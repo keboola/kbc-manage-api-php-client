@@ -47,5 +47,6 @@ Tests requires valid Keboola Management API token and URL of API.
 ```
 export KBC_MANAGE_API_URL=https://connection.keboola.com
 export KBC_MANAGE_API_TOKEN=your_token
+export KBC_TEST_MAINTAINER_ID=1
 php vendor/bin/phpunit
 ```

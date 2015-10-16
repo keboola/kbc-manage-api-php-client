@@ -112,9 +112,31 @@ class Client
         return $this->apiGet("/manage/organizations");
     }
 
+    public function createOrganization($maintainerId, $params)
+    {
+        return $this->apiPost("/manage/maintainers/{$maintainerId}/organizations",$params);
+    }
+
+    public function deleteOrganization($id)
+    {
+        $this->apiDelete("/manage/organizations/{$id}");
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
+    }
+
+    private function apiPost($url, $data)
+    {
+        return $this->request('POST', $url, [
+            'json' => $data,
+        ]);
+    }
+
+    private function apiDelete($url)
+    {
+        $this->request('DELETE', $url);
     }
 
     private function request($method, $url, array $options = [])

@@ -18,6 +18,8 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
      */
     protected $client;
 
+    protected $testMaintainerId;
+
     public function setUp()
     {
         $this->client = new Client([
@@ -25,6 +27,7 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 1,
         ]);
+        $this->testMaintainerId = getenv('KBC_TEST_MAINTAINER_ID');
     }
 
 

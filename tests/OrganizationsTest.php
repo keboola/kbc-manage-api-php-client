@@ -23,4 +23,25 @@ class OrganizationsTest extends ClientTestCase
         $this->assertNotEmpty($organization['created']);
         $this->assertArrayHasKey('maintainer', $organization);
     }
+
+    public function testOrganizationCreateAndDelete()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+           'name' => 'My org',
+        ]);
+
+        $fromList = array_values(array_filter($this->client->listOrganizations(), function($org) use($organization) {
+            return $org['id'] === $organization['id'];
+        }));
+        $this->assertNotEmpty($fromList);
+        $this->assertCount(1, $fromList);
+        $this->assertEquals($organization['id'], $fromList[0]['id']);
+
+        $this->client->deleteOrganization($organization['id']);
+    }
+
+    public function testOrganizationDelete()
+    {
+
+    }
 }
