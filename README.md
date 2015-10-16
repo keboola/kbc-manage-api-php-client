@@ -17,10 +17,10 @@ mv ./composer.phar ~/bin/composer # or /usr/local/bin/composer
 **Create composer.json file in your project root folder:**
 ```json
 {
-"require": {
-"php" : ">=5.4.0",
-"keboola/storage-api-client": "2.12.*"
-}
+    "require": {
+        "php" : ">=5.4.0",
+        "keboola/kbc-manage-api-php-client": "~0.0"
+    }
 }
 ```
 
