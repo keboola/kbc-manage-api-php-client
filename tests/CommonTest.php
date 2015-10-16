@@ -20,5 +20,7 @@ class CommonTest extends ClientTestCase
         $this->assertNotEmpty($token['created']);
         $this->assertFalse($token['isDisabled']);
         $this->assertFalse($token['isExpired']);
+        $this->assertInternalType('array', $token['scopes']);
+        $this->assertContains('projects', $token['scopes']);
     }
 }

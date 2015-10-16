@@ -102,6 +102,16 @@ class Client
         return $this->apiGet("/manage/tokens/verify");
     }
 
+    public function listMaintainers()
+    {
+        return $this->apiGet("/manage/maintainers");
+    }
+
+    public function listOrganizations()
+    {
+        return $this->apiGet("/manage/organizations");
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
