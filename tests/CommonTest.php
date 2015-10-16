@@ -11,8 +11,14 @@ namespace Keboola\ManageApiTest;
 class CommonTest extends ClientTestCase
 {
 
-	public function testVerifyToken()
-	{
-		$token = $this->client->verifyToken();
-	}
+    public function testVerifyToken()
+    {
+        $token = $this->client->verifyToken();
+
+        $this->assertInternalType('int', $token['id']);
+        $this->assertNotEmpty($token['description']);
+        $this->assertNotEmpty($token['created']);
+        $this->assertFalse($token['isDisabled']);
+        $this->assertFalse($token['isExpired']);
+    }
 }
