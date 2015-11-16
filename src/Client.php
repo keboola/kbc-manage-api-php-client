@@ -122,6 +122,11 @@ class Client
         $this->apiDelete("/manage/organizations/{$id}");
     }
 
+    public function createProject($organizationId, $params)
+    {
+        return $this->apiPost("/manage/organizations/{$organizationId}/projects",$params);
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
