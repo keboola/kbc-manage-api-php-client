@@ -112,6 +112,11 @@ class Client
         return $this->apiGet("/manage/organizations");
     }
 
+    public function listOrganizationProjects($organizationId)
+    {
+        return $this->apiGet("/manage/organizations/{$organizationId}/projects");
+    }
+
     public function createOrganization($maintainerId, $params)
     {
         return $this->apiPost("/manage/maintainers/{$maintainerId}/organizations",$params);
@@ -124,7 +129,39 @@ class Client
 
     public function createProject($organizationId, $params)
     {
-        return $this->apiPost("/manage/organizations/{$organizationId}/projects",$params);
+        return $this->apiPost("/manage/organizations/{$organizationId}/projects", $params);
+    }
+
+    public function getProject($id)
+    {
+        return $this->apiGet("/manage/projects/{$id}");
+    }
+
+    public function deleteProject($id)
+    {
+        $this->apiDelete("/manage/projects/{$id}");
+    }
+
+    public function listProjectUsers($id)
+    {
+        return $this->apiGet("/manage/projects/{$id}/users");
+    }
+
+    public function addUserToProject($projectId, $params = [])
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/users", $params);
+    }
+
+    public function removeUserFromProject($projectId, $userId)
+    {
+        $this->apiDelete("/manage/projects/{$projectId}/users/{$userId}");
+    }
+
+    public function changeProjectOrganization($projectId, $newOrganizationId)
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/organizations", [
+            'organizationId' => $newOrganizationId,
+        ]);
     }
 
     private function apiGet($url)

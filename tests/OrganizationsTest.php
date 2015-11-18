@@ -37,6 +37,9 @@ class OrganizationsTest extends ClientTestCase
         $this->assertCount(1, $fromList);
         $this->assertEquals($organization['id'], $fromList[0]['id']);
 
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $this->assertEmpty($projects);
+
         $this->client->deleteOrganization($organization['id']);
     }
 
