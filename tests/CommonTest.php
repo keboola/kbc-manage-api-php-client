@@ -24,6 +24,13 @@ class CommonTest extends ClientTestCase
         $this->assertFalse($token['isExpired']);
         $this->assertInternalType('array', $token['scopes']);
         $this->assertEquals($token['type'], 'admin');
+        $this->assertNotEmpty($token['lastUsed']);
+
+        $lastUsed = $token['lastUsed'];
+
+        sleep(1);
+        $token = $this->client->verifyToken();
+        $this->assertNotEquals($lastUsed, $token['lastUsed']);
     }
 
     public function testVerifySuperToken()
