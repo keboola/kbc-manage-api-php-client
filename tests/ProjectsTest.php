@@ -35,6 +35,16 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($project['name'], $foundProject['name']);
         $this->assertArrayHasKey('organization', $foundProject);
         $this->assertEquals($organization['id'], $foundProject['organization']['id']);
+        $this->assertArrayHasKey('limits', $foundProject);
+        $this->assertTrue(count($foundProject['limits']) > 1);
+        $this->assertArrayHasKey('metrics', $foundProject);
+
+        $firstLimit = reset($foundProject['limits']);
+        $limitKeys = array_keys($foundProject['limits']);
+        $this->assertArrayHasKey('name', $firstLimit);
+        $this->assertArrayHasKey('value', $firstLimit);
+        $this->assertInternalType('int', $firstLimit['value']);
+        $this->assertEquals($firstLimit['name'], $limitKeys[0]);
 
         // delete project
         $this->client->deleteProject($project['id']);
