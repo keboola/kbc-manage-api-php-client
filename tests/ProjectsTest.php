@@ -8,6 +8,8 @@
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\ClientException;
+
 class ProjectsTest extends ClientTestCase
 {
 
@@ -38,6 +40,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('limits', $foundProject);
         $this->assertTrue(count($foundProject['limits']) > 1);
         $this->assertArrayHasKey('metrics', $foundProject);
+        $this->assertEquals('mysql', $foundProject['defaultBackend']);
 
         $firstLimit = reset($foundProject['limits']);
         $limitKeys = array_keys($foundProject['limits']);
@@ -54,6 +57,40 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteOrganization($organization['id']);
     }
+
+    public function testCreateProjectWithRedshiftBackend()
+    {
+        $backend = 'redshift';
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => $backend,
+        ]);
+
+        $this->assertEquals($backend, $project['defaultBackend']);
+    }
+
+    public function testCreateProjectWithInvalidBackendShouldFail()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        try {
+            $this->client->createProject($organization['id'], [
+                'name' => 'My test',
+                'defaultBackend' => 'file',
+            ]);
+            $this->fail("Project should not be created");
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertEquals('storage.unsupportedBackend', $e->getStringCode());
+        }
+    }
+
 
     public function testUsersManagement()
     {
@@ -93,6 +130,39 @@ class ProjectsTest extends ClientTestCase
 
         $admins = $this->client->listProjectUsers($project['id']);
         $this->assertCount(1, $admins);
+    }
+
+    public function testProjectUpdate()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        // update
+        $newName = 'new name';
+        $project = $this->client->updateProject($project['id'], [
+            'name' => $newName,
+        ]);
+        $this->assertEquals($newName, $project['name']);
+
+        // fetch again
+        $project = $this->client->getProject($project['id']);
+        $this->assertEquals($newName, $project['name']);
+        $this->assertEquals('mysql', $project['defaultBackend']);
+
+        // update - change backend
+        $project = $this->client->updateProject($project['id'], [
+           'defaultBackend' => 'redshift',
+        ]);
+        $this->assertEquals('redshift', $project['defaultBackend']);
+
+        // fetch again
+        $project = $this->client->getProject($project['id']);
+        $this->assertEquals('redshift', $project['defaultBackend']);
     }
 
 

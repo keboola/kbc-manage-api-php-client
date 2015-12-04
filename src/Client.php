@@ -132,6 +132,11 @@ class Client
         return $this->apiPost("/manage/organizations/{$organizationId}/projects", $params);
     }
 
+    public function updateProject($id, $params)
+    {
+        return $this->apiPut("/manage/projects/{$id}", $params);
+    }
+
     public function getProject($id)
     {
         return $this->apiGet("/manage/projects/{$id}");
@@ -172,6 +177,13 @@ class Client
     private function apiPost($url, $data)
     {
         return $this->request('POST', $url, [
+            'json' => $data,
+        ]);
+    }
+
+    private function apiPut($url, $data)
+    {
+        return $this->request('PUT', $url, [
             'json' => $data,
         ]);
     }
