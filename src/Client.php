@@ -169,6 +169,13 @@ class Client
         ]);
     }
 
+    public function setProjectLimits($projectId, array $limits)
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/limits", [
+           'limits' => $limits,
+        ]);
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);

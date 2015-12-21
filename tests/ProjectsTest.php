@@ -184,4 +184,33 @@ class ProjectsTest extends ClientTestCase
        $this->assertEquals($newOrganization['id'], $changedProject['organization']['id']);
     }
 
+    public function testChangeProjectLimits()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $limits = [
+            [
+                'name' => 'goodData.prodTokenEnabled',
+                'value' => 0,
+            ],
+            [
+                'name' => 'goodData.usersCount',
+                'value' => 20,
+            ]
+        ];
+        $project = $this->client->setProjectLimits($project['id'], $limits);
+        $this->assertEquals($limits[0], $project['limits']['goodData.prodTokenEnabled']);
+        $this->assertEquals($limits[1], $project['limits']['goodData.usersCount']);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertEquals($limits[0], $project['limits']['goodData.prodTokenEnabled']);
+        $this->assertEquals($limits[1], $project['limits']['goodData.usersCount']);
+    }
+
 }
