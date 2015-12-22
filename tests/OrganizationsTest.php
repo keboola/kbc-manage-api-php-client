@@ -11,7 +11,7 @@ namespace Keboola\ManageApiTest;
 class OrganizationsTest extends ClientTestCase
 {
 
-    public function testListMaintainers()
+    public function testListOrganizations()
     {
         $organizations = $this->client->listOrganizations();
 
@@ -26,6 +26,8 @@ class OrganizationsTest extends ClientTestCase
 
     public function testOrganizationCreateAndDelete()
     {
+        $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+        $initialOrgsCount = count($organizations);
         $organization = $this->client->createOrganization($this->testMaintainerId, [
            'name' => 'My org',
         ]);
@@ -40,11 +42,10 @@ class OrganizationsTest extends ClientTestCase
         $projects = $this->client->listOrganizationProjects($organization['id']);
         $this->assertEmpty($projects);
 
+        $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+        $this->assertEquals($initialOrgsCount + 1, count($organizations));
+
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testOrganizationDelete()
-    {
-
-    }
 }

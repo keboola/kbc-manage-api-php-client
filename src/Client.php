@@ -107,6 +107,11 @@ class Client
         return $this->apiGet("/manage/maintainers");
     }
 
+    public function listMaintainerOrganizations($maintainerId)
+    {
+        return $this->apiGet("/manage/maintainers/{$maintainerId}/organizations");
+    }
+
     public function listOrganizations()
     {
         return $this->apiGet("/manage/organizations");
