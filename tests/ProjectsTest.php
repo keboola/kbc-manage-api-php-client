@@ -281,6 +281,5 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canManageTokens']);
         $this->assertFalse($verified['canReadAllFileUploads']);
         $this->assertEquals(['in.c-main' => 'read'], $verified['bucketPermissions']);
-        var_dump($verified);
     }
 }
