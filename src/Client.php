@@ -167,6 +167,11 @@ class Client
         $this->apiDelete("/manage/projects/{$projectId}/users/{$userId}");
     }
 
+    public function createProjectStorageToken($projectId, array $params)
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/tokens", $params);
+    }
+
     public function changeProjectOrganization($projectId, $newOrganizationId)
     {
         return $this->apiPost("/manage/projects/{$projectId}/organizations", [

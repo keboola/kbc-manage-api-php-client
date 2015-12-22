@@ -9,6 +9,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use Keboola\StorageApi\Client;
 
 class ProjectsTest extends ClientTestCase
 {
@@ -213,4 +214,73 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($limits[1], $project['limits']['goodData.usersCount']);
     }
 
+    public function testCreateProjectStorageToken()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $token = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+        ]);
+
+        $client = new Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token['token'],
+        ]);
+
+        $verified = $client->verifyToken();
+        $this->assertEquals($project['id'], $verified['owner']['id']);
+        $this->assertFalse($verified['canManageBuckets']);
+        $this->assertFalse($verified['canManageTokens']);
+        $this->assertFalse($verified['canReadAllFileUploads']);
+        $this->assertEmpty($verified['bucketPermissions']);
+
+        // new token with more permissions
+        $token = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+            'canReadAllFileUploads' => true,
+        ]);
+
+        $client = new Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token['token'],
+        ]);
+
+        $verified = $client->verifyToken();
+        $this->assertEquals($project['id'], $verified['owner']['id']);
+        $this->assertTrue($verified['canManageBuckets']);
+        $this->assertFalse($verified['canManageTokens']);
+        $this->assertTrue($verified['canReadAllFileUploads']);
+        $this->assertNotEmpty($verified['bucketPermissions']);
+
+        // test bucket permissions
+        $token = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'bucketPermissions' => [
+                'in.c-main' => 'read',
+            ]
+        ]);
+
+        $client = new Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token['token'],
+        ]);
+
+        $verified = $client->verifyToken();
+        $this->assertEquals($project['id'], $verified['owner']['id']);
+        $this->assertFalse($verified['canManageBuckets']);
+        $this->assertFalse($verified['canManageTokens']);
+        $this->assertFalse($verified['canReadAllFileUploads']);
+        $this->assertEquals(['in.c-main' => 'read'], $verified['bucketPermissions']);
+        var_dump($verified);
+    }
 }
