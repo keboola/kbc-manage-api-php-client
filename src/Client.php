@@ -186,6 +186,18 @@ class Client
         ]);
     }
 
+    public function addProjectFeature($projectId, $feature)
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/features", [
+           'feature' => (string) $feature,
+        ]);
+    }
+
+    public function removeProjectFeature($projectId, $feature)
+    {
+        return $this->apiDelete("/manage/projects/{$projectId}/features/{$feature}");
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);

@@ -214,6 +214,34 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($limits[1], $project['limits']['goodData.usersCount']);
     }
 
+    public function testAddRemoveProjectFeatures()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->assertEmpty($project['features']);
+
+        $featureName = 'storage-tests';
+        $this->client->addProjectFeature($project['id'], $featureName);
+
+        $project = $this->client->getProject($project['id']);
+
+        $this->assertEquals([$featureName], $project['features']);
+
+        $this->client->addProjectFeature($project['id'], 'storage-tests-2');
+        $project = $this->client->getProject($project['id']);
+        $this->assertCount(2, $project['features']);
+
+        $this->client->removeProjectFeature($project['id'], 'storage-tests-2');
+        $project = $this->client->getProject($project['id']);
+        $this->assertEquals([$featureName], $project['features']);
+    }
+
     public function testCreateProjectStorageToken()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
