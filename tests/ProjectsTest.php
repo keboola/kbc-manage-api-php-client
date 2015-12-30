@@ -42,6 +42,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue(count($foundProject['limits']) > 1);
         $this->assertArrayHasKey('metrics', $foundProject);
         $this->assertEquals('mysql', $foundProject['defaultBackend']);
+        $this->assertArrayHasKey('isDisabled', $foundProject);
 
         $firstLimit = reset($foundProject['limits']);
         $limitKeys = array_keys($foundProject['limits']);
