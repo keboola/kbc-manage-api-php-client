@@ -311,4 +311,55 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canReadAllFileUploads']);
         $this->assertEquals(['in.c-main' => 'read'], $verified['bucketPermissions']);
     }
+
+    public function testProjectEnableDisable()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->assertFalse($project['isDisabled']);
+
+        $storageToken = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+        ]);
+
+        $disableReason = 'Disable test';
+        $this->client->disableProject($project['id'], [
+            'disableReason' => $disableReason,
+            'estimatedEndTime' => '+1 hour',
+        ]);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertTrue($project['isDisabled']);
+
+        $this->assertEquals($disableReason, $project['disabled']['reason']);
+        $this->assertNotEmpty($project['disabled']['estimatedEndTime']);
+
+        $client = new Client([
+            'url' =>  getenv('KBC_MANAGE_API_URL'),
+            'token' => $storageToken['token'],
+            'backoffMaxTries' => 1,
+        ]);
+
+        try {
+            $client->verifyToken();
+            $this->fail('Token should be disabled');
+        } catch (\Keboola\StorageApi\ClientException $e) {
+            $this->assertEquals($e->getStringCode(), 'MAINTENANCE');
+            $this->assertEquals($e->getMessage(), $disableReason);
+        }
+
+        $this->client->enableProject($project['id']);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertFalse($project['isDisabled']);
+
+        $storageToken = $client->verifyToken();
+        $this->assertNotEmpty($storageToken);
+    }
 }

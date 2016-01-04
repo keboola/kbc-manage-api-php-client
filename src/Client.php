@@ -167,6 +167,20 @@ class Client
         $this->apiDelete("/manage/projects/{$projectId}/users/{$userId}");
     }
 
+    public function enableProject($projectId)
+    {
+        $this->apiPost("/manage/projects/{$projectId}/disabled", [
+           'isDisabled' => false,
+        ]);
+    }
+
+    public function disableProject($projectId, $params = [])
+    {
+        $this->apiPost("/manage/projects/{$projectId}/disabled", array_merge($params, [
+            'isDisabled' => true,
+        ]));
+    }
+
     public function createProjectStorageToken($projectId, array $params)
     {
         return $this->apiPost("/manage/projects/{$projectId}/tokens", $params);
