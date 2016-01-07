@@ -212,6 +212,23 @@ class Client
         return $this->apiDelete("/manage/projects/{$projectId}/features/{$feature}");
     }
 
+    public function getUser($emailOrId)
+    {
+        return $this->apiGet("/manage/users/{$emailOrId}");
+    }
+
+    public function addUserFeature($emailOrId, $feature)
+    {
+        return $this->apiPost("/manage/users/{$emailOrId}/features", [
+            'feature' => $feature,
+        ]);
+    }
+
+    public function removeUserFeature($emailOrId, $feature)
+    {
+        $this->apiDelete("/manage/users/{$emailOrId}/features/{$feature}");
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
