@@ -229,6 +229,16 @@ class Client
         $this->apiDelete("/manage/users/{$emailOrId}/features/{$feature}");
     }
 
+    public function addNotification($data)
+    {
+        return $this->apiPost("/manage/notifications", $data);
+    }
+
+    public function getNotifications()
+    {
+        return $this->apiGet("/manage/notifications");
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);

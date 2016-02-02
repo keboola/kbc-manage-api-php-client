@@ -18,6 +18,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertGreaterThan(0, count($maintainers));
 
         $maintainer = $maintainers[0];
+
         $this->assertInternalType('int', $maintainer['id']);
         $this->assertNotEmpty($maintainer['name']);
         $this->assertNotEmpty($maintainer['created']);
