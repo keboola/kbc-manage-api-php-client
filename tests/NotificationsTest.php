@@ -67,7 +67,7 @@ class NotificationsTest extends ClientTestCase
         sleep(3);
 
         $response = $this->client->getNotifications();
-        $notification = array_shift($response['result']);
+        $notification = array_shift($response);
 
         $this->assertArrayHasKey('type', $notification);
         $this->assertArrayHasKey('created', $notification);
@@ -76,13 +76,13 @@ class NotificationsTest extends ClientTestCase
         $this->assertArrayHasKey('message', $notification);
         $this->assertEquals('global', $notification['type']);
 
-        $notification2 = array_shift($response['result']);
+        $notification2 = array_shift($response);
         $this->assertEquals('limit', $notification2['type']);
         $this->assertArrayHasKey('project', $notification2);
         $this->assertArrayHasKey('id', $notification2['project']);
         $this->assertArrayHasKey('name', $notification2['project']);
 
-        $notification3 = array_shift($response['result']);
+        $notification3 = array_shift($response);
         $this->assertEquals('common', $notification3['type']);
         $this->assertArrayHasKey('title', $notification);
         $this->assertArrayHasKey('message', $notification);
@@ -121,7 +121,7 @@ class NotificationsTest extends ClientTestCase
 
         $response = $client2->getNotifications();
 
-        $notification = array_shift($response['result']);
+        $notification = array_shift($response);
 
         $this->assertArrayHasKey('id', $notification);
         $this->assertArrayHasKey('type', $notification);
@@ -163,8 +163,8 @@ class NotificationsTest extends ClientTestCase
         ]);
 
         $response = $this->client->getNotifications();
-        $notification1 = array_shift($response['result']);
-        $notification2 = array_shift($response['result']);
+        $notification1 = array_shift($response);
+        $notification2 = array_shift($response);
         $this->assertFalse($notification1['isRead']);
         $this->assertFalse($notification2['isRead']);
 
@@ -174,8 +174,8 @@ class NotificationsTest extends ClientTestCase
         ]);
 
         $response = $this->client->getNotifications();
-        $notification1 = array_shift($response['result']);
-        $notification2 = array_shift($response['result']);
+        $notification1 = array_shift($response);
+        $notification2 = array_shift($response);
         $this->assertTrue($notification1['isRead']);
         $this->assertTrue($notification2['isRead']);
     }
@@ -212,7 +212,7 @@ class NotificationsTest extends ClientTestCase
 
         $response = $client2->getNotifications();
 
-        $notificationsFromProject = array_filter($response['result'], function ($item) use ($project) {
+        $notificationsFromProject = array_filter($response, function ($item) use ($project) {
             return isset($item['project']) && $item['project']['id'] == $project['id'];
         });
 
@@ -232,7 +232,7 @@ class NotificationsTest extends ClientTestCase
         sleep(5);
 
         $response = $client2->getNotifications();
-        $notificationsFromProject = array_filter($response['result'], function ($item) use ($project) {
+        $notificationsFromProject = array_filter($response, function ($item) use ($project) {
             return isset($item['project']) && $item['project']['id'] == $project['id'];
         });
 
