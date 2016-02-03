@@ -239,6 +239,11 @@ class Client
         return $this->apiGet("/manage/notifications");
     }
 
+    public function markReadNotifications(array $ids)
+    {
+        return $this->apiPut("/manage/notifications", ['read' => $ids]);
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
@@ -301,5 +306,4 @@ class Client
 
         return (string)$response->getBody();
     }
-
 }
