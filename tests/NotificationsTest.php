@@ -25,6 +25,7 @@ class NotificationsTest extends ClientTestCase
         $response = $this->client->addNotification([
             'type' => 'limit',
             'projectId' => $project['id'],
+            'title' => 'Project is over quota',
             'limit' => 'kbc.adminsCount'
         ]);
 
@@ -53,7 +54,7 @@ class NotificationsTest extends ClientTestCase
         $this->client->addNotification([
             'type' => 'limit',
             'projectId' => $project['id'],
-            'title' => 'Limit is over quota',
+            'title' => 'Project is over quota',
             'limit' => 'kbc.storageSize'
         ]);
 
@@ -119,6 +120,8 @@ class NotificationsTest extends ClientTestCase
             'url' => getenv('KBC_MANAGE_API_URL')
         ]);
 
+        sleep(5);
+
         $response = $client2->getNotifications();
 
         $notification = array_shift($response);
@@ -161,6 +164,8 @@ class NotificationsTest extends ClientTestCase
             'title' => 'Limit is over quota',
             'limit' => 'kbc.storageSize'
         ]);
+
+        sleep(5);
 
         $response = $this->client->getNotifications();
         $notification1 = array_shift($response);
