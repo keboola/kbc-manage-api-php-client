@@ -234,9 +234,19 @@ class Client
         return $this->apiPost("/manage/notifications", $data);
     }
 
-    public function getNotifications()
+    /**
+     * @param $params
+     *  - fromId
+     *
+     * @return mixed|string
+     */
+    public function getNotifications($params = [])
     {
-        return $this->apiGet("/manage/notifications");
+        $url = "/manage/notifications";
+        if (!empty($params['fromId'])) {
+            $url .= "?fromId=" .$params['fromId'];
+        }
+        return $this->apiGet($url);
     }
 
     public function markReadNotifications(array $ids)

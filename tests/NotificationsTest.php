@@ -29,9 +29,10 @@ class NotificationsTest extends ClientTestCase
             'limit' => 'kbc.adminsCount'
         ]);
 
+        $this->assertArrayHasKey('id', $response);
         $this->assertEquals('limit', $response['type']);
-        $this->assertEquals($project['id'], $response['data']['projectId']);
-        $this->assertEquals('kbc.adminsCount', $response['data']['limit']);
+        $this->assertEquals('Project is over quota', $response['title']);
+        $this->assertEquals('kbc.adminsCount', $response['object']);
     }
 
     public function testGetNotifications()
@@ -44,52 +45,53 @@ class NotificationsTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
-        $this->client->addNotification([
+        $res1 = $this->client->addNotification([
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'DEMO project outage',
             'message' => 'In 30 days this DEMO project will be deleted.'
         ]);
 
-        $this->client->addNotification([
+        $res2 = $this->client->addNotification([
             'type' => 'limit',
             'projectId' => $project['id'],
             'title' => 'Project is over quota',
             'limit' => 'kbc.storageSize'
         ]);
 
-        $this->client->addNotification([
+        $res3 = $this->client->addNotification([
             'type' => 'global',
             'title' => 'Maintenance announcement',
             'message' => 'There will be maintenance at some point in future'
         ]);
 
-        // it takes a while while the children feeds get updated
-        sleep(3);
+        // it takes a while to update child feeds
+        $response = $this->getNotificationsFromId($res3['id']);
 
-        $response = $this->client->getNotifications();
         $notification = array_shift($response);
-
+        $this->assertEquals($res3['id'], $notification['id']);
+        $this->assertEquals('global', $notification['type']);
         $this->assertArrayHasKey('type', $notification);
         $this->assertArrayHasKey('created', $notification);
         $this->assertArrayHasKey('isRead', $notification);
         $this->assertArrayHasKey('title', $notification);
         $this->assertArrayHasKey('message', $notification);
-        $this->assertEquals('global', $notification['type']);
 
-        $notification2 = array_shift($response);
-        $this->assertEquals('limit', $notification2['type']);
-        $this->assertArrayHasKey('project', $notification2);
-        $this->assertArrayHasKey('id', $notification2['project']);
-        $this->assertArrayHasKey('name', $notification2['project']);
+        $notification = array_shift($response);
+        $this->assertEquals($res2['id'], $notification['id']);
+        $this->assertEquals('limit', $notification['type']);
+        $this->assertArrayHasKey('project', $notification);
+        $this->assertArrayHasKey('id', $notification['project']);
+        $this->assertArrayHasKey('name', $notification['project']);
 
-        $notification3 = array_shift($response);
-        $this->assertEquals('common', $notification3['type']);
+        $notification = array_shift($response);
+        $this->assertEquals($res1['id'], $notification['id']);
+        $this->assertEquals('common', $notification['type']);
         $this->assertArrayHasKey('title', $notification);
         $this->assertArrayHasKey('message', $notification);
-        $this->assertArrayHasKey('project', $notification2);
-        $this->assertArrayHasKey('id', $notification2['project']);
-        $this->assertArrayHasKey('name', $notification2['project']);
+        $this->assertArrayHasKey('project', $notification);
+        $this->assertArrayHasKey('id', $notification['project']);
+        $this->assertArrayHasKey('name', $notification['project']);
     }
 
     public function testNotificationsForAddedAdmin()
@@ -108,24 +110,21 @@ class NotificationsTest extends ClientTestCase
 
         $msg = 'anotherAdminTestMessage' . microtime();
 
-        $this->client->addNotification([
+        $addRes = $this->client->addNotification([
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'anotherAdminTest',
             'message' => $msg
         ]);
 
-        $client2 = new Client([
+        $this->client = new Client([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL')
         ]);
 
-        sleep(5);
-
-        $response = $client2->getNotifications();
+        $response = $this->getNotificationsFromId($addRes['id']);
 
         $notification = array_shift($response);
-
         $this->assertArrayHasKey('id', $notification);
         $this->assertArrayHasKey('type', $notification);
         $this->assertArrayHasKey('created', $notification);
@@ -158,18 +157,16 @@ class NotificationsTest extends ClientTestCase
             'limit' => 'kbc.adminsCount'
         ]);
 
-        $this->client->addNotification([
+        $res2 = $this->client->addNotification([
             'type' => 'limit',
             'projectId' => $project['id'],
             'title' => 'Limit is over quota',
             'limit' => 'kbc.storageSize'
         ]);
 
-        sleep(5);
-
-        $response = $this->client->getNotifications();
-        $notification1 = array_shift($response);
+        $response = $this->getNotificationsFromId($res2['id']);
         $notification2 = array_shift($response);
+        $notification1 = array_shift($response);
         $this->assertFalse($notification1['isRead']);
         $this->assertFalse($notification2['isRead']);
 
@@ -201,21 +198,20 @@ class NotificationsTest extends ClientTestCase
         ]);
 
         $msg1 = 'anotherAdminTestMessage' . microtime();
-        $this->client->addNotification([
+        $res1 = $this->client->addNotification([
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'anotherAdminTest',
             'message' => $msg1
         ]);
 
-        $client2 = new Client([
+        $origClient = $this->client;
+        $this->client = new Client([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL')
         ]);
 
-        sleep(5);
-
-        $response = $client2->getNotifications();
+        $response = $this->getNotificationsFromId($res1['id']);
 
         $notificationsFromProject = array_filter($response, function ($item) use ($project) {
             return isset($item['project']) && $item['project']['id'] == $project['id'];
@@ -223,11 +219,11 @@ class NotificationsTest extends ClientTestCase
 
         $this->assertCount(1, $notificationsFromProject);
 
-        $user = $this->client->getUser($adminEmail);
-        $this->client->removeUserFromProject($project['id'], $user['id']);
+        $user = $origClient->getUser($adminEmail);
+        $origClient->removeUserFromProject($project['id'], $user['id']);
 
         $msg2 = 'anotherAdminTestMessage' . microtime();
-        $this->client->addNotification([
+        $origClient->addNotification([
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'anotherAdminTest',
@@ -235,12 +231,26 @@ class NotificationsTest extends ClientTestCase
         ]);
 
         sleep(5);
-
-        $response = $client2->getNotifications();
+        $response = $this->client->getNotifications();
         $notificationsFromProject = array_filter($response, function ($item) use ($project) {
             return isset($item['project']) && $item['project']['id'] == $project['id'];
         });
 
         $this->assertCount(0, $notificationsFromProject);
+    }
+
+    private function getNotificationsFromId($id)
+    {
+        $i=0;
+        do {
+            $response = $this->client->getNotifications();
+            if ($id == $response[0]['id']) {
+                return $response;
+            }
+            sleep(1);
+            $i++;
+        } while ($i < 10);
+
+        throw new \Exception("Unable to find notification {$id}.");
     }
 }
