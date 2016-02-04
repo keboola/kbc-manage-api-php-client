@@ -25,6 +25,7 @@ class CommonTest extends ClientTestCase
         $this->assertInternalType('array', $token['scopes']);
         $this->assertEquals($token['type'], 'admin');
         $this->assertNotEmpty($token['lastUsed']);
+        $this->assertFalse($token['isSessionToken']);
 
         $lastUsed = $token['lastUsed'];
 
@@ -49,5 +50,6 @@ class CommonTest extends ClientTestCase
         $this->assertFalse($token['isExpired']);
         $this->assertInternalType('array', $token['scopes']);
         $this->assertEquals($token['type'], 'super');
+        $this->assertFalse($token['isSessionToken']);
     }
 }
