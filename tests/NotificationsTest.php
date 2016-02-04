@@ -22,17 +22,22 @@ class NotificationsTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
-        $response = $this->client->addNotification([
+        $addRes = $this->client->addNotification([
             'type' => 'limit',
             'projectId' => $project['id'],
             'title' => 'Project is over quota',
-            'limit' => 'kbc.adminsCount'
+            'payload' => [
+                'limit' => 'kbc.adminsCount'
+            ]
         ]);
 
-        $this->assertArrayHasKey('id', $response);
-        $this->assertEquals('limit', $response['type']);
-        $this->assertEquals('Project is over quota', $response['title']);
-        $this->assertEquals('kbc.adminsCount', $response['object']);
+        $response = $this->getNotificationsFromId($addRes['id']);
+        $notification = array_shift($response);
+
+        $this->assertArrayHasKey('id', $notification);
+        $this->assertEquals('limit', $notification['type']);
+        $this->assertEquals('Project is over quota', $notification['title']);
+        $this->assertEquals('kbc.adminsCount', $notification['payload']['limit']);
     }
 
     public function testGetNotifications()
@@ -45,47 +50,18 @@ class NotificationsTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
-        $res1 = $this->client->addNotification([
+        $res = $this->client->addNotification([
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'DEMO project outage',
             'message' => 'In 30 days this DEMO project will be deleted.'
         ]);
 
-        $res2 = $this->client->addNotification([
-            'type' => 'limit',
-            'projectId' => $project['id'],
-            'title' => 'Project is over quota',
-            'limit' => 'kbc.storageSize'
-        ]);
-
-        $res3 = $this->client->addNotification([
-            'type' => 'global',
-            'title' => 'Maintenance announcement',
-            'message' => 'There will be maintenance at some point in future'
-        ]);
-
         // it takes a while to update child feeds
-        $response = $this->getNotificationsFromId($res3['id']);
+        $response = $this->getNotificationsFromId($res['id']);
 
         $notification = array_shift($response);
-        $this->assertEquals($res3['id'], $notification['id']);
-        $this->assertEquals('global', $notification['type']);
-        $this->assertArrayHasKey('type', $notification);
-        $this->assertArrayHasKey('created', $notification);
-        $this->assertArrayHasKey('isRead', $notification);
-        $this->assertArrayHasKey('title', $notification);
-        $this->assertArrayHasKey('message', $notification);
-
-        $notification = array_shift($response);
-        $this->assertEquals($res2['id'], $notification['id']);
-        $this->assertEquals('limit', $notification['type']);
-        $this->assertArrayHasKey('project', $notification);
-        $this->assertArrayHasKey('id', $notification['project']);
-        $this->assertArrayHasKey('name', $notification['project']);
-
-        $notification = array_shift($response);
-        $this->assertEquals($res1['id'], $notification['id']);
+        $this->assertEquals($res['id'], $notification['id']);
         $this->assertEquals('common', $notification['type']);
         $this->assertArrayHasKey('title', $notification);
         $this->assertArrayHasKey('message', $notification);
@@ -150,36 +126,27 @@ class NotificationsTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
-        $this->client->addNotification([
+        $res = $this->client->addNotification([
             'type' => 'limit',
             'projectId' => $project['id'],
             'title' => 'Limit is over quota',
-            'limit' => 'kbc.adminsCount'
+            'payload' => [
+                'limit' => 'kbc.storageSize'
+            ]
         ]);
 
-        $res2 = $this->client->addNotification([
-            'type' => 'limit',
-            'projectId' => $project['id'],
-            'title' => 'Limit is over quota',
-            'limit' => 'kbc.storageSize'
-        ]);
+        $response = $this->getNotificationsFromId($res['id']);
+        $notification = array_shift($response);
 
-        $response = $this->getNotificationsFromId($res2['id']);
-        $notification2 = array_shift($response);
-        $notification1 = array_shift($response);
-        $this->assertFalse($notification1['isRead']);
-        $this->assertFalse($notification2['isRead']);
+        $this->assertFalse($notification['isRead']);
 
         $this->client->markReadNotifications([
-            $notification1['id'],
-            $notification2['id']
+            $notification['id']
         ]);
 
         $response = $this->client->getNotifications();
-        $notification1 = array_shift($response);
-        $notification2 = array_shift($response);
-        $this->assertTrue($notification1['isRead']);
-        $this->assertTrue($notification2['isRead']);
+        $notification = array_shift($response);
+        $this->assertTrue($notification['isRead']);
     }
 
     public function testNotificationsAdminRemovedFromProject()
