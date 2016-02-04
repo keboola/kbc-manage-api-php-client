@@ -229,6 +229,31 @@ class Client
         $this->apiDelete("/manage/users/{$emailOrId}/features/{$feature}");
     }
 
+    public function addNotification($data)
+    {
+        return $this->apiPost("/manage/notifications", $data);
+    }
+
+    /**
+     * @param $params
+     *  - fromId
+     *
+     * @return mixed|string
+     */
+    public function getNotifications($params = [])
+    {
+        $url = "/manage/notifications";
+        if (!empty($params['fromId'])) {
+            $url .= "?fromId=" .$params['fromId'];
+        }
+        return $this->apiGet($url);
+    }
+
+    public function markReadNotifications(array $ids)
+    {
+        return $this->apiPut("/manage/notifications", ['read' => $ids]);
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
@@ -291,5 +316,4 @@ class Client
 
         return (string)$response->getBody();
     }
-
 }
