@@ -68,6 +68,14 @@ class NotificationsTest extends ClientTestCase
         $this->assertArrayHasKey('project', $notification);
         $this->assertArrayHasKey('id', $notification['project']);
         $this->assertArrayHasKey('name', $notification['project']);
+        $this->assertArrayHasKey('payload', $notification);
+        $this->assertArrayHasKey('created', $notification);
+
+        $created = new \DateTime($notification['created']);
+        $dateDiff = $created->diff(new \DateTime(), true);
+        $secs = $dateDiff->s + $dateDiff->i*60 + $dateDiff->h*60*60;
+
+        $this->assertLessThan(10, $secs);
     }
 
     public function testNotificationsForAddedAdmin()
