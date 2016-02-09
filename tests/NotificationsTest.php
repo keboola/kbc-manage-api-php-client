@@ -31,8 +31,7 @@ class NotificationsTest extends ClientTestCase
             ]
         ]);
 
-        $response = $this->getNotificationsFromId($addRes['id']);
-        $notification = array_shift($response);
+        $notification = $this->getNotificationById($addRes['id']);
 
         $this->assertArrayHasKey('id', $notification);
         $this->assertEquals('limit', $notification['type']);
@@ -58,9 +57,8 @@ class NotificationsTest extends ClientTestCase
         ]);
 
         // it takes a while to update child feeds
-        $response = $this->getNotificationsFromId($res['id']);
+        $notification = $this->getNotificationById($res['id']);
 
-        $notification = array_shift($response);
         $this->assertEquals($res['id'], $notification['id']);
         $this->assertEquals('common', $notification['type']);
         $this->assertArrayHasKey('title', $notification);
@@ -101,14 +99,14 @@ class NotificationsTest extends ClientTestCase
             'message' => $msg
         ]);
 
+        $origClient = $this->client;
         $this->client = new Client([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL')
         ]);
 
-        $response = $this->getNotificationsFromId($addRes['id']);
+        $notification = $this->getNotificationById($addRes['id']);
 
-        $notification = array_shift($response);
         $this->assertArrayHasKey('id', $notification);
         $this->assertArrayHasKey('type', $notification);
         $this->assertArrayHasKey('created', $notification);
@@ -122,6 +120,8 @@ class NotificationsTest extends ClientTestCase
 
         $this->assertEquals($msg, $notification['message']);
         $this->assertEquals($project['id'], $notification['project']['id']);
+
+        $this->client = $origClient;
     }
 
     public function testNotificationsMarkRead()
@@ -143,8 +143,7 @@ class NotificationsTest extends ClientTestCase
             ]
         ]);
 
-        $response = $this->getNotificationsFromId($res['id']);
-        $notification = array_shift($response);
+        $notification = $this->getNotificationById($res['id']);
 
         $this->assertFalse($notification['isRead']);
 
@@ -152,8 +151,7 @@ class NotificationsTest extends ClientTestCase
             $notification['id']
         ]);
 
-        $response = $this->client->getNotifications();
-        $notification = array_shift($response);
+        $notification = $this->getNotificationById($res['id']);
         $this->assertTrue($notification['isRead']);
     }
 
@@ -186,45 +184,49 @@ class NotificationsTest extends ClientTestCase
             'url' => getenv('KBC_MANAGE_API_URL')
         ]);
 
-        $response = $this->getNotificationsFromId($res1['id']);
+        $notification = $this->getNotificationById($res1['id']);
 
-        $notificationsFromProject = array_filter($response, function ($item) use ($project) {
-            return isset($item['project']) && $item['project']['id'] == $project['id'];
-        });
-
-        $this->assertCount(1, $notificationsFromProject);
+        $this->assertEquals($res1['id'], $notification['id']);
 
         $user = $origClient->getUser($adminEmail);
         $origClient->removeUserFromProject($project['id'], $user['id']);
 
         $msg2 = 'anotherAdminTestMessage' . microtime();
-        $origClient->addNotification([
+        $res2 = $origClient->addNotification([
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'anotherAdminTest',
             'message' => $msg2
         ]);
 
-        sleep(5);
+        try {
+            $this->getNotificationById($res2['id']);
+        } catch (\Exception $e) {
+        }
+
         $response = $this->client->getNotifications();
         $notificationsFromProject = array_filter($response, function ($item) use ($project) {
             return isset($item['project']) && $item['project']['id'] == $project['id'];
         });
 
         $this->assertCount(0, $notificationsFromProject);
+
+        $this->client = $origClient;
     }
 
-    private function getNotificationsFromId($id)
+    private function getNotificationById($id)
     {
         $i=0;
         do {
             $response = $this->client->getNotifications();
-            if ($id == $response[0]['id']) {
-                return $response;
+            foreach ($response as $r) {
+                if ($id == $r['id']) {
+                    return $r;
+                }
             }
-            sleep(1);
+            sleep(pow(2, $i));
             $i++;
-        } while ($i < 10);
+        } while ($i < 5);
 
         throw new \Exception("Unable to find notification {$id}.");
     }
