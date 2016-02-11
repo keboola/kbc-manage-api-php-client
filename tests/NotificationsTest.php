@@ -226,7 +226,7 @@ class NotificationsTest extends ClientTestCase
             }
             sleep(pow(2, $i));
             $i++;
-        } while ($i < 5);
+        } while ($i < 10);
 
         throw new \Exception("Unable to find notification {$id}.");
     }
