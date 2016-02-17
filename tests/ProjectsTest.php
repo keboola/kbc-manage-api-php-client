@@ -43,6 +43,8 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('metrics', $foundProject);
         $this->assertEquals('mysql', $foundProject['defaultBackend']);
         $this->assertArrayHasKey('isDisabled', $foundProject);
+        $this->assertEquals('production', $project['type']);
+        $this->assertNull($project['expires']);
 
         $firstLimit = reset($foundProject['limits']);
         $limitKeys = array_keys($foundProject['limits']);
@@ -58,6 +60,38 @@ class ProjectsTest extends ClientTestCase
         $this->assertEmpty($projects);
 
         $this->client->deleteOrganization($organization['id']);
+    }
+
+    public function testProductionProjectCreate()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'type' => 'production',
+        ]);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertEquals('production', $project['type']);
+        $this->assertNull($project['expires']);
+    }
+
+    public function testDemoProjectCreate()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'type' => 'demo',
+        ]);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertEquals('demo', $project['type']);
+        $this->assertNotEmpty($project['expires']);
     }
 
     public function testCreateProjectWithRedshiftBackend()
@@ -165,6 +199,78 @@ class ProjectsTest extends ClientTestCase
         // fetch again
         $project = $this->client->getProject($project['id']);
         $this->assertEquals('redshift', $project['defaultBackend']);
+
+
+        $this->assertNull($project['expires']);
+        // update - project type and expiration
+        $project = $this->client->updateProject($project['id'], [
+           'type' => 'demo',
+           'expirationDays' => 22, // reset expiration
+           'billedMonthlyPrice' => 100000,
+        ]);
+
+        $this->assertEquals('demo', $project['type']);
+        $this->assertNotEmpty($project['expires']);
+        $this->assertEquals(100000, $project['billedMonthlyPrice']);
+    }
+
+    public function testProjectUpdatePermissions()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->client->addUserToProject($project['id'], [
+            'email' => getenv('KBC_TEST_ADMIN_EMAIL'),
+        ]);
+
+        $client = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 1,
+        ]);
+
+        // update
+        $newName = 'new name';
+        $project = $client->updateProject($project['id'], [
+            'name' => $newName,
+        ]);
+        $this->assertEquals($newName, $project['name']);
+
+        // change type should not be allowd
+        try {
+            $client->updateProject($project['id'], [
+                'type' => 'production',
+            ]);
+            $this->fail('change type should not be allowed');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        // change expiration should not be allowed
+        try {
+            $client->updateProject($project['id'], [
+                'expirationDays' => 23423,
+            ]);
+            $this->fail('change expiration should not be allowed');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        // change monthly fee should not be allowed
+        try {
+            $client->updateProject($project['id'], [
+                'billedMonthlyPrice' => 23423,
+            ]);
+            $this->fail('change billedMonthlyPrice should not be allowed');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
     }
 
 
