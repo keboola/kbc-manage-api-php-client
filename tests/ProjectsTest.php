@@ -109,6 +109,21 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($backend, $project['defaultBackend']);
     }
 
+
+    public function testCreateProjectWithRedshiftBackendFromTemplate()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'type' => 'productionRedshift',
+        ]);
+
+        $this->assertEquals('redshift', $project['defaultBackend']);
+    }
+
     public function testCreateProjectWithInvalidBackendShouldFail()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
