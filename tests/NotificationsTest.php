@@ -73,7 +73,7 @@ class NotificationsTest extends ClientTestCase
         $dateDiff = $created->diff(new \DateTime(), true);
         $secs = $dateDiff->s + $dateDiff->i*60 + $dateDiff->h*60*60;
 
-        $this->assertLessThan(10, $secs);
+        $this->assertLessThan(30, $secs);
     }
 
     public function testNotificationsForAddedAdmin()
