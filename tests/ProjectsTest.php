@@ -45,6 +45,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('isDisabled', $foundProject);
         $this->assertEquals('production', $project['type']);
         $this->assertNull($project['expires']);
+        $this->assertNotEmpty($project['region']);
 
         $firstLimit = reset($foundProject['limits']);
         $limitKeys = array_keys($foundProject['limits']);
