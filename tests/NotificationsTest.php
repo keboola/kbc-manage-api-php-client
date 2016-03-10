@@ -214,6 +214,47 @@ class NotificationsTest extends ClientTestCase
         $this->client = $origClient;
     }
 
+
+    public function testUserShouldNotReceiveOldNotificationsOnProjectEnter()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $msg1 = 'notificationBeforeAdminEnters' . microtime();
+        $notification = $this->client->addNotification([
+            'type' => 'common',
+            'projectId' => $project['id'],
+            'title' => 'notificationBeforeAdminEnters',
+            'message' => $msg1
+        ]);
+
+        // ensure that current admin which is member of project will receive notification
+        $this->getNotificationById($notification['id']);
+
+        // add new user to project
+        $adminEmail = getenv('KBC_TEST_ADMIN_EMAIL');
+        $this->client->addUserToProject($project['id'], [
+            'email' => $adminEmail
+        ]);
+
+        $newAdminClient = new Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL')
+        ]);
+
+        $notifications = $newAdminClient->getNotifications();
+
+        $received = array_filter($notifications, function($iteratedNotification) use($notification) {
+           return $iteratedNotification['id'] === $notification['id'];
+        });
+        $this->assertCount(0, $received, 'New project admin should not receive old notifications');
+    }
+
     private function getNotificationById($id)
     {
         $i=0;
