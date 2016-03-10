@@ -155,6 +155,53 @@ class NotificationsTest extends ClientTestCase
         $this->assertTrue($notification['isRead']);
     }
 
+    public function testMarkAllNotificationsAsRead()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $notification1 = $this->client->addNotification([
+            'type' => 'limit',
+            'projectId' => $project['id'],
+            'title' => 'Limit is over quota',
+            'payload' => [
+                'limit' => 'kbc.storageSize'
+            ]
+        ]);
+
+        $notification2 = $this->client->addNotification([
+            'type' => 'limit',
+            'projectId' => $project['id'],
+            'title' => 'Limit is over quota',
+            'payload' => [
+                'limit' => 'kbc.storageSize'
+            ]
+        ]);
+
+        // wait for notifications
+        $notification1 = $this->getNotificationById($notification1['id']);
+        $notification2 = $this->getNotificationById($notification2['id']);
+
+        $this->assertFalse($notification1['isRead']);
+        $this->assertFalse($notification2['isRead']);
+
+        $this->client->markAllNotificationsAsRead();
+
+        $notifications = $this->client->getNotifications();
+        $this->assertNotEmpty($notifications);
+
+        foreach ($notifications as $notification) {
+            $this->assertTrue($notification['isRead']);
+        }
+
+
+    }
+
     public function testNotificationsAdminRemovedFromProject()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -261,6 +308,7 @@ class NotificationsTest extends ClientTestCase
         do {
             $response = $this->client->getNotifications();
             foreach ($response as $r) {
+
                 if ($id == $r['id']) {
                     return $r;
                 }

@@ -249,6 +249,13 @@ class Client
         return $this->apiGet($url);
     }
 
+    public function markAllNotificationsAsRead()
+    {
+        return $this->apiPut("/manage/notifications", [
+           'allRead' => true,
+        ]);
+    }
+
     public function markReadNotifications(array $ids)
     {
         return $this->apiPut("/manage/notifications", ['read' => $ids]);
