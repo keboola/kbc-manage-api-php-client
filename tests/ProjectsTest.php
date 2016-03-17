@@ -160,6 +160,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotEmpty($admins[0]['name']);
         $this->assertNotEmpty($admins[0]['email']);
 
+        // begin test of adding / removing user without expiration/reason
         $resp = $this->client->addUserToProject($project['id'], [
            'email' => 'spam@keboola.com',
         ]);
@@ -182,6 +183,53 @@ class ProjectsTest extends ClientTestCase
 
         $admins = $this->client->listProjectUsers($project['id']);
         $this->assertCount(1, $admins);
+    }
+
+    public function testTemporaryAccess()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+        $admins = $this->client->listProjectUsers($project['id']);
+        $this->assertCount(1, $admins);
+
+        // test of adding / removing user with expiration/reason
+        $resp = $this->client->addUserToProject($project['id'], [
+            'email' => 'spam@keboola.com',
+            'reason' => 'created by test',
+            'expires' => date("Y-m-d H:i:s", strtotime("+ 1 minute"))
+        ]);
+
+        $admins = $this->client->listProjectUsers($project['id']);
+        $this->assertCount(2, $admins);
+
+        $foundUser = null;
+        foreach ($admins as $user) {
+            if ($user['email'] == 'spam@keboola.com') {
+                $foundUser = $user;
+                break;
+            }
+        }
+        if (!$foundUser) {
+            $this->fail('User should be in list');
+        }
+
+        // wait for the new guy to get removed from the project during next cron run
+        $tries = 0;
+
+        while ($tries < 7) {
+            $admins = $this->client->listProjectUsers($project['id']);
+            if (count($admins) < 2) {
+                break;
+            }
+            sleep(pow(2, $tries++));
+        }
+        $this->assertCount(1, $admins);
+
     }
 
     public function testProjectUpdate()
