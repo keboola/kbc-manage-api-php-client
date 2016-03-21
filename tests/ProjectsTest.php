@@ -201,7 +201,7 @@ class ProjectsTest extends ClientTestCase
         $resp = $this->client->addUserToProject($project['id'], [
             'email' => 'spam@keboola.com',
             'reason' => 'created by test',
-            'expires' => date("Y-m-d H:i:s", strtotime("+ 1 minute"))
+            'expirationSeconds' => '60'
         ]);
 
         $admins = $this->client->listProjectUsers($project['id']);
