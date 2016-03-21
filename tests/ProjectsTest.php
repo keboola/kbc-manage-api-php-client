@@ -177,6 +177,9 @@ class ProjectsTest extends ClientTestCase
         }
         if (!$foundUser) {
             $this->fail('User should be in list');
+        } else {
+            $this->assertNull($foundUser['expires']);
+            $this->assertEmpty($foundUser['reason']);
         }
 
         $this->client->removeUserFromProject($project['id'], $foundUser['id']);
@@ -216,6 +219,9 @@ class ProjectsTest extends ClientTestCase
         }
         if (!$foundUser) {
             $this->fail('User should be in list');
+        } else {
+            $this->assertEquals("created by test", $foundUser["reason"]);
+            $this->assertGreaterThan(date("Y-m-d H:i:s", time()),$foundUser["expires"]);
         }
 
         // wait for the new guy to get removed from the project during next cron run
