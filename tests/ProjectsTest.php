@@ -601,6 +601,31 @@ class ProjectsTest extends ClientTestCase
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(1, $projects);
 
+        // name filter test
+        $params = array(
+            'organizationId' => $organization['id'],
+            'name' => $project['name'],
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertGreaterThan(0, count($projects));
+
+        $params = array(
+            'organizationId' => $organization['id'],
+            'name' => $project['name'],
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertGreaterThan(0, count($projects));
+
+        $params = array(
+            'organizationId' => $organization['id'],
+            'name' => sha1($project['name']),
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(0, $projects);
+
         foreach ($organizations as $organization) {
             $this->client->deleteOrganization($organization['id']);
         }
