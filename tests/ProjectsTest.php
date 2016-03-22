@@ -680,7 +680,7 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteProject($project['id']);
 
         $projects = $this->client->listDeletedProjects($params);
-        $this->assertCount(0, $projects);
+        $this->assertCount(1, $projects);
 
         $this->client->deleteOrganization($organization['id']);
     }
