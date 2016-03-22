@@ -707,4 +707,35 @@ class ProjectsTest extends ClientTestCase
 
         //@FIXME permissions validation
     }
+
+    public function testProjectUnDelete()
+    {
+        $organization = $this->initTestOrganization();
+
+        $project = $this->initTestProject($organization['id']);
+
+        $this->client->deleteProject($project['id']);
+
+        $params = array(
+            'organizationId' => $organization['id'],
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(1, $projects);
+
+        $this->client->undeleteProject($project['id']);
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(0, $projects);
+
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $this->assertCount(1, $projects);
+
+        $this->client->deleteProject($project['id']);
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(0, $projects);
+
+        $this->client->deleteOrganization($organization['id']);
+    }
 }
