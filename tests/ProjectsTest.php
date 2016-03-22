@@ -569,7 +569,6 @@ class ProjectsTest extends ClientTestCase
     {
         $organizations = array();
 
-        //@FIXME deleted maintainer should produce error
         for ($i=0; $i<2; $i++) {
             $organization = $this->initTestOrganization();
             $organizations[] = $organization;
@@ -691,12 +690,15 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testListDeletedProjectsErrors()
+    public function testDeletedProjectsErrors()
     {
-        // deleted organization
         $organization = $this->initTestOrganization();
+        $project = $this->initTestProject($organization['id']);
+
+        $this->client->deleteProject($project['id']);
         $this->client->deleteOrganization($organization['id']);
 
+        // deleted organization
         try {
             $this->client->listDeletedProjects(array('organizationId' => $organization['id']));
 
@@ -705,7 +707,28 @@ class ProjectsTest extends ClientTestCase
             $this->assertEquals(400, $e->getCode());
         }
 
-        //@FIXME permissions validation
+        // permission validation
+        $client = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL')
+        ]);
+
+        try {
+            $client->listDeletedProjects();
+
+            $this->fail('List deleted projects with non super admint oken should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $client->undeleteProject($project['id']);
+
+            $this->fail('Undelete projects with non super admint oken should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
     }
 
     public function testProjectUnDelete()
