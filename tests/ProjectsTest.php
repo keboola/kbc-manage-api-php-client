@@ -513,11 +513,12 @@ class ProjectsTest extends ClientTestCase
 
     public function testListDeletedProjects()
     {
-        //@FIXME permissions validation
-        //@FIXME deleted organization should produce error
+        $organizations = array();
+
         //@FIXME deleted maintainer should produce error
         for ($i=0; $i<2; $i++) {
             $organization = $this->initTestOrganization();
+            $organizations[] = $organization;
             $project = $this->initTestProject($organization['id']);
 
             // check if the project is listed in organization projects
@@ -532,8 +533,6 @@ class ProjectsTest extends ClientTestCase
 
             $projects = $this->client->listOrganizationProjects($organization['id']);
             $this->assertEmpty($projects);
-
-            $this->client->deleteOrganization($organization['id']);
         }
 
         // all deleted projects
@@ -547,6 +546,10 @@ class ProjectsTest extends ClientTestCase
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(1, $projects);
+
+        foreach ($organizations as $organization) {
+            $this->client->deleteOrganization($organization['id']);
+        }
     }
 
     public function testListDeletedProjectsPaging()
@@ -609,4 +612,20 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
+    public function testListDeletedProjectsErrors()
+    {
+        // deleted organization
+        $organization = $this->initTestOrganization();
+        $this->client->deleteOrganization($organization['id']);
+
+        try {
+            $this->client->listDeletedProjects(array('organizationId' => $organization['id']));
+
+            $this->fail('List deleted projects of deleted organization should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+        }
+
+        //@FIXME permissions validation
+    }
 }
