@@ -152,6 +152,17 @@ class Client
         $this->apiDelete("/manage/projects/{$id}");
     }
 
+    public function listDeletedProjects($params = array())
+    {
+        $defaultParams = array(
+            'limit' => 100,
+            'offset' => 0,
+        );
+
+        $queryParams = array_merge($defaultParams, $params);
+        return $this->apiGet("/manage/deleted-projects?" . http_build_query($queryParams));
+    }
+
     public function listProjectUsers($id)
     {
         return $this->apiGet("/manage/projects/{$id}/users");
