@@ -13,31 +13,41 @@ use Keboola\StorageApi\Client;
 
 class ProjectsTest extends ClientTestCase
 {
-
-    public function testProjectCreate()
+    /**
+     * @return array
+     */
+    private function initTestOrganization()
     {
+        $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'My org',
+            'name' => $name,
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-           'name' => 'My test',
+        $this->assertArrayHasKey('id', $organization);
+        $this->assertArrayHasKey('name', $organization);
+
+        $this->assertEquals($organization['name'], $name);
+
+        return $organization;
+    }
+
+    /**
+     * @param $organizationId
+     * @return array
+     */
+    private function initTestProject($organizationId)
+    {
+        $project = $this->client->createProject($organizationId, [
+            'name' => 'My test',
         ]);
         $this->assertArrayHasKey('id', $project);
         $this->assertEquals('My test', $project['name']);
-
-        // check if the project is listed in organization projects
-        $projects = $this->client->listOrganizationProjects($organization['id']);
-
-        $this->assertCount(1, $projects);
-        $this->assertEquals($project['id'], $projects[0]['id']);
-        $this->assertEquals($project['name'], $projects[0]['name']);
 
         $foundProject = $this->client->getProject($project['id']);
         $this->assertEquals($project['id'], $foundProject['id']);
         $this->assertEquals($project['name'], $foundProject['name']);
         $this->assertArrayHasKey('organization', $foundProject);
-        $this->assertEquals($organization['id'], $foundProject['organization']['id']);
+        $this->assertEquals($organizationId, $foundProject['organization']['id']);
         $this->assertArrayHasKey('limits', $foundProject);
         $this->assertTrue(count($foundProject['limits']) > 1);
         $this->assertArrayHasKey('metrics', $foundProject);
@@ -53,6 +63,22 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('value', $firstLimit);
         $this->assertInternalType('int', $firstLimit['value']);
         $this->assertEquals($firstLimit['name'], $limitKeys[0]);
+
+        return $foundProject;
+    }
+
+    public function testProjectCreate()
+    {
+        $organization = $this->initTestOrganization();
+
+        $project = $this->initTestProject($organization['id']);
+
+        // check if the project is listed in organization projects
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+
+        $this->assertCount(1, $projects);
+        $this->assertEquals($project['id'], $projects[0]['id']);
+        $this->assertEquals($project['name'], $projects[0]['name']);
 
         // delete project
         $this->client->deleteProject($project['id']);
@@ -537,5 +563,202 @@ class ProjectsTest extends ClientTestCase
 
         $storageToken = $client->verifyToken();
         $this->assertNotEmpty($storageToken);
+    }
+
+    public function testListDeletedProjects()
+    {
+        $organizations = array();
+
+        for ($i=0; $i<2; $i++) {
+            $organization = $this->initTestOrganization();
+            $organizations[] = $organization;
+            $project = $this->initTestProject($organization['id']);
+
+            // check if the project is listed in organization projects
+            $projects = $this->client->listOrganizationProjects($organization['id']);
+
+            $this->assertCount(1, $projects);
+            $this->assertEquals($project['id'], $projects[0]['id']);
+            $this->assertEquals($project['name'], $projects[0]['name']);
+
+            // delete project
+            $this->client->deleteProject($project['id']);
+
+            $projects = $this->client->listOrganizationProjects($organization['id']);
+            $this->assertEmpty($projects);
+        }
+
+        // all deleted projects
+        $projects = $this->client->listDeletedProjects();
+        $this->assertGreaterThan($i + 1, $projects);
+
+        // organization deleted projects
+        $params = array(
+            'organizationId' => $organization['id'],
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(1, $projects);
+
+        // name filter test
+        $params = array(
+            'organizationId' => $organization['id'],
+            'name' => $project['name'],
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertGreaterThan(0, count($projects));
+
+        $params = array(
+            'organizationId' => $organization['id'],
+            'name' => $project['name'],
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertGreaterThan(0, count($projects));
+
+        $params = array(
+            'organizationId' => $organization['id'],
+            'name' => sha1($project['name']),
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(0, $projects);
+
+        foreach ($organizations as $organization) {
+            $this->client->deleteOrganization($organization['id']);
+        }
+    }
+
+    public function testListDeletedProjectsPaging()
+    {
+        $organization = $this->initTestOrganization();
+
+        $project1 = $this->initTestProject($organization['id']);
+        $project2 = $this->initTestProject($organization['id']);
+        $project3 = $this->initTestProject($organization['id']);
+
+        // check if the project is listed in organization projects
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+
+        $this->assertCount(3, $projects);
+
+        // delete project
+        $this->client->deleteProject($project1['id']);
+        $this->client->deleteProject($project2['id']);
+        $this->client->deleteProject($project3['id']);
+
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $this->assertEmpty($projects);
+
+        // try paging
+        $params = array(
+            'organizationId' => $organization['id'],
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(3, $projects);
+
+        $params = array(
+            'organizationId' => $organization['id'],
+            'offset' => 0,
+            'limit' => 2,
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(2, $projects);
+
+        $params = array(
+            'organizationId' => $organization['id'],
+            'offset' => 2,
+            'limit' => 2,
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(1, $projects);
+
+        $params = array(
+            'organizationId' => $organization['id'],
+            'offset' => 4,
+            'limit' => 2,
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(0, $projects);
+
+
+        $this->client->deleteOrganization($organization['id']);
+    }
+
+    public function testDeletedProjectsErrors()
+    {
+        $organization = $this->initTestOrganization();
+        $project = $this->initTestProject($organization['id']);
+
+        $this->client->deleteProject($project['id']);
+        $this->client->deleteOrganization($organization['id']);
+
+        // deleted organization
+        try {
+            $this->client->listDeletedProjects(array('organizationId' => $organization['id']));
+
+            $this->fail('List deleted projects of deleted organization should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+        }
+
+        // permission validation
+        $client = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL')
+        ]);
+
+        try {
+            $client->listDeletedProjects();
+
+            $this->fail('List deleted projects with non super admint oken should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $client->undeleteProject($project['id']);
+
+            $this->fail('Undelete projects with non super admint oken should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+    }
+
+    public function testProjectUnDelete()
+    {
+        $organization = $this->initTestOrganization();
+
+        $project = $this->initTestProject($organization['id']);
+
+        $this->client->deleteProject($project['id']);
+
+        $params = array(
+            'organizationId' => $organization['id'],
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(1, $projects);
+
+        $this->client->undeleteProject($project['id']);
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(0, $projects);
+
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $this->assertCount(1, $projects);
+
+        $this->client->deleteProject($project['id']);
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(1, $projects);
+
+        $this->client->deleteOrganization($organization['id']);
     }
 }
