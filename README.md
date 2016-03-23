@@ -42,20 +42,43 @@ Read more in [Composer documentation](http://getcomposer.org/doc/01-basic-usage.
 TODO
 
 ## Tests
-Tests requires valid Keboola Management API tokens and an endpoint URL of the API test environment.
-Also, the test environment should be running a cronjob for token-expirator otherwise the testTemporaryAccess test will fail
 
-```
+Tests requires valid Keboola Management API tokens and an endpoint URL of the API test environment.
+Also, the test environment should be running a cronjob for token-expirator otherwise the testTemporaryAccess test will fail.
+
+Create file with environment variables (for example `set-env.sh`):
+
+```bash
+#!/bin/bash
+
 export KBC_MANAGE_API_URL=https://connection.keboola.com  
 export KBC_MANAGE_API_TOKEN=your_token
 export KBC_SUPER_API_TOKEN=your_token
 export KBC_TEST_MAINTAINER_ID=1
 export KBC_TEST_ADMIN_EMAIL=email_of_another_admin
 export KBC_TEST_ADMIN_TOKEN=token_of_another_admin
-
-php vendor/bin/phpunit
 ```
 
-- KBC_MANAGE_API_TOKEN - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens 
-- KBC_SUPER_API_TOKEN can be created in manage-apps on the Tokens tab
-- KBC_TEST_ADMIN_TOKEN is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has KBC_MANAGE_API_TOKEN 
+Source newly created file and run tests:
+
+```bash
+source set-env.sh
+./vendor/bin/phpunit
+```
+
+Description mentioned variables:
+
+- `KBC_MANAGE_API_URL` - URL where Keboola Connection is running
+- `KBC_MANAGE_API_TOKEN` - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens 
+- `KBC_SUPER_API_TOKEN` - can be created in manage-apps on the Tokens tab
+- `KBC_TEST_MAINTAINER_ID` - `id` of maintainer. This can be left as is, since you probably run tests for this maintainer.
+- `KBC_TEST_ADMIN_EMAIL` - email address of another user with admin privilege to organization
+- `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`
+
+### Running in Docker
+
+To run tests inside the container:
+
+```bash
+docker run -i -t --rm -v "$PWD:/code" -w /code php:5.6 sh -c '. ./set-env.sh && ./vendor/bin/phpunit'
+```
