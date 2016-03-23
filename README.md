@@ -56,6 +56,6 @@ export KBC_TEST_ADMIN_TOKEN=token_of_another_admin
 php vendor/bin/phpunit
 ```
 
-- KBC_MANAGE_API_TOKEN can be created in Account Settings under the title Personal Access Tokens 
+- KBC_MANAGE_API_TOKEN - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens 
 - KBC_SUPER_API_TOKEN can be created in manage-apps on the Tokens tab
-- KBC_TEST_ADMIN_TOKEN is also a Personal Access Token, but for a different user than that which has KBC_MANAGE_API_TOKEN 
+- KBC_TEST_ADMIN_TOKEN is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has KBC_MANAGE_API_TOKEN 
