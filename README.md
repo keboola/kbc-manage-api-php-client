@@ -44,9 +44,10 @@ TODO
 ## Tests
 
 Tests requires valid Keboola Management API tokens and an endpoint URL of the API test environment.
-Also, the test environment should be running a cronjob for token-expirator otherwise the testTemporaryAccess test will fail.
 
-Create file with environment variables (for example `set-env.sh`):
+*Note: The test environment should be running a cronjob for `token-expirator` otherwise the `testTemporaryAccess` test will fail.*
+
+Create file `set-env.sh` with environment variables:
 
 ```bash
 #!/bin/bash
@@ -66,7 +67,7 @@ source set-env.sh
 ./vendor/bin/phpunit
 ```
 
-Description mentioned variables:
+Description of mentioned variables:
 
 - `KBC_MANAGE_API_URL` - URL where Keboola Connection is running
 - `KBC_MANAGE_API_TOKEN` - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens 
@@ -77,8 +78,16 @@ Description mentioned variables:
 
 ### Running in Docker
 
-To run tests inside the container:
+Using `docker-compose` command:
 
 ```bash
-docker run -i -t --rm -v "$PWD:/code" -w /code php:5.6 sh -c '. ./set-env.sh && ./vendor/bin/phpunit'
+docker-compose run --rm tests
+```
+
+Or if you're more into standard `docker` commands:
+
+```bash
+docker build -t keboola/kbc-manage-api-php-client .
+docker run -i -t --rm -v "$PWD:/code" -w /code keboola/kbc-manage-api-php-client \
+  sh -c 'composer install && . ./set-env.sh && ./vendor/bin/phpunit'
 ```
