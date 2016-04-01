@@ -277,6 +277,21 @@ class Client
         return $this->apiPut("/manage/notifications", ['read' => $ids]);
     }
 
+    public function createFileStorage(array $options)
+    {
+        return $this->apiPost("/manage/file-storage", $options);
+    }
+
+    public function listFileStorage()
+    {
+        return $this->apiGet("manage/file-storage");
+    }
+
+    public function listStorageBackend($options = [])
+    {
+        return $this->apiGet("manage/storage-backend?" . http_build_query($options));
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
