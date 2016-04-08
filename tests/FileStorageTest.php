@@ -30,6 +30,31 @@ class FileStorageTest extends ClientTestCase
         $this->assertArrayHasKey('filesBucket', $storage);
     }
 
+    public function testProjectAssignFileStorage()
+    {
+        $this->markTestSkipped('just for development');
+        $name = 'My org';
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->client->assignFileStorage($project['id'], 15);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertEquals(15, $project['fileStorage']['id']);
+    }
+
+    public function testSetFileStorageAsDefault()
+    {
+        $this->markTestSkipped('just for development');
+        $this->client->setFileStorageAsDefault(17);
+        $this->client->setFileStorageAsDefault(20);
+    }
+
     public function testFileStorageList()
     {
         $storageList = $this->client->listFileStorage();
@@ -41,6 +66,9 @@ class FileStorageTest extends ClientTestCase
         $this->assertArrayNotHasKey('awsSecret', $storage);
         $this->assertArrayHasKey('region', $storage);
         $this->assertArrayHasKey('filesBucket', $storage);
+        $this->assertArrayHasKey('isDefault', $storage);
+        $this->assertInternalType('bool', $storage['isDefault']);
+        var_dump($storageList);
     }
 
 }

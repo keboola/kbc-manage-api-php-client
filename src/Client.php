@@ -202,6 +202,20 @@ class Client
         return $this->apiPost("/manage/projects/{$projectId}/tokens", $params);
     }
 
+    public function assignProjectStorageBackend($projectId, $backendId)
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/storage-backend", [
+            'storageBackendId' => (int) $backendId,
+        ]);
+    }
+
+    public function assignFileStorage($projectId, $storageId)
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/file-storage", [
+           'fileStorageId' => (int) $storageId,
+        ]);
+    }
+
     public function changeProjectOrganization($projectId, $newOrganizationId)
     {
         return $this->apiPost("/manage/projects/{$projectId}/organizations", [
@@ -282,9 +296,19 @@ class Client
         return $this->apiPost("/manage/file-storage", $options);
     }
 
+    public function setFileStorageAsDefault($fileStorageId)
+    {
+        return $this->apiPost("/manage/file-storage/{$fileStorageId}/default");
+    }
+
     public function listFileStorage()
     {
         return $this->apiGet("manage/file-storage");
+    }
+
+    public function createStorageBackend(array $options)
+    {
+        return $this->apiPost("/manage/storage-backend", $options);
     }
 
     public function listStorageBackend($options = [])
@@ -297,7 +321,7 @@ class Client
         return $this->request('GET', $url);
     }
 
-    private function apiPost($url, $data)
+    private function apiPost($url, $data = [])
     {
         return $this->request('POST', $url, [
             'json' => $data,

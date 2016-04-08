@@ -64,6 +64,22 @@ class ProjectsTest extends ClientTestCase
         $this->assertInternalType('int', $firstLimit['value']);
         $this->assertEquals($firstLimit['name'], $limitKeys[0]);
 
+        $this->assertArrayHasKey('fileStorage', $project);
+        $fileStorage = $project['fileStorage'];
+        $this->assertInternalType('int', $fileStorage['id']);
+        $this->assertArrayHasKey('awsKey', $fileStorage);
+        $this->assertArrayHasKey('region', $fileStorage);
+        $this->assertArrayHasKey('filesBucket', $fileStorage);
+
+        $this->assertArrayHasKey('backends', $project);
+
+        $backends = $project['backends'];
+        $this->assertArrayHasKey('mysql', $backends);
+
+        $mysql = $backends['mysql'];
+        $this->assertInternalType('int', $mysql['id']);
+        $this->assertArrayHasKey('host', $mysql);
+
         return $foundProject;
     }
 
