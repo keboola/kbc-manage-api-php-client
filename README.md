@@ -83,11 +83,3 @@ Using `docker-compose` command:
 ```bash
 docker-compose run --rm tests
 ```
-
-Or if you're more into standard `docker` commands:
-
-```bash
-docker build -t keboola/kbc-manage-api-php-client .
-docker run -i -t --rm -v "$PWD:/code" -w /code keboola/kbc-manage-api-php-client \
-  sh -c 'composer install && . ./set-env.sh && ./vendor/bin/phpunit'
-```
