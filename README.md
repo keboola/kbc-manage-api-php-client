@@ -1,6 +1,6 @@
 # Keboola Manage API PHP client
 
-Simple PHP wrapper library for [Keboola Management REST API](http://docs.keboolamanagementapi1.apiary.io/#)
+Simple PHP wrapper library for [Keboola Management REST API](http://docs.keboolamanagementapi.apiary.io/#)
 
 ## Installation
 
