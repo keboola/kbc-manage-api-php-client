@@ -777,4 +777,49 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteOrganization($organization['id']);
     }
+
+    public function testActiveProjectUnDelete()
+    {
+        $organization = $this->initTestOrganization();
+
+        $project = $this->initTestProject($organization['id']);
+
+        $params = array(
+            'organizationId' => $organization['id'],
+        );
+
+        try {
+            $this->client->undeleteProject($project['id']);
+            $this->fail('Undelete active projects should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+        }
+
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $this->assertCount(1, $projects);
+
+        $this->client->deleteProject($project['id']);
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(1, $projects);
+
+        $this->client->deleteOrganization($organization['id']);
+    }
+
+    public function testNonExistingProjectUnDelete()
+    {
+        $organization = $this->initTestOrganization();
+
+        try {
+            $this->client->undeleteProject(PHP_INT_MAX);
+            $this->fail('Undelete active projects should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
+
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $this->assertCount(0, $projects);
+
+        $this->client->deleteOrganization($organization['id']);
+    }
 }
