@@ -152,9 +152,9 @@ class Client
         $this->apiDelete("/manage/projects/{$id}");
     }
 
-    public function undeleteProject($id)
+    public function undeleteProject($id, $params = array())
     {
-        $this->apiDelete("/manage/deleted-projects/{$id}");
+        $this->apiDelete("/manage/deleted-projects/{$id}?" . http_build_query($params));
     }
 
     public function listDeletedProjects($params = array())

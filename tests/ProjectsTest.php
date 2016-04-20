@@ -864,4 +864,40 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteOrganization($organization['id']);
     }
+
+    public function testProjectUnDeleteWithExpiration()
+    {
+        $organization = $this->initTestOrganization();
+
+        $project = $this->initTestProject($organization['id']);
+        $this->assertEmpty($project['expires']);
+
+        $this->client->deleteProject($project['id']);
+
+        $params = array(
+            'organizationId' => $organization['id'],
+        );
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(1, $projects);
+
+        $this->client->undeleteProject($project['id'], array('expirationDays' => 7));
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(0, $projects);
+
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $this->assertCount(1, $projects);
+
+        $project = reset($projects);
+        $this->assertNotEmpty($project['expires']);
+
+
+        $this->client->deleteProject($project['id']);
+
+        $projects = $this->client->listDeletedProjects($params);
+        $this->assertCount(1, $projects);
+
+        $this->client->deleteOrganization($organization['id']);
+    }
 }
