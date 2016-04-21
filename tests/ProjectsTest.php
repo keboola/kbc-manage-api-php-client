@@ -831,6 +831,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My test',
             'type' => 'demo',
         ]);
+        $projectId = $project['id'];
 
         $project = $this->client->getProject($project['id']);
         $this->assertEquals('demo', $project['type']);
@@ -855,7 +856,7 @@ class ProjectsTest extends ClientTestCase
 
         $project = reset($projects);
         $this->assertEmpty($project['expires']);
-
+        $this->assertEquals($projectId, $project['id']);
 
         $this->client->deleteProject($project['id']);
 
