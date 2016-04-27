@@ -8,6 +8,8 @@
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\ClientException;
+
 class UsersTest extends ClientTestCase
 {
 
@@ -38,6 +40,20 @@ class UsersTest extends ClientTestCase
 
         $user = $this->client->getUser($userId);
         $this->assertEmpty($user['features']);
+    }
+
+    public function testAddNonexistentFeature()
+    {
+        $token = $this->client->verifyToken();
+        $this->assertTrue(isset($token['user']['id']));
+        $featureName = 'random-feature-' . $this->getRandomFeatureSuffix();
+
+        try {
+            $this->client->addUserFeature($token['user']['id'], $featureName);
+            $this->fail('Feature not found');
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
     }
 
 }
