@@ -2,6 +2,8 @@
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\ClientException;
+
 class FeaturesTest extends ClientTestCase
 {
     public function testCreateListAndDeleteFeature()
@@ -38,6 +40,16 @@ class FeaturesTest extends ClientTestCase
 
         $this->assertSame(count($features), count($this->client->listFeatures()));
 
+    }
+
+    public function testRemoveNonexistentFeature()
+    {
+        try {
+            $this->client->removeFeature('random-feature-' . $this->getRandomFeatureSuffix());
+            $this->fail('Feature not found');
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
     }
 
     private function prepareRandomFeature()
