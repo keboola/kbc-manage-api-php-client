@@ -453,6 +453,39 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
+    public function testAddProjectFeatureTwice()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $project = $this->client->getProject($project['id']);
+
+        $initialFeaturesCount = count($project['features']);
+
+        $newFeature = 'random-feature-' . $this->getRandomFeatureSuffix();
+        $this->client->createFeature($newFeature, 'project', $newFeature);
+        $this->client->addProjectFeature($project['id'], $newFeature);
+
+        $project = $this->client->getProject($project['id']);
+
+        $this->assertSame($initialFeaturesCount + 1, count($project['features']));
+
+        try {
+            $this->client->addProjectFeature($project['id'], $newFeature);
+            $this->fail('Feature already added');
+        } catch (ClientException $e) {
+            $this->assertEquals(422, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+
+        $this->assertSame($initialFeaturesCount + 1, count($project['features']));
+    }
+
     public function testAddRemoveProjectFeatures()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [

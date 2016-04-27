@@ -60,4 +60,34 @@ class UsersTest extends ClientTestCase
         }
     }
 
+    public function testAddUserFeatureTwice()
+    {
+        $token = $this->client->verifyToken();
+        $this->assertTrue(isset($token['user']['id']));
+        $userId = $token['user']['id'];
+
+        $user = $this->client->getUser($userId);
+
+        $initialFeaturesCount = count($user['features']);
+
+        $newFeature = 'new-feature-' . $this->getRandomFeatureSuffix();
+        $this->client->createFeature($newFeature, 'admin', $newFeature);
+        $this->client->addUserFeature($userId, $newFeature);
+
+        $user = $this->client->getUser($userId);
+
+        $this->assertSame($initialFeaturesCount + 1, count($user['features']));
+
+        try {
+            $this->client->addUserFeature($userId, $newFeature);
+            $this->fail('Feature already added');
+        } catch (ClientException $e) {
+            $this->assertEquals(422, $e->getCode());
+        }
+
+        $user = $this->client->getUser($userId);
+
+        $this->assertSame($initialFeaturesCount + 1, count($user['features']));
+    }
+
 }
