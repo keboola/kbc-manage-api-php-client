@@ -43,7 +43,7 @@ class FeaturesTest extends ClientTestCase
     private function prepareRandomFeature()
     {
         return [
-            'name' => 'test-feature-' . substr(sha1(time() . mt_rand(1, 1000)), 0, 8),
+            'name' => 'test-feature-' . $this->getRandomFeatureSuffix(),
             'type' => 'admin',
             'description' => 'test feature',
         ];
