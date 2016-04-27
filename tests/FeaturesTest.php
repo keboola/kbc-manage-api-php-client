@@ -36,7 +36,7 @@ class FeaturesTest extends ClientTestCase
             $secondFeature['name'], $secondFeature['type'], $secondFeature['description']
         );
 
-        $this->client->removeFeature($featureFound['name']);
+        $this->client->removeFeature($featureFound['id']);
 
         $this->assertSame(count($features), count($this->client->listFeatures()));
 

@@ -239,9 +239,9 @@ class Client
         ]);
     }
 
-    public function removeFeature($name)
+    public function removeFeature($id)
     {
-        $this->apiDelete("/manage/features/{$name}");
+        $this->apiDelete("/manage/features/{$id}");
     }
 
     public function listFeatures()
