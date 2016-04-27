@@ -21,25 +21,29 @@ class UsersTest extends ClientTestCase
 
         $user = $this->client->getUser($userEmail);
         $this->assertEquals($userId, $user['id']);
-        $this->assertEmpty($user['features']);
+        $initialFeaturesCount = count($user['features']);
 
-        $feature = 'manage-feature-test';
+        $feature = 'manage-feature-test-' . $this->getRandomFeatureSuffix();
+        $this->client->createFeature($feature, 'admin', $feature);
         $this->client->addUserFeature($userEmail, $feature);
 
         $user = $this->client->getUser($userEmail);
-        $this->assertEquals([$feature], $user['features']);
+        $this->assertEquals($initialFeaturesCount + 1, count($user['features']));
+        $this->assertContains($feature, $user['features']);
 
-        $feature2 = 'manage-feature-test-2';
+        $feature2 = 'manage-feature-test-2-' . $this->getRandomFeatureSuffix();
+        $this->client->createFeature($feature2, 'admin', $feature2);
         $this->client->addUserFeature($userId, $feature2);
 
         $user = $this->client->getUser($userEmail);
-        $this->assertEquals([$feature2, $feature], $user['features']);
+        $this->assertEquals($initialFeaturesCount + 2, count($user['features']));
+        $this->assertContains($feature, $user['features']);
 
         $this->client->removeUserFeature($userId, $feature);
         $this->client->removeUserFeature($userId, $feature2);
 
         $user = $this->client->getUser($userId);
-        $this->assertEmpty($user['features']);
+        $this->assertEquals($initialFeaturesCount, count($user['features']));
     }
 
     public function testAddNonexistentFeature()
