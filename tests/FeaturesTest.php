@@ -42,6 +42,30 @@ class FeaturesTest extends ClientTestCase
 
     }
 
+    public function testCreateSameFeatureTwice()
+    {
+        $initialFeaturesCount = count($this->client->listFeatures());
+
+        $newFeature = $this->prepareRandomFeature();
+
+        $this->client->createFeature(
+            $newFeature['name'], $newFeature['type'], $newFeature['description']
+        );
+
+        $this->assertSame($initialFeaturesCount + 1, count($this->client->listFeatures()));
+
+        try {
+            $this->client->createFeature(
+                $newFeature['name'], $newFeature['type'], $newFeature['description']
+            );
+            $this->fail('Feature already exists');
+        } catch (ClientException $e) {
+            $this->assertEquals(422, $e->getCode());
+        }
+
+        $this->assertSame($initialFeaturesCount + 1, count($this->client->listFeatures()));
+    }
+
     public function testRemoveNonexistentFeature()
     {
         try {
