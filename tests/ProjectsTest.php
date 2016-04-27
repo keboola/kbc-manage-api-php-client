@@ -433,6 +433,26 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($limits[1], $project['limits']['goodData.usersCount']);
     }
 
+    public function testAddNonexistentFeature()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $featureName = 'random-feature-' . $this->getRandomFeatureSuffix();
+
+        try {
+            $this->client->addProjectFeature($project['id'], $featureName);
+            $this->fail('Feature not found');
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
+    }
+
     public function testAddRemoveProjectFeatures()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -445,20 +465,22 @@ class ProjectsTest extends ClientTestCase
 
         $this->assertEmpty($project['features']);
 
-        $featureName = 'storage-tests';
-        $this->client->addProjectFeature($project['id'], $featureName);
-
+        $firstFeatureName = 'first-feature-' . $this->getRandomFeatureSuffix();
+        $this->client->createFeature($firstFeatureName, 'project', $firstFeatureName);
+        $this->client->addProjectFeature($project['id'], $firstFeatureName);
         $project = $this->client->getProject($project['id']);
 
-        $this->assertEquals([$featureName], $project['features']);
+        $this->assertEquals([$firstFeatureName], $project['features']);
 
-        $this->client->addProjectFeature($project['id'], 'storage-tests-2');
+        $secondFeatureName = 'second-feature-' . $this->getRandomFeatureSuffix();
+        $this->client->createFeature($secondFeatureName, 'project', $secondFeatureName);
+        $this->client->addProjectFeature($project['id'], $secondFeatureName);
         $project = $this->client->getProject($project['id']);
         $this->assertCount(2, $project['features']);
 
-        $this->client->removeProjectFeature($project['id'], 'storage-tests-2');
+        $this->client->removeProjectFeature($project['id'], $secondFeatureName);
         $project = $this->client->getProject($project['id']);
-        $this->assertEquals([$featureName], $project['features']);
+        $this->assertEquals([$firstFeatureName], $project['features']);
     }
 
     public function testCreateProjectStorageToken()
