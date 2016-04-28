@@ -66,6 +66,20 @@ class FeaturesTest extends ClientTestCase
         $this->assertSame($initialFeaturesCount + 1, count($this->client->listFeatures()));
     }
 
+    public function testCreateFeatureWithWrongType()
+    {
+        $newFeature = $this->prepareRandomFeature();
+
+        try {
+            $this->client->createFeature(
+                $newFeature['name'], 'random-feature-type', $newFeature['description']
+            );
+            $this->fail('Invalid feature type');
+        } catch (ClientException $e) {
+            $this->assertEquals(422, $e->getCode());
+        }
+    }
+
     public function testRemoveNonexistentFeature()
     {
         try {
