@@ -230,6 +230,25 @@ class Client
         ]);
     }
 
+    public function createFeature($name, $type, $description)
+    {
+        return $this->apiPost("/manage/features", [
+            'name' => $name,
+            'type' => $type,
+            'description' => $description,
+        ]);
+    }
+
+    public function removeFeature($id)
+    {
+        $this->apiDelete("/manage/features/{$id}");
+    }
+
+    public function listFeatures()
+    {
+        return $this->apiGet("/manage/features");
+    }
+
     public function addProjectFeature($projectId, $feature)
     {
         return $this->apiPost("/manage/projects/{$projectId}/features", [
@@ -239,7 +258,7 @@ class Client
 
     public function removeProjectFeature($projectId, $feature)
     {
-        return $this->apiDelete("/manage/projects/{$projectId}/features/{$feature}");
+        $this->apiDelete("/manage/projects/{$projectId}/features/{$feature}");
     }
 
     public function getUser($emailOrId)
