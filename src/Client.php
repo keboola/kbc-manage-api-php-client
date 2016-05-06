@@ -249,6 +249,21 @@ class Client
         return $this->apiGet("/manage/features");
     }
 
+    public function getFeature($id)
+    {
+        return $this->apiGet("/manage/features/{$id}");
+    }
+
+    public function getFeatureProjects($id)
+    {
+        return $this->apiGet("/manage/features/{$id}/projects");
+    }
+
+    public function getFeatureAdmins($id)
+    {
+        return $this->apiGet("/manage/features/{$id}/admins");
+    }
+
     public function addProjectFeature($projectId, $feature)
     {
         return $this->apiPost("/manage/projects/{$projectId}/features", [
