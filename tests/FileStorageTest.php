@@ -68,7 +68,6 @@ class FileStorageTest extends ClientTestCase
         $this->assertArrayHasKey('filesBucket', $storage);
         $this->assertArrayHasKey('isDefault', $storage);
         $this->assertInternalType('bool', $storage['isDefault']);
-        var_dump($storageList);
     }
 
 }
