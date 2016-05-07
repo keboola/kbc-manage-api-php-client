@@ -28,6 +28,7 @@ class StorageBackendTest extends ClientTestCase
 
     public function testStorageAssignBackend()
     {
+        $this->markTestSkipped('this creates too many RS databses - skip it for');
         // get redshift backend
         $backends = $this->client->listStorageBackend();
         $redshiftBackend = null;
@@ -71,8 +72,6 @@ class StorageBackendTest extends ClientTestCase
         $this->assertEquals($redshiftBackend['id'], $redshift['id']);
 
         // let's try to create a bucket in project now
-        // this creates too many RS databses - skip it for now
-        return;
 
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
