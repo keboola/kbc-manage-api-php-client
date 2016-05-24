@@ -209,6 +209,11 @@ class Client
         ]);
     }
 
+    public function removeProjectStorageBackend($projectId, $backendId)
+    {
+        $this->apiDelete("/manage/projects/{$projectId}/storage-backend/{$backendId}");
+    }
+
     public function assignFileStorage($projectId, $storageId)
     {
         return $this->apiPost("/manage/projects/{$projectId}/file-storage", [

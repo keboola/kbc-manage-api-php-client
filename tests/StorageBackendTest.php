@@ -180,4 +180,58 @@ class StorageBackendTest extends ClientTestCase
         $this->assertArrayHasKey('region', $backend);
     }
 
+    public function testStorageBackendRemove()
+    {
+        $name = 'My org';
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->assertArrayHasKey('backends', $project);
+        $this->assertEquals('mysql', $project['defaultBackend']);
+        $this->assertCount(1, $project['backends']);
+        
+        $this->client->removeProjectStorageBackend($project['id'], reset($project['backends'])['id']);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertEmpty($project['backends']);
+    }
+
+    public function testStorageBackendShouldNotBeRemovedIfThereAreBuckets()
+    {
+        $name = 'My org';
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $token = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+        ]);
+
+        $sapiClient = new \Keboola\StorageApi\Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token['token'],
+        ]);
+        $sapiClient->createBucket('test', 'in');
+
+        try {
+
+            $this->client->removeProjectStorageBackend($project['id'], reset($project['backends'])['id']);
+            $this->fail('Backend should not be removed');
+        } catch(ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertEquals('bucketsExists', $e->getStringCode());
+        }
+    }
+
 }
