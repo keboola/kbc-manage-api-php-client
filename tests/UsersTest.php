@@ -46,6 +46,16 @@ class UsersTest extends ClientTestCase
         $this->assertEquals($initialFeaturesCount, count($user['features']));
     }
 
+    public function testGetNonexistentUser()
+    {
+        try {
+            $this->client->getUser('nonexistent.user@keboola.com');
+            $this->fail('nonexistent.user@keboola.com not found');
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
+    }
+
     public function testAddNonexistentFeature()
     {
         $token = $this->client->verifyToken();
