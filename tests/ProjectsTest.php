@@ -526,6 +526,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
+        // token without permissions
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
             'expiresIn' => 60,
@@ -561,14 +562,16 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($verified['canManageBuckets']);
         $this->assertFalse($verified['canManageTokens']);
         $this->assertTrue($verified['canReadAllFileUploads']);
-        $this->assertNotEmpty($verified['bucketPermissions']);
 
         // test bucket permissions
+        // let's create some bucket with previous token
+        $newBucketId = $client->createBucket('test', 'in');
+
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
             'expiresIn' => 60,
             'bucketPermissions' => [
-                'in.c-main' => 'read',
+                $newBucketId => 'read',
             ]
         ]);
 
@@ -582,7 +585,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canManageBuckets']);
         $this->assertFalse($verified['canManageTokens']);
         $this->assertFalse($verified['canReadAllFileUploads']);
-        $this->assertEquals(['in.c-main' => 'read'], $verified['bucketPermissions']);
+        $this->assertEquals([$newBucketId => 'read'], $verified['bucketPermissions']);
     }
 
     public function testProjectEnableDisable()
