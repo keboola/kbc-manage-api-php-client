@@ -127,6 +127,11 @@ class Client
         return $this->apiPost("/manage/maintainers/{$maintainerId}/organizations",$params);
     }
 
+    public function getOrganization($organizationId)
+    {
+        return $this->apiGet("/manage/organizations/{$organizationId}");
+    }
+
     public function deleteOrganization($id)
     {
         $this->apiDelete("/manage/organizations/{$id}");

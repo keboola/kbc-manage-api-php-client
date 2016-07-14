@@ -48,4 +48,17 @@ class OrganizationsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
+    public function testOrganizationDetail()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+
+        $org = $this->client->getOrganization($organization['id']);
+
+        $this->assertEquals($org['name'], $organization['name']);
+        $this->assertEmpty($org['projects']);
+
+        $this->client->deleteOrganization($organization['id']);
+    }
 }
