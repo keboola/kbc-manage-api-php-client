@@ -23,12 +23,11 @@ class UiAppsTest extends ClientTestCase
         $apps = $client->listUiApps();
 
         $app = reset($apps);
-        $this->assertNotEmpty($app['id']);
         $this->assertNotEmpty($app['name']);
         $this->assertNotEmpty($app['version']);
-        $this->assertNotEmpty($app['version']['version']);
-        $this->assertNotEmpty($app['version']['basePath']);
-        $this->assertNotEmpty($app['version']['styles']);
+        $this->assertNotEmpty($app['basePath']);
+        $this->assertNotEmpty($app['styles']);
+        $this->assertNotEmpty($app['scripts']);
     }
 
 }
