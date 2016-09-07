@@ -355,6 +355,11 @@ class Client
         return $this->apiGet("manage/storage-backend?" . http_build_query($options));
     }
 
+    public function listUiApps()
+    {
+        return $this->apiGet("manage/ui-apps");
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);

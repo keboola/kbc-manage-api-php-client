@@ -47,10 +47,9 @@ Tests requires valid Keboola Management API tokens and an endpoint URL of the AP
 
 *Note: The test environment should be running a cronjob for `token-expirator` otherwise the `testTemporaryAccess` test will fail.*
 
-Create file `set-env.sh` with environment variables:
+Create file `.env` with environment variables:
 
 ```bash
-#!/bin/bash
 
 export KBC_MANAGE_API_URL=https://connection.keboola.com  
 export KBC_MANAGE_API_TOKEN=your_token
@@ -63,8 +62,7 @@ export KBC_TEST_ADMIN_TOKEN=token_of_another_admin
 Source newly created file and run tests:
 
 ```bash
-source set-env.sh
-./vendor/bin/phpunit
+docker-compose run --rm tests
 ```
 
 Description of mentioned variables:
@@ -76,10 +74,4 @@ Description of mentioned variables:
 - `KBC_TEST_ADMIN_EMAIL` - email address of another user with admin privilege to organization
 - `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`
 
-### Running in Docker
 
-Using `docker-compose` command:
-
-```bash
-docker-compose run --rm tests
-```

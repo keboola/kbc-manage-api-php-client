@@ -1,0 +1,34 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: martinhalamicek
+ * Date: 15/10/15
+ * Time: 15:29
+ */
+
+namespace Keboola\ManageApiTest;
+
+use Keboola\ManageApi\Client;
+
+class UiAppsTest extends ClientTestCase
+{
+
+    public function testPublicList()
+    {
+        $client = new Client([
+            'token' => 'token is not required for this api all',
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 1,
+        ]);
+        $apps = $client->listUiApps();
+
+        $app = reset($apps);
+        $this->assertNotEmpty($app['id']);
+        $this->assertNotEmpty($app['name']);
+        $this->assertNotEmpty($app['version']);
+        $this->assertNotEmpty($app['version']['version']);
+        $this->assertNotEmpty($app['version']['basePath']);
+        $this->assertNotEmpty($app['version']['styles']);
+    }
+
+}
