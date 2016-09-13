@@ -8,9 +8,10 @@
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\ClientException;
+
 class OrganizationsTest extends ClientTestCase
 {
-
     public function testListOrganizations()
     {
         $organizations = $this->client->listOrganizations();
@@ -48,4 +49,24 @@ class OrganizationsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
+    public function testOrganizationDetail()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+
+        $org = $this->client->getOrganization($organization['id']);
+
+        $this->assertEquals($org['name'], $organization['name']);
+        $this->assertEmpty($org['projects']);
+
+        $this->client->deleteOrganization($organization['id']);
+
+        try {
+            $org = $this->client->getOrganization($organization['id']);
+            $this->fail("Organisation has been deleted, should not exist.");
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
+    }
 }
