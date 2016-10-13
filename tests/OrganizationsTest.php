@@ -21,7 +21,6 @@ class OrganizationsTest extends ClientTestCase
         $organization = $organizations[0];
         $this->assertInternalType('int', $organization['id']);
         $this->assertNotEmpty($organization['name']);
-        $this->assertNotEmpty($organization['created']);
         $this->assertArrayHasKey('maintainer', $organization);
     }
 
@@ -59,6 +58,7 @@ class OrganizationsTest extends ClientTestCase
 
         $this->assertEquals($org['name'], $organization['name']);
         $this->assertEmpty($org['projects']);
+        $this->assertNotEmpty($organization['created']);
 
         $this->client->deleteOrganization($organization['id']);
 

@@ -8,5 +8,6 @@ artifacts/
 docs/_build
 docs/*.pyc
 .idea
+.env
 .DS_STORE
 set-env.sh

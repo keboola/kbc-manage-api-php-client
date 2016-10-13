@@ -1,20 +1,22 @@
-tests:
-  build: .
-  tty: true
-  stdin_open: true
-  volumes:
-    - ./:/code
-  working_dir: /code
-  environment:
-    - KBC_MANAGE_API_URL
-    - KBC_MANAGE_API_TOKEN
-    - KBC_SUPER_API_TOKEN
-    - KBC_TEST_MAINTAINER_ID
-    - KBC_TEST_ADMIN_EMAIL
-    - KBC_TEST_ADMIN_TOKEN
-  command: >
-           sh -c '
-           composer install
-           && . ./set-env.sh
-           && ./vendor/bin/phpunit
-           '
+version: '2'
+services:
+  tests:
+    build: .
+    image: keboola/manage-api-tests
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./:/code
+    working_dir: /code
+    environment:
+      - KBC_MANAGE_API_URL
+      - KBC_MANAGE_API_TOKEN
+      - KBC_SUPER_API_TOKEN
+      - KBC_TEST_MAINTAINER_ID
+      - KBC_TEST_ADMIN_EMAIL
+      - KBC_TEST_ADMIN_TOKEN
+    command: >
+         sh -c '
+         composer install
+         && ./vendor/bin/phpunit
+         '

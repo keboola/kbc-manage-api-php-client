@@ -50,13 +50,12 @@ Tests requires valid Keboola Management API tokens and an endpoint URL of the AP
 Create file `.env` with environment variables:
 
 ```bash
-
-export KBC_MANAGE_API_URL=https://connection.keboola.com  
-export KBC_MANAGE_API_TOKEN=your_token
-export KBC_SUPER_API_TOKEN=your_token
-export KBC_TEST_MAINTAINER_ID=1
-export KBC_TEST_ADMIN_EMAIL=email_of_another_admin
-export KBC_TEST_ADMIN_TOKEN=token_of_another_admin
+KBC_MANAGE_API_URL=https://connection.keboola.com  
+KBC_MANAGE_API_TOKEN=your_token
+KBC_SUPER_API_TOKEN=your_token
+KBC_TEST_MAINTAINER_ID=1
+KBC_TEST_ADMIN_EMAIL=email_of_another_admin
+KBC_TEST_ADMIN_TOKEN=token_of_another_admin
 ```
 
 Source newly created file and run tests:
