@@ -269,7 +269,7 @@ class ProjectsTest extends ClientTestCase
         // wait for the new guy to get removed from the project during next cron run
         $tries = 0;
 
-        while ($tries < 7) {
+        while ($tries < 10) {
             $admins = $this->client->listProjectUsers($project['id']);
             if (count($admins) < 2) {
                 break;
