@@ -8,7 +8,7 @@ class FeaturesTest extends ClientTestCase
 {
     public function testCreateListAndDeleteFeature()
     {
-        $expectedFeature = $this->prepareRandomFeature();
+        $expectedFeature = $this->prepareRandomFeature('global');
 
         $this->client->createFeature(
             $expectedFeature['name'], $expectedFeature['type'], $expectedFeature['description']
@@ -30,7 +30,7 @@ class FeaturesTest extends ClientTestCase
         $this->assertSame($expectedFeature['type'], $featureFound['type']);
         $this->assertSame($expectedFeature['description'], $featureFound['description']);
 
-        $secondFeature = $this->prepareRandomFeature();
+        $secondFeature = $this->prepareRandomFeature('admin');
 
         $this->client->createFeature(
             $secondFeature['name'], $secondFeature['type'], $secondFeature['description']
@@ -44,7 +44,7 @@ class FeaturesTest extends ClientTestCase
 
     public function testFeatureDetail()
     {
-        $newFeature = $this->prepareRandomFeature();
+        $newFeature = $this->prepareRandomFeature('admin');
 
         $insertedFeature = $this->client->createFeature(
             $newFeature['name'], $newFeature['type'], $newFeature['description']
@@ -60,8 +60,7 @@ class FeaturesTest extends ClientTestCase
 
     public function testFeatureDetailProjects()
     {
-        $newFeature = $this->prepareRandomFeature();
-        $newFeature['type'] = 'project';
+        $newFeature = $this->prepareRandomFeature('project');
 
         $insertedFeature = $this->client->createFeature(
             $newFeature['name'], $newFeature['type'], $newFeature['description']
@@ -101,8 +100,7 @@ class FeaturesTest extends ClientTestCase
 
     public function testFeatureDetailAdmins()
     {
-        $newFeature = $this->prepareRandomFeature();
-        $newFeature['type'] = 'admin';
+        $newFeature = $this->prepareRandomFeature('admin');
 
         $insertedFeature = $this->client->createFeature(
             $newFeature['name'], $newFeature['type'], $newFeature['description']
@@ -144,7 +142,7 @@ class FeaturesTest extends ClientTestCase
     {
         $initialFeaturesCount = count($this->client->listFeatures());
 
-        $newFeature = $this->prepareRandomFeature();
+        $newFeature = $this->prepareRandomFeature('admin');
 
         $this->client->createFeature(
             $newFeature['name'], $newFeature['type'], $newFeature['description']
@@ -166,11 +164,11 @@ class FeaturesTest extends ClientTestCase
 
     public function testCreateFeatureWithWrongType()
     {
-        $newFeature = $this->prepareRandomFeature();
+        $newFeature = $this->prepareRandomFeature('random-feature-type');
 
         try {
             $this->client->createFeature(
-                $newFeature['name'], 'random-feature-type', $newFeature['description']
+                $newFeature['name'], $newFeature['type'], $newFeature['description']
             );
             $this->fail('Invalid feature type');
         } catch (ClientException $e) {
@@ -188,12 +186,12 @@ class FeaturesTest extends ClientTestCase
         }
     }
 
-    private function prepareRandomFeature()
+    private function prepareRandomFeature($type)
     {
         return [
             'name' => 'test-feature-' . $this->getRandomFeatureSuffix(),
-            'type' => 'admin',
-            'description' => 'test feature',
+            'type' => $type,
+            'description' => 'test ' . $type . 'feature',
         ];
     }
 
