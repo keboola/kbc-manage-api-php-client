@@ -42,6 +42,43 @@ class FeaturesTest extends ClientTestCase
 
     }
 
+    public function testFilterFeatures()
+    {
+        $expectedFeature = $this->prepareRandomFeature('project');
+
+        $this->client->createFeature(
+            $expectedFeature['name'], $expectedFeature['type'], $expectedFeature['description']
+        );
+
+        // try to find feature in wrong list
+        $globalFeatures = $this->client->listFeatures(['type' => 'global']);
+        $featureFoundInWrongList = false;
+        foreach ($globalFeatures as $feature) {
+            if (array_search($expectedFeature['name'], $feature) !== false) {
+                $featureFoundInWrongList = true;
+                break;
+            }
+        }
+
+        $this->assertFalse($featureFoundInWrongList);
+
+        // find in correct list
+        $projectFeatures = $this->client->listFeatures(['type' => 'project']);
+        $foundFeature = null;
+
+        foreach ($projectFeatures as $feature) {
+            if (array_search($expectedFeature['name'], $feature) !== false) {
+                $foundFeature = $feature;
+                break;
+            }
+        }
+
+        $this->assertTrue($foundFeature !== null);
+        $this->assertSame($expectedFeature['name'], $foundFeature['name']);
+        $this->assertSame($expectedFeature['type'], $foundFeature['type']);
+        $this->assertSame($expectedFeature['description'], $foundFeature['description']);
+    }
+
     public function testFeatureDetail()
     {
         $newFeature = $this->prepareRandomFeature('admin');
