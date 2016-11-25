@@ -1,4 +1,6 @@
-# Keboola Manage API PHP client
+# Keboola Manage API PHP client 
+
+[![Build Status](https://travis-ci.org/keboola/kbc-manage-api-php-client.svg?branch=master)](https://travis-ci.org/keboola/kbc-manage-api-php-client)
 
 Simple PHP wrapper library for [Keboola Management REST API](http://docs.keboolamanagementapi.apiary.io/#)
 
