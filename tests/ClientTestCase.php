@@ -32,6 +32,6 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
 
     public function getRandomFeatureSuffix()
     {
-        return substr(sha1(get_called_class() . time() . mt_rand(1, 1000)), 0, 8);
+        return uniqid(true);
     }
 }

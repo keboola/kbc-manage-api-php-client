@@ -254,9 +254,13 @@ class Client
         $this->apiDelete("/manage/features/{$id}");
     }
 
-    public function listFeatures()
+    public function listFeatures(array $params = [])
     {
-        return $this->apiGet("/manage/features");
+        $url = '/manage/features';
+        if (isset($params['type'])) {
+            $url .= '?' . http_build_query(['type' => $params['type']]);
+        }
+        return $this->apiGet($url);
     }
 
     public function getFeature($id)
