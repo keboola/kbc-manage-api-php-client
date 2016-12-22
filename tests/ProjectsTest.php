@@ -230,6 +230,26 @@ class ProjectsTest extends ClientTestCase
         $this->assertCount(1, $admins);
     }
 
+    public function testUserManagementInvalidEmail()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        try {
+            $this->client->addUserToProject($project['id'], [
+                'email' => 'invalid email',
+            ]);
+            $this->fail('Email address is not valid');
+        } catch (ClientException $e) {
+            $this->assertEquals(422, $e->getCode());
+        }
+    }
+
     public function testTemporaryAccess()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
