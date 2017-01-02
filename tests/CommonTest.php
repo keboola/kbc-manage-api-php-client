@@ -12,7 +12,6 @@ use Keboola\ManageApi\Client;
 
 class CommonTest extends ClientTestCase
 {
-
     public function testVerifyAdminToken()
     {
         $token = $this->client->verifyToken();
@@ -51,5 +50,33 @@ class CommonTest extends ClientTestCase
         $this->assertInternalType('array', $token['scopes']);
         $this->assertEquals($token['type'], 'super');
         $this->assertFalse($token['isSessionToken']);
+    }
+
+    public function testInvalidRequestBody()
+    {
+        $client = new \GuzzleHttp\Client([
+            'base_uri' => getenv('KBC_MANAGE_API_URL'),
+        ]);
+
+        $requestOptions = [
+            'headers' => [
+                'X-KBC-ManageApiToken' => getenv('KBC_MANAGE_API_TOKEN'),
+                'Accept-Encoding' => 'gzip',
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'Keboola Manage API PHP Client',
+            ],
+            'body' => '{"key": "invalid json}'
+        ];
+
+        try {
+            $client->request(
+                'POST',
+                '/manage/maintainers/' . $this->testMaintainerId . '/organizations',
+                $requestOptions
+            );
+        } catch (\Exception $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('Request body not valid', $e->getMessage());
+        }
     }
 }
