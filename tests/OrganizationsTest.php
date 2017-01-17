@@ -69,4 +69,22 @@ class OrganizationsTest extends ClientTestCase
             $this->assertEquals(404, $e->getCode());
         }
     }
+    
+    public function testUpdateOrganization()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+
+        $this->assertEquals("Test org", $organization['name']);
+        $this->assertEquals(1, (int) $organization['allowAutoJoin']);
+
+        $org = $this->client->updateOrganization($organization['id'], [
+            "name" => "new name",
+            "allowAutoJoin" => 0
+        ]);
+
+        $this->assertEquals("new name", $org['name']);
+        $this->assertEquals(0, (int) $org['allowAutoJoin']);
+    }
 }
