@@ -132,6 +132,11 @@ class Client
         return $this->apiGet("/manage/organizations/{$organizationId}");
     }
 
+    public function updateOrganization($organizationId, $params)
+    {
+        return $this->apiPatch("/manage/organizations/{$organizationId}", $params);
+    }
+
     public function deleteOrganization($id)
     {
         $this->apiDelete("/manage/organizations/{$id}");
@@ -384,6 +389,13 @@ class Client
     private function apiPut($url, $data)
     {
         return $this->request('PUT', $url, [
+            'json' => $data,
+        ]);
+    }
+
+    private function apiPatch($url, $data)
+    {
+        return $this->request('PATCH', $url, [
             'json' => $data,
         ]);
     }
