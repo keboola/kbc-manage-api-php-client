@@ -87,4 +87,34 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEquals("new name", $org['name']);
         $this->assertEquals(0, (int) $org['allowAutoJoin']);
     }
+
+    public function testOrganizationUsers()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $admins = $this->client->listOrganizationUsers($organization['id']);
+        $this->assertCount(1, $admins);
+
+        $this->client->addUserToOrganization($organization['id'], ['email' => 'spam@keboola.com']);
+
+        $admins = $this->client->listOrganizationUsers($organization['id']);
+        $this->assertCount(2, $admins);
+
+        $foundUser = null;
+        foreach ($admins as $user) {
+            if ($user['email'] == 'spam@keboola.com') {
+                $foundUser = $user;
+                break;
+            }
+        }
+        if (!$foundUser) {
+            $this->fail('User should be in list');
+        }
+
+        $this->client->removeUserFromOrganization($organization['id'], $foundUser['id']);
+
+        $admins = $this->client->listProjectUsers($organization['id']);
+        $this->assertCount(1, $admins);
+    }
 }
