@@ -114,7 +114,7 @@ class OrganizationsTest extends ClientTestCase
 
         $this->client->removeUserFromOrganization($organization['id'], $foundUser['id']);
 
-        $admins = $this->client->listProjectUsers($organization['id']);
+        $admins = $this->client->listOrganizationUsers($organization['id']);
         $this->assertCount(1, $admins);
     }
 }
