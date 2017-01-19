@@ -137,6 +137,21 @@ class Client
         return $this->apiPatch("/manage/organizations/{$organizationId}", $params);
     }
 
+    public function listOrganizationUsers($organizationId)
+    {
+        return $this->apiGet("manage/organizations/{$organizationId}/users");
+    }
+    
+    public function addUserToOrganization($organizationId, $params = [])
+    {
+        return $this->apiPost("manage/organizations/{$organizationId}/users", $params);
+    }
+
+    public function removeUserFromOrganization($organizationId, $userId)
+    {
+        $this->apiDelete("manage/organizations/{$organizationId}/users/{$userId}");
+    }
+
     public function deleteOrganization($id)
     {
         $this->apiDelete("/manage/organizations/{$id}");
