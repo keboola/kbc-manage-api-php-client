@@ -117,4 +117,89 @@ class OrganizationsTest extends ClientTestCase
         $admins = $this->client->listOrganizationUsers($organization['id']);
         $this->assertCount(1, $admins);
     }
+    
+    public function testOrganizationPermissions()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $admins = $this->client->listOrganizationUsers($organization['id']);
+
+        $superAdmin = $this->client->verifyToken()['user'];
+
+        // permission validation
+        $normalUserClient = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL')
+        ]);
+        $normalUser = $normalUserClient->verifyToken()['user'];
+
+        $this->client->addUserToOrganization($organization['id'], ["email" => $normalUser['email']]);
+        $this->client->removeUserFromOrganization($organization['id'], $admins[0]['id']);
+        $admins = $this->client->listOrganizationUsers($organization['id']);
+
+        $this->assertCount(1,$admins);
+        $this->assertEquals($normalUser['email'], $admins[0]['email']);
+        // confirmed super admin is no longer a member of the organisation
+
+        $testProject = $normalUserClient->createProject($organization['id'], [
+            'name' => 'Test Project',
+        ]);
+
+        // allowAutoJoin is true, so superAdmins should be allowed to join this new project
+        $this->client->addUserToProject($testProject['id'],[
+            "email" => $superAdmin['email']
+        ]);
+        $projUsers = $this->client->listProjectUsers($testProject['id']);
+        $this->assertCount(2,$projUsers);
+        foreach ($projUsers as $projUser) {
+            $this->assertEquals("active", $projUser['status']);
+            if ($projUser['email'] === $superAdmin['email']) {
+                $this->assertEquals($projUser['id'], $superAdmin['id']);
+            } else {
+                $this->assertEquals($projUser['email'], $normalUser['email']);
+            }
+        }
+        $this->client->removeUserFromProject($testProject['id'],$superAdmin['id']);
+        $projUsers = $this->client->listProjectUsers($testProject['id']);
+        $this->assertCount(1,$projUsers);
+
+        // make sure superAdmin cannot join organization
+        try {
+            $this->client->addUserToOrganization($organization['id'], ["email" => $superAdmin['email']]);
+            $this->fail("Cannot add super users to organization");
+        } catch (ClientException $e) {
+            $this->assertEquals("manage.joinOrganizationPermissionDenied", $e->getStringCode());
+        }
+
+        // make sure superAdmin cannot update allowAutoJoin
+        try {
+            $org = $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+            $this->fail("Superadmins not allowed to alter 'allowAutoJoin` parameter");
+        } catch (ClientException $e) {
+            $this->assertEquals("manage.updateOrganizationPermissionDenied", $e->getStringCode());
+        }
+
+        $org = $normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+        $this->assertFalse($org['allowAutoJoin']);
+
+        // now superAdmin should have access pending when he tries to join the project
+        $this->client->addUserToProject($testProject['id'], [
+            'email' => $superAdmin['email'],
+            'reason' => "testing",
+            'expirationSeconds' => 8600
+        ]);
+        $projUsers = $this->client->listProjectUsers($testProject['id']);
+        $this->assertCount(2,$projUsers);
+        foreach ($projUsers as $projUser) {
+            if ($projUser['email'] === $superAdmin['email']) {
+                $this->assertEquals($projUser['id'], $superAdmin['id']);
+                $this->assertEquals("pending", $projUser['status']);
+                $this->assertEquals("testing", $projUser['reason']);
+            } else {
+                $this->assertEquals("active", $projUser['status']);
+                $this->assertEquals($projUser['email'], $normalUser['email']);
+            }
+        }
+    }
 }
