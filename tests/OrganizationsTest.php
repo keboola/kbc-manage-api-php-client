@@ -228,4 +228,45 @@ class OrganizationsTest extends ClientTestCase
             }
         }
     }
+
+    public function testInviteSuperAdmin()
+    {
+        $normalUserClient = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL')
+        ]);
+        $normalUser = $normalUserClient->verifyToken()['user'];
+        $superAdmin = $this->client->verifyToken()['user'];
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->addUserToOrganization($organization['id'], [
+            "email" => $normalUser['email']
+        ]);
+        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
+
+        $testProject = $normalUserClient->createProject($organization['id'], [
+            'name' => 'Test Project',
+        ]);
+
+        $org = $normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+        $this->assertEquals(false, $org['allowAutoJoin']);
+        
+        $normalUserClient->addUserToProject($testProject['id'],[
+            "email" => $superAdmin['email']
+        ]);
+
+        $projUsers = $this->client->listProjectUsers($testProject['id']);
+        $this->assertCount(2,$projUsers);
+        foreach ($projUsers as $projUser) {
+            $this->assertEquals("active", $projUser['status']);
+            if ($projUser['email'] === $superAdmin['email']) {
+                $this->assertEquals($projUser['id'], $superAdmin['id']);
+                $this->assertEquals("active", $projUser['status']);
+            } else {
+                $this->assertEquals($projUser['email'], $normalUser['email']);
+            }
+        }
+    }
 }
