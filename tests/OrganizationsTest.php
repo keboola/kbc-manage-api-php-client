@@ -124,11 +124,17 @@ class OrganizationsTest extends ClientTestCase
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL')
         ]);
-        $organization = $normalUserClient->createOrganization($this->testMaintainerId, [
+        $normalUser = $normalUserClient->verifyToken()['user'];
+        $superAdmin = $this->client->verifyToken()['user'];
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
         ]);
+        $this->client->addUserToOrganization($organization['id'], [
+            "email" => $normalUser['email']
+        ]);
+        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
-        $superAdmin = $this->client->verifyToken()['user'];
         // make sure superAdmin cannot join organization
         try {
             $this->client->addUserToOrganization($organization['id'], ["email" => $superAdmin['email']]);
@@ -252,7 +258,7 @@ class OrganizationsTest extends ClientTestCase
 
         $org = $normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
         $this->assertEquals(false, $org['allowAutoJoin']);
-        
+
         $normalUserClient->addUserToProject($testProject['id'],[
             "email" => $superAdmin['email']
         ]);
