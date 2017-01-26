@@ -252,6 +252,7 @@ A Organization object has the following attributes:
 
 + name
 + created
++ allowAutoJoin
 + projects - An array of Projects objects.
 
 + Parameters
@@ -262,6 +263,7 @@ A Organization object has the following attributes:
     ```js
         {
             "id": 123,
+            "name": "sample org",
             "created": "2014-11-11T08:40:51.620Z",
             "projects": [
                 {
@@ -275,22 +277,34 @@ A Organization object has the following attributes:
     ```
 ### Retrieve a Organization [GET]
 
-*Not yet implemented.*
-
 + Response 200
 
+    ```js
+        {
+          "id": 123,
+          "name": "sample org",
+          "created": "2015-10-02T11:03:44+0200",
+          "allowAutoJoin": true,
+          "projects": [
+          	{
+          		"id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+          	}
+          ]
+        }
+    ```
 
 
 ### Update Organization [PATCH]
-
-*Not yet implemented.*
 
 Partial update of organization.
 
 Parameters:
 
 + name (optional) - Organization name
-+ maintainerId (option) - Assign organization to another maintainer
++ maintainerId (optional) - Assign organization to another maintainer
++ allowAutoJoin (optional) - Toggle whether superAdmins need approval to join the organization's projects. (default 1)
 
 + Request (application/json)
 
@@ -301,7 +315,23 @@ Parameters:
   ```
 
 + Response 200
-    [Organization][]
+
+    ```js
+        {
+          "id": 123,
+          "name": "POC",
+          "created": "2015-10-02T11:03:44+0200",
+          "allowAutoJoin": true,
+          "projects": [
+          	{
+          		"id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+          	}
+          ]
+        }
+    ```
+
 
 ### Delete a Organization  [DELETE]
 
@@ -336,7 +366,7 @@ Create a new organization.
 
 ## Organization users [/manage/organizations/{organization_id}/users]
 
- *Not yet implemented.*
+ 
 
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization.
@@ -357,8 +387,6 @@ Create a new organization.
 
 ## Add a user [POST]
 
- *Not yet implemented.*
-
 Either `id` or `email` of member must be set. If member is not found by email, account is created and invitation is sent.
 
 
@@ -373,8 +401,6 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 + Response 204
 
 ## Remove a user [DELETE /manage/organizations/{organization_id}/users/{user_id}]
-
- *Not yet implemented.*
 
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization.

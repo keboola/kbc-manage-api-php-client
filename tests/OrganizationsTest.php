@@ -69,4 +69,210 @@ class OrganizationsTest extends ClientTestCase
             $this->assertEquals(404, $e->getCode());
         }
     }
+    
+    public function testUpdateOrganization()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+
+        $this->assertEquals("Test org", $organization['name']);
+        $this->assertEquals(1, (int) $organization['allowAutoJoin']);
+
+        $org = $this->client->updateOrganization($organization['id'], [
+            "name" => "new name",
+            "allowAutoJoin" => 0
+        ]);
+
+        $this->assertEquals("new name", $org['name']);
+        $this->assertEquals(0, (int) $org['allowAutoJoin']);
+    }
+
+    public function testOrganizationUsers()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $admins = $this->client->listOrganizationUsers($organization['id']);
+        $this->assertCount(1, $admins);
+
+        $this->client->addUserToOrganization($organization['id'], ['email' => 'spam@keboola.com']);
+
+        $admins = $this->client->listOrganizationUsers($organization['id']);
+        $this->assertCount(2, $admins);
+
+        $foundUser = null;
+        foreach ($admins as $user) {
+            if ($user['email'] == 'spam@keboola.com') {
+                $foundUser = $user;
+                break;
+            }
+        }
+        if (!$foundUser) {
+            $this->fail('User should be in list');
+        }
+
+        $this->client->removeUserFromOrganization($organization['id'], $foundUser['id']);
+
+        $admins = $this->client->listOrganizationUsers($organization['id']);
+        $this->assertCount(1, $admins);
+    }
+
+    public function testSuperNoJoinOrganization()
+    {
+        $normalUserClient = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL')
+        ]);
+        $normalUser = $normalUserClient->verifyToken()['user'];
+        $superAdmin = $this->client->verifyToken()['user'];
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->addUserToOrganization($organization['id'], [
+            "email" => $normalUser['email']
+        ]);
+        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
+
+        // make sure superAdmin cannot join organization
+        try {
+            $this->client->addUserToOrganization($organization['id'], ["email" => $superAdmin['email']]);
+            $this->fail("Cannot add super users to organization");
+        } catch (ClientException $e) {
+            $this->assertEquals("manage.joinOrganizationPermissionDenied", $e->getStringCode());
+        }
+    }
+
+    public function testSettingAutoJoinFlag()
+    {
+        $normalUserClient = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL')
+        ]);
+        $normalUser = $normalUserClient->verifyToken()['user'];
+        $superAdmin = $this->client->verifyToken()['user'];
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->addUserToOrganization($organization['id'], [
+            "email" => $normalUser['email']
+        ]);
+        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
+
+        // make sure superAdmin cannot update allowAutoJoin
+        try {
+            $org = $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+            $this->fail("Superadmins not allowed to alter 'allowAutoJoin` parameter");
+        } catch (ClientException $e) {
+            $this->assertEquals("manage.updateOrganizationPermissionDenied", $e->getStringCode());
+        }
+        $this->assertEquals(true, $organization['allowAutoJoin']);
+        $org = $normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+        $this->assertEquals(false, $org['allowAutoJoin']);
+    }
+
+    public function testSuperAdminAutoJoin()
+    {
+        $normalUserClient = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL')
+        ]);
+        $normalUser = $normalUserClient->verifyToken()['user'];
+        $superAdmin = $this->client->verifyToken()['user'];
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->addUserToOrganization($organization['id'], [
+            "email" => $normalUser['email']
+        ]);
+        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
+
+        $testProject = $normalUserClient->createProject($organization['id'], [
+            'name' => 'Test Project',
+        ]);
+
+        // allowAutoJoin is true, so superAdmins should be allowed to join this new project
+        $this->client->addUserToProject($testProject['id'],[
+            "email" => $superAdmin['email']
+        ]);
+        $projUsers = $this->client->listProjectUsers($testProject['id']);
+        $this->assertCount(2,$projUsers);
+        foreach ($projUsers as $projUser) {
+            $this->assertEquals("active", $projUser['status']);
+            if ($projUser['email'] === $superAdmin['email']) {
+                $this->assertEquals($projUser['id'], $superAdmin['id']);
+                $this->assertEquals("active", $projUser['status']);
+            } else {
+                $this->assertEquals($projUser['email'], $normalUser['email']);
+            }
+        }
+        $this->client->removeUserFromProject($testProject['id'],$superAdmin['id']);
+        $projUsers = $this->client->listProjectUsers($testProject['id']);
+        $this->assertCount(1,$projUsers);
+
+        $normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+
+        // now superAdmin should have access pending when he tries to join the project
+        $this->client->addUserToProject($testProject['id'], [
+            'email' => $superAdmin['email'],
+            'reason' => "testing",
+            'expirationSeconds' => 8600
+        ]);
+        $projUsers = $this->client->listProjectUsers($testProject['id']);
+        $this->assertCount(2,$projUsers);
+        foreach ($projUsers as $projUser) {
+            if ($projUser['email'] === $superAdmin['email']) {
+                $this->assertEquals($projUser['id'], $superAdmin['id']);
+                $this->assertEquals("pending", $projUser['status']);
+                $this->assertEquals("testing", $projUser['reason']);
+            } else {
+                $this->assertEquals("active", $projUser['status']);
+                $this->assertEquals($projUser['email'], $normalUser['email']);
+            }
+        }
+    }
+
+    public function testInviteSuperAdmin()
+    {
+        $normalUserClient = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL')
+        ]);
+        $normalUser = $normalUserClient->verifyToken()['user'];
+        $superAdmin = $this->client->verifyToken()['user'];
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->addUserToOrganization($organization['id'], [
+            "email" => $normalUser['email']
+        ]);
+        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
+
+        $testProject = $normalUserClient->createProject($organization['id'], [
+            'name' => 'Test Project',
+        ]);
+
+        $org = $normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+        $this->assertEquals(false, $org['allowAutoJoin']);
+
+        $normalUserClient->addUserToProject($testProject['id'],[
+            "email" => $superAdmin['email']
+        ]);
+
+        $projUsers = $this->client->listProjectUsers($testProject['id']);
+        $this->assertCount(2,$projUsers);
+        foreach ($projUsers as $projUser) {
+            $this->assertEquals("active", $projUser['status']);
+            if ($projUser['email'] === $superAdmin['email']) {
+                $this->assertEquals($projUser['id'], $superAdmin['id']);
+                $this->assertEquals("active", $projUser['status']);
+            } else {
+                $this->assertEquals($projUser['email'], $normalUser['email']);
+            }
+        }
+    }
 }
