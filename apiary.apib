@@ -74,11 +74,11 @@ Create a new maintainer. User associated to token will become a admin of maintai
 
 + Request
 
-   ```js
-   {
-    "name": "My maintainer"
-   }
-   ```
+    ```js
+    {
+        "name": "My maintainer"
+    }
+    ```
 
 + Response 201
 
@@ -146,26 +146,25 @@ A Maintainer object has the following attributes:
 + Model (application/json)
 
     ```js
-        {
-            "id": 123,
-            "crated": "2014-11-11T08:40:51.620Z",
-            "url": "/questions/1",
-            "defaultConnectionMysql": 234,
-            "defaultConnectionRedshift": 232,
-            "organizations": [
-                {
-                    "id": 234,
-                    "name": "Development",
-                    "projects": []
-                },
-                {
-                    "id": 235,
-                    "name": "POC",
-                    "projects": []
-                }
-            ]
-        }
-
+    {
+        "id": 123,
+        "crated": "2014-11-11T08:40:51.620Z",
+        "url": "/questions/1",
+        "defaultConnectionMysql": 234,
+        "defaultConnectionRedshift": 232,
+        "organizations": [
+            {
+                "id": 234,
+                "name": "Development",
+                "projects": []
+            },
+            {
+                "id": 235,
+                "name": "POC",
+                "projects": []
+            }
+        ]
+    }
     ```
 ### Retrieve a maintainer [GET]
 
@@ -206,13 +205,13 @@ Parameters:
 + Response 200 (application/json)
 
     ```js
-        [
-            {
-                "id": 23423,
-                "name": "Martin Halamicek",
-                "email": "martin@keboola.com"
-            }
-        ]
+    [
+        {
+            "id": 23423,
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    ]
     ```
 
 ## Add a user [POST]
@@ -225,9 +224,9 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 + Request (application/json)
 
     ```js
-        {
-            "id": 12
-        }
+    {
+        "id": 12
+    }
     ```
 
 + Response 204
@@ -261,38 +260,37 @@ A Organization object has the following attributes:
 + Model (application/json)
 
     ```js
-        {
-            "id": 123,
-            "name": "sample org",
-            "created": "2014-11-11T08:40:51.620Z",
-            "projects": [
-                {
-                    "id": 123,
-                    "name": "Demo",
-                    "created": "2014-11-11T08:40:51.620Z"
-                }
-            ]
-        }
-
+    {
+        "id": 123,
+        "name": "sample org",
+        "created": "2014-11-11T08:40:51.620Z",
+        "projects": [
+            {
+                "id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+            }
+        ]
+    }
     ```
 ### Retrieve a Organization [GET]
 
 + Response 200
 
     ```js
-        {
-          "id": 123,
-          "name": "sample org",
-          "created": "2015-10-02T11:03:44+0200",
-          "allowAutoJoin": true,
-          "projects": [
-              {
-                  "id": 123,
-                  "name": "Demo",
-                  "created": "2014-11-11T08:40:51.620Z"
-              }
-          ]
-        }
+    {
+        "id": 123,
+        "name": "sample org",
+        "created": "2015-10-02T11:03:44+0200",
+        "allowAutoJoin": true,
+        "projects": [
+            {
+                "id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+            }
+        ]
+    }
     ```
 
 
@@ -317,19 +315,19 @@ Parameters:
 + Response 200
 
     ```js
-        {
-          "id": 123,
-          "name": "POC",
-          "created": "2015-10-02T11:03:44+0200",
-          "allowAutoJoin": true,
-          "projects": [
-              {
-                  "id": 123,
-                  "name": "Demo",
-                  "created": "2014-11-11T08:40:51.620Z"
-              }
-          ]
-        }
+    {
+        "id": 123,
+        "name": "POC",
+        "created": "2015-10-02T11:03:44+0200",
+        "allowAutoJoin": true,
+        "projects": [
+            {
+                "id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+            }
+        ]
+    }
     ```
 
 
@@ -347,11 +345,11 @@ Create a new organization.
 
 + Request
 
-   ```js
-   {
-    "name": "My Organization"
-   }
-   ```
+    ```js
+    {
+        "name": "My Organization"
+    }
+    ```
 
 + Response 201
 
@@ -376,13 +374,13 @@ Create a new organization.
 + Response 200 (application/json)
 
     ```js
-        [
-            {
-                "id": 23423,
-                "name": "Martin Halamicek",
-                "email": "martin@keboola.com"
-            }
-        ]
+    [
+        {
+            "id": 23423,
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    ]
     ```
 
 ## Add a user [POST]
@@ -393,9 +391,9 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 + Request (application/json)
 
     ```js
-        {
-            "id": 12
-        }
+    {
+        "id": 12
+    }
     ```
 
 + Response 204
@@ -434,19 +432,19 @@ Project will be created from default template which defines it's limits.
 
     ```js
     {
-            "id":259,
-            "name":"New Project",
-            "features":["new-orchestrator","es-events"],
-            "type": "demo",
-            "expires": "2014-11-11T08:40:51.620Z",
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": "1"
-            }
+        "id":259,
+        "name":"New Project",
+        "features":["new-orchestrator","es-events"],
+        "type": "demo",
+        "expires": "2014-11-11T08:40:51.620Z",
+        "redshift": {
+            "connectionId":309,
+            "databaseName":"sapi_258"
         }
+        "organization": {
+            "id": "1"
+        }
+    }
     ```
 
 ## Move project to another organization [/manage/projects/{project_id}/organizations]
@@ -468,17 +466,17 @@ Project will be created from default template which defines it's limits.
 
     ```js
     {
-            "id":259,
-            "name":"New Project",
-            "features":["new-orchestrator","es-events"],
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": 3432
-            }
+        "id":259,
+        "name":"New Project",
+        "features":["new-orchestrator","es-events"],
+        "redshift": {
+            "connectionId":309,
+            "databaseName":"sapi_258"
         }
+        "organization": {
+            "id": 3432
+        }
+    }
     ```
 
 
@@ -505,17 +503,17 @@ Connection type is automatically detected from passed connection identifier.
 
     ```js
     {
-            "id":259,
-            "name":"New Project",
-            "features":["new-orchestrator","es-events"],
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": 3432
-            }
+        "id":259,
+        "name":"New Project",
+        "features":["new-orchestrator","es-events"],
+        "redshift": {
+            "connectionId":309,
+            "databaseName":"sapi_258"
         }
+        "organization": {
+            "id": 3432
+        }
+    }
     ```
 ## Remove project storage backend [/manage/projects/{project_id}/storage-backend/{storage_backend_id}]
 This action can be performed only by super admin.
@@ -533,17 +531,17 @@ Storage backend type is automatically detected from it's id. Only backend withou
 
     ```js
     {
-            "id":259,
-            "name":"New Project",
-            "features":["new-orchestrator","es-events"],
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": 3432
-            }
+        "id":259,
+        "name":"New Project",
+        "features":["new-orchestrator","es-events"],
+        "redshift": {
+            "connectionId":309,
+            "databaseName":"sapi_258"
         }
+        "organization": {
+            "id": 3432
+        }
+    }
     ```
 
 
@@ -567,17 +565,17 @@ This action can be performed only by super admin.
 
     ```js
     {
-            "id":259,
-            "name":"New Project",
-            "features":["new-orchestrator","es-events"],
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": 3432
-            }
+        "id":259,
+        "name":"New Project",
+        "features":["new-orchestrator","es-events"],
+        "redshift": {
+            "connectionId":309,
+            "databaseName":"sapi_258"
         }
+        "organization": {
+            "id": 3432
+        }
+    }
     ```
 
 ## Project Limits [/manage/projects/{project_id}/limits]
@@ -606,23 +604,23 @@ Change project limits is allowed only form Super Admin.
 
     ```js
     {
-            "id":259,
-            "name":"New Project",
-            "features":["new-orchestrator","es-events"],
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": 3432
-            },
-            "limits": {
-                "goodData.usersCount": {
-                    "name": "goodData.usersCount",
-                    "value": 23
-                }
+        "id":259,
+        "name":"New Project",
+        "features":["new-orchestrator","es-events"],
+        "redshift": {
+            "connectionId":309,
+            "databaseName":"sapi_258"
+        }
+        "organization": {
+            "id": 3432
+        },
+        "limits": {
+            "goodData.usersCount": {
+                "name": "goodData.usersCount",
+                "value": 23
             }
         }
+    }
     ```
 
 
@@ -763,93 +761,93 @@ Available attributes to change:
 
     ```js
     {
-            {
-                "id":258,
-                "name":"Shared Config",
-                "description": "Project description",
-                "features":["new-orchestrator","es-events"],
-                "created": "2014-11-11T08:40:51.620Z",
-                "expirationDate": "2015-11-11T08:40:51.620Z",
-                "defaultBackend": "redshift",
-                "monthlyPrice" 800.0,
-                "redshift": {
-                    "connectionId":309,
-                    "databaseName":"sapi_258"
-                }
-                "organization": {
-                    "id": "1"
-                },
-                "alarms": [
-                    {
-                        "name": "storage.dataSizeBytes",
-                        "currentValue": 234234,
-                        "limitValue": 123234324,
-                        "isAlarm": false
-                    },
-                   {
-                       "name": "orchestrations.delay",
-                       "currentValue": 60.0,
-                       "limitValue": 15.0
-                   },
-                   {
-                        "name": "gooddata.usersCount",
-                        "currentValue": 234,
-                        "limitValue": 500,
-                        "isAlarm": false
-                   },
-                   {
-                        "name": "gooddata.dataSizeBytes",
-                        "currentValue": 23434543,
-                        "limitValue": 500345345,
-                        "isAlarm": false
-                   },
-                   {
-                       "name": "gooddata.loadFrequency",
-                       "currentValue": 3.3,
-                       "limitValue": 5.0,
-                       "isAlarm": false
-                  }
-                ],
-                "limits": [
-                    {
-                        "name": "orchestrations.count",
-                        "limitValue": 8
-                    },
-                    {
-                        "name": "adminsCount",
-                        "limitValue": 15
-                    },
-                    {
-                        "name": "extractorsCount",
-                        "limitValue": null
-                    },
-                    {
-                        "name": "writersCount",
-                        "limitValue": null
-                    },
-                    {
-                        "name": "storage.jobsParallelism",
-                        "limitValue": 10
-                    },
-                    {
-                        "name": "syrup.jobsParallelism",
-                        "limitValue": 10
-                    },
-                    {
-                        "name": "gooddata.prodTokenEnabled",
-                        "isEnabled": true
-                    },
-                    {
-                        "name": "gooddata.demoTokenEnabled",
-                        "isEnabled": true
-                    },
-                    {
-                        "name": "gooddata.projectsCount",
-                        "limitValue": 4
-                    }
-                ]
+        {
+            "id":258,
+            "name":"Shared Config",
+            "description": "Project description",
+            "features":["new-orchestrator","es-events"],
+            "created": "2014-11-11T08:40:51.620Z",
+            "expirationDate": "2015-11-11T08:40:51.620Z",
+            "defaultBackend": "redshift",
+            "monthlyPrice" 800.0,
+            "redshift": {
+                "connectionId":309,
+                "databaseName":"sapi_258"
             }
+            "organization": {
+                "id": "1"
+            },
+            "alarms": [
+                {
+                    "name": "storage.dataSizeBytes",
+                    "currentValue": 234234,
+                    "limitValue": 123234324,
+                    "isAlarm": false
+                },
+               {
+                   "name": "orchestrations.delay",
+                   "currentValue": 60.0,
+                   "limitValue": 15.0
+               },
+               {
+                    "name": "gooddata.usersCount",
+                    "currentValue": 234,
+                    "limitValue": 500,
+                    "isAlarm": false
+               },
+               {
+                    "name": "gooddata.dataSizeBytes",
+                    "currentValue": 23434543,
+                    "limitValue": 500345345,
+                    "isAlarm": false
+               },
+               {
+                   "name": "gooddata.loadFrequency",
+                   "currentValue": 3.3,
+                   "limitValue": 5.0,
+                   "isAlarm": false
+              }
+            ],
+            "limits": [
+                {
+                    "name": "orchestrations.count",
+                    "limitValue": 8
+                },
+                {
+                    "name": "adminsCount",
+                    "limitValue": 15
+                },
+                {
+                    "name": "extractorsCount",
+                    "limitValue": null
+                },
+                {
+                    "name": "writersCount",
+                    "limitValue": null
+                },
+                {
+                    "name": "storage.jobsParallelism",
+                    "limitValue": 10
+                },
+                {
+                    "name": "syrup.jobsParallelism",
+                    "limitValue": 10
+                },
+                {
+                    "name": "gooddata.prodTokenEnabled",
+                    "isEnabled": true
+                },
+                {
+                    "name": "gooddata.demoTokenEnabled",
+                    "isEnabled": true
+                },
+                {
+                    "name": "gooddata.projectsCount",
+                    "limitValue": 4
+                }
+            ]
         }
+    }
     ```
 
 ### Delete Project [DELETE]
@@ -875,22 +873,22 @@ Project will not be physically deleted. It'll be just not accessible and hidden.
 
     ```js
     [
-      {
-        "id": 123,
-        "name": "test user",
-        "email": "martin@keboola.com",
-        "features": [],
-        "expires": null,
-        "reason": ""
-      },
-      {
-        "id": 124,
-        "name": "test user 2",
-        "email": "spam@keboola.com",
-        "features": [],
-        "expires": "2016-03-22 15:01:13",
-        "reason": "temporary test"
-      }
+        {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com",
+            "features": [],
+            "expires": null,
+            "reason": ""
+        },
+        {
+            "id": 124,
+            "name": "test user 2",
+            "email": "spam@keboola.com",
+            "features": [],
+            "expires": "2016-03-22 15:01:13",
+            "reason": "temporary test"
+        }
     ]
     ```
 
@@ -984,20 +982,21 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 + Response 201
 
     ```js
-        {
-            "id": 3846,
-            "token": "TOKEN_VALUE",
-            "created":"2013-03-28T13:31:50+0100",
-            "description":"martin@keboola.com",
-            "isMasterToken":true,
-            "canManageBuckets":true,
-            "canManageTokens":true,
-            "canReadAllFileUploads":true,
-            "expires":null,
-            "isExpired":false,
-            "isDisabled":false,
-            "dailyCapacity":0,
-            "bucketPermissions": {}
+    {
+        "id": 3846,
+        "token": "TOKEN_VALUE",
+        "created":"2013-03-28T13:31:50+0100",
+        "description":"martin@keboola.com",
+        "isMasterToken":true,
+        "canManageBuckets":true,
+        "canManageTokens":true,
+        "canReadAllFileUploads":true,
+        "expires":null,
+        "isExpired":false,
+        "isDisabled":false,
+        "dailyCapacity":0,
+        "bucketPermissions": {}
+    }
     ```
 
 # Group Deleted Projects
@@ -1094,12 +1093,12 @@ Users can be managed only by super admins.
 
     ```js
     {
-      "id": 2,
-      "name": "Martin Halamicek",
-      "email": "martin@keboola.com",
-      "features": [
-        "inline-manual"
-      ]
+        "id": 2,
+        "name": "Martin Halamicek",
+        "email": "martin@keboola.com",
+        "features": [
+            "inline-manual"
+        ]
     }
     ```
 
@@ -1163,25 +1162,25 @@ There are yet three types of notifications:
 
 + Request
     ```js
-        {
-            "type": "common",
-            "projectId": "1234",
-            "title": "Maintenance Announcement",
-            "message": "There will be maintenance on this project sometime in the future"
-        }
+    {
+        "type": "common",
+        "projectId": "1234",
+        "title": "Maintenance Announcement",
+        "message": "There will be maintenance on this project sometime in the future"
+    }
     ```
 
 + Response 201 (application/json)
 
     ```js
-        {
-            "id": "497bda6a-cb57-11e5-8080-800144cef8df",
-            "actor": "Project:1234",
-            "type": "common",
-            "created": "2016-02-04T15:52:26.011505",
-            "title": "Maintenance Announcement",
-            "message": "There will be maintenance on this project sometime in the future"
-        }
+    {
+        "id": "497bda6a-cb57-11e5-8080-800144cef8df",
+        "actor": "Project:1234",
+        "type": "common",
+        "created": "2016-02-04T15:52:26.011505",
+        "title": "Maintenance Announcement",
+        "message": "There will be maintenance on this project sometime in the future"
+    }
     ```
 
 ### Mark Notification as read [PUT]
@@ -1192,18 +1191,20 @@ all notifications as read.
 
 + Request
     ```js
-        {
-            "read": [
-                "497bda6a-cb57-11e5-8080-800144cef8df",
-                "fae2ad7e-cb43-11e5-8080-800019c0d40a"
-            ],
-            "allRead": true
-        }
+    {
+        "read": [
+            "497bda6a-cb57-11e5-8080-800144cef8df",
+            "fae2ad7e-cb43-11e5-8080-800019c0d40a"
+        ],
+        "allRead": true
+    }
     ```
 
 + Response 200 (application/json)
     ```js
-        {"status": "ok"}
+    {
+        "status": "ok"
+    }
     ```
 
 
@@ -1224,21 +1225,21 @@ Events related to maintainers, organizations and projects accessible by token.
             "id": "3071651386",
             "type": "ProjectCreated",
             "actor": {
-              "id": 12015,
-              "email": "martin@keboola.com",
+                "id": 12015,
+                "email": "martin@keboola.com",
             },
             "repo": {
-              "id": 35902694,
-              "name": "ICTatRTI/coconut-mobile",
-              "url": "https://api.github.com/repos/ICTatRTI/coconut-mobile"
+                "id": 35902694,
+                "name": "ICTatRTI/coconut-mobile",
+                "url": "https://api.github.com/repos/ICTatRTI/coconut-mobile"
             },
             "payload": {
-             "message": "Project New was created"
+                "message": "Project New was created"
             },
             "created": "2015-08-19T13:23:18Z",
             "organization": {
-              "id": 4205148,
-              "name": "Keboola Devel",
+                "id": 4205148,
+                "name": "Keboola Devel",
             },
             "maintainer": {
                 "id": 624475,
@@ -1381,23 +1382,23 @@ Assign project feature is allowed only for Super Admin.
 
     ```js
     {
-            "id":259,
-            "name":"New Project",
-            "features":["new-orchestrator","es-events"],
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": 3432
-            },
-            "limits": {
-                "goodData.usersCount": {
-                    "name": "goodData.usersCount",
-                    "value": 23
-                }
+        "id":259,
+        "name":"New Project",
+        "features":["new-orchestrator","es-events"],
+        "redshift": {
+            "connectionId":309,
+            "databaseName":"sapi_258"
+        }
+        "organization": {
+            "id": 3432
+        },
+        "limits": {
+            "goodData.usersCount": {
+                "name": "goodData.usersCount",
+                "value": 23
             }
         }
+    }
     ```
 
 ### Remove project feature [DELETE /manage/projects/{project_id}/features/{feature_name}]
@@ -1440,12 +1441,12 @@ Remove project feature is allowed only for Super Admin.
 
     ```js
     {
-      "id": 2,
-      "name": "Martin Halamicek",
-      "email": "martin@keboola.com",
-      "features": [
-        "inline-manual"
-      ]
+        "id": 2,
+        "name": "Martin Halamicek",
+        "email": "martin@keboola.com",
+        "features": [
+            "inline-manual"
+        ]
     }
     ```
 
@@ -1459,12 +1460,12 @@ Remove project feature is allowed only for Super Admin.
 
     ```js
     {
-      "id": 2,
-      "name": "Martin Halamicek",
-      "email": "martin@keboola.com",
-      "features": [
-        "inline-manual"
-      ]
+        "id": 2,
+        "name": "Martin Halamicek",
+        "email": "martin@keboola.com",
+        "features": [
+            "inline-manual"
+        ]
     }
     ```
 
@@ -1621,22 +1622,22 @@ Returns active manage applications. This resources doesn't require authenticatio
 + Response 200 (application/json)
 
     ```js
-       [
-         {
-           "id": "kbc.manageApps",
-           "name": "kbc.manageApps",
-             "version": "0.0.3-33-ga6bc947",
-             "basePath": "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/",
-             "scripts": [
-               "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/scripts\/libs.js",
-               "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/scripts\/scripts.js"
-             ],
-             "styles": [
-               "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/styles\/libs.css",
-               "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/styles\/select2.png"
-             ]
-           }
-      ]
+    [
+        {
+            "id": "kbc.manageApps",
+            "name": "kbc.manageApps",
+            "version": "0.0.3-33-ga6bc947",
+            "basePath": "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/",
+            "scripts": [
+                "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/scripts\/libs.js",
+                "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/scripts\/scripts.js"
+            ],
+            "styles": [
+                "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/styles\/libs.css",
+                "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/styles\/select2.png"
+            ]
+        }
+    ]
     ```
 
 ## Get Application detail [GET /manage/ui-apps/{app_id}]
@@ -1663,6 +1664,7 @@ Retrieve application detail with all it's versions.
                     "buildUrl":""
                 }
             ]
+        }
     ]
     ```
 
@@ -1728,9 +1730,7 @@ Components event feed. Changelog of all actions on uis.
 + Response 200 (application/json)
 
     ```js
-    [
-
-    ]
+    []
     ```
 
 
@@ -1756,8 +1756,8 @@ Management of Keboola Connection Components and Applications
             hasRun: true,
             ico32: "",
             ico64: "",
-            data: { },
-            flags: [ ],
+            data: {},
+            flags: [],
             uri: "https://syrup.keboola.com/ag-forecastio"
         },
         {
@@ -1769,8 +1769,8 @@ Management of Keboola Connection Components and Applications
             hasRun: true,
             ico32: "",
             ico64: "",
-            data: { },
-            flags: [ ],
+            data: {},
+            flags: [],
             uri: "https://syrup.keboola.com/ag-geocoding"
         }
     ]
@@ -1781,7 +1781,7 @@ Management of Keboola Connection Components and Applications
 + Request (application/json)
 
     ```js
-     {
+    {
         id: "ag-geocoding",
         type: "extractor",
         name: "Geocoding Augmentation",
@@ -1790,8 +1790,8 @@ Management of Keboola Connection Components and Applications
         hasRun: true,
         ico32: "",
         ico64: "",
-        data: { },
-        flags: [ ],
+        data: {},
+        flags: [],
         uri: "https://syrup.keboola.com/ag-geocoding"
     }
     ```
@@ -1808,8 +1808,8 @@ Management of Keboola Connection Components and Applications
         hasRun: true,
         ico32: "",
         ico64: "",
-        data: { },
-        flags: [ ],
+        data: {},
+        flags: [],
         uri: "https://syrup.keboola.com/ag-geocoding"
     }
     ```
@@ -1822,9 +1822,9 @@ Management of Keboola Connection Components and Applications
 + Request (application/json)
 
     ```
-        {
-            "name": "Forecast.io"
-        }
+    {
+        "name": "Forecast.io"
+    }
     ```
 
 + Response 200 (application/json)
@@ -1839,8 +1839,8 @@ Management of Keboola Connection Components and Applications
         hasRun: true,
         ico32: "",
         ico64: "",
-        data: { },
-        flags: [ ],
+        data: {},
+        flags: [],
         uri: "https://syrup.keboola.com/ag-geocoding"
     }
     ```
@@ -1854,9 +1854,7 @@ Components event feed. Changelog of all actions on components.
 + Response 200 (application/json)
 
     ```js
-    [
-
-    ]
+    []
     ```
 
 ## Components Tokens [/manage/components/{component_id}/tokens]
