@@ -107,6 +107,26 @@ class Client
         return $this->apiGet("/manage/maintainers");
     }
 
+    public function createMaintainer($params)
+    {
+        return $this->apiPost("/manage/maintainers", $params);
+    }
+
+    public function updateMaintainer($maintainerId, $params = [])
+    {
+        return $this->apiPatch("/manage/maintainers/{$maintainerId}", $params);
+    }
+
+    public function deleteMaintainer($maintainerId)
+    {
+        $this->apiDelete("/manage/maintainers/{$maintainerId}");
+    }
+
+    public function getMaintainer($maintainerId)
+    {
+        return $this->apiGet("/manage/maintainers/{$maintainerId}");
+    }
+
     public function listMaintainerMembers($maintainerId)
     {
         return $this->apiGet("/manage/maintainers/{$maintainerId}/users");
