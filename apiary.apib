@@ -97,6 +97,7 @@ Create a new maintainer. User associated to token will become a admin of maintai
             "created": "2014-11-11T08:40:51.620Z",
             "defaultConnectionMysql": 234,
             "defaultConnectionRedshift": 232,
+            "defaultConnectionSnowflake": 242,
             "organizations": [
                 {
                     "id": 234,
@@ -116,6 +117,7 @@ Create a new maintainer. User associated to token will become a admin of maintai
             "crated": "2014-11-11T08:40:51.620Z",
             "defaultConnectionMysql": 234,
             "defaultConnectionRedshift": 232,
+            "defaultConnectionSnowflake": 242,            
             "organizations": [
                 {
                     "id": 234,
@@ -141,7 +143,7 @@ A Maintainer object has the following attributes:
 + organizations - An array of Organizations objects.
 
 + Parameters
-    + maintainer_id: 1 (required, number) - ID of the Question in form of an integer
+    + maintainer_id: 1 (required, integer) 
 
 + Model (application/json)
 
@@ -177,6 +179,9 @@ Partial update of maintainer.
 Parameters:
 
 + name (optional) - Maintainer name
++ idDefaultConnectionMysql (optional) - Default Mysql Connection Id
++ idDefaultConnectionRedshift (optional) - Default Redshift Connection Id
++ idDefaultConnectionSnowflake (optional) - Default Snowflake Connection Id
 
 + Request (application/json)
 
@@ -200,8 +205,6 @@ Parameters:
 
 ### List members [GET]
 
- *Not yet implemented.*
-
 + Response 200 (application/json)
 
     ```js
@@ -215,8 +218,6 @@ Parameters:
     ```
 
 ## Add a user [POST]
-
- *Not yet implemented.*
 
 Either `id` or `email` of member must be set. If member is not found by email, account is created and invitation is sent.
 
@@ -232,8 +233,6 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 + Response 204
 
 ## Remove a user [DELETE /manage/maintainers/{maintainer_id}/users/{user_id}]
-
- *Not yet implemented.*
 
 + Parameters
     + maintainer_id: 1 (required, number) - ID of the maintainer.
