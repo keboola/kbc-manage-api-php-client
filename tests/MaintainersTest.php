@@ -41,7 +41,7 @@ class MaintainersTest extends ClientTestCase
     {
         $maintainers = $this->client->listMaintainers();
         foreach ($maintainers as $maintainer) {
-            if ($maintainer['id'] === $this->testMaintainerId) {
+            if ((int) $maintainer['id'] === (int) $this->testMaintainerId) {
                 $members = $this->client->listMaintainerMembers($maintainer['id']);
                 foreach ($members as $member) {
                     if ($member['id'] != $this->superAdmin['id']) {
@@ -52,7 +52,7 @@ class MaintainersTest extends ClientTestCase
                 $this->client->deleteMaintainer($maintainer['id']);
             } 
         }
-        parent::tearDown(); 
+        parent::tearDown();
     }
 
     public function testCreateDeleteMaintainer()
@@ -71,9 +71,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals($testMaintainer['idDefaultConnectionMysql'], $newMaintainer['idDefaultConnectionMysql']);
         $this->assertEquals($testMaintainer['idDefaultConnectionRedshift'], $newMaintainer['idDefaultConnectionRedshift']);
         $this->assertEquals($testMaintainer['idDefaultConnectionSnowflake'], $newMaintainer['idDefaultConnectionSnowflake']);
-        $this->assertArrayHasKey('zendesk_dropboxId', $newMaintainer);
         $this->assertArrayHasKey('zendesk_url', $newMaintainer);
-        $this->assertNull($newMaintainer['zendesk_dropboxId']);
         $this->assertNull($newMaintainer['zendesk_url']);
 
         $maintainerList = $this->client->listMaintainers();
@@ -124,13 +122,10 @@ class MaintainersTest extends ClientTestCase
         }
 
         $updateArray['zendesk_url'] = "https://fake.url.com";
-        $updateArray['zendesk_dropboxId'] = "12345";
 
         $updatedMaintainer = $this->client->updateMaintainer($newMaintainer['id'], $updateArray);
-
         $this->assertEquals('updated name', $updatedMaintainer['name']);
         $this->assertEquals("https://fake.url.com", $updatedMaintainer['zendesk_url']);
-        $this->assertEquals("12345", $updatedMaintainer['zendesk_dropboxId']);
 
         if (array_key_exists('idDefaultConnectionMysql',$updateArray)) {
             $this->assertEquals($mysqlBackend['id'], $updatedMaintainer['idDefaultConnectionMysql']);
@@ -139,7 +134,7 @@ class MaintainersTest extends ClientTestCase
             $this->assertEquals($redshiftBackend['id'], $updatedMaintainer['idDefaultConnectionRedshift']);
         }
         if (array_key_exists('idDefaultConnectionSnowflake',$updateArray)) {
-            $this->assertEquals($mysqlBackend['id'], $updatedMaintainer['idDefaultConnectionSnowflake']);
+            $this->assertEquals($snowflakeBackend['id'], $updatedMaintainer['idDefaultConnectionSnowflake']);
         }
     }
 
@@ -174,7 +169,7 @@ class MaintainersTest extends ClientTestCase
             $this->assertEquals(403, $e->getCode());
         }
         
-        $this->client->addUserToMaintainer($this->testMaintainerId, $this->normalUser['email']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
         $testMaintainer = $this->normalUserClient->getMaintainer($this->testMaintainerId);
         $this->assertNotEmpty($testMaintainer['name']);
     }
@@ -193,12 +188,8 @@ class MaintainersTest extends ClientTestCase
         $this->assertArrayHasKey('idDefaultConnectionMysql', $maintainer);
         $this->assertArrayHasKey('idDefaultConnectionRedshift', $maintainer);
         $this->assertArrayHasKey('idDefaultConnectionSnowflake', $maintainer);
-        $this->assertArrayHasKey('zendesk_dropboxId', $maintainer);
         $this->assertArrayHasKey('zendesk_url', $maintainer);
-        $this->assertNull($maintainer['zendesk_dropboxId']);
         $this->assertNull($maintainer['zendesk_url']);
-        $this->assertFalse($maintainer['isDeleted']);
-        $this->assertNull($maintainer['deletedTime']);
     }
     
     public function testUserMaintainerUsers()
@@ -293,31 +284,31 @@ class MaintainersTest extends ClientTestCase
                 $this->assertEquals($projUser['id'], $this->normalUser['id']);
                 $this->assertEquals("active", $projUser['status']);
             } else {
-                $this->assertEquals($projUser['email'], $this->normalUser['email']);
+                $this->assertEquals($projUser['email'], $this->superAdmin['email']);
             }
         }
-        $this->client->removeUserFromProject($testProject['id'],$this->superAdmin['id']);
+        $this->client->removeUserFromProject($testProject['id'],$this->normalUser['id']);
         $projUsers = $this->client->listProjectUsers($testProject['id']);
         $this->assertCount(1,$projUsers);
 
-        $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+        $org = $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
 
-        // now superAdmin should have access pending when he tries to join the project
-        $this->client->addUserToProject($testProject['id'], [
-            'email' => $this->superAdmin['email'],
+        // now maintainer should have access pending when he tries to join the project
+        $this->normalUserClient->addUserToProject($testProject['id'], [
+            'email' => $this->normalUser['email'],
             'reason' => "testing",
             'expirationSeconds' => 8600
         ]);
         $projUsers = $this->client->listProjectUsers($testProject['id']);
         $this->assertCount(2,$projUsers);
         foreach ($projUsers as $projUser) {
-            if ($projUser['email'] === $this->superAdmin['email']) {
+            if ($projUser['email'] === $this->normalUser['email']) {
                 $this->assertEquals($projUser['id'], $this->normalUser['id']);
                 $this->assertEquals("pending", $projUser['status']);
                 $this->assertEquals("testing", $projUser['reason']);
             } else {
                 $this->assertEquals("active", $projUser['status']);
-                $this->assertEquals($projUser['email'], $this->normalUser['email']);
+                $this->assertEquals($projUser['email'], $this->superAdmin['email']);
             }
         }
     }
@@ -329,7 +320,7 @@ class MaintainersTest extends ClientTestCase
         ]);
 
         // make sure normalUser is a maintainer
-        $this->addNormalMaintainer($this->normalUser);
+        $this->addNormalMaintainer();
 
         $testProject = $this->client->createProject($organization['id'], [
             'name' => 'Test Project',
@@ -350,7 +341,7 @@ class MaintainersTest extends ClientTestCase
                 $this->assertEquals($projUser['id'], $this->normalUser['id']);
                 $this->assertEquals("active", $projUser['status']);
             } else {
-                $this->assertEquals($projUser['email'], $this->normalUser['email']);
+                $this->assertEquals($projUser['email'], $this->superAdmin['email']);
             }
         }
     }
