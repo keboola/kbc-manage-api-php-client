@@ -173,6 +173,28 @@ class OrganizationsTest extends ClientTestCase
         }
     }
 
+    public function testSuperCannotAddAnybodyToOrganizationWithNoJoin()
+    {
+        $normalUser = $this->normalUserClient->verifyToken()['user'];
+        $superAdmin = $this->client->verifyToken()['user'];
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->addUserToOrganization($organization['id'], [
+            "email" => $normalUser['email']
+        ]);
+        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
+
+        // make sure superAdmin cannot join organization
+        try {
+            $this->client->addUserToOrganization($organization['id'], ["email" => "spammer@keboola.com"]);
+            $this->fail("Should not be able to add the user");
+        } catch (ClientException $e) {
+            $this->assertEquals("manage.joinOrganizationPermissionDenied", $e->getStringCode());
+        }
+    }
+
     public function testSettingAutoJoinFlag()
     {
         $normalUser = $this->normalUserClient->verifyToken()['user'];
@@ -200,11 +222,7 @@ class OrganizationsTest extends ClientTestCase
 
     public function testSuperAdminAutoJoin()
     {
-        $normalUserClient = new \Keboola\ManageApi\Client([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL')
-        ]);
-        $normalUser = $normalUserClient->verifyToken()['user'];
+        $normalUser = $this->normalUserClient->verifyToken()['user'];
         $superAdmin = $this->client->verifyToken()['user'];
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -215,7 +233,7 @@ class OrganizationsTest extends ClientTestCase
         ]);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
-        $testProject = $normalUserClient->createProject($organization['id'], [
+        $testProject = $this->normalUserClient->createProject($organization['id'], [
             'name' => 'Test Project',
         ]);
 
@@ -238,7 +256,7 @@ class OrganizationsTest extends ClientTestCase
         $projUsers = $this->client->listProjectUsers($testProject['id']);
         $this->assertCount(1,$projUsers);
 
-        $normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+        $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
 
         // now superAdmin should have access pending when he tries to join the project
         $this->client->addUserToProject($testProject['id'], [
@@ -262,11 +280,7 @@ class OrganizationsTest extends ClientTestCase
 
     public function testInviteSuperAdmin()
     {
-        $normalUserClient = new \Keboola\ManageApi\Client([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL')
-        ]);
-        $normalUser = $normalUserClient->verifyToken()['user'];
+        $normalUser = $this->normalUserClient->verifyToken()['user'];
         $superAdmin = $this->client->verifyToken()['user'];
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -277,14 +291,14 @@ class OrganizationsTest extends ClientTestCase
         ]);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
-        $testProject = $normalUserClient->createProject($organization['id'], [
+        $testProject = $this->normalUserClient->createProject($organization['id'], [
             'name' => 'Test Project',
         ]);
 
-        $org = $normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+        $org = $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
         $this->assertEquals(false, $org['allowAutoJoin']);
 
-        $normalUserClient->addUserToProject($testProject['id'],[
+        $this->normalUserClient->addUserToProject($testProject['id'],[
             "email" => $superAdmin['email']
         ]);
 
