@@ -72,7 +72,7 @@ Description of mentioned variables:
 - `KBC_MANAGE_API_TOKEN` - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens 
 - `KBC_SUPER_API_TOKEN` - can be created in manage-apps on the Tokens tab
 - `KBC_TEST_MAINTAINER_ID` - `id` of maintainer. This can be left as is, since you probably run tests for this maintainer.
-- `KBC_TEST_ADMIN_EMAIL` - email address of another user with admin privilege to organization
+- `KBC_TEST_ADMIN_EMAIL` - email address of another user without any organizations
 - `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`
 
 

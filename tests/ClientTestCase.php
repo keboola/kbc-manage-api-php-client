@@ -18,12 +18,22 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
      */
     protected $client;
 
+    /**
+     * @var Client
+     */
+    protected $normalUserClient;
+
     protected $testMaintainerId;
 
     public function setUp()
     {
         $this->client = new Client([
             'token' => getenv('KBC_MANAGE_API_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 1,
+        ]);
+        $this->normalUserClient = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 1,
         ]);

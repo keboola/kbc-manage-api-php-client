@@ -60,6 +60,21 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEmpty($org['projects']);
         $this->assertNotEmpty($organization['created']);
 
+        // permissions of another user
+        try {
+            $this->normalUserClient->getOrganization($organization['id']);
+            $this->fail('User should not have permissions to organization');
+        } catch (ClientException $e) {
+           $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->deleteOrganization($organization['id']);
+            $this->fail('User should not have permissions to organization');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
         $this->client->deleteOrganization($organization['id']);
 
         try {
@@ -86,6 +101,16 @@ class OrganizationsTest extends ClientTestCase
 
         $this->assertEquals("new name", $org['name']);
         $this->assertEquals(0, (int) $org['allowAutoJoin']);
+
+        // permissions of another user
+        try {
+            $this->normalUserClient->updateOrganization($organization['id'], [
+                "name" => "my name",
+            ]);
+            $this->fail('User should not have permissions to rename the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
     }
 
     public function testOrganizationUsers()
@@ -116,15 +141,19 @@ class OrganizationsTest extends ClientTestCase
 
         $admins = $this->client->listOrganizationUsers($organization['id']);
         $this->assertCount(1, $admins);
+
+        // permissions of another user
+        try {
+            $this->normalUserClient->addUserToOrganization($organization['id'], ['email' => 'spam2@keboola.com']);
+            $this->fail('User should not have permissions to add users to organization');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
     }
 
     public function testSuperNoJoinOrganization()
     {
-        $normalUserClient = new \Keboola\ManageApi\Client([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL')
-        ]);
-        $normalUser = $normalUserClient->verifyToken()['user'];
+        $normalUser = $this->normalUserClient->verifyToken()['user'];
         $superAdmin = $this->client->verifyToken()['user'];
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -146,11 +175,7 @@ class OrganizationsTest extends ClientTestCase
 
     public function testSettingAutoJoinFlag()
     {
-        $normalUserClient = new \Keboola\ManageApi\Client([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL')
-        ]);
-        $normalUser = $normalUserClient->verifyToken()['user'];
+        $normalUser = $this->normalUserClient->verifyToken()['user'];
         $superAdmin = $this->client->verifyToken()['user'];
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -169,7 +194,7 @@ class OrganizationsTest extends ClientTestCase
             $this->assertEquals("manage.updateOrganizationPermissionDenied", $e->getStringCode());
         }
         $this->assertEquals(true, $organization['allowAutoJoin']);
-        $org = $normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+        $org = $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
         $this->assertEquals(false, $org['allowAutoJoin']);
     }
 
