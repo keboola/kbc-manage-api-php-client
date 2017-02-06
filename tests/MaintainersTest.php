@@ -163,6 +163,45 @@ class MaintainersTest extends ClientTestCase
         $testMaintainer = $this->normalUserClient->getMaintainer($this->testMaintainerId);
         $this->assertNotEmpty($testMaintainer['name']);
     }
+
+    public function testCrossMaintainerOrganizationAccess()
+    {
+        $secondMaintainer = $this->client->createMaintainer(["name" => "secondary maintainer"]);
+        $this->client->addUserToMaintainer($secondMaintainer['id'], ["id" => $this->normalUser['id']]);
+        $this->client->removeUserFromMaintainer($secondMaintainer['id'], $this->superAdmin['id']);
+
+        $normalMaintainers = $this->normalUserClient->listMaintainers();
+        $this->assertCount(1, $normalMaintainers);
+        $this->assertEquals('secondary maintainer', $normalMaintainers[0]['name']);
+
+        try {
+            $this->normalUserClient->updateMaintainer($this->testMaintainerId, ["name" => "should fail"]);
+            $this->fail("Should not be able to update other maintainer");
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->createOrganization($this->testMaintainerId, ["name" => "org create fail"]);
+            $this->fail("Should not be able to create org for other maintainer");
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->addUserToMaintainer($this->testMaintainerId, ["email" => $this->normalUser['email']]);
+            $this->fail("Should not be able to add user to other maintainer");
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->removeUserFromMaintainer($this->testMaintainerId, $this->superAdmin['id']);
+            $this->fail("Should not be able to remove users from foreign maintainer");
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+    }
     
     public function testListMaintainers()
     {
