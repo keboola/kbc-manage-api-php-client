@@ -13,29 +13,6 @@ use Keboola\ManageApi\ClientException;
 
 class MaintainersTest extends ClientTestCase
 {
-    private $normalUser;
-    
-    private $superAdmin;
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->normalUser = $this->normalUserClient->verifyToken()['user'];
-        $this->superAdmin = $this->client->verifyToken()['user'];
-        $maintainers = $this->client->listMaintainers();
-        foreach ($maintainers as $maintainer) {
-            if ((int) $maintainer['id'] === (int) $this->testMaintainerId) {
-                $members = $this->client->listMaintainerMembers($maintainer['id']);
-                foreach ($members as $member) {
-                    if ($member['id'] != $this->superAdmin['id']) {
-                        $this->client->removeUserFromMaintainer($maintainer['id'], $member['id']);
-                    }
-                }
-            } else {
-                $this->client->deleteMaintainer($maintainer['id']);
-            }
-        }
-    }
 
     public function testCreateDeleteMaintainer()
     {
