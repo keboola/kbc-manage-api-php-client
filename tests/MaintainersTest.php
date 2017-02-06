@@ -96,14 +96,12 @@ class MaintainersTest extends ClientTestCase
         if (!is_null($mysqlBackend)) {
             $updateArray['defaultConnectionMysqlId'] = $mysqlBackend['id'];
         }
-        /*
         if (!is_null($redshiftBackend)) {
             $updateArray['defaultConnectionRedshiftId'] = $redshiftBackend['id'];
         }
         if (!is_null($snowflakeBackend)) {
             $updateArray['defaultConnectionSnowflakeId'] = $snowflakeBackend['id'];
         }
-        */
 
         $updateArray['zendeskUrl'] = "https://fake.url.com";
 
@@ -120,6 +118,16 @@ class MaintainersTest extends ClientTestCase
         if (array_key_exists('defaultConnectionSnowflakeId',$updateArray)) {
             $this->assertEquals($snowflakeBackend['id'], $updatedMaintainer['defaultConnectionSnowflakeId']);
         }
+
+        // test nulling out connection ids
+        $upd = $this->client->updateMaintainer($this->testMaintainerId, [
+            'defaultConnectionMysqlId' => null,
+            'defaultConnectionRedshiftId' => null,
+            'defaultConnectionSnowflakeId' => null,
+        ]);
+        $this->assertNull($upd['defaultConnectionMysqlId']);
+        $this->assertNull($upd['defaultConnectionRedshiftId']);
+        $this->assertNull($upd['defaultConnectionSnowflakeId']);
     }
 
     public function testNormalUserMaintainerPermissions()
