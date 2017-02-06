@@ -95,9 +95,9 @@ Create a new maintainer. User associated to token will become a admin of maintai
             "id": 123,
             "name": "Keboola CZ",
             "created": "2014-11-11T08:40:51.620Z",
-            "defaultConnectionMysql": 234,
-            "defaultConnectionRedshift": 232,
-            "defaultConnectionSnowflake": 242,
+            "defaultConnectionMysqlId": 234,
+            "defaultConnectionRedshiftId": 232,
+            "defaultConnectionSnowflakeId": 242,
             "organizations": [
                 {
                     "id": 234,
@@ -115,9 +115,9 @@ Create a new maintainer. User associated to token will become a admin of maintai
             "id": 124,
             "name": "abc",
             "crated": "2014-11-11T08:40:51.620Z",
-            "defaultConnectionMysql": 234,
-            "defaultConnectionRedshift": 232,
-            "defaultConnectionSnowflake": 242,            
+            "defaultConnectionMysqlId": 234,
+            "defaultConnectionRedshiftId": 232,
+            "defaultConnectionSnowflakeId": 242,
             "organizations": [
                 {
                     "id": 234,
@@ -152,9 +152,9 @@ A Maintainer object has the following attributes:
         "id": 123,
         "crated": "2014-11-11T08:40:51.620Z",
         "url": "/questions/1",
-        "defaultConnectionMysql": 234,
-        "defaultConnectionRedshift": 232,
-        "defaultConnectionSnowflake": 242,
+        "defaultConnectionMysqlId": 234,
+        "defaultConnectionRedshiftId": 232,
+        "defaultConnectionSnowflakeId": 242,
         "zendesk_url": "https://some.url.com",
         "zendesk_dropboxId": "someIdentifier",
         "organizations": [
@@ -182,9 +182,9 @@ Partial update of maintainer.
 Parameters:
 
 + name (optional) - Maintainer name
-+ idDefaultConnectionMysql (optional) - Default Mysql Connection Id
-+ idDefaultConnectionRedshift (optional) - Default Redshift Connection Id
-+ idDefaultConnectionSnowflake (optional) - Default Snowflake Connection Id
++ defaultConnectionMysqlId (optional) - Default Mysql Connection Id
++ defaultConnectionRedshiftId (optional) - Default Redshift Connection Id
++ defaultConnectionSnowflakeId (optional) - Default Snowflake Connection Id
 + zendesk_url (optional)
 
 + Request (application/json)

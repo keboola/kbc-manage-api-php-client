@@ -13,12 +13,6 @@ use Keboola\ManageApi\ClientException;
 
 class MaintainersTest extends ClientTestCase
 {
-    
-    /**
-     * @var Client
-     */
-    private $normalUserClient;
-
     private $normalUser;
     
     private $superAdmin;
@@ -26,10 +20,6 @@ class MaintainersTest extends ClientTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->normalUserClient = new \Keboola\ManageApi\Client([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL')
-        ]);
         $this->normalUser = $this->normalUserClient->verifyToken()['user'];
         $this->superAdmin = $this->client->verifyToken()['user'];
     }
@@ -61,16 +51,16 @@ class MaintainersTest extends ClientTestCase
 
         $newMaintainer = $this->client->createMaintainer([
             'name' => "test maintainer",
-            'idDefaultConnectionMysql' => $testMaintainer['idDefaultConnectionMysql'],
-            'idDefaultConnectionRedshift' => $testMaintainer['idDefaultConnectionRedshift'],
-            'idDefaultConnectionSnowflake' => $testMaintainer['idDefaultConnectionSnowflake'],
+            'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
+            'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
+            'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
         ]);
 
         $this->assertEquals('test maintainer', $newMaintainer['name']);
         $this->assertArrayHasKey('created', $newMaintainer);
-        $this->assertEquals($testMaintainer['idDefaultConnectionMysql'], $newMaintainer['idDefaultConnectionMysql']);
-        $this->assertEquals($testMaintainer['idDefaultConnectionRedshift'], $newMaintainer['idDefaultConnectionRedshift']);
-        $this->assertEquals($testMaintainer['idDefaultConnectionSnowflake'], $newMaintainer['idDefaultConnectionSnowflake']);
+        $this->assertEquals($testMaintainer['defaultConnectionMysqlId'], $newMaintainer['defaultConnectionMysqlId']);
+        $this->assertEquals($testMaintainer['defaultConnectionRedshiftId'], $newMaintainer['defaultConnectionRedshiftId']);
+        $this->assertEquals($testMaintainer['defaultConnectionSnowflakeId'], $newMaintainer['defaultConnectionSnowflakeId']);
         $this->assertArrayHasKey('zendesk_url', $newMaintainer);
         $this->assertNull($newMaintainer['zendesk_url']);
 
@@ -112,13 +102,13 @@ class MaintainersTest extends ClientTestCase
         ]);
         $updateArray = ['name' => 'updated name'];
         if (!is_null($mysqlBackend)) {
-            $updateArray['idDefaultConnectionMysql'] = $mysqlBackend['id'];
+            $updateArray['defaultConnectionMysqlId'] = $mysqlBackend['id'];
         }
         if (!is_null($redshiftBackend)) {
-            $updateArray['idDefaultConnectionRedshift'] = $redshiftBackend['id'];
+            $updateArray['defaultConnectionRedshiftId'] = $redshiftBackend['id'];
         }
         if (!is_null($snowflakeBackend)) {
-            $updateArray['idDefaultConnectionSnowflake'] = $snowflakeBackend['id'];
+            $updateArray['defaultConnectionSnowflakeId'] = $snowflakeBackend['id'];
         }
 
         $updateArray['zendesk_url'] = "https://fake.url.com";
@@ -127,14 +117,14 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals('updated name', $updatedMaintainer['name']);
         $this->assertEquals("https://fake.url.com", $updatedMaintainer['zendesk_url']);
 
-        if (array_key_exists('idDefaultConnectionMysql',$updateArray)) {
-            $this->assertEquals($mysqlBackend['id'], $updatedMaintainer['idDefaultConnectionMysql']);
+        if (array_key_exists('defaultConnectionMysqlId',$updateArray)) {
+            $this->assertEquals($mysqlBackend['id'], $updatedMaintainer['defaultConnectionMysqlId']);
         }
-        if (array_key_exists('idDefaultConnectionRedshift',$updateArray)) {
-            $this->assertEquals($redshiftBackend['id'], $updatedMaintainer['idDefaultConnectionRedshift']);
+        if (array_key_exists('defaultConnectionRedshiftId',$updateArray)) {
+            $this->assertEquals($redshiftBackend['id'], $updatedMaintainer['defaultConnectionRedshiftId']);
         }
-        if (array_key_exists('idDefaultConnectionSnowflake',$updateArray)) {
-            $this->assertEquals($snowflakeBackend['id'], $updatedMaintainer['idDefaultConnectionSnowflake']);
+        if (array_key_exists('defaultConnectionSnowflakeId',$updateArray)) {
+            $this->assertEquals($snowflakeBackend['id'], $updatedMaintainer['defaultConnectionSnowflakeId']);
         }
     }
 
@@ -144,9 +134,9 @@ class MaintainersTest extends ClientTestCase
         try {
             $newMaintainer = $this->normalUserClient->createMaintainer([
                 'name' => "test maintainer",
-                'idDefaultConnectionMysql' => $testMaintainer['idDefaultConnectionMysql'],
-                'idDefaultConnectionRedshift' => $testMaintainer['idDefaultConnectionRedshift'],
-                'idDefaultConnectionSnowflake' => $testMaintainer['idDefaultConnectionSnowflake'],
+                'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
+                'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
+                'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
             ]);    
             $this->fail("normal user should not be able to create maintainrer");
         } catch (ClientException $e) {
@@ -173,6 +163,45 @@ class MaintainersTest extends ClientTestCase
         $testMaintainer = $this->normalUserClient->getMaintainer($this->testMaintainerId);
         $this->assertNotEmpty($testMaintainer['name']);
     }
+
+    public function testCrossMaintainerOrganizationAccess()
+    {
+        $secondMaintainer = $this->client->createMaintainer(["name" => "secondary maintainer"]);
+        $this->client->addUserToMaintainer($secondMaintainer['id'], ["id" => $this->normalUser['id']]);
+        $this->client->removeUserFromMaintainer($secondMaintainer['id'], $this->superAdmin['id']);
+
+        $normalMaintainers = $this->normalUserClient->listMaintainers();
+        $this->assertCount(1, $normalMaintainers);
+        $this->assertEquals('secondary maintainer', $normalMaintainers[0]['name']);
+
+        try {
+            $this->normalUserClient->updateMaintainer($this->testMaintainerId, ["name" => "should fail"]);
+            $this->fail("Should not be able to update other maintainer");
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->createOrganization($this->testMaintainerId, ["name" => "org create fail"]);
+            $this->fail("Should not be able to create org for other maintainer");
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->addUserToMaintainer($this->testMaintainerId, ["email" => $this->normalUser['email']]);
+            $this->fail("Should not be able to add user to other maintainer");
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->removeUserFromMaintainer($this->testMaintainerId, $this->superAdmin['id']);
+            $this->fail("Should not be able to remove users from foreign maintainer");
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+    }
     
     public function testListMaintainers()
     {
@@ -185,9 +214,9 @@ class MaintainersTest extends ClientTestCase
         $this->assertInternalType('int', $maintainer['id']);
         $this->assertNotEmpty($maintainer['name']);
         $this->assertNotEmpty($maintainer['created']);
-        $this->assertArrayHasKey('idDefaultConnectionMysql', $maintainer);
-        $this->assertArrayHasKey('idDefaultConnectionRedshift', $maintainer);
-        $this->assertArrayHasKey('idDefaultConnectionSnowflake', $maintainer);
+        $this->assertArrayHasKey('defaultConnectionMysqlId', $maintainer);
+        $this->assertArrayHasKey('defaultConnectionRedshiftId', $maintainer);
+        $this->assertArrayHasKey('defaultConnectionSnowflakeId', $maintainer);
         $this->assertArrayHasKey('zendesk_url', $maintainer);
         $this->assertNull($maintainer['zendesk_url']);
     }
@@ -229,9 +258,10 @@ class MaintainersTest extends ClientTestCase
         // make sure normalUser is a maintainer
         $this->addNormalMaintainer();
 
-        // make sure maintainer cannot join organization
+        // make sure maintainer cannot join organization -- superAdmin should not be org member for this test
+        $this->client->removeUserFromOrganization($organization['id'], $this->superAdmin['id']);
         try {
-            $this->client->addUserToOrganization($organization['id'], ["email" => $this->normalUser['email']]);
+            $org = $this->client->addUserToOrganization($organization['id'], ["email" => $this->normalUser['email']]);
             $this->fail("Cannot add maintainers to organization");
         } catch (ClientException $e) {
             $this->assertEquals("manage.joinOrganizationPermissionDenied", $e->getStringCode());
