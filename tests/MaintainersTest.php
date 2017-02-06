@@ -120,7 +120,7 @@ class MaintainersTest extends ClientTestCase
         }
 
         // test nulling out connection ids
-        $upd = $this->client->updateMaintainer($this->testMaintainerId, [
+        $upd = $this->client->updateMaintainer($newMaintainer['id'], [
             'defaultConnectionMysqlId' => null,
             'defaultConnectionRedshiftId' => null,
             'defaultConnectionSnowflakeId' => null,
@@ -129,6 +129,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertNull($upd['defaultConnectionRedshiftId']);
         $this->assertNull($upd['defaultConnectionSnowflakeId']);
     }
+
 
     public function testNormalUserMaintainerPermissions()
     {
