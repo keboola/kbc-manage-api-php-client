@@ -53,8 +53,8 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals($testMaintainer['defaultConnectionMysqlId'], $newMaintainer['defaultConnectionMysqlId']);
         $this->assertEquals($testMaintainer['defaultConnectionRedshiftId'], $newMaintainer['defaultConnectionRedshiftId']);
         $this->assertEquals($testMaintainer['defaultConnectionSnowflakeId'], $newMaintainer['defaultConnectionSnowflakeId']);
-        $this->assertArrayHasKey('zendesk_url', $newMaintainer);
-        $this->assertNull($newMaintainer['zendesk_url']);
+        $this->assertArrayHasKey('zendeskUrl', $newMaintainer);
+        $this->assertNull($newMaintainer['zendeskUrl']);
 
         $maintainerList = $this->client->listMaintainers();
         $this->assertCount(2, $maintainerList);
@@ -96,18 +96,20 @@ class MaintainersTest extends ClientTestCase
         if (!is_null($mysqlBackend)) {
             $updateArray['defaultConnectionMysqlId'] = $mysqlBackend['id'];
         }
+        /*
         if (!is_null($redshiftBackend)) {
             $updateArray['defaultConnectionRedshiftId'] = $redshiftBackend['id'];
         }
         if (!is_null($snowflakeBackend)) {
             $updateArray['defaultConnectionSnowflakeId'] = $snowflakeBackend['id'];
         }
+        */
 
-        $updateArray['zendesk_url'] = "https://fake.url.com";
+        $updateArray['zendeskUrl'] = "https://fake.url.com";
 
         $updatedMaintainer = $this->client->updateMaintainer($newMaintainer['id'], $updateArray);
         $this->assertEquals('updated name', $updatedMaintainer['name']);
-        $this->assertEquals("https://fake.url.com", $updatedMaintainer['zendesk_url']);
+        $this->assertEquals("https://fake.url.com", $updatedMaintainer['zendeskUrl']);
 
         if (array_key_exists('defaultConnectionMysqlId',$updateArray)) {
             $this->assertEquals($mysqlBackend['id'], $updatedMaintainer['defaultConnectionMysqlId']);
@@ -209,8 +211,8 @@ class MaintainersTest extends ClientTestCase
         $this->assertArrayHasKey('defaultConnectionMysqlId', $maintainer);
         $this->assertArrayHasKey('defaultConnectionRedshiftId', $maintainer);
         $this->assertArrayHasKey('defaultConnectionSnowflakeId', $maintainer);
-        $this->assertArrayHasKey('zendesk_url', $maintainer);
-        $this->assertNull($maintainer['zendesk_url']);
+        $this->assertArrayHasKey('zendeskUrl', $maintainer);
+        $this->assertNull($maintainer['zendeskUrl']);
     }
     
     public function testUserMaintainerUsers()
