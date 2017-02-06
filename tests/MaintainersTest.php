@@ -22,13 +22,6 @@ class MaintainersTest extends ClientTestCase
         parent::setUp();
         $this->normalUser = $this->normalUserClient->verifyToken()['user'];
         $this->superAdmin = $this->client->verifyToken()['user'];
-    }
-
-    /**
-     * Clean up any created maintainers or users added
-     */
-    public function tearDown()
-    {
         $maintainers = $this->client->listMaintainers();
         foreach ($maintainers as $maintainer) {
             if ((int) $maintainer['id'] === (int) $this->testMaintainerId) {
@@ -40,9 +33,8 @@ class MaintainersTest extends ClientTestCase
                 }
             } else {
                 $this->client->deleteMaintainer($maintainer['id']);
-            } 
+            }
         }
-        parent::tearDown();
     }
 
     public function testCreateDeleteMaintainer()
