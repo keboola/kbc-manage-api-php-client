@@ -95,8 +95,9 @@ Create a new maintainer. User associated to token will become a admin of maintai
             "id": 123,
             "name": "Keboola CZ",
             "created": "2014-11-11T08:40:51.620Z",
-            "defaultConnectionMysql": 234,
-            "defaultConnectionRedshift": 232,
+            "defaultConnectionMysqlId": 234,
+            "defaultConnectionRedshiftId": 232,
+            "defaultConnectionSnowflakeId": 242,
             "organizations": [
                 {
                     "id": 234,
@@ -114,8 +115,9 @@ Create a new maintainer. User associated to token will become a admin of maintai
             "id": 124,
             "name": "abc",
             "crated": "2014-11-11T08:40:51.620Z",
-            "defaultConnectionMysql": 234,
-            "defaultConnectionRedshift": 232,
+            "defaultConnectionMysqlId": 234,
+            "defaultConnectionRedshiftId": 232,
+            "defaultConnectionSnowflakeId": 242,
             "organizations": [
                 {
                     "id": 234,
@@ -141,7 +143,7 @@ A Maintainer object has the following attributes:
 + organizations - An array of Organizations objects.
 
 + Parameters
-    + maintainer_id: 1 (required, number) - ID of the Question in form of an integer
+    + maintainer_id: 1 (required, integer) 
 
 + Model (application/json)
 
@@ -150,8 +152,11 @@ A Maintainer object has the following attributes:
         "id": 123,
         "crated": "2014-11-11T08:40:51.620Z",
         "url": "/questions/1",
-        "defaultConnectionMysql": 234,
-        "defaultConnectionRedshift": 232,
+        "defaultConnectionMysqlId": 234,
+        "defaultConnectionRedshiftId": 232,
+        "defaultConnectionSnowflakeId": 242,
+        "zendesk_url": "https://some.url.com",
+        "zendesk_dropboxId": "someIdentifier",
         "organizations": [
             {
                 "id": 234,
@@ -177,6 +182,10 @@ Partial update of maintainer.
 Parameters:
 
 + name (optional) - Maintainer name
++ defaultConnectionMysqlId (optional) - Default Mysql Connection Id
++ defaultConnectionRedshiftId (optional) - Default Redshift Connection Id
++ defaultConnectionSnowflakeId (optional) - Default Snowflake Connection Id
++ zendesk_url (optional)
 
 + Request (application/json)
 
@@ -200,8 +209,6 @@ Parameters:
 
 ### List members [GET]
 
- *Not yet implemented.*
-
 + Response 200 (application/json)
 
     ```js
@@ -215,8 +222,6 @@ Parameters:
     ```
 
 ## Add a user [POST]
-
- *Not yet implemented.*
 
 Either `id` or `email` of member must be set. If member is not found by email, account is created and invitation is sent.
 
@@ -232,8 +237,6 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 + Response 204
 
 ## Remove a user [DELETE /manage/maintainers/{maintainer_id}/users/{user_id}]
-
- *Not yet implemented.*
 
 + Parameters
     + maintainer_id: 1 (required, number) - ID of the maintainer.
