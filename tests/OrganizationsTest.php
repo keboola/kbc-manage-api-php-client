@@ -184,9 +184,18 @@ class OrganizationsTest extends ClientTestCase
         $this->client->addUserToOrganization($organization['id'], [
             "email" => $normalUser['email']
         ]);
+        $this->assertTrue($organization['allowAutoJoin']);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
+        $orgUsers = $this->client->listOrganizationUsers($organization['id']);
+        $this->assertCount(1, $orgUsers);
 
-        // make sure superAdmin cannot join organization
+        // make sure superAdmin can add someone to the organization, allowAutoJoin is true
+        $org = $this->client->addUserToOrganization($organization['id'], ["email" => "spammer@keboola.com"]);
+        $orgUsers = $this->client->listOrganizationUsers($organization['id']);
+        $this->assertCount(2, $orgUsers);
+
+        // now set allowAutoJoin to false and super should no longer be able to add user to org
+        $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
         try {
             $this->client->addUserToOrganization($organization['id'], ["email" => "spammer@keboola.com"]);
             $this->fail("Should not be able to add the user");
