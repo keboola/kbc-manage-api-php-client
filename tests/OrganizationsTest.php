@@ -150,29 +150,7 @@ class OrganizationsTest extends ClientTestCase
             $this->assertEquals(403, $e->getCode());
         }
     }
-
-    public function testSuperNoJoinOrganization()
-    {
-        $normalUser = $this->normalUserClient->verifyToken()['user'];
-        $superAdmin = $this->client->verifyToken()['user'];
-
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'Test org',
-        ]);
-        $this->client->addUserToOrganization($organization['id'], [
-            "email" => $normalUser['email']
-        ]);
-        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
-
-        // make sure superAdmin cannot join organization
-        try {
-            $this->client->addUserToOrganization($organization['id'], ["email" => $superAdmin['email']]);
-            $this->fail("Cannot add super users to organization");
-        } catch (ClientException $e) {
-            $this->assertEquals("manage.joinOrganizationPermissionDenied", $e->getStringCode());
-        }
-    }
-
+    
     public function testSuperCannotAddAnybodyToOrganizationWithNoJoin()
     {
         $normalUser = $this->normalUserClient->verifyToken()['user'];
