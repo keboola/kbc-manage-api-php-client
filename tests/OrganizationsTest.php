@@ -150,7 +150,7 @@ class OrganizationsTest extends ClientTestCase
             $this->assertEquals(403, $e->getCode());
         }
     }
-    
+
     public function testSuperCannotAddAnybodyToOrganizationWithNoJoin()
     {
         $normalUser = $this->normalUserClient->verifyToken()['user'];
