@@ -225,29 +225,9 @@ class MaintainersTest extends ClientTestCase
     }
 
     // the remaining tests are testing maintainer user privileges
-    // 1) confirm maintainer users cannot join organization
-    // 2) confirm maintainer users cannot update autoJoin flag for organization
-    // 3) confirm project joining requirements.
-    // 4) confirm invited maintainer is active
-    public function testMaintainerNoJoinOrganization()
-    {
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'Test org',
-        ]);
-
-        // make sure normalUser is a maintainer
-        $this->addNormalMaintainer();
-
-        // make sure maintainer cannot join organization -- superAdmin should not be org member for this test
-        $this->client->removeUserFromOrganization($organization['id'], $this->superAdmin['id']);
-        try {
-            $org = $this->client->addUserToOrganization($organization['id'], ["email" => $this->normalUser['email']]);
-            $this->fail("Cannot add maintainers to organization");
-        } catch (ClientException $e) {
-            $this->assertEquals("manage.joinOrganizationPermissionDenied", $e->getStringCode());
-        }
-    }
-
+    // 1) confirm maintainer users cannot update autoJoin flag for organization
+    // 2) confirm project joining requirements.
+    // 3) confirm invited maintainer is active
     public function testSettingAutoJoinFlag()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
