@@ -250,6 +250,68 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
+    public function testExpiringUserDeletedProject()
+    {
+        // normal user in this case will be our maintainer.
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+        $organization = $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $admins = $this->client->listProjectUsers($project['id']);
+        $this->assertCount(1, $admins);
+        $this->assertEquals($this->superAdmin['email'], $admins[0]['email']);
+
+        // test of adding / removing user with expiration/reason
+        $resp = $this->normalUserClient->addUserToProject($project['id'], [
+            'email' => $this->normalUser['email'],
+            'reason' => 'created by test',
+            'expirationSeconds' => '30'
+        ]);
+
+        $admins = $this->normalUserClient->listProjectUsers($project['id']);
+        $this->assertCount(2, $admins);
+
+        foreach ($admins as $projUser) {
+            if ($projUser['email'] === $this->superAdmin['email']) {
+                $this->assertEquals($projUser['id'], $this->superAdmin['id']);
+                $this->assertEquals("active", $projUser['status']);
+            } else {
+                $this->assertEquals($projUser['email'], $this->normalUser['email']);
+                $this->assertEquals("pending", $projUser['status']);
+            }
+        }
+
+        // now delete the project
+        $this->client->deleteProject($project['id']);
+
+        // now the next time the cron runs the user should be removed from the deleted project.
+        sleep(90);
+
+        // after undeleting the project, the user should be gone
+        $this->client->undeleteProject($project['id']);
+
+        // user should be gone
+        $admins = $this->client->listProjectUsers($project['id']);
+        $this->assertCount(1, $admins);
+        $this->assertEquals($this->superAdmin['email'], $admins[0]['email']);
+
+        // let's add the expired user back to the project
+        $resp = $this->client->addUserToProject($project['id'], [
+            'email' => $this->normalUser['email']
+        ]);
+
+        // the project should have 2 users now
+        $admins = $this->client->listProjectUsers($project['id']);
+        $this->assertCount(2, $admins);
+    }
+
     public function testTemporaryAccess()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
