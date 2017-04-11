@@ -258,7 +258,6 @@ class ProjectsTest extends ClientTestCase
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
         ]);
-        $organization = $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
@@ -272,19 +271,18 @@ class ProjectsTest extends ClientTestCase
         $resp = $this->normalUserClient->addUserToProject($project['id'], [
             'email' => $this->normalUser['email'],
             'reason' => 'created by test',
-            'expirationSeconds' => '30'
+            'expirationSeconds' => '20'
         ]);
 
         $admins = $this->normalUserClient->listProjectUsers($project['id']);
         $this->assertCount(2, $admins);
 
         foreach ($admins as $projUser) {
+            $this->assertEquals("active", $projUser['status']);
             if ($projUser['email'] === $this->superAdmin['email']) {
                 $this->assertEquals($projUser['id'], $this->superAdmin['id']);
-                $this->assertEquals("active", $projUser['status']);
             } else {
                 $this->assertEquals($projUser['email'], $this->normalUser['email']);
-                $this->assertEquals("pending", $projUser['status']);
             }
         }
 
@@ -292,13 +290,14 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteProject($project['id']);
 
         // now the next time the cron runs the user should be removed from the deleted project.
-        sleep(90);
+        sleep(60);
 
         // after undeleting the project, the user should be gone
         $this->client->undeleteProject($project['id']);
 
         // user should be gone
         $admins = $this->client->listProjectUsers($project['id']);
+
         $this->assertCount(1, $admins);
         $this->assertEquals($this->superAdmin['email'], $admins[0]['email']);
 
