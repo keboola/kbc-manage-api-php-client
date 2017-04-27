@@ -290,7 +290,7 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteProject($project['id']);
 
         // now the next time the cron runs the user should be removed from the deleted project.
-        sleep(60);
+        sleep(120);
 
         // after undeleting the project, the user should be gone
         $this->client->undeleteProject($project['id']);
