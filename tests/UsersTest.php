@@ -100,4 +100,19 @@ class UsersTest extends ClientTestCase
         $this->assertSame($initialFeaturesCount + 1, count($user['features']));
     }
 
+    public function testUpdateUser()
+    {
+        $token = $this->client->verifyToken();
+        $this->assertTrue(isset($token['user']['id']));
+        $userId = $token['user']['id'];
+
+        $user = $this->client->getUser($userId);
+
+        $oldUserName = $user['name'];
+
+        $updatedUser = $this->client->updateUser($userId, ['name' => 'Pat a Mat']);
+
+        $this->assertNotEquals($oldUserName, $updatedUser['name']);
+        $this->assertEquals("Pat a Mat", $updatedUser['name']);
+    }
 }

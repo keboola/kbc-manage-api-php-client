@@ -350,6 +350,11 @@ class Client
         return $this->apiGet("/manage/users/{$emailOrId}");
     }
 
+    public function updateUser($emailOrId, $params)
+    {
+        return $this->apiPut("/manage/users/{$emailOrId}", $params);
+    }
+
     public function addUserFeature($emailOrId, $feature)
     {
         return $this->apiPost("/manage/users/{$emailOrId}/features", [
