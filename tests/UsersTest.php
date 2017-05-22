@@ -109,10 +109,11 @@ class UsersTest extends ClientTestCase
         $user = $this->client->getUser($userId);
 
         $oldUserName = $user['name'];
+        $newUserName = 'Rename ' . date('y-m-d H:i:s');
 
-        $updatedUser = $this->client->updateUser($userId, ['name' => 'Pat a Mat']);
+        $updatedUser = $this->client->updateUser($userId, ['name' => $newUserName]);
 
         $this->assertNotEquals($oldUserName, $updatedUser['name']);
-        $this->assertEquals("Pat a Mat", $updatedUser['name']);
+        $this->assertEquals($newUserName, $updatedUser['name']);
     }
 }
