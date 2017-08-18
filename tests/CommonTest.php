@@ -8,6 +8,7 @@
 
 namespace Keboola\ManageApiTest;
 
+use GuzzleHttp\Exception\ClientException;
 use Keboola\ManageApi\Client;
 
 class CommonTest extends ClientTestCase
@@ -74,9 +75,9 @@ class CommonTest extends ClientTestCase
                 '/manage/maintainers/' . $this->testMaintainerId . '/organizations',
                 $requestOptions
             );
-        } catch (\Exception $e) {
+        } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Request body not valid', $e->getMessage());
+            $this->assertContains('Request body not valid', (string) $e->getResponse()->getBody());
         }
     }
 }
