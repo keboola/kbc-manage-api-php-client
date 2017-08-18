@@ -14,21 +14,8 @@ use Keboola\StorageApi\Client;
 class StorageBackendTest extends ClientTestCase
 {
 
-    public function testStorageBackendCreate()
+    public function testStorageAssignRedshiftBackend()
     {
-        $this->markTestSkipped('just for development');
-        $backend = $this->client->createStorageBackend([
-            'region' => 'us-east-1',
-            'backend' => 'mysql',
-            'host' => 'rds-devel-a.c97npkkbezqf.eu-west-1.rds.amazonaws.com',
-            'username' => '',
-            'password' => '',
-        ]);
-    }
-
-    public function testStorageAssignBackend()
-    {
-        $this->markTestSkipped('this creates too many RS databses - skip it for');
         // get redshift backend
         $backends = $this->client->listStorageBackend();
         $redshiftBackend = null;
@@ -86,11 +73,14 @@ class StorageBackendTest extends ClientTestCase
         $bucketId = $sapiClient->createBucket('test', 'in');
         $bucket = $sapiClient->getBucket($bucketId);
         $this->assertEquals('redshift', $bucket['backend']);
+
+        $sapiClient->dropBucket($bucketId);
+
+        $this->client->removeProjectStorageBackend($project['id'], $redshiftBackend['id']);
     }
 
     public function testStorageAssignSnowflakeBackend()
     {
-        $this->markTestSkipped('this creates too many SF databses - skip it for');
         // get redshift backend
         $backends = $this->client->listStorageBackend();
         $snowflakeBackend = null;
@@ -149,6 +139,9 @@ class StorageBackendTest extends ClientTestCase
         $bucket = $sapiClient->getBucket($bucketId);
         $this->assertEquals('snowflake', $bucket['backend']);
 
+        $sapiClient->dropBucket($bucketId);
+
+        $this->client->removeProjectStorageBackend($project['id'], $snowflakeBackend['id']);
     }
 
     public function testStorageBackendList()
