@@ -228,6 +228,11 @@ class Client
         return $this->apiGet("/manage/deleted-projects?" . http_build_query($queryParams));
     }
 
+    public function getDeletedProject($id)
+    {
+        return $this->apiGet("/manage/deleted-projects/{$id}");
+    }
+
     public function listProjectUsers($id)
     {
         return $this->apiGet("/manage/projects/{$id}/users");
