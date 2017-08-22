@@ -429,6 +429,11 @@ class Client
         return $this->apiGet("manage/ui-apps");
     }
 
+    public function runCommand(array $options)
+    {
+        return $this->apiPost("/manage/commands", $options);
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
