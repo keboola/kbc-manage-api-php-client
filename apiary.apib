@@ -143,7 +143,7 @@ A Maintainer object has the following attributes:
 + organizations - An array of Organizations objects.
 
 + Parameters
-    + maintainer_id: 1 (required, integer) 
+    + maintainer_id: 1 (required, integer)
 
 + Model (application/json)
 
@@ -366,7 +366,7 @@ Create a new organization.
 
 ## Organization users [/manage/organizations/{organization_id}/users]
 
- 
+
 
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization.
@@ -1639,6 +1639,35 @@ According to previous example parameter for storage create will be:
 + username: keboola (required)
 + password: 1234 (required)
 + owner: keboola (required)
+
+
+# Group SUPER - Commands
+
+## Run Command [POST /manage/commands]
+
+Execute Keboola Connection cli command asynchronously. Command is enqued to commands queue, `commandExecutionId` is returned.
+You can use this id for search of command output in papertrail logs.
+
+
++ Request (application/json)
+
+    + Attributes(CommandExecute)
+
++ Response 201 (application/json)
+
+    + Attributes(CommandExecuteResponse)
+
+## Data Structures
+
+### CommandExecute
+
++ command: `storage:workers\-list` (required) - command to execute
++ parameters: `--help`, 23 (array[string]) - command parameters
+
+## CommandExecuteResponse
+
++ commandExecutionId: `123\-abcd` (required) - id of execution, this id is appended to all logs provided by command
+
 
 
 # Group SUPER - UI Management
