@@ -917,6 +917,24 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
+    public function testDeletedProjectDetail()
+    {
+        $organization = $this->initTestOrganization();
+
+        $project = $this->initTestProject($organization['id']);
+
+        $this->client->deleteProject($project['id']);
+
+        $params = array(
+            'organizationId' => $organization['id'],
+        );
+
+        $deletedProject = $this->client->getDeletedProject($project['id']);
+        $this->assertTrue($deletedProject['isDeleted']);
+        $this->assertFalse($deletedProject['isPurged']);
+        $this->assertNull($deletedProject['purgedTime']);
+    }
+
     public function testActiveProjectUnDelete()
     {
         $organization = $this->initTestOrganization();
