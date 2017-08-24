@@ -1003,6 +1003,53 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
 # Group Deleted Projects
 
+Deleted project operations are allowed only for super admins.
+
+## Deleted project detail [/manage/deleted-projects/{project_id}]
+
+### Deleted project detail [GET]
+
++ Parameters
+    + project_id (required, int) - Deleted project id
+
++ Response 200 (application/json)
+
+    ```js
+    {
+            "id":258,
+            "name":"Shared Config",
+            "description": "Project description",
+            "features":["new-orchestrator","es-events"],
+            "created": "2014-11-11T08:40:51.620Z",
+            "expirationDate": "2015-11-11T08:40:51.620Z",
+            "defaultBackend": "redshift",
+            "monthlyPrice" 800.0,
+            "redshift": {
+                "connectionId":309,
+                "databaseName":"sapi_258"
+            }
+            "organization": {
+                "id": "1"
+            },
+            "alarms": [],
+            "limits": []
+        }
+    ```
+
+
+## Purge Deleted Project [/manage/deleted-projects/{project_id}/purge]
+
+### Purge Deleted Project [POST]
+Enqueues project full delete command and returns its command execution id for monitoring.
+
++ Parameters
+    + project_id (required, int) - Deleted project id
+
++ Response 200 (application/json)
+
+ + Attributes(CommandExecuteResponse)
+
+
 ## List deleted projects [/manage/deleted-projects]
 
 ### List deleted projects [GET]
