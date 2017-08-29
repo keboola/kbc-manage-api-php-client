@@ -233,9 +233,9 @@ class Client
         return $this->apiGet("/manage/deleted-projects/{$id}");
     }
 
-    public function purgeDeletedProject($id)
+    public function purgeDeletedProject($id, array $params = [])
     {
-        return $this->apiPost("/manage/deleted-projects/{$id}/purge");
+        return $this->apiPost("/manage/deleted-projects/{$id}/purge", $params);
     }
 
     public function listProjectUsers($id)
