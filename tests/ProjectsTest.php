@@ -1058,4 +1058,23 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteOrganization($organization['id']);
     }
+
+    public function testProjectDataRetention()
+    {
+        $organization = $this->initTestOrganization();
+        $project = $this->initTestProject($organization['id']);
+
+        $this->assertEquals(1, (int) $project['dataRetentionTimeInDays']);
+
+        // verify that normal users can't update data retention time
+        try {
+            $this->normalUserClient->updateProject($project['id'], ['dataRetentionTimeInDays' => 30]);
+            $this->fail('Must be a super admin to update data retention period');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->updateProject($project['id'], ['dataRetentionTimeInDays' => 30]);
+        $this->assertEquals(30, (int) $project['dataRetentionTimeInDays']);
+    }
 }
