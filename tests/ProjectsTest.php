@@ -51,7 +51,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('limits', $foundProject);
         $this->assertTrue(count($foundProject['limits']) > 1);
         $this->assertArrayHasKey('metrics', $foundProject);
-        $this->assertEquals('mysql', $foundProject['defaultBackend']);
+        $this->assertEquals('snowflake', $foundProject['defaultBackend']);
         $this->assertArrayHasKey('isDisabled', $foundProject);
         $this->assertEquals('production', $project['type']);
         $this->assertNull($project['expires']);
@@ -74,11 +74,11 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('backends', $project);
 
         $backends = $project['backends'];
-        $this->assertArrayHasKey('mysql', $backends);
+        $this->assertArrayHasKey('snowflake', $backends);
 
-        $mysql = $backends['mysql'];
-        $this->assertInternalType('int', $mysql['id']);
-        $this->assertArrayHasKey('host', $mysql);
+        $snowflake = $backends['snowflake'];
+        $this->assertInternalType('int', $snowflake['id']);
+        $this->assertArrayHasKey('host', $snowflake);
 
         return $foundProject;
     }
@@ -381,7 +381,7 @@ class ProjectsTest extends ClientTestCase
         // fetch again
         $project = $this->client->getProject($project['id']);
         $this->assertEquals($newName, $project['name']);
-        $this->assertEquals('mysql', $project['defaultBackend']);
+        $this->assertEquals('snowflake', $project['defaultBackend']);
 
         // update - change backend
         $project = $this->client->updateProject($project['id'], [
