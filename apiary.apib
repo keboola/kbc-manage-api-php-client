@@ -1182,6 +1182,32 @@ Users can be managed only by super admins.
     }
     ```
 
+## Enable MFA for User [POST /manage/users/{user_id_or_email}/MFA]
+
++ Parameters
+    + user_id_or_email (required) - User id or email
+
++ Request (application/json)
+
+    ```js
+    {
+        "secret": "secret"
+    }
+    ```
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 2,
+        "name": "Corrected Spelling",
+        "email": "spelling@keboola.com",
+        "mfaEnabled": true,
+        "features": [
+            "inline-manual"
+        ]
+    }
+    ```
+
 ## Disable MFA for User [DELETE /manage/users/{user_id_or_email}/MFA]
 
 + Parameters
