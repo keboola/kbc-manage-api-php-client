@@ -28,7 +28,23 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
     protected $normalUser;
 
     protected $superAdmin;
-    
+
+    public static function setUpBeforeClass()
+    {
+        $client = new Client([
+            'token' => getenv('KBC_MANAGE_API_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 0,
+        ]);
+        $organizations = $client->listMaintainerOrganizations(getenv('KBC_TEST_MAINTAINER_ID'));
+        foreach ($organizations as $organization) {
+            foreach ($client->listOrganizationProjects($organization['id']) as $project) {
+                $client->deleteProject($project['id']);
+            }
+            $client->deleteOrganization($organization['id']);
+        }
+    }
+
     public function setUp()
     {
         $this->client = new Client([
