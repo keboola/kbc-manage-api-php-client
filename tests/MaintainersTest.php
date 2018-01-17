@@ -71,7 +71,11 @@ class MaintainersTest extends ClientTestCase
         $newMaintainer = $this->client->createMaintainer([
             'name' => self::TESTS_MAINTAINER_PREFIX . " - test maintainer"
         ]);
-        $updateArray = ['name' => 'updated name'];
+
+        $updatedMaintainerName = self::TESTS_MAINTAINER_PREFIX . ' - updated name';
+        $updateArray = [
+            'name' => $updatedMaintainerName
+        ];
         if (!is_null($mysqlBackend)) {
             $updateArray['defaultConnectionMysqlId'] = $mysqlBackend['id'];
         }
@@ -85,7 +89,7 @@ class MaintainersTest extends ClientTestCase
         $updateArray['zendeskUrl'] = "https://fake.url.com";
 
         $updatedMaintainer = $this->client->updateMaintainer($newMaintainer['id'], $updateArray);
-        $this->assertEquals('updated name', $updatedMaintainer['name']);
+        $this->assertEquals($updatedMaintainerName, $updatedMaintainer['name']);
         $this->assertEquals("https://fake.url.com", $updatedMaintainer['zendeskUrl']);
 
         if (array_key_exists('defaultConnectionMysqlId',$updateArray)) {
