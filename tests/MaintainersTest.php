@@ -18,14 +18,16 @@ class MaintainersTest extends ClientTestCase
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
+        $initialMaintainersCount = count($this->client->listMaintainers());
+        $maintainerName = self::TESTS_MAINTAINER_PREFIX . " - test maintainer";
         $newMaintainer = $this->client->createMaintainer([
-            'name' => self::TESTS_MAINTAINER_PREFIX . " - test maintainer",
+            'name' => $maintainerName,
             'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
             'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
             'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
         ]);
 
-        $this->assertEquals('test maintainer', $newMaintainer['name']);
+        $this->assertEquals($maintainerName, $newMaintainer['name']);
         $this->assertArrayHasKey('created', $newMaintainer);
         $this->assertEquals($testMaintainer['defaultConnectionMysqlId'], $newMaintainer['defaultConnectionMysqlId']);
         $this->assertEquals($testMaintainer['defaultConnectionRedshiftId'], $newMaintainer['defaultConnectionRedshiftId']);
@@ -34,12 +36,12 @@ class MaintainersTest extends ClientTestCase
         $this->assertNull($newMaintainer['zendeskUrl']);
 
         $maintainerList = $this->client->listMaintainers();
-        $this->assertCount(2, $maintainerList);
+        $this->assertCount($initialMaintainersCount + 1, $maintainerList);
 
         $this->client->deleteMaintainer($newMaintainer['id']);
 
         $maintainerList = $this->client->listMaintainers();
-        $this->assertCount(1, $maintainerList);
+        $this->assertCount($initialMaintainersCount, $maintainerList);
 
         // retrieve the deleted maintainer should throw 404
         try {
@@ -146,15 +148,16 @@ class MaintainersTest extends ClientTestCase
 
     public function testCrossMaintainerOrganizationAccess()
     {
+        $maintainerName = self::TESTS_MAINTAINER_PREFIX . " - secondary maintainer";
         $secondMaintainer = $this->client->createMaintainer([
-            "name" => self::TESTS_MAINTAINER_PREFIX . " - secondary maintainer"
+            "name" => $maintainerName,
         ]);
         $this->client->addUserToMaintainer($secondMaintainer['id'], ["id" => $this->normalUser['id']]);
         $this->client->removeUserFromMaintainer($secondMaintainer['id'], $this->superAdmin['id']);
 
         $normalMaintainers = $this->normalUserClient->listMaintainers();
         $this->assertCount(1, $normalMaintainers);
-        $this->assertEquals('secondary maintainer', $normalMaintainers[0]['name']);
+        $this->assertEquals($maintainerName, $normalMaintainers[0]['name']);
 
         try {
             $this->normalUserClient->updateMaintainer($this->testMaintainerId, ["name" => "should fail"]);
