@@ -19,7 +19,7 @@ class MaintainersTest extends ClientTestCase
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
         $newMaintainer = $this->client->createMaintainer([
-            'name' => "test maintainer",
+            'name' => self::TESTS_MAINTAINER_PREFIX . " - test maintainer",
             'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
             'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
             'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
@@ -67,7 +67,7 @@ class MaintainersTest extends ClientTestCase
         }
 
         $newMaintainer = $this->client->createMaintainer([
-            'name' => "test maintainer"
+            'name' => self::TESTS_MAINTAINER_PREFIX . " - test maintainer"
         ]);
         $updateArray = ['name' => 'updated name'];
         if (!is_null($mysqlBackend)) {
@@ -113,7 +113,7 @@ class MaintainersTest extends ClientTestCase
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
         try {
             $newMaintainer = $this->normalUserClient->createMaintainer([
-                'name' => "test maintainer",
+                'name' => self::TESTS_MAINTAINER_PREFIX . " - test maintainer",
                 'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
                 'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
                 'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
@@ -146,7 +146,9 @@ class MaintainersTest extends ClientTestCase
 
     public function testCrossMaintainerOrganizationAccess()
     {
-        $secondMaintainer = $this->client->createMaintainer(["name" => "secondary maintainer"]);
+        $secondMaintainer = $this->client->createMaintainer([
+            "name" => self::TESTS_MAINTAINER_PREFIX . " - secondary maintainer"
+        ]);
         $this->client->addUserToMaintainer($secondMaintainer['id'], ["id" => $this->normalUser['id']]);
         $this->client->removeUserFromMaintainer($secondMaintainer['id'], $this->superAdmin['id']);
 
