@@ -41,7 +41,20 @@ require 'vendor/autoload.php';
 Read more in [Composer documentation](http://getcomposer.org/doc/01-basic-usage.md)
 
 ## Usage examples
-TODO
+
+
+```php
+require 'vendor/autoload.php';
+
+use Keboola\ManageApi\Client;
+
+$client = new Client([
+    'token' => getenv('MY_MANAGE_TOKEN'),
+    'url' => 'https://connnection.keboola.com',
+]);
+
+$project = $client->getProject(234);
+```
 
 ## Tests
 
