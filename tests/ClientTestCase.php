@@ -47,6 +47,7 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
             throw new \Exception('Tests cannot be executed against production host - ' . $manageApiUrl);
         }
 
+        // cleanup organizations and projects created in testing maintainer
         $client = new Client([
             'token' => getenv('KBC_MANAGE_API_TOKEN'),
             'url' => $manageApiUrl,
