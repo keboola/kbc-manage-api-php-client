@@ -16,7 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class Client
 {
-    private $apiUrl = "https://connection.keboola.com";
+    private $apiUrl;
 
     private $tokenString = '';
 
@@ -46,9 +46,10 @@ class Client
         }
         $this->tokenString = $config['token'];
 
-        if (isset($config['url'])) {
-            $this->apiUrl = $config['url'];
+        if (!isset($config['url'])) {
+            throw new \InvalidArgumentException('url must be set');
         }
+        $this->apiUrl = $config['url'];
 
         if (isset($config['backoffMaxTries'])) {
             $this->backoffMaxTries = (int)$config['backoffMaxTries'];

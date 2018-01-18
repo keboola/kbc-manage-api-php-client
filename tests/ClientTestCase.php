@@ -13,6 +13,16 @@ use Keboola\ManageApi\Client;
 class ClientTestCase extends \PHPUnit_Framework_TestCase
 {
 
+    const PRODUCTION_HOSTS = [
+        'connection.keboola.com',
+        'connection.eu-central-1.keboola.com',
+    ];
+
+    /**
+     * Prefix of all maintainers created by tests
+     */
+    const TESTS_MAINTAINER_PREFIX = 'KBC_MANAGE_TESTS';
+
     /**
      * @var Client
      */
@@ -28,7 +38,30 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
     protected $normalUser;
 
     protected $superAdmin;
-    
+
+    public static function setUpBeforeClass()
+    {
+        $manageApiUrl = getenv('KBC_MANAGE_API_URL');
+
+        if (in_array(parse_url($manageApiUrl, PHP_URL_HOST), self::PRODUCTION_HOSTS)) {
+            throw new \Exception('Tests cannot be executed against production host - ' . $manageApiUrl);
+        }
+
+        // cleanup organizations and projects created in testing maintainer
+        $client = new Client([
+            'token' => getenv('KBC_MANAGE_API_TOKEN'),
+            'url' => $manageApiUrl,
+            'backoffMaxTries' => 0,
+        ]);
+        $organizations = $client->listMaintainerOrganizations(getenv('KBC_TEST_MAINTAINER_ID'));
+        foreach ($organizations as $organization) {
+            foreach ($client->listOrganizationProjects($organization['id']) as $project) {
+                $client->deleteProject($project['id']);
+            }
+            $client->deleteOrganization($organization['id']);
+        }
+    }
+
     public function setUp()
     {
         $this->client = new Client([
@@ -45,6 +78,8 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
 
         $this->normalUser = $this->normalUserClient->verifyToken()['user'];
         $this->superAdmin = $this->client->verifyToken()['user'];
+
+        // cleanup maintainers created by tests
         $maintainers = $this->client->listMaintainers();
         foreach ($maintainers as $maintainer) {
             if ((int) $maintainer['id'] === (int) $this->testMaintainerId) {
@@ -54,7 +89,7 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
                         $this->client->removeUserFromMaintainer($maintainer['id'], $member['id']);
                     }
                 }
-            } else {
+            } elseif (strpos($maintainer['name'], self::TESTS_MAINTAINER_PREFIX) === 0) {
                 $this->client->deleteMaintainer($maintainer['id']);
             }
         }

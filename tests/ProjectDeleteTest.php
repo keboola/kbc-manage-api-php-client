@@ -18,19 +18,6 @@ class ProjectDeleteTest extends ClientTestCase
 {
     public function testDeleteAndPurgeProjectWithData()
     {
-        // get SNFLK backend
-        $backends = $this->client->listStorageBackend();
-        $snowflakeBackend = null;
-        foreach ($backends as $backend) {
-            if ($backend['backend'] == 'snowflake') {
-                $snowflakeBackend = $backend;
-                break;
-            }
-        }
-        if (!$snowflakeBackend) {
-            $this->fail('Snowflake backend not found');
-        }
-
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => $name,
@@ -40,14 +27,7 @@ class ProjectDeleteTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
-
-        $this->client->assignProjectStorageBackend($project['id'], $snowflakeBackend['id']);
-
-        $project = $this->client->getProject($project['id']);
-
-
         // Create tables, bucket, configuration and workspaces
-
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
             'expiresIn' => 600,
