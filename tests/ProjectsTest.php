@@ -1064,7 +1064,7 @@ class ProjectsTest extends ClientTestCase
         $organization = $this->initTestOrganization();
         $project = $this->initTestProject($organization['id']);
 
-        $this->assertEquals(1, (int) $project['dataRetentionTimeInDays']);
+        $this->assertEquals(7, (int) $project['dataRetentionTimeInDays']);
 
         // verify that normal users can't update data retention time
         try {
