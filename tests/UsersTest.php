@@ -124,29 +124,21 @@ class UsersTest extends ClientTestCase
 
         $user = $this->client->getUser($userId);
 
-        $this->assertArrayHasKey($user, 'mfaEnabled');
+        $this->assertArrayHasKey('mfaEnabled', $user);
         $this->assertFalse($user['mfaEnabled']);
 
         try {
-            $this->normalUserClient->enableUserMFA($userId, '12345');
+            $this->normalUserClient->disableUserMFA($userId);
             $this->fail("normal user should not be able to enable mfa via thea api");
         } catch(ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
-        // enable mfa
-        $this->client->enableUserMFA($userId, '12345');
-        $user = $this->client->getUser($userId);
-        $this->assertTrue($user['mfaEnabled']);
 
         try {
-            $this->normalUserClient->disableUserMFA($userId);
-            $this->fail("normal user should not be able to disable mfa via thea api");
+            $this->client->disableUserMFA($userId);
+            $this->fail("you cannot disable mfa for user having mfa disabled");
         } catch(ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
+            $this->assertEquals(400, $e->getCode());
         }
-        // disable mfa
-        $this->client->disableUserMFA($userId);
-        $user = $this->client->getUser($userId);
-        $this->assertFalse($user['mfaEnabled']);
     }
 }
