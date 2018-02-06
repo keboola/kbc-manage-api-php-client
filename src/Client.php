@@ -378,6 +378,11 @@ class Client
         $this->apiDelete("/manage/users/{$emailOrId}/features/{$feature}");
     }
 
+    public function disableUserMFA($emailOrId)
+    {
+        $this->apiDelete("/manage/users/{$emailOrId}/mfa");
+    }
+
     public function addNotification($data)
     {
         return $this->apiPost("/manage/notifications", $data);
