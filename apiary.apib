@@ -254,6 +254,7 @@ A Organization object has the following attributes:
 + name
 + created
 + allowAutoJoin
++ mfaRequired
 + projects - An array of Projects objects.
 
 + Parameters
@@ -266,6 +267,8 @@ A Organization object has the following attributes:
         "id": 123,
         "name": "sample org",
         "created": "2014-11-11T08:40:51.620Z",
+        "allowAutoJoin": true,
+        "mfaRequired": false,
         "projects": [
             {
                 "id": 123,
@@ -285,6 +288,7 @@ A Organization object has the following attributes:
         "name": "sample org",
         "created": "2015-10-02T11:03:44+0200",
         "allowAutoJoin": true,
+        "mfaRequired": false,
         "projects": [
             {
                 "id": 123,
@@ -304,7 +308,8 @@ Parameters:
 
 + name (optional) - Organization name
 + maintainerId (optional) - Assign organization to another maintainer
-+ allowAutoJoin (optional) - Toggle whether superAdmins need approval to join the organization's projects. (default 1)
++ allowAutoJoin (optional) - Toggle whether superAdmins need approval to join the organization's projects. (default true)
++ mfaRequired (optional) - Toggle whether all members of or organization and its projects must have enabled multi-factor authentication. (default false)
 
 + Request (application/json)
 
@@ -322,6 +327,7 @@ Parameters:
         "name": "POC",
         "created": "2015-10-02T11:03:44+0200",
         "allowAutoJoin": true,
+        "mfaRequired": false,
         "projects": [
             {
                 "id": 123,
