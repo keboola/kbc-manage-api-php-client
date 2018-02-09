@@ -147,7 +147,7 @@ class UsersTest extends ClientTestCase
 
         try {
             $this->normalUserClient->disableUserMFA($userId);
-            $this->fail("normal user should not be able to enable mfa via thea api");
+            $this->fail("normal user should not be able to enable mfa via the api");
         } catch(ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
