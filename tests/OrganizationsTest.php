@@ -301,4 +301,81 @@ class OrganizationsTest extends ClientTestCase
             }
         }
     }
+
+    public function testOrganizationMfa()
+	{
+		$this->assertTrue($this->superAdmin['mfaEnabled']);
+		$this->assertFalse($this->normalUser['mfaEnabled']);
+
+		$organization = $this->client->createOrganization($this->testMaintainerId, [
+			'name' => 'Test MFA org',
+		]);
+
+		$admins = $this->client->listOrganizationUsers($organization['id']);
+		$this->assertCount(1, $admins);
+
+		$this->assertEquals("Test MFA org", $organization['name']);
+		$this->assertEquals(0, (int) $organization['mfaRequired']);
+
+		// require mfa
+		$org = $this->client->updateOrganization($organization['id'], [
+			"mfaRequired" => 1,
+		]);
+
+		$this->assertEquals(1, (int) $org['mfaRequired']);
+
+		// permissions of another user
+		try {
+			$this->normalUserClient->updateOrganization($organization['id'], [
+				"requiredMfa" => 0,
+			]);
+			$this->fail('User should not have permissions to rename the organization');
+		} catch (ClientException $e) {
+			$this->assertEquals(403, $e->getCode());
+		}
+
+		// add user without MFA
+		try {
+			$this->client->addUserToOrganization($organization['id'], [
+				'email' => 'spam@keboola.com',
+			]);
+			$this->fail('User without MFA should not be added to organization');
+		} catch (ClientException $e) {
+			$this->assertEquals(400, $e->getCode());
+		}
+
+		$project = $this->client->createProject($organization['id'], ['name' => 'test']);
+
+		try {
+			$this->client->addUserToProject($project['id'], [
+				'email' => 'spam@keboola.com',
+			]);
+		} catch (ClientException $e) {
+			$this->assertEquals(400, $e->getCode());
+		}
+
+		// do not require MFA
+		$org = $this->client->updateOrganization($organization['id'], [
+			"mfaRequired" => 0,
+		]);
+
+		$this->assertEquals(0, (int) $org['mfaRequired']);
+
+		// add user without MFA
+		$this->client->addUserToOrganization($organization['id'], [
+			'email' => 'spam@keboola.com',
+		]);
+
+		$admins = $this->client->listOrganizationUsers($organization['id']);
+		$this->assertCount(2, $admins);
+
+		// require mfa
+		try {
+			$this->client->updateOrganization($organization['id'], [
+				"mfaRequired" => 1,
+			]);
+		} catch (ClientException $e) {
+			$this->assertEquals(400, $e->getCode());
+		}
+	}
 }

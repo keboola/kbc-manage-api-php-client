@@ -86,10 +86,10 @@ docker-compose run --rm tests
 Description of mentioned variables:
 
 - `KBC_MANAGE_API_URL` - URL where Keboola Connection is running
-- `KBC_MANAGE_API_TOKEN` - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens 
+- `KBC_MANAGE_API_TOKEN` - manage api token assigned to user **with** **superadmin** privileges and **multi-factor authentication** **enabled**. Can be created in Account Settings under the title Personal Access Tokens.
 - `KBC_SUPER_API_TOKEN` - can be created in manage-apps on the Tokens tab
 - `KBC_TEST_MAINTAINER_ID` - `id` of maintainer. Please create a new maintainer dedicated to test suite. All maintainer's organizations and projects all purged before tests!
 - `KBC_TEST_ADMIN_EMAIL` - email address of another user without any organizations
-- `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`
+- `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have **multi-factor authentication** **disabled**
 
 
