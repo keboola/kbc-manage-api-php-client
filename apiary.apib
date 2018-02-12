@@ -1017,24 +1017,30 @@ Deleted project operations are allowed only for super admins.
 
     ```js
     {
-            "id":258,
-            "name":"Shared Config",
-            "description": "Project description",
-            "features":["new-orchestrator","es-events"],
-            "created": "2014-11-11T08:40:51.620Z",
-            "expirationDate": "2015-11-11T08:40:51.620Z",
-            "defaultBackend": "redshift",
-            "monthlyPrice" 800.0,
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": "1"
-            },
-            "alarms": [],
-            "limits": []
-        }
+            "id": 101,
+            "name": "test project",
+            "type": "production",
+            "region": "eu-west-1",
+            "created": "2017-02-15T14:25:15+0100",
+            "expires": null,
+            "features": [],
+            "dataSizeBytes": 49152,
+            "rowsCount": 200,
+            "hasMysql": false,
+            "hasRedshift": false,
+            "hasSnowflake": true,
+            "defaultBackend": "snowflake",
+            "hasTryModeOn": "0",
+            "limits": {},
+            "metrics": {},
+            "isDisabled": false,
+            "billedMonthlyPrice": null,
+            "dataRetentionTimeInDays": 1,
+            "isPurged": false,
+            "isDeleted": true,
+            "deletedTime": "2018-02-11T14:25:15+0100",
+            "purgedTime": null
+    }
     ```
 
 
@@ -1079,42 +1085,54 @@ Projects can be filtered by various filters:
     ```js
     [
         {
-            "id":258,
-            "name":"Shared Config",
-            "description": "Project description",
-            "features":["new-orchestrator","es-events"],
-            "created": "2014-11-11T08:40:51.620Z",
-            "expirationDate": "2015-11-11T08:40:51.620Z",
-            "defaultBackend": "redshift",
-            "monthlyPrice" 800.0,
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": "1"
-            },
-            "alarms": [],
-            "limits": []
+            "id": 101,
+            "name": "test project",
+            "type": "production",
+            "region": "eu-west-1",
+            "created": "2017-02-15T14:25:15+0100",
+            "expires": null,
+            "features": [],
+            "dataSizeBytes": 49152,
+            "rowsCount": 200,
+            "hasMysql": false,
+            "hasRedshift": false,
+            "hasSnowflake": true,
+            "defaultBackend": "snowflake",
+            "hasTryModeOn": "0",
+            "limits": {},
+            "metrics": {},
+            "isDisabled": false,
+            "billedMonthlyPrice": null,
+            "dataRetentionTimeInDays": 7,
+            "isPurged": false,
+            "isDeleted": true,
+            "deletedTime": "2018-02-11T14:25:15+0100",
+            "purgedTime": null
         },
         {
-            "id":259,
-            "name":"Shared Data",
-            "description": "Project description",
-            "features":["new-orchestrator","es-events"],
-            "created": "2014-11-11T08:40:51.620Z",
-            "expirationDate": "2015-11-11T08:40:51.620Z",
-            "defaultBackend": "redshift",
-            "monthlyPrice" 800.0,
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": "1"
-            },
-            "alarms": [],
-            "limits": []
+            "id": 104,
+            "name": "another test project",
+            "type": "production",
+            "region": "eu-west-1",
+            "created": "2017-02-15T14:25:15+0100",
+            "expires": null,
+            "features": [],
+            "dataSizeBytes": 49152,
+            "rowsCount": 200,
+            "hasMysql": false,
+            "hasRedshift": false,
+            "hasSnowflake": true,
+            "defaultBackend": "snowflake",
+            "hasTryModeOn": "0",
+            "limits": {},
+            "metrics": {},
+            "isDisabled": false,
+            "billedMonthlyPrice": null,
+            "dataRetentionTimeInDays": 7,
+            "isPurged": false,
+            "isDeleted": true,
+            "deletedTime": "2018-02-11T14:25:15+0100",
+            "purgedTime": null
         }
     ]
     ```
