@@ -78,7 +78,7 @@ class CommandsTest extends ClientTestCase
             [
                 [
                     'command' => 'test',
-                    'parameters' => 'hovno',
+                    'parameters' => 'unknown',
                 ]
             ],
         ];
