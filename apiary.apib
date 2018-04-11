@@ -656,17 +656,22 @@ Change project limits is allowed only form Super Admin.
 ### Set Project Limits [POST]
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "limits": [
-            {
-                "name": "goodData.usersCount",
-                "value": 23
-            }
-        ]
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+        ```js
+        {
+            "limits": [
+                {
+                    "name": "goodData.usersCount",
+                    "value": 23
+                }
+            ]
+        }
+        ```
 
 + Response 200 (application/json)
 
@@ -707,6 +712,10 @@ Metric alarms has soft limit. Example alarm metrics - project size, gooddata siz
 + Parameters
     + project_id (required, int) - Project id
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -803,28 +812,22 @@ Metric alarms has soft limit. Example alarm metrics - project size, gooddata siz
 
 ### Update Project [PUT]
 
-Available attributes to change:
-- `name` - rename project
-- `defaultBackend` - change project default backend
-- `type` - change project type (demo, production, poc, ...) allowed only for super admin
-- `expirationDays` - Change project expiration  - allowed only for super admin
-- `billedMonthlyPrice` - Change project monthly fee - allowed only for super admin
-- `dataRetentionTimeInDays` - (snowflake only) Change the data retention period for this project - allowed only for super admin
++ Attributes
+
+    + name: Test - Rename project
+    + defaultBackend: snowflake - Change project default backend type
+    + type:demo - change project type (demo, production, poc, ...) allowed only for super admin
+    + expirationDays: 7 - Change project expiration  - allowed only for super admin
+    + billedMonthlyPrice: 2000 - Change project monthly fee - allowed only for super admin
+    + dataRetentionTimeInDays: 20 - (snowflake only) Change the data retention period for this project - allowed only for super admin
 
 + Parameters
     + project_id (required, int) - Project id
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "name": "Test",
-        "defaultBackend": "redshift",
-        "billedMonthlyPrice": 1200,
-        "expirationDays": 30,
-        "type": "demo"
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 200
 
@@ -924,6 +927,11 @@ Project will not be physically deleted. It'll be just not accessible and hidden.
 
 + Parameters
     + project_id (required, int) - Project id
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
