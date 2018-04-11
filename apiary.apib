@@ -1013,15 +1013,16 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
 ### Change project disabled status [POST]
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "isDisabled": true,
-        "disableReason": "Maintenance",
-        "estimatedEndTime": "+1 hour"
-    }
-    ```
+    + isDisabled: true (boolean) - Enable or disable project
+    + disabledReason: Project mainteintance - Why the project is disabled
+    + estimatedEndTime: +1 hour - When the project will be enabled
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200
 
@@ -1053,19 +1054,20 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
 ### Create Storage Token [POST]
 
-+ Request (application/json)
 
-    ```js
-    {
-        "description": "Test token",
-        "canManageBuckets": true,
-        "canReadAllFileUploads": true,
-        "expiresIn": 60,
-        "bucketPermissions": {
-            "in.c-main": "read"
-        }
-    }
-    ```
++ Attributes
+
+    + description: Test Token (required) - token description
+    + canManageBuckets: true (boolean) - Token has full permissions on tabular storage
+    + canReadAllFileUploads: true (boolean) - Token has full permissions to files staging
+    + expiresIn: 60 (number) - Token lifetime
+    + bucketPermissions (object)
+        - in.c-main: read
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 201
 
