@@ -473,14 +473,17 @@ Project will be created from default template which defines it's limits.
 
 ### Add Project [POST]
 
++ Attributes
+
+    + name: My Demo (required) - project name
+    + type: demo (required) -  one of `production`, `poc`, `demo`. Default `production`.
+    + defaultBackend: snowflake - Project default backend `snowflake` or `redshift`. `snowflake` is default.
+    + dataRetentionTimeInDays: 7 - Data retention in days for Time Travel
+
 + Request (application/json)
+    + Headers
 
-    + Attributes
-
-        + name: My Demo (required) - project name
-        + type: demo (required) -  one of `production`, `poc`, `demo`. Default `production`.
-        + defaultBackend: mysql - Project default backend `redshift` or `mysql`. `mysql` is default.
-        + region: `us-east-1` - Project region. `us-east-1` is default.
+            X-KBC-ManageApiToken: your_token
 
 + Response 201 (application/json)
 
@@ -508,13 +511,16 @@ Project will be created from default template which defines it's limits.
 
 ### Move project [POST]
 
++ Attributes
+
+    + organizationId: 523 (required) - ID of destination orgranization
+
 + Request (application/json)
 
-    ```js
-    {
-        "organizationId": 3432
-    }
-    ```
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 200 (application/json)
 
@@ -545,13 +551,14 @@ Connection type is automatically detected from passed connection identifier.
 
 ### Assign project storage backend [POST]
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "storageBackendId": 3454
-    }
-    ```
+    + storageBackendId: 32 (required) - ID of storage backend
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -581,6 +588,11 @@ Storage backend type is automatically detected from it's id. Only backend withou
 
 ### Remove project storage backend [DELETE]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -607,13 +619,15 @@ This action can be performed only by super admin.
 
 ### Assign Project File Storage [POST]
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "fileStorageId": 23
-    }
-    ```
+    + fileStorageId: 32 (required) - ID of file storage
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 200 (application/json)
 
