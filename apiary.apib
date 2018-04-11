@@ -1467,6 +1467,11 @@ add `type` parameter to your query.
 + Parameters
     + type: admin (string) - type of features you want to filter
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -1482,6 +1487,11 @@ add `type` parameter to your query.
     ```
 
 ### Retrieve one feature [GET /manage/features/{id}]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1499,6 +1509,11 @@ add `type` parameter to your query.
 
 Get projects with specified feature assigned.
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -1513,6 +1528,11 @@ Get projects with specified feature assigned.
 ### Retrieve feature users [GET /manage/features/{id}/admins]
 
 Get users with specified feature assigned.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1530,19 +1550,16 @@ Get users with specified feature assigned.
 
 To create new feature, provide following parameters as JSON in request body:
 
-- `name` (required, string): - Feature name; example: `show-new-design`
-- `type` (required, string): - Feature type, should be one of the following: `admin`, `project` or `global`
-- `description` (required, string): - Short description of the feature; example: `Users with this feature will see new UI`
++ Attributes
+
+    + name: show-new-design (required) - Feature name
+    + type: admin, project (enum) (required) - Feature type
+    + description: Users with this feature will see new UI (required)  - Short description of the feature
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "name": "show-new-design",
-        "type": "admin",
-        "description": "Users with this feature will see new UI"
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 201 (application/json)
 
