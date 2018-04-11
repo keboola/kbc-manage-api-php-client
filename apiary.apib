@@ -1100,6 +1100,11 @@ Deleted project operations are allowed only for super admins.
 + Parameters
     + project_id (required, int) - Deleted project id
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -1140,6 +1145,10 @@ Enqueues project full delete command and returns its command execution id for mo
     + project_id (required, int) - Deleted project id
 
 + Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
     + Attributes
         + ignoreBackendErrors: `false` (boolean) - ignore errors from backed. eq. deleted Redshift cluter. `false` is default.
 
@@ -1166,6 +1175,10 @@ Projects can be filtered by various filters:
 * *limit* - number of returned projects. Default value: 100
 * *offset* - pagination offset
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1247,6 +1260,10 @@ You can also specify new expiration by `expirationDays` parameter.
     + project_id (required, int) - Project id
     + expirationDays (optional, number) - Project expiration in days
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
