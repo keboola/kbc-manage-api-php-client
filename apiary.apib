@@ -410,11 +410,15 @@ Create a new organization.
 ## Organization users [/manage/organizations/{organization_id}/users]
 
 
-
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization.
 
 ### List users [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -432,14 +436,14 @@ Create a new organization.
 
 Either `id` or `email` of member must be set. If member is not found by email, account is created and invitation is sent.
 
++ Attributes
+    + id:7234 - User id
+    + email:martin@keboola.com - User email
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "id": 12
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
@@ -448,6 +452,11 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization.
     + user_id: 1 (required, int) - User id
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
