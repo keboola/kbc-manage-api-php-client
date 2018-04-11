@@ -1272,10 +1272,18 @@ You can also specify new expiration by `expirationDays` parameter.
 
 Users can be managed only by super admins.
 
-## User Detail [GET /manage/users/{user_id_or_email}]
+## Manage User [/manage/users/{user_id_or_email}]
+
+### User Detail [GET]
 
 + Parameters
     + user_id_or_email (required) - User id or email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 200 (application/json)
 
@@ -1290,18 +1298,20 @@ Users can be managed only by super admins.
     }
     ```
 
-## Update User [PUT /manage/users/{user_id_or_email}]
+### Update User [PUT]
 
 + Parameters
     + user_id_or_email (required) - User id or email
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "name": "Corrected Spelling"
-    }
-    ```
+    + name: Martin - user name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 200 (application/json)
 
@@ -1320,6 +1330,11 @@ Users can be managed only by super admins.
 
 + Parameters
     + user_id_or_email (required) - User id or email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
