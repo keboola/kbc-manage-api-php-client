@@ -227,6 +227,11 @@ Partial update of maintainer.
 
 ### List members [GET]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -243,14 +248,16 @@ Partial update of maintainer.
 
 Either `id` or `email` of member must be set. If member is not found by email, account is created and invitation is sent.
 
++ Attributes
+    + id:7234 - User id
+    + email:martin@keboola.com - User email
+
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "id": 12
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 204
 
@@ -259,6 +266,11 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 + Parameters
     + maintainer_id: 1 (required, number) - ID of the maintainer.
     + user_id: 1 (required, int) - Member id
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
