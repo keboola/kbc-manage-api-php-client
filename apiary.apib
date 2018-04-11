@@ -45,6 +45,11 @@ There are following types of tokens
 
 ## Token Verification [GET /manage/tokens/verify]
 
++ Request
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -72,13 +77,15 @@ There are following types of tokens
 ### Create a Maintainer [POST]
 Create a new maintainer. User associated to token will become a admin of maintainer.
 
-+ Request
++ Attributes
+    + name:Example (required) - Maintainer name
 
-    ```js
-    {
-        "name": "My maintainer"
-    }
-    ```
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 201
 
