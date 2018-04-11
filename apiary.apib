@@ -1715,6 +1715,10 @@ Storage region is automatically detected.
 
 + Request (application/json)
 
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
     + Attributes(FileStorageRequest)
 
 + Response 201 (application/json)
@@ -1738,6 +1742,10 @@ Only storage owned by **keboola** can be set as default.
 ### Set storage as default [POST]
 
 + Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 
 + Response 201 (application/json)
@@ -1809,6 +1817,10 @@ According to previous example parameter for storage create will be:
 
 + Request (application/json)
 
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
     + Attributes(StorageBackendCreate)
 
 + Response 201 (application/json)
@@ -1854,6 +1866,10 @@ You can use this id for search of command output in papertrail logs.
 
 + Request (application/json)
 
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
     + Attributes(CommandExecute)
 
 + Response 201 (application/json)
@@ -1878,6 +1894,13 @@ You can use this id for search of command output in papertrail logs.
 ## List Applications [GET /manage/ui-apps]
 
 Returns active manage applications. This resources doesn't require authentication.
+
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1905,6 +1928,12 @@ Retrieve application detail with all it's versions.
 
 + Parameters
     + app_id (required, id) - Application id
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
