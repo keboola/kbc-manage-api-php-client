@@ -308,6 +308,11 @@ A Organization object has the following attributes:
     ```
 ### Retrieve a Organization [GET]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200
 
     ```js
@@ -331,19 +336,16 @@ A Organization object has the following attributes:
 
 Partial update of organization.
 
-Parameters:
-
-+ name (optional) - Organization name
-+ maintainerId (optional) - Assign organization to another maintainer
-+ allowAutoJoin (optional) - Toggle whether superAdmins need approval to join the organization's projects. (default 1)
++ Attributes
+    + name:POC - Organization name
+    + maintainerId - Assign organization to another maintainer
+    + allowAutoJoin - Toggle whether superAdmins need approval to join the organization's projects. (default 1)
 
 + Request (application/json)
+    + Headers
 
-  ```js
-  {
-    "name": "POC"
-  }
-  ```
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 200
 
@@ -366,6 +368,11 @@ Parameters:
 
 ### Delete a Organization  [DELETE]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 204
 
 ## Maintainer Organizations collection [/manage/maintainers/{maintainer_id}/organizations]
@@ -376,19 +383,24 @@ Parameters:
 ### Create a Organization [POST]
 Create a new organization.
 
-+ Request
++ Attributes
+    + name:POC - Organization name
 
-    ```js
-    {
-        "name": "My Organization"
-    }
-    ```
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 201
 
     [Organization][]
 
 ### List Maintainer's Organizations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200
 
