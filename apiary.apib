@@ -1455,49 +1455,6 @@ all notifications as read.
     ```
 
 
-
-# Group Activity
-*Not yet implemented*.
-
-Events related to maintainers, organizations and projects accessible by token.
-
-
-## List Events [GET /manage/events]
-
-+ Response 200 (application/json)
-
-    ```js
-    [
-        {
-            "id": "3071651386",
-            "type": "ProjectCreated",
-            "actor": {
-                "id": 12015,
-                "email": "martin@keboola.com",
-            },
-            "repo": {
-                "id": 35902694,
-                "name": "ICTatRTI/coconut-mobile",
-                "url": "https://api.github.com/repos/ICTatRTI/coconut-mobile"
-            },
-            "payload": {
-                "message": "Project New was created"
-            },
-            "created": "2015-08-19T13:23:18Z",
-            "organization": {
-                "id": 4205148,
-                "name": "Keboola Devel",
-            },
-            "maintainer": {
-                "id": 624475,
-                "name": "Keboola CZ"
-            }
-        }
-    ]
-
-    ```
-
-
 # Group SUPER - Features
 
 ## Features [/manage/features?type={type}]
