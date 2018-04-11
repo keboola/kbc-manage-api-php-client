@@ -946,6 +946,11 @@ Project will not be physically deleted. It'll be just not accessible and hidden.
 
 ### List Users [GET]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200
 
     ```js
@@ -973,15 +978,16 @@ Project will not be physically deleted. It'll be just not accessible and hidden.
 
 An optional expiration (seconds) and reason for joining can be added to the request.
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "email": "martin@keboola.com",
-        "expirationSeconds": "86400",
-        "reason": "KBC Support for Zendesk Ticket #1234"
-    }
-    ```
+    + email: martin@keboola.com (required) - Email of invited user
+    + expirationSeconds: 3600 (number) - After how many secons the membership of user will expire
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
@@ -992,6 +998,11 @@ An optional expiration (seconds) and reason for joining can be added to the requ
     + user_id (required, int) - User id
 
 ### Delete user from project [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
