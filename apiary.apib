@@ -1578,6 +1578,11 @@ To create new feature, provide following parameters as JSON in request body:
 + Parameters
     + id: 1 (required, number) - ID of the feature to delete
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 204
 
 ## Project Features [/manage/projects/{project_id}/features]
@@ -1591,13 +1596,14 @@ Assign project feature is allowed only for Super Admin.
 
 *Note: Feature has to exist before adding to project.*
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "feature": "kbc-testing"
-    }
-    ```
+    + feature: show-new-design (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1630,12 +1636,9 @@ Remove project feature is allowed only for Super Admin.
     + project_id (required, int)  - Project id
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "feature": "kbc-testing"
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
@@ -1650,13 +1653,14 @@ Remove project feature is allowed only for Super Admin.
 + Parameters
     + user_id_or_email (required) - User id or email
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "feature": "inline-manual"
-    }
-    ```
+    + feature: show-new-design (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1676,6 +1680,11 @@ Remove project feature is allowed only for Super Admin.
 + Parameters
     + user_id_or_email (required) - User id or email
     + feature (required) - feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
