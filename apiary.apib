@@ -94,6 +94,11 @@ Create a new maintainer. User associated to token will become a admin of maintai
 
 ### List maintainers [GET]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```
@@ -179,32 +184,39 @@ A Maintainer object has the following attributes:
     ```
 ### Retrieve a maintainer [GET]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200
     [Maintainer][]
 
 ### Update a maintainer [PATCH]
 Partial update of maintainer.
 
-Parameters:
-
-+ name (optional) - Maintainer name
-+ defaultConnectionMysqlId (optional) - Default Mysql Connection Id
-+ defaultConnectionRedshiftId (optional) - Default Redshift Connection Id
-+ defaultConnectionSnowflakeId (optional) - Default Snowflake Connection Id
-+ zendeskUrl (optional)
++ Attributes
+    + name:Example - Maintainer name
+    + defaultConnectionRedshiftId:234 (optional) - Default Redshift Connection Id
+    + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection Id
+    + zendeskUrl:https://keboola.zendesk.com (optional)
 
 + Request (application/json)
+    + Headers
 
-  ```js
-  {
-    "name": "POC"
-  }
-  ```
+            X-KBC-ManageApiToken: your_token
+
+
 
 + Response 200
     [Maintainer][]
 
 ### Delete a Maintainer  [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
