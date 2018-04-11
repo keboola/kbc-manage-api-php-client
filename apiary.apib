@@ -1353,6 +1353,12 @@ There are yet three types of notifications:
 
 ### List Notifications [GET]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
 + Response 200 (application/json)
 
     ```js
@@ -1390,21 +1396,20 @@ There are yet three types of notifications:
     ```
 
 ### Create Notification [POST]
-- type (required, string) - type of notification, one of [common | limit | global]
-- projectId (string) - required for `common` and `limit` type, ignored for `global`
-- title (requried, string) - short title of notification
-- message (string) - long message, supports markdown
-- payload (json) - optional JSON payload, for type `limit` set to `{"limit": "kbc.limitNameHere"}
 
-+ Request
-    ```js
-    {
-        "type": "common",
-        "projectId": "1234",
-        "title": "Maintenance Announcement",
-        "message": "There will be maintenance on this project sometime in the future"
-    }
-    ```
++ Attributes
+
+    + type: common (required) - type of notification, one of [common | limit | global]
+    + projectId: 234 - required for `common` and `limit` type, ignored for `global`
+    + title: First Notification (required) - short title of notification
+    + message: Some text - long message, supports markdown
+    + payload (object) - optional JSON payload, for type `limit` set to `{"limit": "kbc.limitNameHere"}
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 201 (application/json)
 
@@ -1425,16 +1430,22 @@ all notifications as read.
 
 
 
-+ Request
-    ```js
-    {
-        "read": [
-            "497bda6a-cb57-11e5-8080-800144cef8df",
-            "fae2ad7e-cb43-11e5-8080-800019c0d40a"
-        ],
-        "allRead": true
-    }
-    ```
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+            ```js
+            {
+                "read": [
+                    "497bda6a-cb57-11e5-8080-800144cef8df",
+                    "fae2ad7e-cb43-11e5-8080-800019c0d40a"
+                ],
+                "allRead": true
+            }
+            ```
 
 + Response 200 (application/json)
     ```js
