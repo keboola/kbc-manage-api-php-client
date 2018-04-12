@@ -1527,6 +1527,69 @@ Remove project feature is allowed only for Super Admin.
     }
     ```
 
+## Project Template Features [/manage/project-templates/{template}/features]
+
+These features will be added to project on project creation.
+
+### List Features [GET /manage/project-templates/{template}/features]
+
+Lists Features assigned to project template.
+
++ Parameters
+    + template (required) - StringId of project template
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 52,
+            "name": "test-feature",
+            "type": "project",
+            "description": "project template test feature",
+            "created": "2018-04-12T21:46:37+0200"
+        }
+    ]
+    ```
+
+### Add Feature [POST /manage/project-templates/{template}/features]
+
+*Note: Feature has to exist before adding to project template and has to be of type `project`.*
+
++ Parameters
+    + template (required) - StringId of project template
+
++ Attributes
+
+    + feature: show-new-design (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
+### Remove Feature [DELETE /manage/project-templates/{template}/features/{feature}]
+
+Removes feature assigned to project template.
+
++ Parameters
+    + template (required) - StringId of project template
+    + feature (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
 # Group SUPER - File Storage Management
 
 Management of file storages. File storage is represented by AWS S3 bucket with associated AWS IAM credentials
