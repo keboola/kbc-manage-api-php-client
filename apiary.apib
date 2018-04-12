@@ -45,6 +45,11 @@ There are following types of tokens
 
 ## Token Verification [GET /manage/tokens/verify]
 
++ Request
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -72,13 +77,15 @@ There are following types of tokens
 ### Create a Maintainer [POST]
 Create a new maintainer. User associated to token will become a admin of maintainer.
 
-+ Request
++ Attributes
+    + name:Example (required) - Maintainer name
 
-    ```js
-    {
-        "name": "My maintainer"
-    }
-    ```
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 201
 
@@ -86,6 +93,11 @@ Create a new maintainer. User associated to token will become a admin of maintai
 
 
 ### List maintainers [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -172,32 +184,39 @@ A Maintainer object has the following attributes:
     ```
 ### Retrieve a maintainer [GET]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200
     [Maintainer][]
 
 ### Update a maintainer [PATCH]
 Partial update of maintainer.
 
-Parameters:
-
-+ name (optional) - Maintainer name
-+ defaultConnectionMysqlId (optional) - Default Mysql Connection Id
-+ defaultConnectionRedshiftId (optional) - Default Redshift Connection Id
-+ defaultConnectionSnowflakeId (optional) - Default Snowflake Connection Id
-+ zendeskUrl (optional)
++ Attributes
+    + name:Example - Maintainer name
+    + defaultConnectionRedshiftId:234 (optional) - Default Redshift Connection Id
+    + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection Id
+    + zendeskUrl:https://keboola.zendesk.com (optional)
 
 + Request (application/json)
+    + Headers
 
-  ```js
-  {
-    "name": "POC"
-  }
-  ```
+            X-KBC-ManageApiToken: your_token
+
+
 
 + Response 200
     [Maintainer][]
 
 ### Delete a Maintainer  [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
@@ -207,6 +226,11 @@ Parameters:
     + maintainer_id: 1 (required, number) - ID of the maintainer.
 
 ### List members [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -224,14 +248,16 @@ Parameters:
 
 Either `id` or `email` of member must be set. If member is not found by email, account is created and invitation is sent.
 
++ Attributes
+    + id:7234 - User id
+    + email:martin@keboola.com - User email
+
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "id": 12
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 204
 
@@ -240,6 +266,11 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 + Parameters
     + maintainer_id: 1 (required, number) - ID of the maintainer.
     + user_id: 1 (required, int) - Member id
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
@@ -277,6 +308,11 @@ A Organization object has the following attributes:
     ```
 ### Retrieve a Organization [GET]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200
 
     ```js
@@ -300,19 +336,16 @@ A Organization object has the following attributes:
 
 Partial update of organization.
 
-Parameters:
-
-+ name (optional) - Organization name
-+ maintainerId (optional) - Assign organization to another maintainer
-+ allowAutoJoin (optional) - Toggle whether superAdmins need approval to join the organization's projects. (default 1)
++ Attributes
+    + name:POC - Organization name
+    + maintainerId - Assign organization to another maintainer
+    + allowAutoJoin - Toggle whether superAdmins need approval to join the organization's projects. (default 1)
 
 + Request (application/json)
+    + Headers
 
-  ```js
-  {
-    "name": "POC"
-  }
-  ```
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 200
 
@@ -335,6 +368,11 @@ Parameters:
 
 ### Delete a Organization  [DELETE]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 204
 
 ## Maintainer Organizations collection [/manage/maintainers/{maintainer_id}/organizations]
@@ -345,19 +383,24 @@ Parameters:
 ### Create a Organization [POST]
 Create a new organization.
 
-+ Request
++ Attributes
+    + name:POC - Organization name
 
-    ```js
-    {
-        "name": "My Organization"
-    }
-    ```
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 201
 
     [Organization][]
 
 ### List Maintainer's Organizations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200
 
@@ -367,11 +410,15 @@ Create a new organization.
 ## Organization users [/manage/organizations/{organization_id}/users]
 
 
-
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization.
 
 ### List users [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -389,14 +436,14 @@ Create a new organization.
 
 Either `id` or `email` of member must be set. If member is not found by email, account is created and invitation is sent.
 
++ Attributes
+    + id:7234 - User id
+    + email:martin@keboola.com - User email
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "id": 12
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
@@ -406,227 +453,135 @@ Either `id` or `email` of member must be set. If member is not found by email, a
     + organization_id: 1 (required, number) - ID of the organization.
     + user_id: 1 (required, int) - User id
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 204
 
 
 # Group Projects
 
+## Project [/manage/projects/{project_id}]
 
-## Add Project [/manage/organizations/{organization_id}/projects]
-
-Project will be created from default template which defines it's limits.
-
-+ Parameters
-    + organization_id (required, int) - Organization id. Project has to be created in some Organization.
-
-### Add Project [POST]
-
-+ Request (application/json)
-
-    + Attributes
-
-        + name: My Demo (required) - project name
-        + type: demo (required) -  one of `production`, `poc`, `demo`. Default `production`.
-        + defaultBackend: mysql - Project default backend `redshift` or `mysql`. `mysql` is default.
-        + region: `us-east-1` - Project region. `us-east-1` is default.
-
-+ Response 201 (application/json)
++ Model (application/json)
 
     ```js
     {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "type": "demo",
-        "expires": "2014-11-11T08:40:51.620Z",
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": "1"
-        }
-    }
-    ```
-
-## Move project to another organization [/manage/projects/{project_id}/organizations]
-
-+ Parameters
-    + project_id (required, int)  - Project id
-
-### Move project [POST]
-
-+ Request (application/json)
-
-    ```js
-    {
-        "organizationId": 3432
-    }
-    ```
-
-+ Response 200 (application/json)
-
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
-        }
-    }
-    ```
-
-
-## Assign project storage backend [/manage/projects/{project_id}/storage-backend]
-This action can be performed only by super admin.
-
-One backend connection of each type (mysql, redshift) can be assigned to project.
-Connection type is automatically detected from passed connection identifier.
-
-+ Parameters
-    + project_id (required, int)  - Project id
-
-### Assign project storage backend [POST]
-
-+ Request (application/json)
-
-    ```js
-    {
-        "storageBackendId": 3454
-    }
-    ```
-
-+ Response 200 (application/json)
-
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
-        }
-    }
-    ```
-## Remove project storage backend [/manage/projects/{project_id}/storage-backend/{storage_backend_id}]
-This action can be performed only by super admin.
-
-Storage backend type is automatically detected from it's id. Only backend without any buckets associated with them can be removed.
-
-
-+ Parameters
-    + project_id (required, int)  - Project id
-    + storage_backend_id (required, int) - Storage backend id. Must be one of storage backends assigned to project.
-
-### Remove project storage backend [DELETE]
-
-+ Response 200 (application/json)
-
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
-        }
-    }
-    ```
-
-
-## Assign Project File Storage [/manage/projects/{project_id}/file-storage]
-This action can be performed only by super admin.
-
-+ Parameters
-    + project_id (required, int)  - Project id
-
-### Assign Project File Storage [POST]
-
-+ Request (application/json)
-
-    ```js
-    {
-        "fileStorageId": 23
-    }
-    ```
-
-+ Response 200 (application/json)
-
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
-        }
-    }
-    ```
-
-## Project Limits [/manage/projects/{project_id}/limits]
-
-Change project limits is allowed only form Super Admin.
-
-+ Parameters
-    + project_id (required, int)  - Project id
-
-### Set Project Limits [POST]
-
-+ Request (application/json)
-
-    ```js
-    {
-        "limits": [
-            {
-                "name": "goodData.usersCount",
-                "value": 23
-            }
-        ]
-    }
-    ```
-
-+ Response 200 (application/json)
-
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
+      "id": 4088,
+      "name": "Martinšík",
+      "type": "production",
+      "region": "us-east-1",
+      "created": "2017-12-11T09:02:13+0100",
+      "expires": null,
+      "features": [],
+      "dataSizeBytes": 22691704832,
+      "rowsCount": 4295727047,
+      "hasMysql": false,
+      "hasRedshift": false,
+      "hasSnowflake": true,
+      "defaultBackend": "snowflake",
+      "hasTryModeOn": "0",
+      "limits": {
+        "components.jobsParallelism": {
+          "name": "components.jobsParallelism",
+          "value": 10
         },
-        "limits": {
-            "goodData.usersCount": {
-                "name": "goodData.usersCount",
-                "value": 23
-            }
+        "goodData.dataSizeBytes": {
+          "name": "goodData.dataSizeBytes",
+          "value": 1000000000
+        },
+        "goodData.demoTokenEnabled": {
+          "name": "goodData.demoTokenEnabled",
+          "value": 1
+        },
+        "goodData.prodTokenEnabled": {
+          "name": "goodData.prodTokenEnabled",
+          "value": 0
+        },
+        "goodData.usersCount": {
+          "name": "goodData.usersCount",
+          "value": 30
+        },
+        "kbc.adminsCount": {
+          "name": "kbc.adminsCount",
+          "value": 10
+        },
+        "kbc.extractorsCount": {
+          "name": "kbc.extractorsCount",
+          "value": 0
+        },
+        "kbc.monthlyProjectPowerLimit": {
+          "name": "kbc.monthlyProjectPowerLimit",
+          "value": 50
+        },
+        "kbc.writersCount": {
+          "name": "kbc.writersCount",
+          "value": 0
+        },
+        "orchestrations.count": {
+          "name": "orchestrations.count",
+          "value": 10
+        },
+        "storage.dataSizeBytes": {
+          "name": "storage.dataSizeBytes",
+          "value": 50000000000
+        },
+        "storage.jobsParallelism": {
+          "name": "storage.jobsParallelism",
+          "value": 10
         }
+      },
+      "metrics": {
+        "kbc.adminsCount": {
+          "name": "kbc.adminsCount",
+          "value": 1
+        },
+        "orchestrations.count": {
+          "name": "orchestrations.count",
+          "value": 1
+        },
+        "storage.dataSizeBytes": {
+          "name": "storage.dataSizeBytes",
+          "value": 22691704832
+        },
+        "storage.rowsCount": {
+          "name": "storage.rowsCount",
+          "value": 4295727047
+        }
+      },
+      "isDisabled": false,
+      "billedMonthlyPrice": null,
+      "dataRetentionTimeInDays": 7,
+      "organization": {
+        "id": 5,
+        "name": "Martinovo",
+        "created": "2013-12-31T11:22:33+0100",
+        "allowAutoJoin": true
+      },
+      "fileStorage": {
+        "id": 2,
+        "awsKey": "AKIAJ2N244XSWYVVYVLQ",
+        "region": "us-east-1",
+        "filesBucket": "kbc-sapi-files",
+        "owner": "keboola",
+        "isDefault": true,
+        "created": "",
+        "creator": {
+          "id": 0,
+          "name": null
+        }
+      },
+      "backends": {
+        "snowflake": {
+          "id": 353,
+          "host": "keboola.snowflakecomputing.com",
+          "region": "us-east-1"
+        }
+      }
     }
     ```
-
-
-## Manage Project [/manage/projects/{project_id}]
 
 
 ### Project Detail [GET]
@@ -641,217 +596,37 @@ Metric alarms has soft limit. Example alarm metrics - project size, gooddata siz
 + Parameters
     + project_id (required, int) - Project id
 
++ Request (application/json)
+    + Headers
 
-+ Response 200 (application/json)
+            X-KBC-ManageApiToken: your_token
 
-    ```js
-    {
-        {
-            "id":258,
-            "name":"Shared Config",
-            "description": "Project description",
-            "features":["new-orchestrator","es-events"],
-            "created": "2014-11-11T08:40:51.620Z",
-            "expirationDate": "2015-11-11T08:40:51.620Z",
-            "defaultBackend": "redshift",
-            "monthlyPrice" 800.0,
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": "1"
-            },
-            "alarms": [
-                {
-                    "name": "storage.dataSizeBytes",
-                    "currentValue": 234234,
-                    "limitValue": 123234324,
-                    "isAlarm": false
-                },
-               {
-                   "name": "orchestrations.delay",
-                   "currentValue": 60.0,
-                   "limitValue": 15.0
-               },
-               {
-                    "name": "gooddata.usersCount",
-                    "currentValue": 234,
-                    "limitValue": 500,
-                    "isAlarm": false
-               },
-               {
-                    "name": "gooddata.dataSizeBytes",
-                    "currentValue": 23434543,
-                    "limitValue": 500345345,
-                    "isAlarm": false
-               },
-               {
-                   "name": "gooddata.loadFrequency",
-                   "currentValue": 3.3,
-                   "limitValue": 5.0,
-                   "isAlarm": false
-              }
-            ],
-            "limits": [
-                {
-                    "name": "orchestrations.count",
-                    "limitValue": 8
-                },
-                {
-                    "name": "adminsCount",
-                    "limitValue": 15
-                },
-                {
-                    "name": "extractorsCount",
-                    "limitValue": null
-                },
-                {
-                    "name": "writersCount",
-                    "limitValue": null
-                },
-                {
-                    "name": "storage.jobsParallelism",
-                    "limitValue": 10
-                },
-                {
-                    "name": "syrup.jobsParallelism",
-                    "limitValue": 10
-                },
-                {
-                    "name": "gooddata.prodTokenEnabled",
-                    "isEnabled": true
-                },
-                {
-                    "name": "gooddata.demoTokenEnabled",
-                    "isEnabled": true
-                },
-                {
-                    "name": "gooddata.projectsCount",
-                    "limitValue": 4
-                }
-            ]
-        }
-    }
-    ```
++ Response 200
+
+    [Project][]
 
 ### Update Project [PUT]
 
-Available attributes to change:
-- `name` - rename project
-- `defaultBackend` - change project default backend
-- `type` - change project type (demo, production, poc, ...) allowed only for super admin
-- `expirationDays` - Change project expiration  - allowed only for super admin
-- `billedMonthlyPrice` - Change project monthly fee - allowed only for super admin
-- `dataRetentionTimeInDays` - (snowflake only) Change the data retention period for this project - allowed only for super admin
++ Attributes
+
+    + name: Test - Rename project
+    + defaultBackend: snowflake - Change project default backend type
+    + type:demo - change project type (demo, production, poc, ...) allowed only for super admin
+    + expirationDays: 7 - Change project expiration  - allowed only for super admin
+    + billedMonthlyPrice: 2000 - Change project monthly fee - allowed only for super admin
+    + dataRetentionTimeInDays: 20 - (snowflake only) Change the data retention period for this project - allowed only for super admin
 
 + Parameters
     + project_id (required, int) - Project id
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "name": "Test",
-        "defaultBackend": "redshift",
-        "billedMonthlyPrice": 1200,
-        "expirationDays": 30,
-        "type": "demo"
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 200
 
-    ```js
-    {
-        {
-            "id":258,
-            "name":"Shared Config",
-            "description": "Project description",
-            "features":["new-orchestrator","es-events"],
-            "created": "2014-11-11T08:40:51.620Z",
-            "expirationDate": "2015-11-11T08:40:51.620Z",
-            "defaultBackend": "redshift",
-            "monthlyPrice" 800.0,
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": "1"
-            },
-            "alarms": [
-                {
-                    "name": "storage.dataSizeBytes",
-                    "currentValue": 234234,
-                    "limitValue": 123234324,
-                    "isAlarm": false
-                },
-               {
-                   "name": "orchestrations.delay",
-                   "currentValue": 60.0,
-                   "limitValue": 15.0
-               },
-               {
-                    "name": "gooddata.usersCount",
-                    "currentValue": 234,
-                    "limitValue": 500,
-                    "isAlarm": false
-               },
-               {
-                    "name": "gooddata.dataSizeBytes",
-                    "currentValue": 23434543,
-                    "limitValue": 500345345,
-                    "isAlarm": false
-               },
-               {
-                   "name": "gooddata.loadFrequency",
-                   "currentValue": 3.3,
-                   "limitValue": 5.0,
-                   "isAlarm": false
-              }
-            ],
-            "limits": [
-                {
-                    "name": "orchestrations.count",
-                    "limitValue": 8
-                },
-                {
-                    "name": "adminsCount",
-                    "limitValue": 15
-                },
-                {
-                    "name": "extractorsCount",
-                    "limitValue": null
-                },
-                {
-                    "name": "writersCount",
-                    "limitValue": null
-                },
-                {
-                    "name": "storage.jobsParallelism",
-                    "limitValue": 10
-                },
-                {
-                    "name": "syrup.jobsParallelism",
-                    "limitValue": 10
-                },
-                {
-                    "name": "gooddata.prodTokenEnabled",
-                    "isEnabled": true
-                },
-                {
-                    "name": "gooddata.demoTokenEnabled",
-                    "isEnabled": true
-                },
-                {
-                    "name": "gooddata.projectsCount",
-                    "limitValue": 4
-                }
-            ]
-        }
-    }
-    ```
+    [Project][]
 
 ### Delete Project [DELETE]
 Project will not be physically deleted. It'll be just not accessible and hidden.
@@ -859,10 +634,156 @@ Project will not be physically deleted. It'll be just not accessible and hidden.
 + Parameters
     + project_id (required, int) - Project id
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 204
 
+## Add Project [/manage/organizations/{organization_id}/projects]
+
+Project will be created from default template which defines it's limits.
+
++ Parameters
+    + organization_id (required, int) - Organization id. Project has to be created in some Organization.
+
+### Add Project [POST]
+
++ Attributes
+
+    + name: My Demo (required) - project name
+    + type: demo (required) -  one of `production`, `poc`, `demo`. Default `production`.
+    + defaultBackend: snowflake - Project default backend `snowflake` or `redshift`. `snowflake` is default.
+    + dataRetentionTimeInDays: 7 - Data retention in days for Time Travel
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
+     [Project][]
+
+## Move project to another organization [/manage/projects/{project_id}/organizations]
+
++ Parameters
+    + project_id (required, int)  - Project id
+
+### Move project [POST]
+
++ Attributes
+
+    + organizationId: 523 (required) - ID of destination orgranization
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    [Project][]
+
+## Assign project storage backend [/manage/projects/{project_id}/storage-backend]
+This action can be performed only by super admin.
+
+One backend connection of each type (snowflake, redshift) can be assigned to project.
+Connection type is automatically detected from passed connection identifier.
+
++ Parameters
+    + project_id (required, int)  - Project id
+
+### Assign project storage backend [POST]
+
++ Attributes
+
+    + storageBackendId: 32 (required) - ID of storage backend
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+     [Project][]
+
+## Remove project storage backend [/manage/projects/{project_id}/storage-backend/{storage_backend_id}]
+This action can be performed only by super admin.
+
+Storage backend type is automatically detected from it's id. Only backend without any buckets associated with them can be removed.
 
 
++ Parameters
+    + project_id (required, int)  - Project id
+    + storage_backend_id (required, int) - Storage backend id. Must be one of storage backends assigned to project.
+
+### Remove project storage backend [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    [Project][]
+
+
+## Assign Project File Storage [/manage/projects/{project_id}/file-storage]
+This action can be performed only by super admin.
+
++ Parameters
+    + project_id (required, int)  - Project id
+
+### Assign Project File Storage [POST]
+
++ Attributes
+
+    + fileStorageId: 32 (required) - ID of file storage
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 200
+
+     [Project][]
+
+## Project Limits [/manage/projects/{project_id}/limits]
+
+Change project limits is allowed only form Super Admin.
+
++ Parameters
+    + project_id (required, int)  - Project id
+
+### Set Project Limits [POST]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+        ```js
+        {
+            "limits": [
+                {
+                    "name": "goodData.usersCount",
+                    "value": 23
+                }
+            ]
+        }
+        ```
+
++ Response 200
+
+    [Project][]
 
 ## Project Users [/manage/projects/{project_id}/users]
 
@@ -871,6 +792,11 @@ Project will not be physically deleted. It'll be just not accessible and hidden.
 
 
 ### List Users [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200
 
@@ -899,15 +825,16 @@ Project will not be physically deleted. It'll be just not accessible and hidden.
 
 An optional expiration (seconds) and reason for joining can be added to the request.
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "email": "martin@keboola.com",
-        "expirationSeconds": "86400",
-        "reason": "KBC Support for Zendesk Ticket #1234"
-    }
-    ```
+    + email: martin@keboola.com (required) - Email of invited user
+    + expirationSeconds: 3600 (number) - After how many secons the membership of user will expire
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
@@ -919,6 +846,11 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
 ### Delete user from project [DELETE]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 204
 
 
@@ -928,38 +860,20 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
 ### Change project disabled status [POST]
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "isDisabled": true,
-        "disableReason": "Maintenance",
-        "estimatedEndTime": "+1 hour"
-    }
-    ```
+    + isDisabled: true (boolean) - Enable or disable project
+    + disabledReason: Project mainteintance - Why the project is disabled
+    + estimatedEndTime: +1 hour - When the project will be enabled
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200
 
-    ```js
-    {
-        "id":258,
-        "name":"Shared Config",
-        "description": "Project description",
-        "features":["new-orchestrator","es-events"],
-        "created": "2014-11-11T08:40:51.620Z",
-        "expirationDate": "2015-11-11T08:40:51.620Z",
-        "defaultBackend": "redshift",
-        "monthlyPrice" 800.0,
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": "1"
-        },
-        "alarms": []
-    }
-    ```
+     [Project][]
 
 ## Create Storage token in project [/manage/projects/{project_id}/tokens]
 
@@ -968,19 +882,20 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
 ### Create Storage Token [POST]
 
-+ Request (application/json)
 
-    ```js
-    {
-        "description": "Test token",
-        "canManageBuckets": true,
-        "canReadAllFileUploads": true,
-        "expiresIn": 60,
-        "bucketPermissions": {
-            "in.c-main": "read"
-        }
-    }
-    ```
++ Attributes
+
+    + description: Test Token (required) - token description
+    + canManageBuckets: true (boolean) - Token has full permissions on tabular storage
+    + canReadAllFileUploads: true (boolean) - Token has full permissions to files staging
+    + expiresIn: 60 (number) - Token lifetime
+    + bucketPermissions (object)
+        - in.c-main: read
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 201
 
@@ -1012,6 +927,11 @@ Deleted project operations are allowed only for super admins.
 
 + Parameters
     + project_id (required, int) - Deleted project id
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1053,6 +973,10 @@ Enqueues project full delete command and returns its command execution id for mo
     + project_id (required, int) - Deleted project id
 
 + Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
     + Attributes
         + ignoreBackendErrors: `false` (boolean) - ignore errors from backed. eq. deleted Redshift cluter. `false` is default.
 
@@ -1079,6 +1003,10 @@ Projects can be filtered by various filters:
 * *limit* - number of returned projects. Default value: 100
 * *offset* - pagination offset
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1160,6 +1088,10 @@ You can also specify new expiration by `expirationDays` parameter.
     + project_id (required, int) - Project id
     + expirationDays (optional, number) - Project expiration in days
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
@@ -1168,10 +1100,18 @@ You can also specify new expiration by `expirationDays` parameter.
 
 Users can be managed only by super admins.
 
-## User Detail [GET /manage/users/{user_id_or_email}]
+## Manage User [/manage/users/{user_id_or_email}]
+
+### User Detail [GET]
 
 + Parameters
     + user_id_or_email (required) - User id or email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 200 (application/json)
 
@@ -1186,18 +1126,20 @@ Users can be managed only by super admins.
     }
     ```
 
-## Update User [PUT /manage/users/{user_id_or_email}]
+### Update User [PUT]
 
 + Parameters
     + user_id_or_email (required) - User id or email
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "name": "Corrected Spelling"
-    }
-    ```
+    + name: Martin - user name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 200 (application/json)
 
@@ -1217,6 +1159,11 @@ Users can be managed only by super admins.
 + Parameters
     + user_id_or_email (required) - User id or email
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 204
 
 
@@ -1233,6 +1180,12 @@ There are yet three types of notifications:
 ## Notifications [/manage/notifications]
 
 ### List Notifications [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 200 (application/json)
 
@@ -1271,21 +1224,20 @@ There are yet three types of notifications:
     ```
 
 ### Create Notification [POST]
-- type (required, string) - type of notification, one of [common | limit | global]
-- projectId (string) - required for `common` and `limit` type, ignored for `global`
-- title (requried, string) - short title of notification
-- message (string) - long message, supports markdown
-- payload (json) - optional JSON payload, for type `limit` set to `{"limit": "kbc.limitNameHere"}
 
-+ Request
-    ```js
-    {
-        "type": "common",
-        "projectId": "1234",
-        "title": "Maintenance Announcement",
-        "message": "There will be maintenance on this project sometime in the future"
-    }
-    ```
++ Attributes
+
+    + type: common (required) - type of notification, one of [common | limit | global]
+    + projectId: 234 - required for `common` and `limit` type, ignored for `global`
+    + title: First Notification (required) - short title of notification
+    + message: Some text - long message, supports markdown
+    + payload (object) - optional JSON payload, for type `limit` set to `{"limit": "kbc.limitNameHere"}
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 
 + Response 201 (application/json)
 
@@ -1306,65 +1258,28 @@ all notifications as read.
 
 
 
-+ Request
-    ```js
-    {
-        "read": [
-            "497bda6a-cb57-11e5-8080-800144cef8df",
-            "fae2ad7e-cb43-11e5-8080-800019c0d40a"
-        ],
-        "allRead": true
-    }
-    ```
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+            ```js
+            {
+                "read": [
+                    "497bda6a-cb57-11e5-8080-800144cef8df",
+                    "fae2ad7e-cb43-11e5-8080-800019c0d40a"
+                ],
+                "allRead": true
+            }
+            ```
 
 + Response 200 (application/json)
     ```js
     {
         "status": "ok"
     }
-    ```
-
-
-
-# Group Activity
-*Not yet implemented*.
-
-Events related to maintainers, organizations and projects accessible by token.
-
-
-## List Events [GET /manage/events]
-
-+ Response 200 (application/json)
-
-    ```js
-    [
-        {
-            "id": "3071651386",
-            "type": "ProjectCreated",
-            "actor": {
-                "id": 12015,
-                "email": "martin@keboola.com",
-            },
-            "repo": {
-                "id": 35902694,
-                "name": "ICTatRTI/coconut-mobile",
-                "url": "https://api.github.com/repos/ICTatRTI/coconut-mobile"
-            },
-            "payload": {
-                "message": "Project New was created"
-            },
-            "created": "2015-08-19T13:23:18Z",
-            "organization": {
-                "id": 4205148,
-                "name": "Keboola Devel",
-            },
-            "maintainer": {
-                "id": 624475,
-                "name": "Keboola CZ"
-            }
-        }
-    ]
-
     ```
 
 
@@ -1379,6 +1294,11 @@ add `type` parameter to your query.
 
 + Parameters
     + type: admin (string) - type of features you want to filter
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1396,6 +1316,11 @@ add `type` parameter to your query.
 
 ### Retrieve one feature [GET /manage/features/{id}]
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -1412,6 +1337,11 @@ add `type` parameter to your query.
 
 Get projects with specified feature assigned.
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -1426,6 +1356,11 @@ Get projects with specified feature assigned.
 ### Retrieve feature users [GET /manage/features/{id}/admins]
 
 Get users with specified feature assigned.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1443,19 +1378,16 @@ Get users with specified feature assigned.
 
 To create new feature, provide following parameters as JSON in request body:
 
-- `name` (required, string): - Feature name; example: `show-new-design`
-- `type` (required, string): - Feature type, should be one of the following: `admin`, `project` or `global`
-- `description` (required, string): - Short description of the feature; example: `Users with this feature will see new UI`
++ Attributes
+
+    + name: show-new-design (required) - Feature name
+    + type: admin, project (enum) (required) - Feature type
+    + description: Users with this feature will see new UI (required)  - Short description of the feature
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "name": "show-new-design",
-        "type": "admin",
-        "description": "Users with this feature will see new UI"
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 201 (application/json)
 
@@ -1474,6 +1406,11 @@ To create new feature, provide following parameters as JSON in request body:
 + Parameters
     + id: 1 (required, number) - ID of the feature to delete
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 204
 
 ## Project Features [/manage/projects/{project_id}/features]
@@ -1487,13 +1424,14 @@ Assign project feature is allowed only for Super Admin.
 
 *Note: Feature has to exist before adding to project.*
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "feature": "kbc-testing"
-    }
-    ```
+    + feature: show-new-design (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1526,12 +1464,9 @@ Remove project feature is allowed only for Super Admin.
     + project_id (required, int)  - Project id
 
 + Request (application/json)
+    + Headers
 
-    ```js
-    {
-        "feature": "kbc-testing"
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 204
 
@@ -1546,13 +1481,14 @@ Remove project feature is allowed only for Super Admin.
 + Parameters
     + user_id_or_email (required) - User id or email
 
-+ Request (application/json)
++ Attributes
 
-    ```js
-    {
-        "feature": "inline-manual"
-    }
-    ```
+    + feature: show-new-design (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1572,6 +1508,11 @@ Remove project feature is allowed only for Super Admin.
 + Parameters
     + user_id_or_email (required) - User id or email
     + feature (required) - feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1602,6 +1543,10 @@ Storage region is automatically detected.
 
 + Request (application/json)
 
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
     + Attributes(FileStorageRequest)
 
 + Response 201 (application/json)
@@ -1625,6 +1570,10 @@ Only storage owned by **keboola** can be set as default.
 ### Set storage as default [POST]
 
 + Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 
 + Response 201 (application/json)
@@ -1654,7 +1603,6 @@ Only storage owned by **keboola** can be set as default.
 Storage backends powers Keboola Connection bucket and tables the main tabular data storage.
 Currently supported backends are:
 
-- MySQL
 - Redshift
 - Snowflake
 
@@ -1696,6 +1644,10 @@ According to previous example parameter for storage create will be:
 
 + Request (application/json)
 
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
     + Attributes(StorageBackendCreate)
 
 + Response 201 (application/json)
@@ -1713,7 +1665,7 @@ According to previous example parameter for storage create will be:
 
 ### StorageBackendCreate
 
-+ backend: redshift (required) - can be redshift, mysql or snowflake
++ backend: snowflake (required) - can be redshift or snowflake
 + host: `sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com` (required)
 + warehouse: `production` - required only for snowflake.
 + username: keboola (required)
@@ -1741,6 +1693,10 @@ You can use this id for search of command output in papertrail logs.
 
 + Request (application/json)
 
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
     + Attributes(CommandExecute)
 
 + Response 201 (application/json)
@@ -1765,6 +1721,13 @@ You can use this id for search of command output in papertrail logs.
 ## List Applications [GET /manage/ui-apps]
 
 Returns active manage applications. This resources doesn't require authentication.
+
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1793,6 +1756,12 @@ Retrieve application detail with all it's versions.
 + Parameters
     + app_id (required, id) - Application id
 
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 200 (application/json)
 
     ```js
@@ -1817,17 +1786,13 @@ Retrieve application detail with all it's versions.
 
 ## Activate/Deactivate application version [PATCH /manage/ui-apps-versions/{version_id}]
 
-+ Parameters
-    + isActive (required, bool) - active state of version. Only one version of app can be active, previous active version will be disabled.
-
++ Attributes
+    + isActive: true (required, boolean) - active state of version. Only one version of app can be active, previous active version will be disabled.
 
 + Request (application/json)
+    + Headers
 
-    ```is
-    {
-        "isActive": true
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1846,6 +1811,11 @@ Retrieve application detail with all it's versions.
 + Parameters
     + manifest_url (required, string) - URL of manifest describing UI build
     + activate (optional, int) - Activate version after registration
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
 
 + Response 201 (application/json)
 
@@ -1866,224 +1836,6 @@ Retrieve application detail with all it's versions.
     }
     ```
 
-## UI Applications Events [/manage/ui-apps-events]
-*Not yet implemented.*
-
-Components event feed. Changelog of all actions on uis.
-
-### List Events [GET]
-
-
-+ Response 200 (application/json)
-
-    ```js
-    []
-    ```
-
-
-# Group SUPER - Components Management
-*Not yet implemented.*
-
-Management of Keboola Connection Components and Applications
-
-## Components [/manage/components]
-
-### List Components [GET]
-
-+ Response 200 (application/json)
-
-    ```js
-    [
-        {
-            id: "ag-forecastio",
-            type: "extractor",
-            name: "Forecast.io Augmentation",
-            description: "Forecast.io Augmentation",
-            hasUI: false,
-            hasRun: true,
-            ico32: "",
-            ico64: "",
-            data: {},
-            flags: [],
-            uri: "https://syrup.keboola.com/ag-forecastio"
-        },
-        {
-            id: "ag-geocoding",
-            type: "extractor",
-            name: "Geocoding Augmentation",
-            description: "Geocoding Augmentation",
-            hasUI: false,
-            hasRun: true,
-            ico32: "",
-            ico64: "",
-            data: {},
-            flags: [],
-            uri: "https://syrup.keboola.com/ag-geocoding"
-        }
-    ]
-```
-
-### Add Component [POST]
-
-+ Request (application/json)
-
-    ```js
-    {
-        id: "ag-geocoding",
-        type: "extractor",
-        name: "Geocoding Augmentation",
-        description: "Geocoding Augmentation",
-        hasUI: false,
-        hasRun: true,
-        ico32: "",
-        ico64: "",
-        data: {},
-        flags: [],
-        uri: "https://syrup.keboola.com/ag-geocoding"
-    }
-    ```
-
-+ Response 201 (application/json)
-
-    ```js
-    {
-        id: "ag-geocoding",
-        type: "extractor",
-        name: "Geocoding Augmentation",
-        description: "Geocoding Augmentation",
-        hasUI: false,
-        hasRun: true,
-        ico32: "",
-        ico64: "",
-        data: {},
-        flags: [],
-        uri: "https://syrup.keboola.com/ag-geocoding"
-    }
-    ```
-
-## Update component [PATCH /manage/components/{component_id}]
-
-+ Parameters
-    + component_id (required, string) - Component id
-
-+ Request (application/json)
-
-    ```
-    {
-        "name": "Forecast.io"
-    }
-    ```
-
-+ Response 200 (application/json)
-
-    ```js
-    {
-        id: "ag-geocoding",
-        type: "extractor",
-        name: "Forecast.io",
-        description: "Geocoding Augmentation",
-        hasUI: false,
-        hasRun: true,
-        ico32: "",
-        ico64: "",
-        data: {},
-        flags: [],
-        uri: "https://syrup.keboola.com/ag-geocoding"
-    }
-    ```
-
-## Components Events [/manage/components-events]
-Components event feed. Changelog of all actions on components.
-
-### List Events [GET]
-
-
-+ Response 200 (application/json)
-
-    ```js
-    []
-    ```
-
-## Components Tokens [/manage/components/{component_id}/tokens]
-Special tokens assigned to components. Only `notifications_push` action can be performed by token.
-Notifications can be send only to projects which has the component installed.
-Can be created only by super admin.
-
-+ Parameters
-    + component_id (required, string) - Component id
-
-### Create token [POST]
-Creates and returns token. Token value cannot be obtained again.
-
-+ Request (application/json)
-
-    ```js
-    {
-        "name": "Gd Writer Production"
-    }
-    ```
-
-+ Response 201 (application/json)
-
-    ```js
-    {
-        "id": 234,
-        "token": "aODFGKASDFSDvdsafsdgsaSDF",
-        "name": "Gd Writer Production",
-        "created":"2015-02-12 11:10:09"
-    }
-    ```
-
-### List Tokens [GET]
-
-+ Response 200 (application/json)
-
-    ```js
-    [
-        {
-            "id": 234,
-            "name": "Gd Writer Production",
-            "created":"2015-02-12 11:10:09"
-        },
-        {
-            "id": 231,
-            "name": "Gd Writer Dev",
-            "created":"2015-02-12 11:10:09"
-        }
-    ]
-    ```
-
-## Notifications [/manage/components/{component_id}/notifications]
-
-+ Parameters
-    + component_id (required, string) - Component id
-
-## Send Notification [POST]
-Send notification to project. Notification can be send only to project which has component activated otherwise 403 is returned.
-Notification will be distributed to all administrators of project.
-
-+ Request (application/json)
-
-    ```
-    {
-        "projectId": 326,
-        "message": "Your gooddata project will be deleted in 3 days.",
-        "payload": {
-            "configuration": "234",
-            "component": "gooddata-writer"
-        }
-    }
-    ```
-
-+ Response 201 (application/json)
-
-    ```js
-    {
-        "id": "23423"
-    }
-    ``
-
-
 # Group Syrup API integration
 
 This s a example of API call returning all running worker processes and it's state. This resource is accessible for tokens of type `super` with `super_monitoring`  scope.
@@ -2100,7 +1852,10 @@ Endpoint should be: https://syrup.keboola.com/queue/workers
 
 This API resource can be used for example by Hubot script for listing running workers.
 
++ Request (application/json)
+    + Headers
 
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
