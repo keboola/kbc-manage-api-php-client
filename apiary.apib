@@ -543,7 +543,7 @@ Project will be created from default template which defines it's limits.
 ## Assign project storage backend [/manage/projects/{project_id}/storage-backend]
 This action can be performed only by super admin.
 
-One backend connection of each type (mysql, redshift) can be assigned to project.
+One backend connection of each type (snowflake, redshift) can be assigned to project.
 Connection type is automatically detected from passed connection identifier.
 
 + Parameters
@@ -1775,7 +1775,6 @@ Only storage owned by **keboola** can be set as default.
 Storage backends powers Keboola Connection bucket and tables the main tabular data storage.
 Currently supported backends are:
 
-- MySQL
 - Redshift
 - Snowflake
 
@@ -1838,7 +1837,7 @@ According to previous example parameter for storage create will be:
 
 ### StorageBackendCreate
 
-+ backend: redshift (required) - can be redshift, mysql or snowflake
++ backend: snowflake (required) - can be redshift or snowflake
 + host: `sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com` (required)
 + warehouse: `production` - required only for snowflake.
 + username: keboola (required)
