@@ -1959,17 +1959,13 @@ Retrieve application detail with all it's versions.
 
 ## Activate/Deactivate application version [PATCH /manage/ui-apps-versions/{version_id}]
 
-+ Parameters
-    + isActive (required, bool) - active state of version. Only one version of app can be active, previous active version will be disabled.
-
++ Attributes
+    + isActive: true (required, boolean) - active state of version. Only one version of app can be active, previous active version will be disabled.
 
 + Request (application/json)
+    + Headers
 
-    ```is
-    {
-        "isActive": true
-    }
-    ```
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -1989,6 +1985,11 @@ Retrieve application detail with all it's versions.
     + manifest_url (required, string) - URL of manifest describing UI build
     + activate (optional, int) - Activate version after registration
 
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 + Response 201 (application/json)
 
     ```js
@@ -2007,21 +2008,6 @@ Retrieve application detail with all it's versions.
         }
     }
     ```
-
-## UI Applications Events [/manage/ui-apps-events]
-*Not yet implemented.*
-
-Components event feed. Changelog of all actions on uis.
-
-### List Events [GET]
-
-
-+ Response 200 (application/json)
-
-    ```js
-    []
-    ```
-
 
 # Group SUPER - Components Management
 *Not yet implemented.*
