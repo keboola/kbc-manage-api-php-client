@@ -463,152 +463,6 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 
 # Group Projects
 
-
-## Add Project [/manage/organizations/{organization_id}/projects]
-
-Project will be created from default template which defines it's limits.
-
-+ Parameters
-    + organization_id (required, int) - Organization id. Project has to be created in some Organization.
-
-### Add Project [POST]
-
-+ Attributes
-
-    + name: My Demo (required) - project name
-    + type: demo (required) -  one of `production`, `poc`, `demo`. Default `production`.
-    + defaultBackend: snowflake - Project default backend `snowflake` or `redshift`. `snowflake` is default.
-    + dataRetentionTimeInDays: 7 - Data retention in days for Time Travel
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 201
-
-     [Project][]
-
-## Move project to another organization [/manage/projects/{project_id}/organizations]
-
-+ Parameters
-    + project_id (required, int)  - Project id
-
-### Move project [POST]
-
-+ Attributes
-
-    + organizationId: 523 (required) - ID of destination orgranization
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 200
-
-    [Project][]
-
-## Assign project storage backend [/manage/projects/{project_id}/storage-backend]
-This action can be performed only by super admin.
-
-One backend connection of each type (snowflake, redshift) can be assigned to project.
-Connection type is automatically detected from passed connection identifier.
-
-+ Parameters
-    + project_id (required, int)  - Project id
-
-### Assign project storage backend [POST]
-
-+ Attributes
-
-    + storageBackendId: 32 (required) - ID of storage backend
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 200
-
-     [Project][]
-
-## Remove project storage backend [/manage/projects/{project_id}/storage-backend/{storage_backend_id}]
-This action can be performed only by super admin.
-
-Storage backend type is automatically detected from it's id. Only backend without any buckets associated with them can be removed.
-
-
-+ Parameters
-    + project_id (required, int)  - Project id
-    + storage_backend_id (required, int) - Storage backend id. Must be one of storage backends assigned to project.
-
-### Remove project storage backend [DELETE]
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 200
-
-    [Project][]
-
-
-## Assign Project File Storage [/manage/projects/{project_id}/file-storage]
-This action can be performed only by super admin.
-
-+ Parameters
-    + project_id (required, int)  - Project id
-
-### Assign Project File Storage [POST]
-
-+ Attributes
-
-    + fileStorageId: 32 (required) - ID of file storage
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-
-+ Response 200
-
-     [Project][]
-
-## Project Limits [/manage/projects/{project_id}/limits]
-
-Change project limits is allowed only form Super Admin.
-
-+ Parameters
-    + project_id (required, int)  - Project id
-
-### Set Project Limits [POST]
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-    + Body
-
-        ```js
-        {
-            "limits": [
-                {
-                    "name": "goodData.usersCount",
-                    "value": 23
-                }
-            ]
-        }
-        ```
-
-+ Response 200
-
-    [Project][]
-
-
 ## Project [/manage/projects/{project_id}]
 
 + Model (application/json)
@@ -787,8 +641,149 @@ Project will not be physically deleted. It'll be just not accessible and hidden.
 
 + Response 204
 
+## Add Project [/manage/organizations/{organization_id}/projects]
+
+Project will be created from default template which defines it's limits.
+
++ Parameters
+    + organization_id (required, int) - Organization id. Project has to be created in some Organization.
+
+### Add Project [POST]
+
++ Attributes
+
+    + name: My Demo (required) - project name
+    + type: demo (required) -  one of `production`, `poc`, `demo`. Default `production`.
+    + defaultBackend: snowflake - Project default backend `snowflake` or `redshift`. `snowflake` is default.
+    + dataRetentionTimeInDays: 7 - Data retention in days for Time Travel
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
+     [Project][]
+
+## Move project to another organization [/manage/projects/{project_id}/organizations]
+
++ Parameters
+    + project_id (required, int)  - Project id
+
+### Move project [POST]
+
++ Attributes
+
+    + organizationId: 523 (required) - ID of destination orgranization
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    [Project][]
+
+## Assign project storage backend [/manage/projects/{project_id}/storage-backend]
+This action can be performed only by super admin.
+
+One backend connection of each type (snowflake, redshift) can be assigned to project.
+Connection type is automatically detected from passed connection identifier.
+
++ Parameters
+    + project_id (required, int)  - Project id
+
+### Assign project storage backend [POST]
+
++ Attributes
+
+    + storageBackendId: 32 (required) - ID of storage backend
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+     [Project][]
+
+## Remove project storage backend [/manage/projects/{project_id}/storage-backend/{storage_backend_id}]
+This action can be performed only by super admin.
+
+Storage backend type is automatically detected from it's id. Only backend without any buckets associated with them can be removed.
 
 
++ Parameters
+    + project_id (required, int)  - Project id
+    + storage_backend_id (required, int) - Storage backend id. Must be one of storage backends assigned to project.
+
+### Remove project storage backend [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    [Project][]
+
+
+## Assign Project File Storage [/manage/projects/{project_id}/file-storage]
+This action can be performed only by super admin.
+
++ Parameters
+    + project_id (required, int)  - Project id
+
+### Assign Project File Storage [POST]
+
++ Attributes
+
+    + fileStorageId: 32 (required) - ID of file storage
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 200
+
+     [Project][]
+
+## Project Limits [/manage/projects/{project_id}/limits]
+
+Change project limits is allowed only form Super Admin.
+
++ Parameters
+    + project_id (required, int)  - Project id
+
+### Set Project Limits [POST]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+        ```js
+        {
+            "limits": [
+                {
+                    "name": "goodData.usersCount",
+                    "value": 23
+                }
+            ]
+        }
+        ```
+
++ Response 200
+
+    [Project][]
 
 ## Project Users [/manage/projects/{project_id}/users]
 
