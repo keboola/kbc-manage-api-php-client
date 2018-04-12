@@ -378,6 +378,23 @@ class Client
         $this->apiDelete("/manage/users/{$emailOrId}/features/{$feature}");
     }
 
+    public function getProjectTemplateFeatures($templateStringId)
+    {
+        return $this->apiGet("/manage/project-templates/{$templateStringId}/features");
+    }
+
+    public function addProjectTemplateFeature($templateStringId, $featureName)
+    {
+        return $this->apiPost("/manage/project-templates/{$templateStringId}/features", [
+            'feature' => $featureName,
+        ]);
+    }
+
+    public function removeProjectTemplateFeature($templateStringId, $featureName)
+    {
+        $this->apiDelete("/manage/project-templates/{$templateStringId}/features/{$featureName}");
+    }
+
     public function disableUserMFA($emailOrId)
     {
         $this->apiDelete("/manage/users/{$emailOrId}/mfa");
