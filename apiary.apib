@@ -485,24 +485,9 @@ Project will be created from default template which defines it's limits.
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 201 (application/json)
++ Response 201
 
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "type": "demo",
-        "expires": "2014-11-11T08:40:51.620Z",
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": "1"
-        }
-    }
-    ```
+     [Project][]
 
 ## Move project to another organization [/manage/projects/{project_id}/organizations]
 
@@ -516,29 +501,13 @@ Project will be created from default template which defines it's limits.
     + organizationId: 523 (required) - ID of destination orgranization
 
 + Request (application/json)
-
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
++ Response 200
 
-+ Response 200 (application/json)
-
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
-        }
-    }
-    ```
-
+    [Project][]
 
 ## Assign project storage backend [/manage/projects/{project_id}/storage-backend]
 This action can be performed only by super admin.
@@ -560,22 +529,10 @@ Connection type is automatically detected from passed connection identifier.
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200 (application/json)
++ Response 200
 
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
-        }
-    }
-    ```
+     [Project][]
+
 ## Remove project storage backend [/manage/projects/{project_id}/storage-backend/{storage_backend_id}]
 This action can be performed only by super admin.
 
@@ -593,22 +550,9 @@ Storage backend type is automatically detected from it's id. Only backend withou
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200 (application/json)
++ Response 200
 
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
-        }
-    }
-    ```
+    [Project][]
 
 
 ## Assign Project File Storage [/manage/projects/{project_id}/file-storage]
@@ -629,22 +573,9 @@ This action can be performed only by super admin.
             X-KBC-ManageApiToken: your_token
 
 
-+ Response 200 (application/json)
++ Response 200
 
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
-        }
-    }
-    ```
+     [Project][]
 
 ## Project Limits [/manage/projects/{project_id}/limits]
 
@@ -673,31 +604,130 @@ Change project limits is allowed only form Super Admin.
         }
         ```
 
-+ Response 200 (application/json)
++ Response 200
+
+    [Project][]
+
+
+## Project [/manage/projects/{project_id}]
+
++ Model (application/json)
 
     ```js
     {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
+      "id": 4088,
+      "name": "Martinšík",
+      "type": "production",
+      "region": "us-east-1",
+      "created": "2017-12-11T09:02:13+0100",
+      "expires": null,
+      "features": [],
+      "dataSizeBytes": 22691704832,
+      "rowsCount": 4295727047,
+      "hasMysql": false,
+      "hasRedshift": false,
+      "hasSnowflake": true,
+      "defaultBackend": "snowflake",
+      "hasTryModeOn": "0",
+      "limits": {
+        "components.jobsParallelism": {
+          "name": "components.jobsParallelism",
+          "value": 10
         },
-        "limits": {
-            "goodData.usersCount": {
-                "name": "goodData.usersCount",
-                "value": 23
-            }
+        "goodData.dataSizeBytes": {
+          "name": "goodData.dataSizeBytes",
+          "value": 1000000000
+        },
+        "goodData.demoTokenEnabled": {
+          "name": "goodData.demoTokenEnabled",
+          "value": 1
+        },
+        "goodData.prodTokenEnabled": {
+          "name": "goodData.prodTokenEnabled",
+          "value": 0
+        },
+        "goodData.usersCount": {
+          "name": "goodData.usersCount",
+          "value": 30
+        },
+        "kbc.adminsCount": {
+          "name": "kbc.adminsCount",
+          "value": 10
+        },
+        "kbc.extractorsCount": {
+          "name": "kbc.extractorsCount",
+          "value": 0
+        },
+        "kbc.monthlyProjectPowerLimit": {
+          "name": "kbc.monthlyProjectPowerLimit",
+          "value": 50
+        },
+        "kbc.writersCount": {
+          "name": "kbc.writersCount",
+          "value": 0
+        },
+        "orchestrations.count": {
+          "name": "orchestrations.count",
+          "value": 10
+        },
+        "storage.dataSizeBytes": {
+          "name": "storage.dataSizeBytes",
+          "value": 50000000000
+        },
+        "storage.jobsParallelism": {
+          "name": "storage.jobsParallelism",
+          "value": 10
         }
+      },
+      "metrics": {
+        "kbc.adminsCount": {
+          "name": "kbc.adminsCount",
+          "value": 1
+        },
+        "orchestrations.count": {
+          "name": "orchestrations.count",
+          "value": 1
+        },
+        "storage.dataSizeBytes": {
+          "name": "storage.dataSizeBytes",
+          "value": 22691704832
+        },
+        "storage.rowsCount": {
+          "name": "storage.rowsCount",
+          "value": 4295727047
+        }
+      },
+      "isDisabled": false,
+      "billedMonthlyPrice": null,
+      "dataRetentionTimeInDays": 7,
+      "organization": {
+        "id": 5,
+        "name": "Martinovo",
+        "created": "2013-12-31T11:22:33+0100",
+        "allowAutoJoin": true
+      },
+      "fileStorage": {
+        "id": 2,
+        "awsKey": "AKIAJ2N244XSWYVVYVLQ",
+        "region": "us-east-1",
+        "filesBucket": "kbc-sapi-files",
+        "owner": "keboola",
+        "isDefault": true,
+        "created": "",
+        "creator": {
+          "id": 0,
+          "name": null
+        }
+      },
+      "backends": {
+        "snowflake": {
+          "id": 353,
+          "host": "keboola.snowflakecomputing.com",
+          "region": "us-east-1"
+        }
+      }
     }
     ```
-
-
-## Manage Project [/manage/projects/{project_id}]
 
 
 ### Project Detail [GET]
@@ -717,98 +747,9 @@ Metric alarms has soft limit. Example alarm metrics - project size, gooddata siz
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200 (application/json)
++ Response 200
 
-    ```js
-    {
-        {
-            "id":258,
-            "name":"Shared Config",
-            "description": "Project description",
-            "features":["new-orchestrator","es-events"],
-            "created": "2014-11-11T08:40:51.620Z",
-            "expirationDate": "2015-11-11T08:40:51.620Z",
-            "defaultBackend": "redshift",
-            "monthlyPrice" 800.0,
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": "1"
-            },
-            "alarms": [
-                {
-                    "name": "storage.dataSizeBytes",
-                    "currentValue": 234234,
-                    "limitValue": 123234324,
-                    "isAlarm": false
-                },
-               {
-                   "name": "orchestrations.delay",
-                   "currentValue": 60.0,
-                   "limitValue": 15.0
-               },
-               {
-                    "name": "gooddata.usersCount",
-                    "currentValue": 234,
-                    "limitValue": 500,
-                    "isAlarm": false
-               },
-               {
-                    "name": "gooddata.dataSizeBytes",
-                    "currentValue": 23434543,
-                    "limitValue": 500345345,
-                    "isAlarm": false
-               },
-               {
-                   "name": "gooddata.loadFrequency",
-                   "currentValue": 3.3,
-                   "limitValue": 5.0,
-                   "isAlarm": false
-              }
-            ],
-            "limits": [
-                {
-                    "name": "orchestrations.count",
-                    "limitValue": 8
-                },
-                {
-                    "name": "adminsCount",
-                    "limitValue": 15
-                },
-                {
-                    "name": "extractorsCount",
-                    "limitValue": null
-                },
-                {
-                    "name": "writersCount",
-                    "limitValue": null
-                },
-                {
-                    "name": "storage.jobsParallelism",
-                    "limitValue": 10
-                },
-                {
-                    "name": "syrup.jobsParallelism",
-                    "limitValue": 10
-                },
-                {
-                    "name": "gooddata.prodTokenEnabled",
-                    "isEnabled": true
-                },
-                {
-                    "name": "gooddata.demoTokenEnabled",
-                    "isEnabled": true
-                },
-                {
-                    "name": "gooddata.projectsCount",
-                    "limitValue": 4
-                }
-            ]
-        }
-    }
-    ```
+    [Project][]
 
 ### Update Project [PUT]
 
@@ -831,96 +772,7 @@ Metric alarms has soft limit. Example alarm metrics - project size, gooddata siz
 
 + Response 200
 
-    ```js
-    {
-        {
-            "id":258,
-            "name":"Shared Config",
-            "description": "Project description",
-            "features":["new-orchestrator","es-events"],
-            "created": "2014-11-11T08:40:51.620Z",
-            "expirationDate": "2015-11-11T08:40:51.620Z",
-            "defaultBackend": "redshift",
-            "monthlyPrice" 800.0,
-            "redshift": {
-                "connectionId":309,
-                "databaseName":"sapi_258"
-            }
-            "organization": {
-                "id": "1"
-            },
-            "alarms": [
-                {
-                    "name": "storage.dataSizeBytes",
-                    "currentValue": 234234,
-                    "limitValue": 123234324,
-                    "isAlarm": false
-                },
-               {
-                   "name": "orchestrations.delay",
-                   "currentValue": 60.0,
-                   "limitValue": 15.0
-               },
-               {
-                    "name": "gooddata.usersCount",
-                    "currentValue": 234,
-                    "limitValue": 500,
-                    "isAlarm": false
-               },
-               {
-                    "name": "gooddata.dataSizeBytes",
-                    "currentValue": 23434543,
-                    "limitValue": 500345345,
-                    "isAlarm": false
-               },
-               {
-                   "name": "gooddata.loadFrequency",
-                   "currentValue": 3.3,
-                   "limitValue": 5.0,
-                   "isAlarm": false
-              }
-            ],
-            "limits": [
-                {
-                    "name": "orchestrations.count",
-                    "limitValue": 8
-                },
-                {
-                    "name": "adminsCount",
-                    "limitValue": 15
-                },
-                {
-                    "name": "extractorsCount",
-                    "limitValue": null
-                },
-                {
-                    "name": "writersCount",
-                    "limitValue": null
-                },
-                {
-                    "name": "storage.jobsParallelism",
-                    "limitValue": 10
-                },
-                {
-                    "name": "syrup.jobsParallelism",
-                    "limitValue": 10
-                },
-                {
-                    "name": "gooddata.prodTokenEnabled",
-                    "isEnabled": true
-                },
-                {
-                    "name": "gooddata.demoTokenEnabled",
-                    "isEnabled": true
-                },
-                {
-                    "name": "gooddata.projectsCount",
-                    "limitValue": 4
-                }
-            ]
-        }
-    }
-    ```
+    [Project][]
 
 ### Delete Project [DELETE]
 Project will not be physically deleted. It'll be just not accessible and hidden.
@@ -1026,26 +878,7 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
 + Response 200
 
-    ```js
-    {
-        "id":258,
-        "name":"Shared Config",
-        "description": "Project description",
-        "features":["new-orchestrator","es-events"],
-        "created": "2014-11-11T08:40:51.620Z",
-        "expirationDate": "2015-11-11T08:40:51.620Z",
-        "defaultBackend": "redshift",
-        "monthlyPrice" 800.0,
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": "1"
-        },
-        "alarms": []
-    }
-    ```
+     [Project][]
 
 ## Create Storage token in project [/manage/projects/{project_id}/tokens]
 
