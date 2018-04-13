@@ -29,7 +29,7 @@ class ProjectTemplateFeaturesTest extends ClientTestCase
             }
         }
 
-        $this->assertTrue($featureFound !== null);
+        $this->assertNotNull($featureFound);
         $this->assertSame($randomFeature['name'], $featureFound['name']);
         $this->assertSame($randomFeature['type'], $featureFound['type']);
         $this->assertSame($randomFeature['description'], $featureFound['description']);
@@ -75,7 +75,7 @@ class ProjectTemplateFeaturesTest extends ClientTestCase
     public function testAccessNonexistentTemplate()
     {
         try {
-            $this->client->getProjectTemplateFeatures('random-template-name-' . time(), 'random-feature-name-' . time());
+            $this->client->getProjectTemplateFeatures('random-template-name-' . time());
             $this->fail('Project template not found');
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());
