@@ -514,6 +514,29 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($limits[1], $project['limits']['goodData.usersCount']);
     }
 
+    public function testChangeProjectLimitsWithSuperToken()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $projectAfterCreation = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        try {
+            $clientWithSuperApiToken = new \Keboola\ManageApi\Client([
+                'token' => getenv('KBC_SUPER_API_TOKEN'),
+                'url' => getenv('KBC_MANAGE_API_URL'),
+                'backoffMaxTries' => 0,
+            ]);
+
+            $clientWithSuperApiToken->setProjectLimits($projectAfterCreation['id'], []);
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+    }
+
     public function testAddNonexistentFeature()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
