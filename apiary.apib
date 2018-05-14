@@ -588,9 +588,8 @@ Either `id` or `email` of member must be set. If member is not found by email, a
 
 Returns project with associated limits and metrics.
 
-* alarms - Alarm is composed of metric name and settings and latest metric cached value and limit values. Also alarm state and last change time is stored with alarm.
-Metric alarms has soft limit. Example alarm metrics - project size, gooddata size, gooddata users count.
-* limits  - These are hard limits assigned to project (number of admins, number of orchestrations, parallelization).
+* limits  - These are limits assigned to project (number of admins, number of orchestrations, parallelization).
+* metrics - Latest values of monitored project metrics.
 
 
 + Parameters
