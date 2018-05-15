@@ -31,16 +31,13 @@ An access token is tied to an administrator and its permissions are derived from
 
 `$ curl -H "X-KBC-ManageApiToken: USER_TOKEN" https://connection.keboola.com/management/tokens/verify`
 
-There are also special tokens issued for [components](https://connection.keboola.com/admin/manage-apps#/tokens) which can be managed only by super admins.
 
 ## Token Types
 There are the following types of tokens:
 
-
 | Name | Tied to User | Token string is available only on create | Description  |
 | ------------- | ------------- | ------------------- | ----- |
-| user | Yes | No |Full access to maintainers, organizations and projects. Access is limited only to resources which are available for the token user.|
-| component | No | Yes | Can manage one specified component *Not yet implemented.* |
+| user | Yes | Yes |Full access to maintainers, organizations and projects. Access is limited only to resources which are available for the token user.|
 | super | No | Yes | KBC management. Limited scopes can be specified `super_ui_deploy`, `super_monitoring`, ...  |
 
 
