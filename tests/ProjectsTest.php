@@ -690,6 +690,26 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canManageTokens']);
         $this->assertFalse($verified['canReadAllFileUploads']);
         $this->assertEquals([$newBucketId => 'read'], $verified['bucketPermissions']);
+
+        // new token with canManageTokens
+        $token = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+            'canReadAllFileUploads' => true,
+            'canManageTokens' => true,
+        ]);
+
+        $client = new Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token['token'],
+        ]);
+
+        $verified = $client->verifyToken();
+        $this->assertEquals($project['id'], $verified['owner']['id']);
+        $this->assertTrue($verified['canManageBuckets']);
+        $this->assertTrue($verified['canManageTokens']);
+        $this->assertTrue($verified['canReadAllFileUploads']);
     }
 
     public function testProjectEnableDisable()
