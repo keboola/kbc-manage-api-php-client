@@ -108,6 +108,78 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
+    public function testAcceptInvitation()
+    {
+        $project = $this->initTestProject();
+
+        $invitations = $this->client->listProjectInvitations($project['id']);
+        $this->assertCount(0, $invitations);
+
+        $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(1, $invitations);
+
+        $invitation = reset($invitations);
+
+        $this->assertEquals($project['id'], $invitation['project']['id']);
+        $this->assertEquals($project['name'], $invitation['project']['name']);
+
+        $this->assertEquals($this->superAdmin['id'], $invitation['creator']['id']);
+        $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
+        $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
+
+        $this->normalUserClient->acceptMyProjectInvitation($invitation['id']);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(0, $invitations);
+
+        $userFound = false;
+        foreach ($this->normalUserClient->listProjectUsers($project['id']) as $user) {
+            if ($user['id'] === $this->normalUser['id']) {
+                $userFound = true;
+            }
+        }
+
+        $this->assertTrue($userFound);
+    }
+
+    public function testDeclineInvitation()
+    {
+        $project = $this->initTestProject();
+
+        $invitations = $this->client->listProjectInvitations($project['id']);
+        $this->assertCount(0, $invitations);
+
+        $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(1, $invitations);
+
+        $invitation = reset($invitations);
+
+        $this->assertEquals($project['id'], $invitation['project']['id']);
+        $this->assertEquals($project['name'], $invitation['project']['name']);
+
+        $this->assertEquals($this->superAdmin['id'], $invitation['creator']['id']);
+        $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
+        $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
+
+        $this->normalUserClient->declineMyProjectInvitation($invitation['id']);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(0, $invitations);
+
+        $userFound = false;
+        foreach ($this->client->listProjectUsers($project['id']) as $user) {
+            if ($user['id'] === $this->normalUser['id']) {
+                $userFound = true;
+            }
+        }
+
+        $this->assertFalse($userFound);
+    }
+
     private function initTestProject()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [

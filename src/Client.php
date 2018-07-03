@@ -249,6 +249,21 @@ class Client
         return $this->apiGet("/manage/projects/{$id}/invitations");
     }
 
+    public function listMyProjectInvitations()
+    {
+        return $this->apiGet("/manage/users/me/projects-invitations");
+    }
+
+    public function acceptMyProjectInvitation($id)
+    {
+        $this->apiPut("/manage/users/me/projects-invitations/{$id}", []);
+    }
+
+    public function declineMyProjectInvitation($id)
+    {
+        $this->apiDelete("/manage/users/me/projects-invitations/{$id}");
+    }
+
     public function addUserToProject($projectId, $params = [])
     {
         return $this->apiPost("/manage/projects/{$projectId}/users", $params);
