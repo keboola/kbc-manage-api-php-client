@@ -223,6 +223,26 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertNotEmpty($userMembership['expires']);
     }
 
+    public function testProjectDeleteRemovesInvitations()
+    {
+        $project = $this->initTestProject();
+
+        $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(1, $invitations);
+
+        $this->client->deleteProject($project['id']);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(0, $invitations);
+
+        $this->client->undeleteProject($project['id']);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(0, $invitations);
+    }
+
     private function initTestProject()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
