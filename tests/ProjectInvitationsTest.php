@@ -14,6 +14,9 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $invitation = $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
 
+        $this->assertEquals('', $invitation['reason']);
+        $this->assertEmpty($invitation['expires']);
+
         $this->assertEquals($this->normalUser['id'], $invitation['user']['id']);
         $this->assertEquals($this->normalUser['email'], $invitation['user']['email']);
         $this->assertEquals($this->normalUser['name'], $invitation['user']['name']);
@@ -37,7 +40,7 @@ class ProjectInvitationsTest extends ClientTestCase
     {
         $project = $this->initTestProject();
 
-        $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
+        $invitation = $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
 
         try {
             $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
@@ -58,6 +61,8 @@ class ProjectInvitationsTest extends ClientTestCase
             $this->assertContains('already', $e->getMessage());
             $this->assertContains('member', $e->getMessage());
         }
+
+        $this->client->cancelProjectInvitation($project['id'], $invitation['id']);
     }
 
     public function testNormalUserError()
@@ -122,6 +127,9 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $invitation = reset($invitations);
 
+        $this->assertEquals('', $invitation['reason']);
+        $this->assertEmpty($invitation['expires']);
+
         $this->assertEquals($project['id'], $invitation['project']['id']);
         $this->assertEquals($project['name'], $invitation['project']['name']);
 
@@ -158,6 +166,9 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $invitation = reset($invitations);
 
+        $this->assertEquals('', $invitation['reason']);
+        $this->assertEmpty($invitation['expires']);
+
         $this->assertEquals($project['id'], $invitation['project']['id']);
         $this->assertEquals($project['name'], $invitation['project']['name']);
 
@@ -178,6 +189,38 @@ class ProjectInvitationsTest extends ClientTestCase
         }
 
         $this->assertFalse($userFound);
+    }
+
+    public function testReasonAndExpiresPropagation()
+    {
+        $project = $this->initTestProject();
+
+        $invitations = $this->client->listProjectInvitations($project['id']);
+        $this->assertCount(0, $invitations);
+
+        $invitation = $this->client->inviteUserToProject($project['id'], [
+            'email' => $this->normalUser['email'],
+            'reason' => 'Testing reason propagation',
+            'expirationSeconds' => 3600
+        ]);
+
+        $this->assertEquals('Testing reason propagation', $invitation['reason']);
+        $this->assertNotEmpty($invitation['expires']);
+
+        $this->normalUserClient->acceptMyProjectInvitation($invitation['id']);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(0, $invitations);
+
+        $userMembership = null;
+        foreach ($this->normalUserClient->listProjectUsers($project['id']) as $user) {
+            if ($user['id'] === $this->normalUser['id']) {
+                $userMembership = $user;
+            }
+        }
+
+        $this->assertEquals($userMembership['reason'], $invitation['reason']);
+        $this->assertNotEmpty($userMembership['expires']);
     }
 
     private function initTestProject()
