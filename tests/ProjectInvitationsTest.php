@@ -243,6 +243,26 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
+    public function testInvitationExpiration()
+    {
+        $project = $this->initTestProject();
+
+        $this->client->inviteUserToProject($project['id'], [
+            'email' => $this->normalUser['email'],
+            'expirationSeconds' => 20,
+        ]);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(1, $invitations);
+
+        // the next time the cron runs the invitation should be removed.
+        sleep(120);
+
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(0, $invitations);
+    }
+
+
     private function initTestProject()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
