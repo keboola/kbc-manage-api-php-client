@@ -1634,6 +1634,68 @@ all notifications as read.
 + Response 204
 
 
+# Group Manage My Account
+
+## Projects Invitations [/manage/users/me/projects-invitations]
+
+### List invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 113,
+            "created": "2018-07-10T11:13:00+0200",
+            "expires": null,
+            "reason": "",
+            "project": {
+                "id": 7,
+                "name": "Martinovo"
+            },
+            "creator": {
+                "id": 2,
+                "name": "Martin Halamicek",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+## Accept or Decline Invitation [/manage/users/me/projects-invitations/{invitation_id}]
+
+### Accept a invitation [PUT]
+
+Invitation will be accepted and current user will be added to the project.
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 202
+
+### Decline a invitation [DELETE]
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
 # Group SUPER - Features
 
 ## Features [/manage/features?type={type}]
