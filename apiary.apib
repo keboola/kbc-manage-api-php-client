@@ -782,6 +782,110 @@ Changing project limits is allowed only for a super admin.
 
     [Project][]
 
+## Project Invitations [/manage/projects/{project_id}/invitations]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+### List invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    [
+        {
+            "id": 112,
+            "created": "2018-07-10T10:45:11+0200",
+            "expires": null,
+            "reason": "",
+            "user": {
+                "id": 124,
+                "name": "test user 2",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        },
+        {
+            "id": 113,
+            "created": "2018-07-10T10:50:00+0200",
+            "expires": "2018-07-12T10:50:00+0200",
+            "reason": "Help with Restbox configuration",
+            "user": {
+                "id": 125,
+                "name": "test user 3",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+
+### Invite a user to a project [POST]
+
+An optional expiration (seconds) and reason for joining can be added to the request.
+
++ Attributes
+
+    + email: martin@keboola.com (string, required) - Email of an invited user
+    + expirationSeconds: 3600 (number) - After how many seconds the invitation and membership of a user will expire
+    + reason: Help with component configuration (string) - Reason for inviting user
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "expires": "2018-07-10T11:50:00+0200",
+        "reason": "Help with component configuration",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+## Cancel User Invitation [/manage/projects/{project_id}/invitations/{invitation_id}]
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + invitation_id (required, int) - User ID
+
+### Cancel a invitation [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
 ## Project Users [/manage/projects/{project_id}/users]
 
 + Parameters
