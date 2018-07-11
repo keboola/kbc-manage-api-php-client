@@ -100,6 +100,7 @@ class ProjectDeleteTest extends ClientTestCase
         $this->client->deleteProject($project['id']);
 
         $deletedProject = $this->client->getDeletedProject($project['id']);
+        $this->assertArrayHasKey('deletedTime', $deletedProject);
         $this->assertTrue($deletedProject['isDeleted']);
         $this->assertFalse($deletedProject['isPurged']);
 
