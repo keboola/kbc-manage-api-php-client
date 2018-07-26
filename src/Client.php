@@ -251,17 +251,17 @@ class Client
 
     public function listMyProjectInvitations()
     {
-        return $this->apiGet("/manage/users/me/projects-invitations");
+        return $this->apiGet("/manage/current-user/projects-invitations");
     }
 
     public function acceptMyProjectInvitation($id)
     {
-        $this->apiPut("/manage/users/me/projects-invitations/{$id}", []);
+        $this->apiPut("/manage/current-user/projects-invitations/{$id}", []);
     }
 
     public function declineMyProjectInvitation($id)
     {
-        $this->apiDelete("/manage/users/me/projects-invitations/{$id}");
+        $this->apiDelete("/manage/current-user/projects-invitations/{$id}");
     }
 
     public function addUserToProject($projectId, $params = [])
