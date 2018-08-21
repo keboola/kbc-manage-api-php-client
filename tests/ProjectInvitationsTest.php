@@ -30,6 +30,8 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $this->assertEquals($invitation, reset($invitations));
 
+        $this->assertEquals($invitation, $this->client->getProjectInvitation($project['id'], $invitation['id']));
+
         $this->client->cancelProjectInvitation($project['id'], $invitation['id']);
 
         $invitations = $this->client->listProjectInvitations($project['id']);
@@ -136,6 +138,8 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['id'], $invitation['creator']['id']);
         $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
         $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
+
+        $this->assertEquals($invitation, $this->normalUserClient->getMyProjectInvitation($invitation['id']));
 
         $this->normalUserClient->acceptMyProjectInvitation($invitation['id']);
 

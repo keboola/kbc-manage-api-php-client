@@ -871,11 +871,40 @@ An optional expiration (seconds) and reason for joining can be added to the requ
     }
     ```
 
-## Cancel User Invitation [/manage/projects/{project_id}/invitations/{invitation_id}]
+## Manage User Invitation [/manage/projects/{project_id}/invitations/{invitation_id}]
 
 + Parameters
     + project_id (required, int) - Project ID
     + invitation_id (required, int) - User ID
+
+
+### Invitation detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "expires": "2018-07-10T11:50:00+0200",
+        "reason": "Help with component configuration",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
 
 ### Cancel a invitation [DELETE]
 
@@ -1667,7 +1696,37 @@ all notifications as read.
     ]
     ```
 
-## Accept or Decline Invitation [/manage/current-user/projects-invitations/{invitation_id}]
+## Manage Invitation [/manage/current-user/projects-invitations/{invitation_id}]
+
+### Invitation detail [GET]
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T11:13:00+0200",
+        "expires": null,
+        "reason": "",
+        "project": {
+            "id": 7,
+            "name": "Martinovo"
+        },
+        "creator": {
+            "id": 2,
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
 
 ### Accept a invitation [PUT]
 
