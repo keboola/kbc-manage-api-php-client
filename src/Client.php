@@ -259,6 +259,11 @@ class Client
         $this->apiPut("/manage/current-user/projects-invitations/{$id}", []);
     }
 
+    public function getMyProjectInvitation($id)
+    {
+        return $this->apiGet("/manage/current-user/projects-invitations/{$id}");
+    }
+
     public function declineMyProjectInvitation($id)
     {
         $this->apiDelete("/manage/current-user/projects-invitations/{$id}");
@@ -277,6 +282,11 @@ class Client
     public function removeUserFromProject($projectId, $userId)
     {
         $this->apiDelete("/manage/projects/{$projectId}/users/{$userId}");
+    }
+
+    public function getProjectInvitation($projectId, $invitationId)
+    {
+        return $this->apiGet("/manage/projects/{$projectId}/invitations/{$invitationId}");
     }
 
     public function cancelProjectInvitation($projectId, $invitationId)
