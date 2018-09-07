@@ -146,14 +146,23 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitations = $this->normalUserClient->listMyProjectInvitations();
         $this->assertCount(0, $invitations);
 
-        $userFound = false;
+        $admin = null;
         foreach ($this->normalUserClient->listProjectUsers($project['id']) as $user) {
             if ($user['id'] === $this->normalUser['id']) {
-                $userFound = true;
+                $admin = $user;
             }
         }
 
-        $this->assertTrue($userFound);
+        $this->assertNotNull($admin);
+        $this->assertArrayHasKey('invitor', $admin);
+        $this->assertArrayHasKey('approver', $admin);
+
+        $this->assertNotEmpty($admin['invitor']);
+        $this->assertEquals($this->superAdmin['id'], $admin['invitor']['id']);
+        $this->assertEquals($this->superAdmin['email'], $admin['invitor']['email']);
+        $this->assertEquals($this->superAdmin['name'], $admin['invitor']['name']);
+
+        $this->assertNull($admin['approver']);
     }
 
     public function testDeclineInvitation()
