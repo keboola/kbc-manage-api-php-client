@@ -197,15 +197,17 @@ class ProjectsTest extends ClientTestCase
 
         $admins = $this->client->listProjectUsers($project['id']);
         $this->assertCount(1, $admins);
-        $this->assertNotEmpty($admins[0]['id']);
-        $this->assertNotEmpty($admins[0]['name']);
-        $this->assertNotEmpty($admins[0]['email']);
-        $this->assertNotEmpty($admins[0]['created']);
-        $this->assertNull($admins[0]['expires']);
-        $this->assertTrue(is_bool($admins[0]['mfaEnabled']));
-        $this->assertArrayHasKey('reason', $admins[0]);
-        $this->assertNotEmpty($admins[0]['status']);
-        $this->assertNull($admins[0]['approver']);
+
+        $admin = $admins[0];
+        $this->assertNotEmpty($admin['id']);
+        $this->assertNotEmpty($admin['name']);
+        $this->assertNotEmpty($admin['email']);
+        $this->assertNotEmpty($admin['created']);
+
+        $this->assertArrayHasKey('invitor', $admin);
+        $this->assertNull($admin['invitor']);
+        $this->assertArrayHasKey('approver', $admin);
+        $this->assertNull($admin['approver']);
 
         // begin test of adding / removing user without expiration/reason
         $resp = $this->client->addUserToProject($project['id'], [
