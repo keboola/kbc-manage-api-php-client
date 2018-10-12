@@ -487,6 +487,26 @@ class Client
         $this->apiDelete("/manage/current-user/projects-join-requests/{$id}");
     }
 
+    public function listProjectJoinRequests($id)
+    {
+        return $this->apiGet("/manage/projects/{$id}/join-requests");
+    }
+
+    public function getProjectJoinRequest($projectId, $joinRequestId)
+    {
+        return $this->apiGet("/manage/projects/{$projectId}/join-requests/{$joinRequestId}");
+    }
+
+    public function approveProjectJoinRequest($projectId, $joinRequestId)
+    {
+        $this->apiPut("/manage/projects/{$projectId}/join-requests/{$joinRequestId}", []);
+    }
+
+    public function rejectProjectJoinRequest($projectId, $joinRequestId)
+    {
+        $this->apiDelete("/manage/projects/{$projectId}/join-requests/{$joinRequestId}");
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
