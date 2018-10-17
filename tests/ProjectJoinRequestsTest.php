@@ -19,6 +19,22 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
         $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
 
+        $isSuperAdminMaintainer = false;
+        foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
+            if ($member['id'] === $this->normalUser['id']) {
+                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
+            }
+
+            if ($member['id'] === $this->superAdmin['id']) {
+                $isSuperAdminMaintainer = true;
+            }
+
+        }
+
+        if (!$isSuperAdminMaintainer) {
+            $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->superAdmin['email']]);
+        }
+
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
         ]);
@@ -126,9 +142,187 @@ class ProjectJoinRequestsTest extends ClientTestCase
         }
 
         $this->assertNotNull($admin);
+        $this->assertArrayHasKey('approver', $admin);
+
+        $this->assertEquals($this->superAdmin['id'], $admin['approver']['id']);
+        $this->assertEquals($this->superAdmin['email'], $admin['approver']['email']);
+        $this->assertEquals($this->superAdmin['name'], $admin['approver']['name']);
 
         $joinRequests = $this->client->listProjectJoinRequests($this->project['id']);
         $this->assertCount(0, $joinRequests);
+    }
+
+    public function testOrganizationAdminApproveSelfJoinRequest()
+    {
+        $projectUsers = $this->client->listProjectUsers($this->project['id']);
+        $this->assertCount(1, $projectUsers);
+
+        $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(0, $joinRequests);
+
+        $joinRequest = $this->normalUserClient->requestAccessToProject($this->project['id']);
+        $joinRequest = $this->client->getProjectJoinRequest($this->project['id'], $joinRequest['id']);
+
+        $this->assertEquals('', $joinRequest['reason']);
+        $this->assertEmpty($joinRequest['expires']);
+        $this->assertEquals($this->normalUser['id'], $joinRequest['user']['id']);
+        $this->assertEquals($this->normalUser['email'], $joinRequest['user']['email']);
+
+        $joinRequests = $this->client->listProjectJoinRequests($this->project['id']);
+        $this->assertCount(1, $joinRequests);
+
+        $this->assertEquals($joinRequest, reset($joinRequests));
+
+        $this->normalUserClient->approveMyProjectJoinRequest($joinRequest['id']);
+
+        $projectUsers = $this->client->listProjectUsers($this->project['id']);
+        $this->assertCount(2, $projectUsers);
+
+        $admin = null;
+        foreach ($projectUsers as $projectUser) {
+            if ($projectUser['id'] === $this->normalUser['id']) {
+                $admin = $projectUser;
+            }
+        }
+
+        $this->assertNotNull($admin);
+        $this->assertArrayHasKey('approver', $admin);
+
+        $this->assertEquals($this->normalUser['id'], $admin['approver']['id']);
+        $this->assertEquals($this->normalUser['email'], $admin['approver']['email']);
+        $this->assertEquals($this->normalUser['name'], $admin['approver']['name']);
+
+        $joinRequests = $this->client->listProjectJoinRequests($this->project['id']);
+        $this->assertCount(0, $joinRequests);
+    }
+
+    public function testMaintainerAdminApproveSelfJoinRequest()
+    {
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $projectUsers = $this->client->listProjectUsers($this->project['id']);
+        $this->assertCount(1, $projectUsers);
+
+        $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(0, $joinRequests);
+
+        $joinRequest = $this->normalUserClient->requestAccessToProject($this->project['id']);
+        $joinRequest = $this->client->getProjectJoinRequest($this->project['id'], $joinRequest['id']);
+
+        $this->assertEquals('', $joinRequest['reason']);
+        $this->assertEmpty($joinRequest['expires']);
+        $this->assertEquals($this->normalUser['id'], $joinRequest['user']['id']);
+        $this->assertEquals($this->normalUser['email'], $joinRequest['user']['email']);
+
+        $joinRequests = $this->client->listProjectJoinRequests($this->project['id']);
+        $this->assertCount(1, $joinRequests);
+
+        $this->assertEquals($joinRequest, reset($joinRequests));
+
+        $this->normalUserClient->approveMyProjectJoinRequest($joinRequest['id']);
+
+        $projectUsers = $this->client->listProjectUsers($this->project['id']);
+        $this->assertCount(2, $projectUsers);
+
+        $admin = null;
+        foreach ($projectUsers as $projectUser) {
+            if ($projectUser['id'] === $this->normalUser['id']) {
+                $admin = $projectUser;
+            }
+        }
+
+        $this->assertNotNull($admin);
+        $this->assertArrayHasKey('approver', $admin);
+
+        $this->assertEquals($this->normalUser['id'], $admin['approver']['id']);
+        $this->assertEquals($this->normalUser['email'], $admin['approver']['email']);
+        $this->assertEquals($this->normalUser['name'], $admin['approver']['name']);
+
+        $joinRequests = $this->client->listProjectJoinRequests($this->project['id']);
+        $this->assertCount(0, $joinRequests);
+    }
+
+    public function testSuperAdminApproveSelfJoinRequest()
+    {
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+        $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->superAdmin['id']);
+
+        $project = $this->normalUserClient->createProject($this->organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $projectUsers = $this->client->listProjectUsers($project['id']);
+        $this->assertCount(1, $projectUsers);
+
+        $joinRequests = $this->client->listMyProjectJoinRequests();
+        $this->assertCount(0, $joinRequests);
+
+        $joinRequest = $this->client->requestAccessToProject($project['id']);
+        $joinRequest = $this->client->getProjectJoinRequest($project['id'], $joinRequest['id']);
+
+        $this->assertEquals('', $joinRequest['reason']);
+        $this->assertEmpty($joinRequest['expires']);
+        $this->assertEquals($this->superAdmin['id'], $joinRequest['user']['id']);
+        $this->assertEquals($this->superAdmin['email'], $joinRequest['user']['email']);
+
+        $joinRequests = $this->client->listProjectJoinRequests($project['id']);
+        $this->assertCount(1, $joinRequests);
+
+        $this->assertEquals($joinRequest, reset($joinRequests));
+
+        $this->client->approveMyProjectJoinRequest($joinRequest['id']);
+
+        $projectUsers = $this->client->listProjectUsers($project['id']);
+        $this->assertCount(2, $projectUsers);
+
+        $admin = null;
+        foreach ($projectUsers as $projectUser) {
+            if ($projectUser['id'] === $this->superAdmin['id']) {
+                $admin = $projectUser;
+            }
+        }
+
+        $this->assertNotNull($admin);
+        $this->assertArrayHasKey('approver', $admin);
+
+        $this->assertEquals($this->superAdmin['id'], $admin['approver']['id']);
+        $this->assertEquals($this->superAdmin['email'], $admin['approver']['email']);
+        $this->assertEquals($this->superAdmin['name'], $admin['approver']['name']);
+
+        $joinRequests = $this->client->listProjectJoinRequests($project['id']);
+        $this->assertCount(0, $joinRequests);
+    }
+
+    public function testApproveMyJoinRequestError()
+    {
+        $projectUsers = $this->client->listProjectUsers($this->project['id']);
+        $this->assertCount(1, $projectUsers);
+
+        $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(0, $joinRequests);
+
+        $joinRequest = $this->normalUserClient->requestAccessToProject($this->project['id']);
+        $joinRequest = $this->client->getProjectJoinRequest($this->project['id'], $joinRequest['id']);
+
+        $this->assertEquals('', $joinRequest['reason']);
+        $this->assertEmpty($joinRequest['expires']);
+        $this->assertEquals($this->normalUser['id'], $joinRequest['user']['id']);
+        $this->assertEquals($this->normalUser['email'], $joinRequest['user']['email']);
+
+        $joinRequests = $this->client->listProjectJoinRequests($this->project['id']);
+        $this->assertCount(1, $joinRequests);
+
+        $this->assertEquals($joinRequest, reset($joinRequests));
+
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
+
+        try {
+            $this->normalUserClient->approveMyProjectJoinRequest($joinRequest['id']);
+            $this->fail('Approve join request of organization non-admin should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
     }
 
     public function testRejectJoinRequest()
@@ -161,16 +355,12 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testManageJoinRequestError()
+    public function testManageJoinRequestsError()
     {
         $joinRequest = $this->normalUserClient->requestAccessToProject($this->project['id']);
 
-        try {
-            $this->normalUserClient->listProjectJoinRequests($this->project['id']);
-            $this->fail('Join Request cannot be managed with non-project admin');
-        } catch (ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
-        }
+        $joinRequests = $this->normalUserClient->listProjectJoinRequests($this->project['id']);
+        $this->assertCount(1, $joinRequests);
 
         try {
             $this->normalUserClient->rejectProjectJoinRequest($this->project['id'], $joinRequest['id']);

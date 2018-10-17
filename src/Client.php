@@ -487,6 +487,11 @@ class Client
         $this->apiDelete("/manage/current-user/projects-join-requests/{$id}");
     }
 
+    public function approveMyProjectJoinRequest($id)
+    {
+        $this->apiPut("/manage/current-user/projects-join-requests/{$id}", []);
+    }
+
     public function listProjectJoinRequests($id)
     {
         return $this->apiGet("/manage/projects/{$id}/join-requests");
