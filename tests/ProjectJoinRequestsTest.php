@@ -520,4 +520,20 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $this->assertEquals(403, $e->getCode());
         }
     }
+
+    public function testJoinRequestExpiration()
+    {
+        $this->normalUserClient->requestAccessToProject($this->project['id'], [
+            'expirationSeconds' => 20,
+        ]);
+
+        $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(1, $joinRequests);
+
+        // the next time the cron runs the invitation should be removed.
+        sleep(120);
+
+        $invitations = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(0, $invitations);
+    }
 }
