@@ -482,6 +482,11 @@ class Client
         return $this->apiPost("/manage/projects/{$projectId}/request-access", $params);
     }
 
+    public function joinProject($projectId)
+    {
+        $this->apiPost("/manage/projects/{$projectId}/join-project");
+    }
+
     public function deleteMyProjectJoinRequest($id)
     {
         $this->apiDelete("/manage/current-user/projects-join-requests/{$id}");
