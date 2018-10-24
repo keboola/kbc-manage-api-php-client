@@ -185,7 +185,6 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-
     public function testUsersManagement()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -201,6 +200,12 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotEmpty($admins[0]['id']);
         $this->assertNotEmpty($admins[0]['name']);
         $this->assertNotEmpty($admins[0]['email']);
+        $this->assertNotEmpty($admins[0]['created']);
+        $this->assertNull($admins[0]['expires']);
+        $this->assertTrue(is_bool($admins[0]['mfaEnabled']));
+        $this->assertArrayHasKey('reason', $admins[0]);
+        $this->assertNotEmpty($admins[0]['status']);
+        $this->assertNull($admins[0]['approver']);
 
         // begin test of adding / removing user without expiration/reason
         $resp = $this->client->addUserToProject($project['id'], [
