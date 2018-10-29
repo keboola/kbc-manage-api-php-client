@@ -96,7 +96,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testMaintainerAdminRequestAccess(): void
     {
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['name']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
@@ -282,7 +282,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testMaintainerAdminRequestAccessError(): void
     {
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['name']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $projectId = $this->createProjectWithSuperAdminMember();
 
@@ -449,7 +449,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testProjectDeleteRemovesJoinRequests()
     {
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['name']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
@@ -479,7 +479,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testJoinRequestExpiration()
     {
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['name']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
@@ -507,7 +507,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testMyJoinRequest()
     {
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['name']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
@@ -543,7 +543,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testJoinRequestConflictsError()
     {
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['name']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0

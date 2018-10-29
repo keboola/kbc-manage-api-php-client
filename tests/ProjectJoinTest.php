@@ -66,7 +66,7 @@ class ProjectJoinTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['name']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -116,7 +116,7 @@ class ProjectJoinTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['name']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
