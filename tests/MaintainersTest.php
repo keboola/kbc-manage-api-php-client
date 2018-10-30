@@ -258,58 +258,47 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals(false, $org['allowAutoJoin']);
     }
 
-    public function testMaintainerAutoJoin()
+    public function testMaintainerAutoJoinError()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
         ]);
 
         // make sure normalUser is a maintainer
-        $this->addNormalMaintainer($this->normalUser);
+        $this->addNormalMaintainer();
 
         $testProject = $this->client->createProject($organization['id'], [
             'name' => 'Test Project',
         ]);
 
-        // allowAutoJoin is true, so maintainer should be allowed to join this new project
-        $this->client->addUserToProject($testProject['id'],[
-            "email" => $this->normalUser['email']
-        ]);
-        $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(2,$projUsers);
-        foreach ($projUsers as $projUser) {
-            $this->assertEquals("active", $projUser['status']);
-            if ($projUser['email'] === $this->normalUser['email']) {
-                $this->assertEquals($projUser['id'], $this->normalUser['id']);
-                $this->assertEquals("active", $projUser['status']);
-            } else {
-                $this->assertEquals($projUser['email'], $this->superAdmin['email']);
-            }
-        }
-        $this->client->removeUserFromProject($testProject['id'],$this->normalUser['id']);
-        $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(1,$projUsers);
+        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
+        $this->assertNull($projectUser);
 
-        $org = $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
-
-        // now maintainer should have access pending when he tries to join the project
-        $this->normalUserClient->addUserToProject($testProject['id'], [
-            'email' => $this->normalUser['email'],
-            'reason' => "testing",
-            'expirationSeconds' => 8600
-        ]);
-        $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(2,$projUsers);
-        foreach ($projUsers as $projUser) {
-            if ($projUser['email'] === $this->normalUser['email']) {
-                $this->assertEquals($projUser['id'], $this->normalUser['id']);
-                $this->assertEquals("pending", $projUser['status']);
-                $this->assertEquals("testing", $projUser['reason']);
-            } else {
-                $this->assertEquals("active", $projUser['status']);
-                $this->assertEquals($projUser['email'], $this->superAdmin['email']);
-            }
+        try {
+            $this->normalUserClient->addUserToProject($testProject['id'],[
+                "email" => $this->normalUser['email']
+            ]);
+            $this->fail('Project join should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
         }
+
+        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
+        $this->assertNull($projectUser);
+
+        $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+
+        try {
+            $this->normalUserClient->addUserToProject($testProject['id'],[
+                "email" => $this->normalUser['email']
+            ]);
+            $this->fail('Project join should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
+        $this->assertNull($projectUser);
     }
 
     public function testInviteMaintainer()
@@ -357,5 +346,18 @@ class MaintainersTest extends ClientTestCase
         if (!$normalMaintainerExists) {
             $this->client->addUserToMaintainer($this->testMaintainerId,['email' => $this->normalUser['email']]);
         }
+    }
+
+    private function findProjectUser(int $projectId, string $userEmail): ?array
+    {
+        $projectUsers = $this->client->listProjectUsers($projectId);
+
+        foreach ($projectUsers as $projectUser) {
+            if ($projectUser['email'] === $userEmail) {
+                return $projectUser;
+            }
+        }
+
+        return null;
     }
 }
