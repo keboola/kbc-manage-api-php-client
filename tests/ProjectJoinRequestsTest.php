@@ -7,52 +7,47 @@ class ProjectJoinRequestsTest extends ClientTestCase
 {
     private $organization;
 
+    /**
+     * Create empty organization without admins, remove admins from test maintainer and delete all their join requests
+     */
     public function setUp()
     {
         parent::setUp();
 
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
+        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
         ]);
 
-        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
-        $isSuperAdminMaintainer = false;
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
 
             if ($member['id'] === $this->superAdmin['id']) {
-                $isSuperAdminMaintainer = true;
+                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
-        }
-
-        if (!$isSuperAdminMaintainer) {
-            $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->superAdmin['email']]);
-        }
-
-        $this->organization = $organization;
-
-        foreach ($this->client->listMyProjectJoinRequests() as $joinRequest) {
-            $this->client->deleteMyProjectJoinRequest($joinRequest['id']);
         }
 
         foreach ($this->normalUserClient->listMyProjectJoinRequests() as $joinRequest) {
             $this->normalUserClient->deleteMyProjectJoinRequest($joinRequest['id']);
         }
+
+        foreach ($this->client->listMyProjectJoinRequests() as $joinRequest) {
+            $this->client->deleteMyProjectJoinRequest($joinRequest['id']);
+        }
     }
 
     public function testSuperAdminRequestAccess(): void
     {
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
-        $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->superAdmin['id']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
         ]);
 
-        $projectId = $this->createProjectWithOrganizationMember();
+        $projectId = $this->createProjectWithNormalAdminMember();
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
         $this->assertNull($projectUser);
@@ -95,7 +90,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testMaintainerAdminRequestAccess(): void
     {
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
@@ -145,6 +140,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testOrganizationAdminRequestAccessError(): void
     {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
@@ -164,7 +160,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
 
         // project without auto-join
-        $this->client->updateOrganization($this->organization['id'], [
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
         ]);
 
@@ -181,8 +177,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testAdminRequestAccessError(): void
     {
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
@@ -219,7 +214,8 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testProjectMemberRequestAccessError(): void
     {
-        $projectId = $this->createProjectWithOrganizationMember();
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
 
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 
@@ -240,6 +236,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
 
         // project without auto-join
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
         ]);
@@ -257,10 +254,8 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testSuperAdminRequestAccessError(): void
     {
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
-        $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->superAdmin['id']);
-
-        $projectId = $this->createProjectWithOrganizationMember();
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
         $this->assertNull($projectUser);
@@ -281,9 +276,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testMaintainerAdminRequestAccessError(): void
     {
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
-
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
@@ -305,16 +298,16 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testOrganizationAdminApproveError()
     {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
 
-        $this->normalUserClient->updateOrganization($this->organization['id'], [
+        $this->client->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
         ]);
 
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $joinRequest = $this->normalUserClient->requestAccessToProject($projectId);
@@ -354,15 +347,14 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testProjectMemberApproveJoinRequest()
     {
-        $projectId = $this->createProjectWithOrganizationMember();
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
 
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-
-        $this->client->updateOrganization($this->organization['id'], [
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
         ]);
 
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 
         $joinRequest = $this->client->requestAccessToProject(
             $projectId,
@@ -410,15 +402,14 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testProjectMemberRejectJoinRequest()
     {
-        $projectId = $this->createProjectWithOrganizationMember();
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
 
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
-
-        $this->client->updateOrganization($this->organization['id'], [
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
         ]);
 
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 
         $joinRequest = $this->client->requestAccessToProject($projectId);
 
@@ -448,7 +439,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testProjectDeleteRemovesJoinRequests()
     {
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
@@ -478,7 +469,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testJoinRequestExpiration()
     {
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
@@ -506,7 +497,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testMyJoinRequest()
     {
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
@@ -539,10 +530,9 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-
     public function testJoinRequestConflictsError()
     {
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
@@ -589,7 +579,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         return null;
     }
 
-    private function createProjectWithOrganizationMember(): int
+    private function createProjectWithNormalAdminMember(): int
     {
         $project = $this->normalUserClient->createProject($this->organization['id'], [
             'name' => 'My test',
