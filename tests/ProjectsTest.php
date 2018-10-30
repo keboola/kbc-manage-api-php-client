@@ -273,7 +273,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['email'], $admins[0]['email']);
 
         // test of adding / removing user with expiration/reason
-        $resp = $this->normalUserClient->addUserToProject($project['id'], [
+        $resp = $this->client->addUserToProject($project['id'], [
             'email' => $this->normalUser['email'],
             'reason' => 'created by test',
             'expirationSeconds' => '20'

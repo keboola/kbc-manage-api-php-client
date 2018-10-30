@@ -207,7 +207,62 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEquals(false, $org['allowAutoJoin']);
     }
 
-    public function testSuperAdminAutoJoin()
+    public function testOrganizationAdminAutoJoin()
+    {
+        $normalUser = $this->normalUserClient->verifyToken()['user'];
+        $superAdmin = $this->client->verifyToken()['user'];
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->addUserToOrganization($organization['id'], [
+            "email" => $normalUser['email']
+        ]);
+
+        $testProject = $this->normalUserClient->createProject($organization['id'], [
+            'name' => 'Test Project',
+        ]);
+
+        $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
+        $this->assertNull($projectUser);
+
+        $this->client->addUserToProject($testProject['id'],[
+            "email" => $superAdmin['email']
+        ]);
+
+        $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
+        $this->assertNotNull($projectUser);
+        $this->assertArrayHasKey('approver', $projectUser);
+        $this->assertArrayHasKey('status', $projectUser);
+
+        $this->assertEquals('active', $projectUser['status']);
+        $this->assertEquals($superAdmin['id'], $projectUser['approver']['id']);
+        $this->assertEquals($superAdmin['email'], $projectUser['approver']['email']);
+        $this->assertEquals($superAdmin['name'], $projectUser['approver']['name']);
+
+        $this->client->removeUserFromProject($testProject['id'], $superAdmin['id']);
+
+        $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
+        $this->assertNull($projectUser);
+
+        $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
+
+        $this->client->addUserToProject($testProject['id'],[
+            "email" => $superAdmin['email']
+        ]);
+
+        $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
+        $this->assertNotNull($projectUser);
+        $this->assertArrayHasKey('approver', $projectUser);
+        $this->assertArrayHasKey('status', $projectUser);
+
+        $this->assertEquals('active', $projectUser['status']);
+        $this->assertEquals($superAdmin['id'], $projectUser['approver']['id']);
+        $this->assertEquals($superAdmin['email'], $projectUser['approver']['email']);
+        $this->assertEquals($superAdmin['name'], $projectUser['approver']['name']);
+    }
+
+    public function testSuperAdminAutoJoinError()
     {
         $normalUser = $this->normalUserClient->verifyToken()['user'];
         $superAdmin = $this->client->verifyToken()['user'];
@@ -224,45 +279,34 @@ class OrganizationsTest extends ClientTestCase
             'name' => 'Test Project',
         ]);
 
-        // allowAutoJoin is true, so superAdmins should be allowed to join this new project
-        $this->client->addUserToProject($testProject['id'],[
-            "email" => $superAdmin['email']
-        ]);
-        $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(2,$projUsers);
-        foreach ($projUsers as $projUser) {
-            $this->assertEquals("active", $projUser['status']);
-            if ($projUser['email'] === $superAdmin['email']) {
-                $this->assertEquals($projUser['id'], $superAdmin['id']);
-                $this->assertEquals("active", $projUser['status']);
-            } else {
-                $this->assertEquals($projUser['email'], $normalUser['email']);
-            }
+        $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
+        $this->assertNull($projectUser);
+
+        try {
+            $this->client->addUserToProject($testProject['id'],[
+                "email" => $superAdmin['email']
+            ]);
+            $this->fail('Project join should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
         }
-        $this->client->removeUserFromProject($testProject['id'],$superAdmin['id']);
-        $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(1,$projUsers);
+
+        $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
+        $this->assertNull($projectUser);
 
         $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
 
-        // now superAdmin should have access pending when he tries to join the project
-        $this->client->addUserToProject($testProject['id'], [
-            'email' => $superAdmin['email'],
-            'reason' => "testing",
-            'expirationSeconds' => 8600
-        ]);
-        $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(2,$projUsers);
-        foreach ($projUsers as $projUser) {
-            if ($projUser['email'] === $superAdmin['email']) {
-                $this->assertEquals($projUser['id'], $superAdmin['id']);
-                $this->assertEquals("pending", $projUser['status']);
-                $this->assertEquals("testing", $projUser['reason']);
-            } else {
-                $this->assertEquals("active", $projUser['status']);
-                $this->assertEquals($projUser['email'], $normalUser['email']);
-            }
+        try {
+            $this->client->addUserToProject($testProject['id'],[
+                "email" => $superAdmin['email']
+            ]);
+            $this->fail('Project join should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
         }
+
+        $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
+        $this->assertNull($projectUser);
     }
 
     public function testInviteSuperAdmin()
@@ -300,5 +344,18 @@ class OrganizationsTest extends ClientTestCase
                 $this->assertEquals($projUser['email'], $normalUser['email']);
             }
         }
+    }
+
+    private function findProjectUser(int $projectId, string $userEmail): ?array
+    {
+        $projectUsers = $this->client->listProjectUsers($projectId);
+
+        foreach ($projectUsers as $projectUser) {
+            if ($projectUser['email'] === $userEmail) {
+                return $projectUser;
+            }
+        }
+
+        return null;
     }
 }
