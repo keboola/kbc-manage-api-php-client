@@ -294,6 +294,38 @@ class MaintainersTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testSuperAdminAutoJoinError(bool $allowAutoJoin)
+    {
+        $superAdmin = $this->client->verifyToken()['user'];
+        $normalUser = $this->normalUserClient->verifyToken()['user'];
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->updateOrganization($organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
+        ]);
+        $testProject = $this->client->createProject($organization['id'], [
+            'name' => 'Test Project',
+        ]);
+        // project cannot be empty so we have to add the another user
+        $this->client->addUserToProject($testProject['id'], [
+            'email' => $normalUser['email'],
+        ]);
+        $this->client->removeUserFromProject($testProject['id'], $superAdmin['id']);
+        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
+
+        $this->expectExceptionCode(ClientException::class);
+        $this->expectExceptionCode(403);
+
+        $this->client->addUserToProject($testProject['id'],[
+            "email" => $superAdmin['email'],
+        ]);
+    }
+
     public function autoJoinProvider()
     {
         return [
