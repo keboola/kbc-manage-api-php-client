@@ -258,58 +258,84 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals(false, $org['allowAutoJoin']);
     }
 
-    public function testMaintainerAutoJoin()
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testMaintainerAutoJoinError(bool $allowAutoJoin)
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
         ]);
+        $this->client->updateOrganization($organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
+        ]);
 
         // make sure normalUser is a maintainer
-        $this->addNormalMaintainer($this->normalUser);
+        $this->addNormalMaintainer();
 
         $testProject = $this->client->createProject($organization['id'], [
             'name' => 'Test Project',
         ]);
 
-        // allowAutoJoin is true, so maintainer should be allowed to join this new project
+        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
+        $this->assertNull($projectUser);
+
+        try {
+            $this->normalUserClient->addUserToProject($testProject['id'],[
+                "email" => $this->normalUser['email']
+            ]);
+            $this->fail('Project join should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
+        $this->assertNull($projectUser);
+    }
+
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testSuperAdminAutoJoinError(bool $allowAutoJoin)
+    {
+        $superAdmin = $this->client->verifyToken()['user'];
+        $normalUser = $this->normalUserClient->verifyToken()['user'];
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->updateOrganization($organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
+        ]);
+        $testProject = $this->client->createProject($organization['id'], [
+            'name' => 'Test Project',
+        ]);
+        // project cannot be empty so we have to add the another user
+        $this->client->addUserToProject($testProject['id'], [
+            'email' => $normalUser['email'],
+        ]);
+        $this->client->removeUserFromProject($testProject['id'], $superAdmin['id']);
+        $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
+
+        $this->expectExceptionCode(ClientException::class);
+        $this->expectExceptionCode(403);
+
         $this->client->addUserToProject($testProject['id'],[
-            "email" => $this->normalUser['email']
+            "email" => $superAdmin['email'],
         ]);
-        $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(2,$projUsers);
-        foreach ($projUsers as $projUser) {
-            $this->assertEquals("active", $projUser['status']);
-            if ($projUser['email'] === $this->normalUser['email']) {
-                $this->assertEquals($projUser['id'], $this->normalUser['id']);
-                $this->assertEquals("active", $projUser['status']);
-            } else {
-                $this->assertEquals($projUser['email'], $this->superAdmin['email']);
-            }
-        }
-        $this->client->removeUserFromProject($testProject['id'],$this->normalUser['id']);
-        $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(1,$projUsers);
+    }
 
-        $org = $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
-
-        // now maintainer should have access pending when he tries to join the project
-        $this->normalUserClient->addUserToProject($testProject['id'], [
-            'email' => $this->normalUser['email'],
-            'reason' => "testing",
-            'expirationSeconds' => 8600
-        ]);
-        $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(2,$projUsers);
-        foreach ($projUsers as $projUser) {
-            if ($projUser['email'] === $this->normalUser['email']) {
-                $this->assertEquals($projUser['id'], $this->normalUser['id']);
-                $this->assertEquals("pending", $projUser['status']);
-                $this->assertEquals("testing", $projUser['reason']);
-            } else {
-                $this->assertEquals("active", $projUser['status']);
-                $this->assertEquals($projUser['email'], $this->superAdmin['email']);
-            }
-        }
+    public function autoJoinProvider()
+    {
+        return [
+            [
+                true,
+            ],
+            [
+                false,
+            ],
+        ];
     }
 
     public function testInviteMaintainer()
@@ -357,5 +383,18 @@ class MaintainersTest extends ClientTestCase
         if (!$normalMaintainerExists) {
             $this->client->addUserToMaintainer($this->testMaintainerId,['email' => $this->normalUser['email']]);
         }
+    }
+
+    private function findProjectUser(int $projectId, string $userEmail): ?array
+    {
+        $projectUsers = $this->client->listProjectUsers($projectId);
+
+        foreach ($projectUsers as $projectUser) {
+            if ($projectUser['email'] === $userEmail) {
+                return $projectUser;
+            }
+        }
+
+        return null;
     }
 }
