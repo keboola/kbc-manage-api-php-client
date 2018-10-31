@@ -258,10 +258,17 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals(false, $org['allowAutoJoin']);
     }
 
-    public function testMaintainerAutoJoinError()
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testMaintainerAutoJoinError(bool $allowAutoJoin)
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
+        ]);
+        $this->client->updateOrganization($organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         // make sure normalUser is a maintainer
@@ -285,20 +292,18 @@ class MaintainersTest extends ClientTestCase
 
         $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
         $this->assertNull($projectUser);
+    }
 
-        $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
-
-        try {
-            $this->normalUserClient->addUserToProject($testProject['id'],[
-                "email" => $this->normalUser['email']
-            ]);
-            $this->fail('Project join should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
-        }
-
-        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
-        $this->assertNull($projectUser);
+    public function autoJoinProvider()
+    {
+        return [
+            [
+                true,
+            ],
+            [
+                false,
+            ],
+        ];
     }
 
     public function testInviteMaintainer()
