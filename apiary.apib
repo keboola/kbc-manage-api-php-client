@@ -830,6 +830,8 @@ Changing project limits is allowed only for a super admin.
 
 ### Add a user to a project [POST]
 
+Only members of the project or its organization are allowed to add new users to the project.
+
 An optional expiration (seconds) and reason for joining can be added to the request.
 
 + Attributes
@@ -852,6 +854,167 @@ An optional expiration (seconds) and reason for joining can be added to the requ
     + user_id (required, int) - User ID
 
 ### Delete a user from a project [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## Join Project [/manage/projects/{project_id}/join-project]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### Join a project [POST]
+
+If organization of the project allows autojoin (`allowAutoJoin` attribute is se to `true`), all members of organization/maintainer and superadmins are allowed to join the project. Otherwise only members of the organization can join the project.
+
+An optional expiration (seconds) and reason for joining can be added to the request.
+
++ Attributes
+
+    + reason: temporary test (string) - Reason for join the project
+    + expirationSeconds: 3600 (number) - After how many seconds the membership of a user will expire
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## Request Access [/manage/projects/{project_id}/request-access]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### Request access to a project [POST]
+
+Create join request to the project. All join requests have to be approved by project member.
+
+An optional expiration (seconds) and reason for joining can be added to the request.
+
++ Attributes
+
+    + reason: temporary test (string) - Reason for join the project
+    + expirationSeconds: 3600 (number) - After how many seconds the membership of a user will expire
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
+    ```js
+    {
+        "id": 124,
+        "created": "2016-02-22T15:01:13+0200",
+        "expires": "2016-03-22T15:01:13+0200",
+        "reason": "temporary test",
+        "project": {
+            "id": 324,
+            "name": "Main project"
+        }
+    }
+    ```
+
+
+## Project Join Requests [/manage/projects/{project_id}/join-requests]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### List join requests [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    [
+        {
+            "id": 1234,
+            "created": "2016-02-22T15:01:13+0200",
+            "expires": "2016-03-22T15:01:13+0200",
+            "reason": "temporary test",
+            "user": {
+                "id": 1,
+                "name": "admin 1",
+                "email": "dev@keboola.com"
+            }
+        },
+        {
+            "id": 1235,
+            "created": "2016-02-30T11:50:13+0200",
+            "expires": null,
+            "reason": "",
+            "user": {
+                "id": 124,
+                "name": "test user 2",
+                "email": "spam@keboola.com"
+            }
+        }
+    ]
+    ```
+
+## Manage Join Requests [/manage/projects/{project_id}/join-requests/{join_request_id}]
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + join_request_id (required, int) - Join Request ID
+
+### Join request detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    {
+        "id": 1235,
+        "created": "2016-02-30T11:50:13+0200",
+        "expires": null,
+        "reason": "",
+        "user": {
+            "id": 124,
+            "name": "test user 2",
+            "email": "spam@keboola.com"
+        }
+    }
+    ```
+
+### Approve join request [PUT]
+
+Only members of the project can approve join requests.
+
+Join request author will be added to the project.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 202
+
+### Reject join request [DELETE]
+
+Only members of the project can reject join requests.
 
 + Request (application/json)
     + Headers
@@ -1288,8 +1451,83 @@ all notifications as read.
     ```js
     {
         "status": "ok"
+    }    ```
+
+
+# Group My Account
+
+## Projects Join Requests [/manage/current-user/projects-join-requests]
+
+### List my join requests [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 124,
+            "created": "2016-02-22T15:01:13+0200",
+            "expires": "2016-03-22T15:01:13+0200",
+            "reason": "temporary test",
+            "project": {
+                "id": 324,
+                "name": "Main project"
+            }
+        },
+        {
+            "id": 127,
+            "crated": "2014-11-11T08:40:51.620Z",
+            "expires": null,
+            "reason": "",
+            "project": {
+                "id": 423,
+                "name": "Development"
+            }
+        }
+    ]
+    ```
+
+## Project Join Request [/manage/current-user/projects-join-requests/{join_request_id}]
+
++ Parameters
+    + join_request_id: 1 (required, integer)
+
+
+### Join request detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    {
+        "id": 124,
+        "created": "2016-02-22T15:01:13+0200",
+        "expires": "2016-03-22T15:01:13+0200",
+        "reason": "temporary test",
+        "project": {
+            "id": 324,
+            "name": "Main project"
+        }
     }
     ```
+
+### Cancel a join request [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
 
 
 # Group SUPER - Features
