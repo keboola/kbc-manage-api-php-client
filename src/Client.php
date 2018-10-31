@@ -467,6 +467,56 @@ class Client
         return $this->apiPost("/manage/commands", $options);
     }
 
+    public function listMyProjectJoinRequests()
+    {
+        return $this->apiGet("/manage/current-user/projects-join-requests");
+    }
+
+    public function getMyProjectJoinRequest($id)
+    {
+        return $this->apiGet("/manage/current-user/projects-join-requests/{$id}");
+    }
+
+    public function requestAccessToProject($projectId, $params = [])
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/request-access", $params);
+    }
+
+    public function joinProject($projectId)
+    {
+        $this->apiPost("/manage/projects/{$projectId}/join-project");
+    }
+
+    public function deleteMyProjectJoinRequest($id)
+    {
+        $this->apiDelete("/manage/current-user/projects-join-requests/{$id}");
+    }
+
+    public function approveMyProjectJoinRequest($id)
+    {
+        $this->apiPut("/manage/current-user/projects-join-requests/{$id}", []);
+    }
+
+    public function listProjectJoinRequests($id)
+    {
+        return $this->apiGet("/manage/projects/{$id}/join-requests");
+    }
+
+    public function getProjectJoinRequest($projectId, $joinRequestId)
+    {
+        return $this->apiGet("/manage/projects/{$projectId}/join-requests/{$joinRequestId}");
+    }
+
+    public function approveProjectJoinRequest($projectId, $joinRequestId)
+    {
+        $this->apiPut("/manage/projects/{$projectId}/join-requests/{$joinRequestId}", []);
+    }
+
+    public function rejectProjectJoinRequest($projectId, $joinRequestId)
+    {
+        $this->apiDelete("/manage/projects/{$projectId}/join-requests/{$joinRequestId}");
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
