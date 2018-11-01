@@ -202,7 +202,10 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotEmpty($admin['id']);
         $this->assertNotEmpty($admin['name']);
         $this->assertNotEmpty($admin['email']);
+        $this->assertNotEmpty($admin['status']);
         $this->assertNotEmpty($admin['created']);
+        $this->assertEmpty($admin['expires']);
+        $this->assertTrue(is_bool($admin['mfaEnabled']));
 
         $this->assertArrayHasKey('invitor', $admin);
         $this->assertNull($admin['invitor']);
