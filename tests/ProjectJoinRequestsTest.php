@@ -543,6 +543,10 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
         $joinRequest = $this->normalUserClient->requestAccessToProject($projectId);
 
+        $joinRequests = $this->client->listProjectJoinRequests($projectId);
+        $this->assertCount(1, $joinRequests);
+
+        // request access twice
         try {
             $this->normalUserClient->requestAccessToProject($projectId);
             $this->fail('Request access to project twice should produce error');
@@ -552,6 +556,10 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $this->assertContains('sent', $e->getMessage());
         }
 
+        $joinRequests = $this->client->listProjectJoinRequests($projectId);
+        $this->assertCount(1, $joinRequests);
+
+        // request access as current project member
         $this->normalUserClient->deleteMyProjectJoinRequest($joinRequest['id']);
 
         $this->client->addUserToProject($projectId, ['email' => $this->normalUser['email']]);
@@ -564,6 +572,25 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $this->assertContains('already', $e->getMessage());
             $this->assertContains('member', $e->getMessage());
         }
+
+        $joinRequests = $this->client->listProjectJoinRequests($projectId);
+        $this->assertCount(0, $joinRequests);
+
+        // request access and having pending invitation
+        $this->client->removeUserFromProject($projectId, $this->normalUser['id']);
+
+        $this->client->inviteUserToProject($projectId, ['email' => $this->normalUser['email']]);
+
+        try {
+            $this->normalUserClient->requestAccessToProject($projectId);
+            $this->fail('Request access of invited user should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('You have been alerady invited', $e->getMessage());
+        }
+
+        $joinRequests = $this->client->listProjectJoinRequests($projectId);
+        $this->assertCount(0, $joinRequests);
     }
 
     private function findProjectUser(int $projectId, string $userEmail): ?array
