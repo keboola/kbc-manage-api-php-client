@@ -195,6 +195,36 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
+    public function testOrganizationAdminJoinProjectInvitationDelete()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->client->updateOrganization($this->organization['id'], [
+            "allowAutoJoin" => 0
+        ]);
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(0, $joinRequests);
+
+        $this->client->inviteUserToProject($projectId, ['email' => $this->normalUser['email']]);
+
+        $joinRequests = $this->client->listProjectInvitations($projectId);
+        $this->assertCount(1, $joinRequests);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $this->normalUserClient->joinProject($projectId);
+
+        $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
+        $this->assertNotNull($projectUser);
+
+        $joinRequests = $this->client->listProjectInvitations($projectId);
+        $this->assertCount(0, $joinRequests);
+    }
+
     public function testAdminJoinProjectError(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
