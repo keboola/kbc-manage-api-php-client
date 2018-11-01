@@ -436,6 +436,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
         $this->assertCount(1, $invitations);
 
+        // send invitation twice
         try {
             $this->normalUserClient->inviteUserToProject($projectId, ['email' => $this->superAdmin['email']]);
             $this->fail('Invite user to project twice should produce error');
@@ -448,6 +449,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
         $this->assertCount(1, $invitations);
 
+        // send invitation to project member
         $this->normalUserClient->addUserToProject($projectId, ['email' => $inviteeEmail]);
 
         try {
@@ -462,14 +464,36 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
         $this->assertCount(1, $invitations);
 
+        // send invitation to myself
         $this->normalUserClient->removeUserFromProject($projectId, $this->normalUser['id']);
 
         try {
             $this->normalUserClient->inviteUserToProject($projectId, ['email' => $this->normalUser['email']]);
-            $this->fail('Invite existing member to project should produce error');
+            $this->fail('Invite yourself to project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('You cannot invite yourself', $e->getMessage());
+        }
+
+        $invitations = $this->normalUserClient->listProjectInvitations($projectId);
+        $this->assertCount(1, $invitations);
+
+        // send invitation to user having join request
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $this->client->updateOrganization($this->organization['id'], [
+            "allowAutoJoin" => 0
+        ]);
+
+        $this->normalUserClient->requestAccessToProject($projectId);
+
+        try {
+            $this->client->inviteUserToProject($projectId, ['email' => $this->normalUser['email']]);
+            $this->fail('Invite user having join request should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This user has already requested access', $e->getMessage());
         }
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
