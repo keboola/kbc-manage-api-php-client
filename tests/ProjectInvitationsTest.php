@@ -224,7 +224,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $projectId = $this->createProjectWithNormalAdminMember();
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            "allowAutoJoin" => $allowAutoJoin,
         ]);
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
