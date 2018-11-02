@@ -836,6 +836,8 @@ Changing project limits is allowed only for a super admin.
 
 ### Invite a user to a project [POST]
 
+Only members of the project or its organization are allowed to invite new users to the project.
+
 An optional expiration (seconds) and reason for joining can be added to the request.
 
 + Attributes
@@ -907,6 +909,8 @@ An optional expiration (seconds) and reason for joining can be added to the requ
     }
 
 ### Cancel a invitation [DELETE]
+
+Only members of the project or its organization are allowed to cancel project invitation.
 
 + Request (application/json)
     + Headers
@@ -1668,8 +1672,6 @@ all notifications as read.
 
 + Response 204
 
-
-# Group Manage My Account
 
 ## Projects Invitations [/manage/current-user/projects-invitations]
 
