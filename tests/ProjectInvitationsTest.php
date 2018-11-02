@@ -425,9 +425,8 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testInviteConflictsError()
+    public function testInviteDuplicityError()
     {
-        $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember();
 
@@ -448,8 +447,14 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
         $this->assertCount(1, $invitations);
+    }
 
-        // send invitation to project member
+    public function testInviteMemberError()
+    {
+        $inviteeEmail = 'spam@keboola.com';
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
+
         $this->normalUserClient->addUserToProject($projectId, ['email' => $inviteeEmail]);
 
         try {
@@ -462,9 +467,15 @@ class ProjectInvitationsTest extends ClientTestCase
         }
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
-        $this->assertCount(1, $invitations);
+        $this->assertCount(0, $invitations);
+    }
 
-        // send invitation to myself
+    public function testInviteSelfError()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
+
+        $this->normalUserClient->addUserToProject($projectId, ['email' => $this->superAdmin['email']]);
         $this->normalUserClient->removeUserFromProject($projectId, $this->normalUser['id']);
 
         try {
@@ -476,12 +487,20 @@ class ProjectInvitationsTest extends ClientTestCase
         }
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
-        $this->assertCount(1, $invitations);
+        $this->assertCount(0, $invitations);
+    }
 
-        // send invitation to user having join request
+    public function testInviteRequesterError()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
+
+        $this->normalUserClient->addUserToProject($projectId, ['email' => $this->superAdmin['email']]);
+        $this->normalUserClient->removeUserFromProject($projectId, $this->normalUser['id']);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+
         $this->client->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => 0
         ]);
@@ -497,7 +516,7 @@ class ProjectInvitationsTest extends ClientTestCase
         }
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
-        $this->assertCount(1, $invitations);
+        $this->assertCount(0, $invitations);
     }
 
     public function testInvitationCancelError()
