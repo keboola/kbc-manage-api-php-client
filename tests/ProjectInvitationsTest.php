@@ -39,35 +39,37 @@ class ProjectInvitationsTest extends ClientTestCase
         }
     }
 
-    public function testSuperAdminInvitesError()
+    public function autoJoinProvider(): array
+    {
+        return [
+            [
+                true,
+            ],
+            [
+                false,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testSuperAdminInvitesError(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember();
 
-        $invitations = $this->client->listProjectInvitations($projectId);
-        $this->assertCount(0, $invitations);
-
-        $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
-        $this->assertNull($projectUser);
-
-        try {
-            $this->client->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
-            $this->fail('Invite someone should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
-        }
-
-        $invitations = $this->client->listProjectInvitations($projectId);
-        $this->assertCount(0, $invitations);
-
-        $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
-        $this->assertNull($projectUser);
-
-        // project without auto-join
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            "allowAutoJoin" => $allowAutoJoin
         ]);
+
+        $invitations = $this->client->listProjectInvitations($projectId);
+        $this->assertCount(0, $invitations);
+
+        $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
+        $this->assertNull($projectUser);
 
         try {
             $this->client->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
@@ -83,11 +85,19 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testMaintainerAdminInvitesError(): void
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testMaintainerAdminInvitesError(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->client->updateOrganization($this->organization['id'], [
+            "allowAutoJoin" => $allowAutoJoin
+        ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
@@ -109,62 +119,27 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
         $this->assertNull($projectUser);
-
-        // project without auto-join
-        $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
-        ]);
-
-        try {
-            $this->normalUserClient->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
-            $this->fail('Invite someone should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
-        }
-
-        $invitations = $this->normalUserClient->listProjectInvitations($projectId);
-        $this->assertCount(0, $invitations);
-
-        $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
-        $this->assertNull($projectUser);
     }
 
-    public function testAdminInvitesError(): void
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testAdminInvitesError(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
 
-        $invitations = $this->client->listProjectInvitations($projectId);
-        $this->assertCount(0, $invitations);
-
-        $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
-        $this->assertNull($projectUser);
-
-        try {
-            $this->normalUserClient->listProjectInvitations($projectId);
-            $this->fail('List invitations should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
-        }
-
-        try {
-            $this->normalUserClient->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
-            $this->fail('Invite someone should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
-        }
-
-        $invitations = $this->client->listProjectInvitations($projectId);
-        $this->assertCount(0, $invitations);
-
-        $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
-        $this->assertNull($projectUser);
-
-        // project without auto-join
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            "allowAutoJoin" => $allowAutoJoin
         ]);
+
+        $invitations = $this->client->listProjectInvitations($projectId);
+        $this->assertCount(0, $invitations);
+
+        $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
+        $this->assertNull($projectUser);
 
         try {
             $this->normalUserClient->listProjectInvitations($projectId);
@@ -187,12 +162,20 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testOrganizationAdminInvites(): void
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testOrganizationAdminInvites(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
 
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
+            "allowAutoJoin" => $allowAutoJoin
+        ]);
+
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
 
@@ -220,41 +203,6 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertEquals($invitation, reset($invitations));
 
         $this->assertEquals($invitation, $this->normalUserClient->getProjectInvitation($projectId, $invitation['id']));
-
-        $this->normalUserClient->cancelProjectInvitation($projectId, $invitation['id']);
-
-        $invitations = $this->normalUserClient->listProjectInvitations($projectId);
-        $this->assertCount(0, $invitations);
-
-        $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
-        $this->assertNull($projectUser);
-
-        // project without auto-join
-        $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
-        ]);
-
-        $invitation = $this->normalUserClient->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
-
-        $this->assertEquals('', $invitation['reason']);
-        $this->assertEmpty($invitation['expires']);
-
-        $invitee = $this->client->getUser($inviteeEmail);
-
-        $this->assertEquals($invitee['id'], $invitation['user']['id']);
-        $this->assertEquals($invitee['email'], $invitation['user']['email']);
-        $this->assertEquals($invitee['name'], $invitation['user']['name']);
-
-        $this->assertEquals($this->normalUser['id'], $invitation['creator']['id']);
-        $this->assertEquals($this->normalUser['email'], $invitation['creator']['email']);
-        $this->assertEquals($this->normalUser['name'], $invitation['creator']['name']);
-
-        $invitations = $this->normalUserClient->listProjectInvitations($projectId);
-        $this->assertCount(1, $invitations);
-
-        $this->assertEquals($invitation, reset($invitations));
-
-        $this->assertEquals($invitation, $this->client->getProjectInvitation($projectId, $invitation['id']));
 
         $this->normalUserClient->cancelProjectInvitation($projectId, $invitation['id']);
 
@@ -265,11 +213,19 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testProjectMemberInvites(): void
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testProjectMemberInvites(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember();
+
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
+            "allowAutoJoin" => 0
+        ]);
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
@@ -298,41 +254,6 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertEquals($invitation, reset($invitations));
 
         $this->assertEquals($invitation, $this->normalUserClient->getProjectInvitation($projectId, $invitation['id']));
-
-        $this->normalUserClient->cancelProjectInvitation($projectId, $invitation['id']);
-
-        $invitations = $this->normalUserClient->listProjectInvitations($projectId);
-        $this->assertCount(0, $invitations);
-
-        $projectUser = $this->findProjectUser($projectId, $inviteeEmail);
-        $this->assertNull($projectUser);
-
-        // project without auto-join
-        $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
-        ]);
-
-        $invitation = $this->normalUserClient->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
-
-        $this->assertEquals('', $invitation['reason']);
-        $this->assertEmpty($invitation['expires']);
-
-        $invitee = $this->client->getUser($inviteeEmail);
-
-        $this->assertEquals($invitee['id'], $invitation['user']['id']);
-        $this->assertEquals($invitee['email'], $invitation['user']['email']);
-        $this->assertEquals($invitee['name'], $invitation['user']['name']);
-
-        $this->assertEquals($this->normalUser['id'], $invitation['creator']['id']);
-        $this->assertEquals($this->normalUser['email'], $invitation['creator']['email']);
-        $this->assertEquals($this->normalUser['name'], $invitation['creator']['name']);
-
-        $invitations = $this->normalUserClient->listProjectInvitations($projectId);
-        $this->assertCount(1, $invitations);
-
-        $this->assertEquals($invitation, reset($invitations));
-
-        $this->assertEquals($invitation, $this->client->getProjectInvitation($projectId, $invitation['id']));
 
         $this->normalUserClient->cancelProjectInvitation($projectId, $invitation['id']);
 
