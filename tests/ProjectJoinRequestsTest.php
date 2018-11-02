@@ -530,7 +530,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testJoinRequestConflictsError()
+    public function testJoinRequestDuplicityError()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -541,12 +541,11 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
         $projectId = $this->createProjectWithSuperAdminMember();
 
-        $joinRequest = $this->normalUserClient->requestAccessToProject($projectId);
+        $this->normalUserClient->requestAccessToProject($projectId);
 
         $joinRequests = $this->client->listProjectJoinRequests($projectId);
         $this->assertCount(1, $joinRequests);
 
-        // request access twice
         try {
             $this->normalUserClient->requestAccessToProject($projectId);
             $this->fail('Request access to project twice should produce error');
@@ -558,9 +557,18 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
         $joinRequests = $this->client->listProjectJoinRequests($projectId);
         $this->assertCount(1, $joinRequests);
+    }
 
-        // request access as current project member
-        $this->normalUserClient->deleteMyProjectJoinRequest($joinRequest['id']);
+    public function testJoinRequestMemberError()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            "allowAutoJoin" => 0
+        ]);
+
+        $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->addUserToProject($projectId, ['email' => $this->normalUser['email']]);
 
@@ -575,9 +583,18 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
         $joinRequests = $this->client->listProjectJoinRequests($projectId);
         $this->assertCount(0, $joinRequests);
+    }
 
-        // request access and having pending invitation
-        $this->client->removeUserFromProject($projectId, $this->normalUser['id']);
+    public function testJoinRequestInviteeError()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            "allowAutoJoin" => 0
+        ]);
+
+        $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->inviteUserToProject($projectId, ['email' => $this->normalUser['email']]);
 
@@ -586,7 +603,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $this->fail('Request access of invited user should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('You have been alerady invited', $e->getMessage());
+            $this->assertContains('You have been already invited', $e->getMessage());
         }
 
         $joinRequests = $this->client->listProjectJoinRequests($projectId);
