@@ -244,14 +244,54 @@ class Client
         return $this->apiGet("/manage/projects/{$id}/users");
     }
 
+    public function listProjectInvitations($id)
+    {
+        return $this->apiGet("/manage/projects/{$id}/invitations");
+    }
+
+    public function listMyProjectInvitations()
+    {
+        return $this->apiGet("/manage/current-user/projects-invitations");
+    }
+
+    public function acceptMyProjectInvitation($id)
+    {
+        $this->apiPut("/manage/current-user/projects-invitations/{$id}", []);
+    }
+
+    public function getMyProjectInvitation($id)
+    {
+        return $this->apiGet("/manage/current-user/projects-invitations/{$id}");
+    }
+
+    public function declineMyProjectInvitation($id)
+    {
+        $this->apiDelete("/manage/current-user/projects-invitations/{$id}");
+    }
+
     public function addUserToProject($projectId, $params = [])
     {
         return $this->apiPost("/manage/projects/{$projectId}/users", $params);
     }
 
+    public function inviteUserToProject($projectId, $params = [])
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/invitations", $params);
+    }
+
     public function removeUserFromProject($projectId, $userId)
     {
         $this->apiDelete("/manage/projects/{$projectId}/users/{$userId}");
+    }
+
+    public function getProjectInvitation($projectId, $invitationId)
+    {
+        return $this->apiGet("/manage/projects/{$projectId}/invitations/{$invitationId}");
+    }
+
+    public function cancelProjectInvitation($projectId, $invitationId)
+    {
+        $this->apiDelete("/manage/projects/{$projectId}/invitations/{$invitationId}");
     }
 
     public function enableProject($projectId)
