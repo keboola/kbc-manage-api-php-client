@@ -470,6 +470,7 @@ Either `id` or `email` of a user must be set. If the email is not associated wit
     {
       "id": 4088,
       "name": "Martinšík",
+      "description": "My new project"
       "type": "production",
       "region": "us-east-1",
       "created": "2017-12-11T09:02:13+0100",
@@ -607,6 +608,7 @@ Returns a project with associated limits and metrics.
 + Attributes
 
     + name: Test - Rename project
+    + description: My new project
     + defaultBackend: Snowflake - Change project default backend type
     + type:demo - Change project type (demo, production, poc, ...) - allowed only for a super admin
     + expirationDays: 7 - Change project expiration - allowed only for a super admin
@@ -650,6 +652,7 @@ A project will be created from a default template which defines its limits.
 + Attributes
 
     + name: My Demo (required) - Project name
+    + description: My new project
     + type: demo (required) -  One of `production`, `poc`, `demo`; default is `production`
     + defaultBackend: snowflake - Project default backend `snowflake` or `redshift`; default is `snowflake`
     + dataRetentionTimeInDays: 7 - Data retention in days for Time Travel
@@ -1253,6 +1256,7 @@ Operations on deleted projects are allowed only for a super admin.
     {
             "id": 101,
             "name": "test project",
+            "description": "My new project"
             "type": "production",
             "region": "eu-west-1",
             "created": "2017-02-15T14:25:15+0100",
@@ -1330,6 +1334,7 @@ Projects can be filtered by various filters:
         {
             "id": 101,
             "name": "test project",
+            "description": "My new project"
             "type": "production",
             "region": "eu-west-1",
             "created": "2017-02-15T14:25:15+0100",
@@ -1361,6 +1366,7 @@ Projects can be filtered by various filters:
         {
             "id": 104,
             "name": "another test project",
+            "description": "My new project"
             "type": "production",
             "region": "eu-west-1",
             "created": "2017-02-15T14:25:15+0100",
