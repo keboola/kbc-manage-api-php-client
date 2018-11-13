@@ -387,6 +387,20 @@ class ProjectsTest extends ClientTestCase
             'name' => $newName,
         ]);
         $this->assertEquals($newName, $project['name']);
+        $this->assertEquals(null, $project['description']);
+
+        // set description
+        $newDescription = 'description of my project';
+        $project = $this->client->updateProject($project['id'], [
+            'description' => $newDescription,
+        ]);
+        $this->assertEquals($newDescription, $project['description']);
+
+        // unset description
+        $project = $this->client->updateProject($project['id'], [
+            'description' => '',
+        ]);
+        $this->assertEmpty($project['description']);
 
         // fetch again
         $project = $this->client->getProject($project['id']);
