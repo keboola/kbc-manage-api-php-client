@@ -4,7 +4,7 @@ HOST: https://connection.keboola.com/
 # Keboola Connection Management API
 
 
-The Keboola Connection Management API covers all tasks required for managing projects, as well as some super admin features 
+The Keboola Connection Management API covers all tasks required for managing projects, as well as some super admin features
 for controlling and monitoring Keboola Connection.
 
 ## Projects Management
@@ -1439,11 +1439,14 @@ Users can be managed only by a super admin.
     ```js
     {
         "id": 2,
-        "name": "Martin Halamicek",
-        "email": "martin@keboola.com",
+        "name": "Martin",
+        "email": "spelling@keboola.com",
         "features": [
             "inline-manual"
-        ]
+        ],
+        "mfaEnabled": true,
+        "canAccessLogs": true,
+        "isSuperAdmin": true
     }
     ```
 
@@ -1467,11 +1470,14 @@ Users can be managed only by a super admin.
     ```js
     {
         "id": 2,
-        "name": "Corrected Spelling",
+        "name": "Martin",
         "email": "spelling@keboola.com",
         "features": [
             "inline-manual"
-        ]
+        ],
+        "mfaEnabled": true,
+        "canAccessLogs": true,
+        "isSuperAdmin": true
     }
     ```
 
@@ -1486,6 +1492,32 @@ Users can be managed only by a super admin.
             X-KBC-ManageApiToken: your_token
 
 + Response 204
+
+## Remove SuperAdmin privilege from User [DELETE /manage/users/{user_id_or_email}/superadmin]
+
++ Parameters
+    + user_id_or_email (required) - User ID or email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 2,
+        "name": "Corrected Spelling",
+        "email": "spelling@keboola.com",
+        "features": [
+            "inline-manual"
+        ],
+        "mfaEnabled": true,
+        "canAccessLogs": false,
+        "isSuperAdmin": false
+    }
+    ```
 
 
 # Group Notifications
