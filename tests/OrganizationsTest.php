@@ -128,13 +128,13 @@ class OrganizationsTest extends ClientTestCase
 
         $foundUser = null;
         foreach ($admins as $user) {
-            $this->assertNotEmpty($foundUser['id']);
-            $this->assertNotEmpty($foundUser['name']);
-            $this->assertNotEmpty($foundUser['email']);
-            $this->assertTrue(is_bool($foundUser['mfaEnabled']));
-            $this->assertNotEmpty($foundUser['created']);
-            $this->assertArrayHasKey('invitor', $foundUser);
-            $this->assertNull($foundUser['invitor']);
+            $this->assertNotEmpty($user['id']);
+            $this->assertArrayHasKey('name', $user);
+            $this->assertNotEmpty($user['email']);
+            $this->assertTrue(is_bool($user['mfaEnabled']));
+            $this->assertNotEmpty($user['created']);
+            $this->assertArrayHasKey('invitor', $user);
+            $this->assertNull($user['invitor']);
 
             if ($user['email'] == 'spam@keboola.com') {
                 $foundUser = $user;
