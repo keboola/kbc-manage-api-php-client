@@ -472,6 +472,28 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
+    public function testAddAdminToOrganizationDeletesInvitations(): void
+    {
+        $inviteeEmail = $this->normalUser['email'];
+        $organizationId = $this->organization['id'];
+
+        $invitations = $this->client->listOrganizationInvitations($organizationId);
+        $this->assertCount(0, $invitations);
+
+        $this->client->inviteUserToOrganization($organizationId, ['email' => $inviteeEmail]);
+
+        $invitations = $this->client->listOrganizationInvitations($organizationId);
+        $this->assertCount(1, $invitations);
+
+        $this->client->addUserToOrganization($organizationId, ['email' => $inviteeEmail]);
+
+        $member = $this->findOrganizationMember($organizationId, $inviteeEmail);
+        $this->assertNotNull($member);
+
+        $invitations = $this->client->listOrganizationInvitations($organizationId);
+        $this->assertCount(0, $invitations);
+    }
+
     private function findOrganizationMember(int $organizationId, string $userEmail): ?array
     {
         $members = $this->client->listOrganizationUsers($organizationId);
