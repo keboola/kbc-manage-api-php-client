@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   tests:
     build: .
@@ -20,3 +20,7 @@ services:
          composer install
          && ./vendor/bin/phpunit
          '
+networks:
+  default:
+    external:
+      name: connection_api-tests
