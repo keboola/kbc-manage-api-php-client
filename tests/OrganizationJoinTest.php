@@ -72,7 +72,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->client->addUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->updateOrganization($organizationId, [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0
         ]);
 
         $member = $this->findOrganizationMember($organizationId, $this->superAdmin['email']);
@@ -96,7 +96,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->client->addUserToOrganization($organizationId, ['email' => $this->superAdmin['email']]);
 
         $this->client->updateOrganization($organizationId, [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -163,7 +163,7 @@ class OrganizationJoinTest extends ClientTestCase
 
         // project without auto-join
         $this->client->updateOrganization($organizationId, [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0
         ]);
 
         try {
@@ -195,7 +195,7 @@ class OrganizationJoinTest extends ClientTestCase
 
         // project without auto-join
         $this->normalUserClient->updateOrganization($organizationId, [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0
         ]);
 
         try {
