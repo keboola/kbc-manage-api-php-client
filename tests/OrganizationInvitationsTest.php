@@ -109,7 +109,7 @@ class OrganizationInvitationsTest extends ClientTestCase
 
         try {
             $this->client->inviteUserToOrganization($organizationId, ['email' => $inviteeEmail]);
-            $this->fail('Invite someone should produce error');
+            $this->fail('Inviting someone to organization without allowAutoJoin should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
@@ -183,7 +183,7 @@ class OrganizationInvitationsTest extends ClientTestCase
 
         try {
             $this->normalUserClient->inviteUserToOrganization($organizationId, ['email' => $inviteeEmail]);
-            $this->fail('Invite someone should produce error');
+            $this->fail('Inviting someone to organization without allowAutoJoin should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
@@ -218,14 +218,14 @@ class OrganizationInvitationsTest extends ClientTestCase
 
         try {
             $this->normalUserClient->listOrganizationInvitations($organizationId);
-            $this->fail('List invitations should produce error');
+            $this->fail('Admin from ouside the  organisation should not be able to list invitations');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
 
         try {
             $this->normalUserClient->inviteUserToOrganization($organizationId, ['email' => $inviteeEmail]);
-            $this->fail('Invite someone should produce error');
+            $this->fail('Admin from ouside the organisation should not be able to invite someone');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
@@ -374,7 +374,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         // send invitation twice
         try {
             $this->normalUserClient->inviteUserToOrganization($organizationId, ['email' => $this->superAdmin['email']]);
-            $this->fail('Invite user to organization twice should produce error');
+            $this->fail('Inviting user to organization twice should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('already', $e->getMessage());
@@ -396,7 +396,7 @@ class OrganizationInvitationsTest extends ClientTestCase
 
         try {
             $this->normalUserClient->inviteUserToOrganization($organizationId, ['email' => $inviteeEmail]);
-            $this->fail('Invite existing member to organization should produce error');
+            $this->fail('Inviting existing member to organization should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('already', $e->getMessage());
@@ -415,7 +415,7 @@ class OrganizationInvitationsTest extends ClientTestCase
 
         try {
             $this->normalUserClient->inviteUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
-            $this->fail('Invite yourself to organization should produce error');
+            $this->fail('Inviting yourself to organization should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('You cannot invite yourself', $e->getMessage());
@@ -446,7 +446,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         // normal admin
         try {
             $this->normalUserClient->cancelOrganizationInvitation($organizationId, $invitation['id']);
-            $this->fail('Cancel invitations should produce error');
+            $this->fail('Canceling invitations by removed user should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
