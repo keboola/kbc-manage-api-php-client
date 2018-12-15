@@ -80,7 +80,7 @@ class OrganizationJoinTest extends ClientTestCase
 
         try {
             $this->client->joinOrganization($organizationId);
-            $this->fail('Organization join should produce error');
+            $this->fail('SuperAdmin should not be able to join organization');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
@@ -106,7 +106,7 @@ class OrganizationJoinTest extends ClientTestCase
 
         try {
             $this->normalUserClient->joinOrganization($organizationId);
-            $this->fail('Organization join should produce error');
+            $this->fail('Maintainer admin should not be able to join organization');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
