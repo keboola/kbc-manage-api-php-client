@@ -475,15 +475,17 @@ class OrganizationInvitationsTest extends ClientTestCase
     public function testAddingAdminToOrganizationDeletesCorrespondingInvitation(): void
     {
         $inviteeEmail = $this->normalUser['email'];
+        $secondInviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
 
         $invitations = $this->client->listOrganizationInvitations($organizationId);
         $this->assertCount(0, $invitations);
 
         $this->client->inviteUserToOrganization($organizationId, ['email' => $inviteeEmail]);
+        $this->client->inviteUserToOrganization($organizationId, ['email' => $secondInviteeEmail]);
 
         $invitations = $this->client->listOrganizationInvitations($organizationId);
-        $this->assertCount(1, $invitations);
+        $this->assertCount(2, $invitations);
 
         $this->client->addUserToOrganization($organizationId, ['email' => $inviteeEmail]);
 
@@ -491,7 +493,15 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNotNull($member);
 
         $invitations = $this->client->listOrganizationInvitations($organizationId);
-        $this->assertCount(0, $invitations);
+        $this->assertCount(1, $invitations);
+
+        $invitation = reset($invitations);
+
+        $this->assertEquals($secondInviteeEmail, $invitation['user']['email']);
+
+        $this->assertEquals($this->superAdmin['id'], $invitation['creator']['id']);
+        $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
+        $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
     }
 
     private function findOrganizationMember(int $organizationId, string $userEmail): ?array
