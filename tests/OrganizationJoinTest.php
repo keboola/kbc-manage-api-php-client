@@ -118,6 +118,7 @@ class OrganizationJoinTest extends ClientTestCase
     public function testOrganizationAdminJoiningOrganizationDeletesCorrsepondingInvitation()
     {
         $organizationId = $this->organization['id'];
+        $secondInviteeEmail = 'spam@keboola.com';
 
         $this->client->addUserToOrganization($organizationId, ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -126,6 +127,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->assertCount(0, $invitations);
 
         $this->client->inviteUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
+        $this->client->inviteUserToOrganization($organizationId, ['email' => $secondInviteeEmail]);
 
         $invitations = $this->normalUserClient->listMyOrganizationInvitations();
         $this->assertCount(1, $invitations);
@@ -140,6 +142,18 @@ class OrganizationJoinTest extends ClientTestCase
 
         $invitations = $this->normalUserClient->listMyOrganizationInvitations();
         $this->assertCount(0, $invitations);
+
+        $invitations = $this->normalUserClient->listOrganizationInvitations($organizationId);
+        $this->assertCount(1, $invitations);
+
+        $invitation = reset($invitations);
+
+        $this->assertEquals($secondInviteeEmail, $invitation['user']['email']);
+
+        $this->assertEquals($this->superAdmin['id'], $invitation['creator']['id']);
+        $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
+        $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
+
     }
 
     public function testRandomAdminCannotJoinOrganization(): void
