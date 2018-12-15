@@ -31,7 +31,7 @@ class OrganizationJoinTest extends ClientTestCase
         }
     }
 
-    public function testSuperAdminJoinOrganization(): void
+    public function testSuperAdminCanJoinOrganization(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -47,7 +47,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->assertEmpty($member['invitor']);
     }
 
-    public function testMaintainerAdminJoinOrganization(): void
+    public function testMaintainerAdminCanJoinOrganization(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -65,7 +65,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->assertEmpty($member['invitor']);
     }
 
-    public function testSuperAdminJoinOrganizationError(): void
+    public function testSuperAdminCannotJoinOrganizationIfAllowAutoJoinIsDisabled(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -89,7 +89,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testMaintainerAdminJoinOrganizationError(): void
+    public function testMaintainerAdminCannotJoinOrganizationIfAllowAutoJoinIsDisabled(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -115,7 +115,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testOrganizationAdminJoinOrganizationInvitationDelete()
+    public function testOrganizationAdminJoiningOrganizationDeletesCorrsepondingInvitation()
     {
         $organizationId = $this->organization['id'];
 
@@ -142,7 +142,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
-    public function testAdminJoinOrganizationError(): void
+    public function testRandomAdminCannotJoinOrganization(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -177,7 +177,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testOrganizationMemberJoinOrganizationError(): void
+    public function testOrganizationMemberCannotJoinOrganizationAgainRegardlessOfAllowAutoJoin(): void
     {
         $organizationId = $this->organization['id'];
 
