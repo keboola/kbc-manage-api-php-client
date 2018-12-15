@@ -51,7 +51,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         ];
     }
 
-    public function testSuperAdminInvites(): void
+    public function testSuperAdminCanInvite(): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -90,7 +90,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testSuperAdminInvitesError(): void
+    public function testSuperAdminCannotInviteIfAllowAutoJoinIsDisabled(): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -121,7 +121,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testMaintainerAdminInvites(): void
+    public function testMaintainerAdminCanInvite(): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -162,7 +162,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testMaintainerAdminInvitesError(): void
+    public function testMaintainerAdminCannotInviteIfAllowAutoJoinIsDisabled(): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -199,7 +199,7 @@ class OrganizationInvitationsTest extends ClientTestCase
      * @dataProvider autoJoinProvider
      * @param bool $allowAutoJoin
      */
-    public function testAdminInvitesError(bool $allowAutoJoin): void
+    public function testRandomAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -241,7 +241,7 @@ class OrganizationInvitationsTest extends ClientTestCase
      * @dataProvider autoJoinProvider
      * @param bool $allowAutoJoin
      */
-    public function testOrganizationAdminInvites(bool $allowAutoJoin): void
+    public function testOrganizationAdminCanInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -286,7 +286,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testAdminAcceptInvitation()
+    public function testAdminAcceptsInvitation()
     {
         $organizationId = $this->organization['id'];
 
@@ -328,7 +328,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['name'], $member['invitor']['name']);
     }
 
-    public function testAdminDeclineInvitation()
+    public function testAdminDeclinesInvitation()
     {
         $organizationId = $this->organization['id'];
 
@@ -360,7 +360,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testInviteDuplicityError()
+    public function testCannotInviteAlreadyInvitedUser()
     {
         $organizationId = $this->organization['id'];
 
@@ -385,7 +385,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(1, $invitations);
     }
 
-    public function testInviteMemberError()
+    public function testCannotInviteExistingMember()
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -407,7 +407,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
-    public function testInviteSelfError()
+    public function testCannotInviteYourself()
     {
         $organizationId = $this->organization['id'];
 
@@ -425,7 +425,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
-    public function testInvitationCancelError()
+    public function testRemovedMemberOfOrgCannotCancelTheirInvitations()
     {
         $organizationId = $this->organization['id'];
 
@@ -455,7 +455,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(1, $invitations);
     }
 
-    public function testOrganizationDeleteRemovesInvitations()
+    public function testDeletingOrganizationRemovesInvitations()
     {
         $organizationId = $this->organization['id'];
 
@@ -472,7 +472,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
-    public function testAddAdminToOrganizationDeletesInvitations(): void
+    public function testAddingAdminToOrganizationDeletesCorrespondingInvitation(): void
     {
         $inviteeEmail = $this->normalUser['email'];
         $organizationId = $this->organization['id'];
