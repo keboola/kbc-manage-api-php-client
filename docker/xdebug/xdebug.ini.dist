@@ -1,0 +1,6 @@
+xdebug.remote_enable=1
+xdebug.remote_autostart=1
+xdebug.default_enable=0
+xdebug.remote_host=host.docker.internal
+; uncomment in case of problems - will create xdebug log inside your project
+; xdebug.remote_log=/var/www/html/docker/xdebug/xdebug.log

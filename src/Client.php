@@ -143,6 +143,11 @@ class Client
         $this->apiDelete("/manage/maintainers/{$maintainerId}/users/{$userId}");
     }
 
+    public function removeUser($userId)
+    {
+        $this->apiDelete("/manage/users/{$userId}");
+    }
+
     public function listMaintainerOrganizations($maintainerId)
     {
         return $this->apiGet("/manage/maintainers/{$maintainerId}/organizations");
