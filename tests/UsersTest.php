@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 07/01/16
- * Time: 09:43
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -151,5 +145,41 @@ class UsersTest extends ClientTestCase
         } catch(ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
+    }
+
+    public function testsRemoveUserFromEverywhere()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg']);
+        $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj']);
+        $email = 'remove' . uniqid() . '@keboola.com';
+        $this->client->addUserToProject($project['id'], ['email' => $email]);
+        $user = $this->client->getUser($email);
+        $this->client->addUserToOrganization($organization['id'], ['email' => $user['email']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $user['email']]);
+        $this->client->removeUser($email);
+
+        $usersInProject = $this->client->listProjectUsers($project['id']);
+        foreach ($usersInProject as $userInProject) {
+            if ($userInProject['id'] === $user['id']) {
+                $this->fail('User has not been deleted from project');
+            }
+        }
+
+        $usersInOrganization = $this->client->listOrganizationUsers($organization['id']);
+        foreach ($usersInOrganization as $userInOrganization) {
+            if ($userInOrganization['id'] === $user['id']) {
+                $this->fail('User has not been deleted from organization');
+            }
+        }
+
+        $usersInMaintainer = $this->client->listMaintainerMembers($this->testMaintainerId);
+        foreach ($usersInMaintainer as $userInMaintainer) {
+            if ($userInMaintainer['id'] === $user['id']) {
+                $this->fail('User has not been deleted from maintainer');
+            }
+        }
+
+        $this->expectException(ClientException::class);
+        $this->client->getUser($email);
     }
 }
