@@ -1660,6 +1660,19 @@ Users can be managed only by a super admin.
         "isSuperAdmin": false
     }
     ```
+## Remove User [DELETE /manage/users/{user_id_or_email}]
+It will completly remove user from everywhere (projects, organizations and maintainers).
+Removes also personal data of user (e-mail and name).
++ Parameters
+    + user_id_or_email (required) - User ID or email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204 (application/json)
+    ```
 
 
 # Group Notifications
