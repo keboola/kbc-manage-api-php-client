@@ -186,4 +186,13 @@ class UsersTest extends ClientTestCase
         $this->assertSame(false, $deletedUser['mfaEnabled'], 'User password has not been deleted');
         $this->assertSame('DELETED', $deletedUser['name'], 'User name has not been deleted');
     }
+
+
+    public function testRemoveNonExistingUser()
+    {
+        $email = 'non-existing' . uniqid() . '@non-existing-keboola.com';
+        $this->expectExceptionMessage("Admin $email not found.");
+        $this->expectException(ClientException::class);
+        $this->client->removeUser($email);
+    }
 }
