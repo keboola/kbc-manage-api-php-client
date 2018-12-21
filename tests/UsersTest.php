@@ -183,7 +183,7 @@ class UsersTest extends ClientTestCase
         $deletedUser = $this->client->getUser($user['id']);
 
         $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
-        $this->assertSame(false, $deletedUser['mfaEnabled'], 'User password has not been deleted');
+        $this->assertSame(false, $deletedUser['mfaEnabled'], 'User mfa has not been disabled');
         $this->assertSame('DELETED', $deletedUser['name'], 'User name has not been deleted');
     }
 
