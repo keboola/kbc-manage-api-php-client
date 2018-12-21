@@ -156,6 +156,7 @@ class UsersTest extends ClientTestCase
         $user = $this->client->getUser($email);
         $this->client->addUserToOrganization($organization['id'], ['email' => $user['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $user['email']]);
+
         $this->client->removeUser($email);
 
         $usersInProject = $this->client->listProjectUsers($project['id']);
@@ -179,7 +180,10 @@ class UsersTest extends ClientTestCase
             }
         }
 
-        $this->expectException(ClientException::class);
-        $this->client->getUser($email);
+        $deletedUser = $this->client->getUser($user['id']);
+
+        $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
+        $this->assertSame(false, $deletedUser['mfaEnabled'], 'User password has not been deleted');
+        $this->assertSame('DELETED', $deletedUser['name'], 'User name has not been deleted');
     }
 }
