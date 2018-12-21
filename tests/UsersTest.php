@@ -149,13 +149,17 @@ class UsersTest extends ClientTestCase
 
     public function testsRemoveUserFromEverywhere()
     {
-        $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg']);
-        $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj']);
+        $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
+        $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-1']);
         $email = 'remove' . uniqid() . '@keboola.com';
+        //PROJECT, ORGANIZATION & MAINTAINER
         $this->client->addUserToProject($project['id'], ['email' => $email]);
         $user = $this->client->getUser($email);
         $this->client->addUserToOrganization($organization['id'], ['email' => $user['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $user['email']]);
+        //INVITATION
+        $inviteProject = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-2']);
+        $this->client->inviteUserToProject($inviteProject['id'], ['email' => $email]);
 
         $this->client->removeUser($email);
 
@@ -177,6 +181,13 @@ class UsersTest extends ClientTestCase
         foreach ($usersInMaintainer as $userInMaintainer) {
             if ($userInMaintainer['id'] === $user['id']) {
                 $this->fail('User has not been deleted from maintainer');
+            }
+        }
+
+        $usersInvitations = $this->client->listProjectInvitations($inviteProject['id']);
+        foreach ($usersInvitations as $invitation) {
+            if ($invitation['user']['id'] === $user['id']) {
+                $this->fail('User\'s invitations has not been deleted');
             }
         }
 
