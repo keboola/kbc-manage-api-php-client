@@ -286,7 +286,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testAdminAcceptsInvitation()
+    public function testAdminAcceptsInvitation(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -328,7 +328,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['name'], $member['invitor']['name']);
     }
 
-    public function testAdminDeclinesInvitation()
+    public function testAdminDeclinesInvitation(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -360,7 +360,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testCannotInviteAlreadyInvitedUser()
+    public function testCannotInviteAlreadyInvitedUser(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -385,7 +385,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(1, $invitations);
     }
 
-    public function testCannotInviteExistingMember()
+    public function testCannotInviteExistingMember(): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -407,7 +407,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
-    public function testCannotInviteYourself()
+    public function testCannotInviteYourself(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -425,7 +425,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
-    public function testRandomAdminCannotManageInvitationsInOrganization()
+    public function testRandomAdminCannotManageInvitationsInOrganization(): void
     {
         $organizationId = $this->organization['id'];
 
@@ -454,7 +454,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(1, $invitations);
     }
 
-    public function testDeletingOrganizationRemovesInvitations()
+    public function testDeletingOrganizationRemovesInvitations(): void
     {
         $organizationId = $this->organization['id'];
 
