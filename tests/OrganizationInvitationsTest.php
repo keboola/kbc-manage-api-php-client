@@ -425,7 +425,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
-    public function testRemovedMemberOfOrgCannotCancelTheirInvitations()
+    public function testRandomAdminCannotManageInvitationsInOrganization()
     {
         $organizationId = $this->organization['id'];
 
@@ -443,7 +443,6 @@ class OrganizationInvitationsTest extends ClientTestCase
 
         $this->normalUserClient->removeUserFromOrganization($organizationId, $this->normalUser['id']);
 
-        // normal admin
         try {
             $this->normalUserClient->cancelOrganizationInvitation($organizationId, $invitation['id']);
             $this->fail('Cancel invitations should produce error');
