@@ -115,7 +115,7 @@ class OrganizationJoinTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testOrganizationAdminJoiningOrganizationDeletesCorrsepondingInvitation()
+    public function testOrganizationAdminJoiningOrganizationDeletesCorrespondingInvitation()
     {
         $organizationId = $this->organization['id'];
         $secondInviteeEmail = 'spam@keboola.com';
