@@ -52,7 +52,7 @@ class ProjectJoinTest extends ClientTestCase
         ];
     }
 
-    public function testSuperAdminJoinProject(): void
+    public function testSuperAdminCanJoinProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember();
@@ -72,7 +72,7 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['name'], $projectUser['approver']['name']);
     }
 
-    public function testMaintainerAdminJoinProject(): void
+    public function testMaintainerAdminCanJoinProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -93,7 +93,7 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertEquals($this->normalUser['name'], $projectUser['approver']['name']);
     }
 
-    public function testSuperAdminJoinProjectError(): void
+    public function testSuperAdminCannotJoinProjectIfAllowAutoJoinIsDisabled(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember();
@@ -116,7 +116,7 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testMaintainerAdminJoinProjectError(): void
+    public function testMaintainerAdminCannotJoinProjectIfAllowAutoJoinIsDisabled(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -141,7 +141,7 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testOrganizationAdminJoinProject(): void
+    public function testOrganizationAdminCanJoinProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -182,7 +182,7 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertEquals($this->normalUser['name'], $projectUser['approver']['name']);
     }
 
-    public function testOrganizationAdminJoinProjectRequestDelete()
+    public function testOrganizationAdminJoiningProjectDeletesCorrespondingJoinRequest(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -212,7 +212,7 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testOrganizationAdminJoinProjectInvitationDelete()
+    public function testOrganizationAdminJoiningProjectDeletesCorrespondingInvitation(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -242,7 +242,7 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testAdminJoinProjectError(): void
+    public function testRandomAdminCannotJoinProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -276,7 +276,7 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testProjectMemberJoinProjectError(): void
+    public function testProjectMemberCannotJoinProjectAgainRegardlessOfAllowAutoJoin(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember();
