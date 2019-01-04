@@ -83,14 +83,113 @@ class ProjectsTest extends ClientTestCase
         return $foundProject;
     }
 
-    public function testProjectCreate()
+    public function testSuperAdminCannotCreateProject()
     {
         $organization = $this->initTestOrganization();
+        $organizationId = $organization['id'];
 
-        $project = $this->initTestProject($organization['id']);
+        $this->client->removeUserFromOrganization($organizationId, $this->superAdmin['id']);
+
+        $member = $this->findOrganizationMember($organizationId, $this->superAdmin['email']);
+        $this->assertNull($member);
+
+        $member = $this->findMaintainerMember($this->testMaintainerId, $this->superAdmin['email']);
+        $this->assertNull($member);
+
+        $projects = $this->client->listOrganizationProjects($organizationId);
+        $this->assertCount(0, $projects);
+
+        try {
+            $this->client->createProject($organizationId, [
+                'name' => 'My test',
+            ]);
+
+            $this->fail('SuperAdmin should be not allowed to create project');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertEquals('manage.createProjectPermissionDenied', $e->getStringCode());
+            $this->assertEquals('Only organization members can create new projects', $e->getMessage());
+        }
+
+        $projects = $this->client->listOrganizationProjects($organizationId);
+        $this->assertCount(0, $projects);
+    }
+
+    public function testMaintainerAdminCannotCreateProject()
+    {
+        $organization = $this->initTestOrganization();
+        $organizationId = $organization['id'];
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $member = $this->findOrganizationMember($organizationId, $this->normalUser['email']);
+        $this->assertNull($member);
+
+        $member = $this->findMaintainerMember($this->testMaintainerId, $this->normalUser['email']);
+        $this->assertNotNull($member);
+        $this->assertEquals($this->normalUser['email'], $member['email']);
+
+        $projects = $this->normalUserClient->listOrganizationProjects($organizationId);
+        $this->assertCount(0, $projects);
+
+        try {
+            $this->normalUserClient->createProject($organizationId, [
+                'name' => 'My test',
+            ]);
+
+            $this->fail('MaintainerAdmin should be not allowed to create project');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertEquals('manage.createProjectPermissionDenied', $e->getStringCode());
+            $this->assertEquals('Only organization members can create new projects', $e->getMessage());
+        }
+
+        $projects = $this->normalUserClient->listOrganizationProjects($organizationId);
+        $this->assertCount(0, $projects);
+    }
+
+    public function testRandomAdminCannotCreateProject()
+    {
+        $organization = $this->initTestOrganization();
+        $organizationId = $organization['id'];
+
+        $member = $this->findOrganizationMember($organizationId, $this->normalUser['email']);
+        $this->assertNull($member);
+
+        $member = $this->findMaintainerMember($this->testMaintainerId, $this->normalUser['email']);
+        $this->assertNull($member);
+
+        $projects = $this->client->listOrganizationProjects($organizationId);
+        $this->assertCount(0, $projects);
+
+        try {
+            $this->normalUserClient->createProject($organizationId, [
+                'name' => 'My test',
+            ]);
+
+            $this->fail('RandomAdmin should be not allowed to create project');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+            $this->assertContains('You don\'t have access to the organization', $e->getMessage());
+        }
+
+        $projects = $this->client->listOrganizationProjects($organizationId);
+        $this->assertCount(0, $projects);
+    }
+
+    public function testOrganizationAdminCanCreateProject()
+    {
+        $organization = $this->initTestOrganization();
+        $organizationId = $organization['id'];
+
+        $member = $this->findOrganizationMember($organizationId, $this->superAdmin['email']);
+        $this->assertNotNull($member);
+        $this->assertEquals($this->superAdmin['email'], $member['email']);
+
+        $project = $this->initTestProject($organizationId);
 
         // check if the project is listed in organization projects
-        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $projects = $this->client->listOrganizationProjects($organizationId);
 
         $this->assertCount(1, $projects);
         $this->assertEquals($project['id'], $projects[0]['id']);
@@ -99,10 +198,10 @@ class ProjectsTest extends ClientTestCase
         // delete project
         $this->client->deleteProject($project['id']);
 
-        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $projects = $this->client->listOrganizationProjects($organizationId);
         $this->assertEmpty($projects);
 
-        $this->client->deleteOrganization($organization['id']);
+        $this->client->deleteOrganization($organizationId);
     }
 
     public function testProductionProjectCreate()
@@ -1203,4 +1302,31 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->updateProject($project['id'], ['dataRetentionTimeInDays' => 30]);
         $this->assertEquals(30, (int) $project['dataRetentionTimeInDays']);
     }
+
+    private function findOrganizationMember(int $organizationId, string $userEmail): ?array
+    {
+        $members = $this->client->listOrganizationUsers($organizationId);
+
+        foreach ($members as $member) {
+            if ($member['email'] === $userEmail) {
+                return $member;
+            }
+        }
+
+        return null;
+    }
+
+    private function findMaintainerMember(int $maintainerId, string $userEmail): ?array
+    {
+        $members = $this->client->listMaintainerMembers($maintainerId);
+
+        foreach ($members as $member) {
+            if ($member['email'] === $userEmail) {
+                return $member;
+            }
+        }
+
+        return null;
+    }
+
 }
