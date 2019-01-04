@@ -24,6 +24,36 @@ class OrganizationsTest extends ClientTestCase
         $this->assertArrayHasKey('maintainer', $organization);
     }
 
+    public function testLeastOneMemberLimit()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+
+        $organizationId = $organization['id'];
+
+        $this->client->addUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
+
+        $members = $this->client->listOrganizationUsers($organizationId);
+        $this->assertCount(2, $members);
+
+        $this->client->removeUserFromOrganization($organizationId, $this->superAdmin['id']);
+
+        $members = $this->client->listOrganizationUsers($organizationId);
+        $this->assertCount(1, $members);
+
+        try {
+            $this->client->removeUserFromOrganization($organizationId, $this->normalUser['id']);
+            $this->fail('The last member could not be removed from the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('least 1 member', $e->getMessage());
+        }
+
+        $members = $this->client->listOrganizationUsers($organizationId);
+        $this->assertCount(1, $members);
+    }
+
     public function testOrganizationCreateAndDelete()
     {
         $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
