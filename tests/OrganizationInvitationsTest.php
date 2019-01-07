@@ -51,46 +51,11 @@ class OrganizationInvitationsTest extends ClientTestCase
         ];
     }
 
-    public function testSuperAdminCanInvite(): void
-    {
-        $inviteeEmail = 'spam@keboola.com';
-        $organizationId = $this->organization['id'];
-
-        $invitations = $this->client->listOrganizationInvitations($organizationId);
-        $this->assertCount(0, $invitations);
-
-        $member = $this->findOrganizationMember($organizationId, $inviteeEmail);
-        $this->assertNull($member);
-
-        $invitation = $this->client->inviteUserToOrganization($organizationId, ['email' => $inviteeEmail]);
-
-        $invitee = $this->client->getUser($inviteeEmail);
-
-        $this->assertEquals($invitee['id'], $invitation['user']['id']);
-        $this->assertEquals($invitee['email'], $invitation['user']['email']);
-        $this->assertEquals($invitee['name'], $invitation['user']['name']);
-
-        $this->assertEquals($this->superAdmin['id'], $invitation['creator']['id']);
-        $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
-        $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
-
-        $invitations = $this->client->listOrganizationInvitations($organizationId);
-        $this->assertCount(1, $invitations);
-
-        $this->assertEquals($invitation, reset($invitations));
-
-        $this->assertEquals($invitation, $this->client->getOrganizationInvitation($organizationId, $invitation['id']));
-
-        $this->client->cancelOrganizationInvitation($organizationId, $invitation['id']);
-
-        $invitations = $this->client->listOrganizationInvitations($organizationId);
-        $this->assertCount(0, $invitations);
-
-        $member = $this->findOrganizationMember($organizationId, $inviteeEmail);
-        $this->assertNull($member);
-    }
-
-    public function testSuperAdminCannotInviteIfAllowAutoJoinIsDisabled(): void
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testSuperAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -98,7 +63,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->client->addUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->updateOrganization($organizationId, [
-            'allowAutoJoin' => false
+            'allowAutoJoin' => $allowAutoJoin
         ]);
 
         $invitations = $this->client->listOrganizationInvitations($organizationId);
@@ -121,48 +86,11 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testMaintainerAdminCanInvite(): void
-    {
-        $inviteeEmail = 'spam@keboola.com';
-        $organizationId = $this->organization['id'];
-
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
-
-        $invitations = $this->normalUserClient->listOrganizationInvitations($organizationId);
-        $this->assertCount(0, $invitations);
-
-        $member = $this->findOrganizationMember($organizationId, $inviteeEmail);
-        $this->assertNull($member);
-
-        $invitation = $this->normalUserClient->inviteUserToOrganization($organizationId, ['email' => $inviteeEmail]);
-
-        $invitee = $this->client->getUser($inviteeEmail);
-
-        $this->assertEquals($invitee['id'], $invitation['user']['id']);
-        $this->assertEquals($invitee['email'], $invitation['user']['email']);
-        $this->assertEquals($invitee['name'], $invitation['user']['name']);
-
-        $this->assertEquals($this->normalUser['id'], $invitation['creator']['id']);
-        $this->assertEquals($this->normalUser['email'], $invitation['creator']['email']);
-        $this->assertEquals($this->normalUser['name'], $invitation['creator']['name']);
-
-        $invitations = $this->normalUserClient->listOrganizationInvitations($organizationId);
-        $this->assertCount(1, $invitations);
-
-        $this->assertEquals($invitation, reset($invitations));
-
-        $this->assertEquals($invitation, $this->normalUserClient->getOrganizationInvitation($organizationId, $invitation['id']));
-
-        $this->normalUserClient->cancelOrganizationInvitation($organizationId, $invitation['id']);
-
-        $invitations = $this->normalUserClient->listOrganizationInvitations($organizationId);
-        $this->assertCount(0, $invitations);
-
-        $member = $this->findOrganizationMember($organizationId, $inviteeEmail);
-        $this->assertNull($member);
-    }
-
-    public function testMaintainerAdminCannotInviteIfAllowAutoJoinIsDisabled(): void
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testMaintainerCannotInviteRegardlessOfAllowAutoJoin($allowAutoJoin): void
     {
         $inviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
@@ -170,7 +98,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->client->addUserToOrganization($organizationId, ['email' => $this->superAdmin['email']]);
 
         $this->client->updateOrganization($organizationId, [
-            'allowAutoJoin' => false
+            'allowAutoJoin' => $allowAutoJoin
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -407,24 +335,6 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
-    public function testCannotInviteYourself(): void
-    {
-        $organizationId = $this->organization['id'];
-
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
-
-        try {
-            $this->normalUserClient->inviteUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
-            $this->fail('Invite yourself to organization should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(400, $e->getCode());
-            $this->assertContains('You cannot invite yourself', $e->getMessage());
-        }
-
-        $invitations = $this->normalUserClient->listOrganizationInvitations($organizationId);
-        $this->assertCount(0, $invitations);
-    }
-
     public function testRandomAdminCannotManageInvitationsInOrganization(): void
     {
         $organizationId = $this->organization['id'];
@@ -476,6 +386,8 @@ class OrganizationInvitationsTest extends ClientTestCase
         $inviteeEmail = $this->normalUser['email'];
         $secondInviteeEmail = 'spam@keboola.com';
         $organizationId = $this->organization['id'];
+
+        $this->client->joinOrganization($organizationId);
 
         $invitations = $this->client->listOrganizationInvitations($organizationId);
         $this->assertCount(0, $invitations);
