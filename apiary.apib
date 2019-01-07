@@ -455,7 +455,7 @@ Creates a new organization.
 
 ### Invite a user to a organization [POST]
 
-If the organization allows autojoin (`allowAutoJoin` attribute is se to `true`), all members of the organization, its maintainers and superadmins are allowed to invite users to the organizations. Otherwise only members of the organization can invite other users.
+Only members of the organization can invite other users.
 
 + Attributes
 
@@ -592,7 +592,7 @@ Either `id` or `email` of a user must be set. If the email is not associated wit
 
 ### Join a organization [POST]
 
-If the organization allows autojoin (`allowAutoJoin` attribute is se to `true`), all members of its organization, its maintainers and superadmins are allowed to join the organization.
+If the organization allows autojoin (`allowAutoJoin` attribute is se to `true`), all members of its maintainer and superadmins are allowed to join the organization.
 
 + Request (application/json)
     + Headers
