@@ -18,6 +18,7 @@ class OrganizationInvitationsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam+spam@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
