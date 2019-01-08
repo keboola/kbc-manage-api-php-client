@@ -193,6 +193,51 @@ class Client
         $this->apiDelete("/manage/organizations/{$id}");
     }
 
+    public function inviteUserToOrganization($organizationId, $params = [])
+    {
+        return $this->apiPost("manage/organizations/{$organizationId}/invitations", $params);
+    }
+
+    public function listOrganizationInvitations($id)
+    {
+        return $this->apiGet("/manage/organizations/{$id}/invitations");
+    }
+
+    public function getOrganizationInvitation($organizationId, $invitationId)
+    {
+        return $this->apiGet("/manage/organizations/{$organizationId}/invitations/{$invitationId}");
+    }
+
+    public function cancelOrganizationInvitation($organizationId, $invitationId)
+    {
+        $this->apiDelete("/manage/organizations/{$organizationId}/invitations/{$invitationId}");
+    }
+
+    public function listMyOrganizationInvitations()
+    {
+        return $this->apiGet("/manage/current-user/organizations-invitations");
+    }
+
+    public function acceptMyOrganizationInvitation($id)
+    {
+        $this->apiPut("/manage/current-user/organizations-invitations/{$id}", []);
+    }
+
+    public function getMyOrganizationInvitation($id)
+    {
+        return $this->apiGet("/manage/current-user/organizations-invitations/{$id}");
+    }
+
+    public function declineMyOrganizationInvitation($id)
+    {
+        $this->apiDelete("/manage/current-user/organizations-invitations/{$id}");
+    }
+
+    public function joinOrganization($organizationId)
+    {
+        $this->apiPost("/manage/organizations/{$organizationId}/join-organization");
+    }
+
     public function createProject($organizationId, $params)
     {
         return $this->apiPost("/manage/organizations/{$organizationId}/projects", $params);
