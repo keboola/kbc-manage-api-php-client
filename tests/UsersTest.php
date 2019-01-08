@@ -147,7 +147,28 @@ class UsersTest extends ClientTestCase
         }
     }
 
-    public function testsRemoveUserFromEverywhere()
+    public function testRemoveUserFromDeletedStructures()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'RemoveMeOrg']);
+        $project = $this->client->createProject($organization['id'], ['name' => 'RemoveMeProj']);
+        $maintainer = $this->client->createMaintainer(['name' => 'RemoveMeMain']);
+        $email = 'remove' . uniqid() . '@keboola.com';
+        $this->client->addUserToProject($project['id'], ['email' => $email]);
+        $user = $this->client->getUser($email);
+        $this->client->addUserToMaintainer($maintainer['id'], ['email' => $email]);
+        $this->client->addUserToOrganization($organization['id'], ['email' => $email]);
+        $this->client->deleteProject($project['id']);
+        $this->client->deleteMaintainer($maintainer['id']);
+        $this->client->deleteOrganization($organization['id']);
+
+        $this->client->removeUser($user['id']);
+
+        $deletedUser = $this->client->getUser($user['id']);
+        $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
+
+    }
+
+    public function testRemoveUserFromEverywhere()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
         $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-1']);
