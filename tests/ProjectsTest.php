@@ -88,6 +88,7 @@ class ProjectsTest extends ClientTestCase
         $organization = $this->initTestOrganization();
         $organizationId = $organization['id'];
 
+        $this->client->addUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
         $this->client->removeUserFromOrganization($organizationId, $this->superAdmin['id']);
 
         $member = $this->findOrganizationMember($organizationId, $this->superAdmin['email']);
