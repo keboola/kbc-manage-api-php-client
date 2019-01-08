@@ -18,6 +18,7 @@ class OrganizationJoinTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
@@ -120,7 +121,11 @@ class OrganizationJoinTest extends ClientTestCase
         $organizationId = $this->organization['id'];
         $secondInviteeEmail = 'spam@keboola.com';
 
+        $secondInviteeUser = $this->client->getUser($secondInviteeEmail);
+
         $this->client->addUserToOrganization($organizationId, ['email' => $this->superAdmin['email']]);
+        $this->client->removeUserFromOrganization($organizationId, $secondInviteeUser['id']);
+
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $invitations = $this->normalUserClient->listMyOrganizationInvitations();
