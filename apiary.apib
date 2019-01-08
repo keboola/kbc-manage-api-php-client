@@ -405,6 +405,130 @@ Creates a new organization.
     [Organization][]
 
 
+## Organization Invitations [/manage/organizations/{organization_id}/invitations]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
+### List invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    [
+        {
+            "id": 112,
+            "created": "2018-07-10T10:45:11+0200",
+            "user": {
+                "id": 124,
+                "name": "test user 2",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        },
+        {
+            "id": 113,
+            "created": "2018-07-10T10:50:00+0200",
+            "user": {
+                "id": 125,
+                "name": "test user 3",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+
+### Invite a user to a organization [POST]
+
+Only members of the organization can invite other users.
+
++ Attributes
+
+    + email: martin@keboola.com (string, required) - Email of an invited user
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+## Manage User Invitation [/manage/organizations/{organization_id}/invitations/{invitation_id}]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+    + invitation_id (required, int) - User ID
+
+
+### Invitation detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
+
+### Cancel a invitation [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
 ## Organization Users [/manage/organizations/{organization_id}/users]
 
 
@@ -451,6 +575,24 @@ Either `id` or `email` of a user must be set. If the email is not associated wit
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization
     + user_id: 1 (required, int) - User ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## Join Organization [/manage/organizations/{organization_id}/join-organization]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
+
+### Join a organization [POST]
+
+If the organization allows autojoin (`allowAutoJoin` attribute is se to `true`), all members of its maintainer and superadmins are allowed to join the organization.
 
 + Request (application/json)
     + Headers
@@ -1637,6 +1779,81 @@ all notifications as read.
 
 # Group My Account
 
+## Organizations Invitations [/manage/current-user/organizations-invitations]
+
+### List invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 113,
+            "created": "2018-07-10T11:13:00+0200",
+            "organization": {
+                "id": 7,
+                "name": "Keboola CZ"
+            },
+            "creator": {
+                "id": 2,
+                "name": "Martin Halamicek",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+## Manage Organization Invitation [/manage/current-user/organizations-invitations/{invitation_id}]
+
+### Invitation detail [GET]
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T11:13:00+0200",
+        "organization": {
+            "id": 7,
+            "name": "Keboola CZ"
+        },
+        "creator": {
+            "id": 2,
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+### Accept a invitation [PUT]
+
+Invitation will be accepted and current user will become a member of the organization.
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 202
+
+
+
 ## Projects Join Requests [/manage/current-user/projects-join-requests]
 
 ### List my join requests [GET]
@@ -1742,7 +1959,7 @@ all notifications as read.
     ]
     ```
 
-## Manage Invitation [/manage/current-user/projects-invitations/{invitation_id}]
+## Manage Project Invitation [/manage/current-user/projects-invitations/{invitation_id}]
 
 ### Invitation detail [GET]
 
