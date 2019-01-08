@@ -18,6 +18,7 @@ class ProjectInvitationsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
@@ -168,9 +169,11 @@ class ProjectInvitationsTest extends ClientTestCase
      */
     public function testOrganizationAdminInvites(bool $allowAutoJoin): void
     {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember();
+
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
             "allowAutoJoin" => $allowAutoJoin
