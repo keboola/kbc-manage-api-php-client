@@ -18,6 +18,7 @@ class ProjectJoinTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
@@ -37,6 +38,18 @@ class ProjectJoinTest extends ClientTestCase
         foreach ($this->client->listMyProjectJoinRequests() as $joinRequest) {
             $this->client->deleteMyProjectJoinRequest($joinRequest['id']);
         }
+    }
+
+    public function autoJoinProvider(): array
+    {
+        return [
+            [
+                true,
+            ],
+            [
+                false,
+            ],
+        ];
     }
 
     public function testSuperAdminJoinProject(): void
@@ -61,8 +74,10 @@ class ProjectJoinTest extends ClientTestCase
 
     public function testMaintainerAdminJoinProject(): void
     {
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -128,8 +143,10 @@ class ProjectJoinTest extends ClientTestCase
 
     public function testOrganizationAdminJoinProject(): void
     {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -285,6 +302,98 @@ class ProjectJoinTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
         }
+    }
+
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testMaintainerAdminCannotAddSelfToProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
+        ]);
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $testProject = $this->client->createProject($this->organization['id'], ['name' => 'Test Project']);
+
+        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
+        $this->assertNull($projectUser);
+
+        try {
+            $this->normalUserClient->addUserToProject($testProject['id'],[
+                "email" => $this->normalUser['email']
+            ]);
+            $this->fail('Project join should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
+        $this->assertNull($projectUser);
+    }
+
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testRandomAdminCannotAddSelfToProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
+        ]);
+
+        $testProject = $this->client->createProject($this->organization['id'], ['name' => 'Test Project']);
+
+        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
+        $this->assertNull($projectUser);
+
+        try {
+            $this->normalUserClient->addUserToProject($testProject['id'],[
+                "email" => $this->normalUser['email']
+            ]);
+            $this->fail('Project join should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
+        $this->assertNull($projectUser);
+    }
+
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testSuperAdminCannotAddSelfToProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
+        ]);
+
+        $testProject = $this->normalUserClient->createProject($this->organization['id'], [
+            'name' => 'Test Project',
+        ]);
+
+        $projectUser = $this->findProjectUser($testProject['id'], $this->superAdmin['email']);
+        $this->assertNull($projectUser);
+
+        try {
+            $this->client->addUserToProject($testProject['id'],['email' => $this->superAdmin['email']]);
+            $this->fail('Project join should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $projectUser = $this->findProjectUser($testProject['id'], $this->superAdmin['email']);
+        $this->assertNull($projectUser);
     }
 
     private function findProjectUser(int $projectId, string $userEmail): ?array
