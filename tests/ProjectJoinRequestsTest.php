@@ -18,6 +18,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
@@ -140,8 +141,10 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testOrganizationAdminRequestAccessError(): void
     {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -276,8 +279,10 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
     public function testMaintainerAdminRequestAccessError(): void
     {
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
