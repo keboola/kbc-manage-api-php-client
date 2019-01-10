@@ -99,4 +99,43 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
     {
         return uniqid('', true);
     }
+
+    protected function findMaintainerMember(int $maintainerId, string $userEmail): ?array
+    {
+        $members = $this->client->listMaintainerMembers($maintainerId);
+
+        foreach ($members as $member) {
+            if ($member['email'] === $userEmail) {
+                return $member;
+            }
+        }
+
+        return null;
+    }
+
+    protected function findOrganizationMember(int $organizationId, string $userEmail): ?array
+    {
+        $members = $this->client->listOrganizationUsers($organizationId);
+
+        foreach ($members as $member) {
+            if ($member['email'] === $userEmail) {
+                return $member;
+            }
+        }
+
+        return null;
+    }
+
+    protected function findProjectUser(int $projectId, string $userEmail): ?array
+    {
+        $projectUsers = $this->client->listProjectUsers($projectId);
+
+        foreach ($projectUsers as $projectUser) {
+            if ($projectUser['email'] === $userEmail) {
+                return $projectUser;
+            }
+        }
+
+        return null;
+    }
 }

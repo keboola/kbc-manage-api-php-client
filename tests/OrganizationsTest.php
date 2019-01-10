@@ -383,17 +383,4 @@ class OrganizationsTest extends ClientTestCase
             }
         }
     }
-
-    private function findProjectUser(int $projectId, string $userEmail): ?array
-    {
-        $projectUsers = $this->client->listProjectUsers($projectId);
-
-        foreach ($projectUsers as $projectUser) {
-            if ($projectUser['email'] === $userEmail) {
-                return $projectUser;
-            }
-        }
-
-        return null;
-    }
 }

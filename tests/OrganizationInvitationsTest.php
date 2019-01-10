@@ -415,17 +415,4 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
         $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
     }
-
-    private function findOrganizationMember(int $organizationId, string $userEmail): ?array
-    {
-        $members = $this->client->listOrganizationUsers($organizationId);
-
-        foreach ($members as $member) {
-            if ($member['email'] === $userEmail) {
-                return $member;
-            }
-        }
-
-        return null;
-    }
 }
