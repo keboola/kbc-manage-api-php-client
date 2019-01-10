@@ -18,6 +18,7 @@ class MaintainerJoinTest extends ClientTestCase
             'name' => self::TESTS_MAINTAINER_PREFIX . " - MaintainerJoinTest",
         ]);
 
+        $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'spam+spam@keboola.com']);
         $this->client->removeUserFromMaintainer($this->maintainer['id'], $this->superAdmin['id']);
     }
 

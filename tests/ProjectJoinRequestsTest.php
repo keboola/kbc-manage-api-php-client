@@ -14,12 +14,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     {
         parent::setUp();
 
-        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'My org',
-        ]);
-
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
@@ -30,6 +25,13 @@ class ProjectJoinRequestsTest extends ClientTestCase
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
         }
+
+        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->normalUserClient->listMyProjectJoinRequests() as $joinRequest) {
             $this->normalUserClient->deleteMyProjectJoinRequest($joinRequest['id']);
