@@ -209,7 +209,37 @@ class MaintainersTest extends ClientTestCase
         $this->assertArrayHasKey('zendeskUrl', $maintainer);
         $this->assertNull($maintainer['zendeskUrl']);
     }
-    
+
+    public function testLeastOneMemberLimit()
+    {
+        $maintainer = $this->client->createMaintainer([
+            'name' => self::TESTS_MAINTAINER_PREFIX . " - test least one member"
+        ]);
+
+        $maintainerId = $maintainer['id'];
+
+        $this->client->addUserToMaintainer($maintainerId, ['email' => $this->normalUser['email']]);
+
+        $members = $this->client->listMaintainerMembers($maintainerId);
+        $this->assertCount(2, $members);
+
+        $this->client->removeUserFromMaintainer($maintainerId, $this->superAdmin['id']);
+
+        $members = $this->client->listMaintainerMembers($maintainerId);
+        $this->assertCount(1, $members);
+
+        try {
+            $this->client->removeUserFromMaintainer($maintainerId, $this->normalUser['id']);
+            $this->fail('The last member could not be removed from the maintainer');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('least 1 member', $e->getMessage());
+        }
+
+        $members = $this->client->listMaintainerMembers($maintainerId);
+        $this->assertCount(1, $members);
+    }
+
     public function testUserMaintainerUsers()
     {
         $maintainerMembers = $this->client->listMaintainerMembers($this->testMaintainerId);
