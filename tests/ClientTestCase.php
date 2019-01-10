@@ -74,18 +74,26 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 0,
         ]);
-        $this->testMaintainerId = getenv('KBC_TEST_MAINTAINER_ID');
+        $this->testMaintainerId = (int) getenv('KBC_TEST_MAINTAINER_ID');
 
         $this->normalUser = $this->normalUserClient->verifyToken()['user'];
         $this->superAdmin = $this->client->verifyToken()['user'];
 
         // cleanup maintainers created by tests
         $maintainers = $this->client->listMaintainers();
+
         foreach ($maintainers as $maintainer) {
-            if ((int) $maintainer['id'] === (int) $this->testMaintainerId) {
+            if ($maintainer['id'] === $this->testMaintainerId) {
+                if (!$this->findMaintainerMember($this->testMaintainerId, $this->superAdmin['email'])) {
+                    $this->client->addUserToMaintainer(
+                        $this->testMaintainerId,
+                        ['email' => $this->superAdmin['email']]
+                    );
+                }
+
                 $members = $this->client->listMaintainerMembers($maintainer['id']);
                 foreach ($members as $member) {
-                    if ($member['id'] != $this->superAdmin['id']) {
+                    if ($member['id'] !== $this->superAdmin['id']) {
                         $this->client->removeUserFromMaintainer($maintainer['id'], $member['id']);
                     }
                 }
