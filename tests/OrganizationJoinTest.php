@@ -224,17 +224,4 @@ class OrganizationJoinTest extends ClientTestCase
             $this->assertEquals(400, $e->getCode());
         }
     }
-
-    private function findOrganizationMember(int $organizationId, string $userEmail): ?array
-    {
-        $members = $this->client->listOrganizationUsers($organizationId);
-
-        foreach ($members as $member) {
-            if ($member['email'] === $userEmail) {
-                return $member;
-            }
-        }
-
-        return null;
-    }
 }

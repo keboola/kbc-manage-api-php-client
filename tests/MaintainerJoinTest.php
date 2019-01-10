@@ -114,17 +114,4 @@ class MaintainerJoinTest extends ClientTestCase
         $member = $this->findMaintainerMember($maintainerId, $this->normalUser['email']);
         $this->assertNotNull($member);
     }
-
-    private function findMaintainerMember(int $maintainerId, string $userEmail): ?array
-    {
-        $members = $this->client->listMaintainerMembers($maintainerId);
-
-        foreach ($members as $member) {
-            if ($member['email'] === $userEmail) {
-                return $member;
-            }
-        }
-
-        return null;
-    }
 }

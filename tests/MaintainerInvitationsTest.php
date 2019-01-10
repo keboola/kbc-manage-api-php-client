@@ -329,17 +329,4 @@ class MaintainerInvitationsTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
         $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
     }
-
-    private function findMaintainerMember(int $maintainerId, string $userEmail): ?array
-    {
-        $members = $this->client->listMaintainerMembers($maintainerId);
-
-        foreach ($members as $member) {
-            if ($member['email'] === $userEmail) {
-                return $member;
-            }
-        }
-
-        return null;
-    }
 }

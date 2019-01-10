@@ -615,19 +615,6 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    private function findProjectUser(int $projectId, string $userEmail): ?array
-    {
-        $projectUsers = $this->client->listProjectUsers($projectId);
-
-        foreach ($projectUsers as $projectUser) {
-            if ($projectUser['email'] === $userEmail) {
-                return $projectUser;
-            }
-        }
-
-        return null;
-    }
-
     private function createProjectWithNormalAdminMember(): int
     {
         $project = $this->normalUserClient->createProject($this->organization['id'], [
