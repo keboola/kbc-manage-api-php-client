@@ -212,25 +212,20 @@ class MaintainersTest extends ClientTestCase
     
     public function testUserMaintainerUsers()
     {
-        $maintainers = $this->client->listMaintainers();
-
-        $this->assertGreaterThan(0, count($maintainers));
-
-        $superAdmin = $this->client->verifyToken()['user'];
-        $maintainer = $maintainers[0];
-
-        $maintainerMembers = $this->client->listMaintainerMembers($maintainer['id']);
+        $maintainerMembers = $this->client->listMaintainerMembers($this->testMaintainerId);
         $this->assertCount(1,$maintainerMembers);
 
-        $this->client->addUserToMaintainer($maintainer['id'],['email' => $this->normalUser['email']]);
-        $maintainerMembers = $this->client->listMaintainerMembers($maintainer['id']);
+        $this->client->addUserToMaintainer($this->testMaintainerId,['email' => $this->normalUser['email']]);
+
+        $maintainerMembers = $this->client->listMaintainerMembers($this->testMaintainerId);
         $this->assertCount(2,$maintainerMembers);
 
-        $this->client->removeUserFromMaintainer($maintainer['id'], $this->normalUser['id']);
-        $maintainerMembers = $this->client->listMaintainerMembers($maintainer['id']);
-        $this->assertCount(1,$maintainerMembers);
-        $this->assertEquals($superAdmin['email'], $maintainerMembers[0]['email']);
+        $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->normalUser['id']);
 
+        $maintainerMembers = $this->client->listMaintainerMembers($this->testMaintainerId);
+        $this->assertCount(1,$maintainerMembers);
+
+        $this->assertEquals($this->superAdmin['email'], $maintainerMembers[0]['email']);
     }
 
     // the remaining tests are testing maintainer user privileges
