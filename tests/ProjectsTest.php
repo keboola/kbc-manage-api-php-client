@@ -1304,6 +1304,20 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals(30, (int) $project['dataRetentionTimeInDays']);
     }
 
+    public function testLastMemberCanLeaveProject()
+    {
+        $organization = $this->initTestOrganization();
+        $project = $this->initTestProject($organization['id']);
+
+        $users = $this->client->listProjectUsers($project['id']);
+        $this->assertCount(1, $users);
+
+        $this->client->removeUserFromProject($project['id'], $this->superAdmin['id']);
+
+        $users = $this->client->listProjectUsers($project['id']);
+        $this->assertCount(0, $users);
+    }
+
     private function findOrganizationMember(int $organizationId, string $userEmail): ?array
     {
         $members = $this->client->listOrganizationUsers($organizationId);
