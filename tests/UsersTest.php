@@ -171,12 +171,14 @@ class UsersTest extends ClientTestCase
     public function testRemoveUserFromEverywhere()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
+        $inviteOrganization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-2']);
         $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-1']);
         $email = 'remove' . uniqid() . '@keboola.com';
         //PROJECT, ORGANIZATION & MAINTAINER
         $this->client->addUserToProject($project['id'], ['email' => $email]);
         $user = $this->client->getUser($email);
         $this->client->addUserToOrganization($organization['id'], ['email' => $user['email']]);
+        $this->client->inviteUserToOrganization($inviteOrganization['id'], ['email' => $user['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $user['email']]);
         //INVITATION
         $inviteProject = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-2']);
@@ -205,10 +207,17 @@ class UsersTest extends ClientTestCase
             }
         }
 
-        $usersInvitations = $this->client->listProjectInvitations($inviteProject['id']);
-        foreach ($usersInvitations as $invitation) {
+        $usersProjectInvitations = $this->client->listProjectInvitations($inviteProject['id']);
+        foreach ($usersProjectInvitations as $invitation) {
             if ($invitation['user']['id'] === $user['id']) {
-                $this->fail('User\'s invitations has not been deleted');
+                $this->fail('User\'s project invitation has not been deleted');
+            }
+        }
+
+        $usersOrganizationInvitations = $this->client->listOrganizationInvitations($inviteOrganization['id']);
+        foreach ($usersOrganizationInvitations as $invitation) {
+            if ($invitation['user']['id'] === $user['id']) {
+                $this->fail('User\'s organization invitation has not been deleted');
             }
         }
 
