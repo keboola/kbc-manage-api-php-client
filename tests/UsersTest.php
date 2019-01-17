@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 07/01/16
- * Time: 09:43
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -151,5 +145,95 @@ class UsersTest extends ClientTestCase
         } catch(ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
+    }
+
+    public function testRemoveUserFromDeletedStructures()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'RemoveMeOrg']);
+        $project = $this->client->createProject($organization['id'], ['name' => 'RemoveMeProj']);
+        $maintainer = $this->client->createMaintainer(['name' => 'RemoveMeMain']);
+        $email = 'remove' . uniqid() . '@keboola.com';
+        $this->client->addUserToProject($project['id'], ['email' => $email]);
+        $user = $this->client->getUser($email);
+        $this->client->addUserToMaintainer($maintainer['id'], ['email' => $email]);
+        $this->client->addUserToOrganization($organization['id'], ['email' => $email]);
+        $this->client->deleteProject($project['id']);
+        $this->client->deleteMaintainer($maintainer['id']);
+        $this->client->deleteOrganization($organization['id']);
+
+        $this->client->removeUser($user['id']);
+
+        $deletedUser = $this->client->getUser($user['id']);
+        $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
+
+    }
+
+    public function testRemoveUserFromEverywhere()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
+        $inviteOrganization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-2']);
+        $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-1']);
+        $email = 'remove' . uniqid() . '@keboola.com';
+        //PROJECT, ORGANIZATION & MAINTAINER
+        $this->client->addUserToProject($project['id'], ['email' => $email]);
+        $user = $this->client->getUser($email);
+        $this->client->addUserToOrganization($organization['id'], ['email' => $user['email']]);
+        $this->client->inviteUserToOrganization($inviteOrganization['id'], ['email' => $user['email']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $user['email']]);
+        //INVITATION
+        $inviteProject = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-2']);
+        $this->client->inviteUserToProject($inviteProject['id'], ['email' => $email]);
+
+        $this->client->removeUser($email);
+
+        $usersInProject = $this->client->listProjectUsers($project['id']);
+        foreach ($usersInProject as $userInProject) {
+            if ($userInProject['id'] === $user['id']) {
+                $this->fail('User has not been deleted from project');
+            }
+        }
+
+        $usersInOrganization = $this->client->listOrganizationUsers($organization['id']);
+        foreach ($usersInOrganization as $userInOrganization) {
+            if ($userInOrganization['id'] === $user['id']) {
+                $this->fail('User has not been deleted from organization');
+            }
+        }
+
+        $usersInMaintainer = $this->client->listMaintainerMembers($this->testMaintainerId);
+        foreach ($usersInMaintainer as $userInMaintainer) {
+            if ($userInMaintainer['id'] === $user['id']) {
+                $this->fail('User has not been deleted from maintainer');
+            }
+        }
+
+        $usersProjectInvitations = $this->client->listProjectInvitations($inviteProject['id']);
+        foreach ($usersProjectInvitations as $invitation) {
+            if ($invitation['user']['id'] === $user['id']) {
+                $this->fail('User\'s project invitation has not been deleted');
+            }
+        }
+
+        $usersOrganizationInvitations = $this->client->listOrganizationInvitations($inviteOrganization['id']);
+        foreach ($usersOrganizationInvitations as $invitation) {
+            if ($invitation['user']['id'] === $user['id']) {
+                $this->fail('User\'s organization invitation has not been deleted');
+            }
+        }
+
+        $deletedUser = $this->client->getUser($user['id']);
+
+        $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
+        $this->assertSame(false, $deletedUser['mfaEnabled'], 'User mfa has not been disabled');
+        $this->assertSame('DELETED', $deletedUser['name'], 'User name has not been deleted');
+    }
+
+
+    public function testRemoveNonExistingUser()
+    {
+        $email = 'non-existing' . uniqid() . '@non-existing-keboola.com';
+        $this->expectExceptionMessage("Admin $email not found.");
+        $this->expectException(ClientException::class);
+        $this->client->removeUser($email);
     }
 }
