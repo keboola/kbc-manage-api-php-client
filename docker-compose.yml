@@ -1,6 +1,6 @@
 version: '3'
 services:
-  tests:
+  tests: &tests-config
     build: .
     image: keboola/manage-api-tests
     tty: true
@@ -20,6 +20,14 @@ services:
          composer install
          && ./vendor/bin/phpunit
          '
+  tests-xdebug:
+    <<: *tests-config
+    build: docker/xdebug
+    image: keboola/manage-api-tests-xdebug
+    volumes:
+      - ./:/code/
+      - ./docker/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+
 networks:
   default:
     external:
