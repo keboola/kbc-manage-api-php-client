@@ -109,6 +109,7 @@ class MaintainerJoinTest extends ClientTestCase
             $this->normalUserClient->joinMaintainer($maintainerId);
             $this->fail('Maintainer join should produce error');
         } catch (ClientException $e) {
+            $this->assertContains('already a member', $e->getMessage());
             $this->assertEquals(400, $e->getCode());
         }
 

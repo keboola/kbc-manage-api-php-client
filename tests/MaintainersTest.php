@@ -210,7 +210,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertNull($maintainer['zendeskUrl']);
     }
 
-    public function testLeastOneMemberLimit()
+    public function testAtLeastOneMemberLimit()
     {
         $maintainer = $this->client->createMaintainer([
             'name' => self::TESTS_MAINTAINER_PREFIX . " - test least one member"
