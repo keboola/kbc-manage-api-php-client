@@ -1317,30 +1317,4 @@ class ProjectsTest extends ClientTestCase
         $users = $this->client->listProjectUsers($project['id']);
         $this->assertCount(0, $users);
     }
-
-    private function findOrganizationMember(int $organizationId, string $userEmail): ?array
-    {
-        $members = $this->client->listOrganizationUsers($organizationId);
-
-        foreach ($members as $member) {
-            if ($member['email'] === $userEmail) {
-                return $member;
-            }
-        }
-
-        return null;
-    }
-
-    private function findMaintainerMember(int $maintainerId, string $userEmail): ?array
-    {
-        $members = $this->client->listMaintainerMembers($maintainerId);
-
-        foreach ($members as $member) {
-            if ($member['email'] === $userEmail) {
-                return $member;
-            }
-        }
-
-        return null;
-    }
 }
