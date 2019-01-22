@@ -151,12 +151,20 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
     }
 
-    public function testOrganizationAdminCannotRequestAccessIfAllowAutoJoinIsDisabled(): void
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testOrganizationAdminCannotRequestAccessRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
+            "allowAutoJoin" => $allowAutoJoin
+        ]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -168,21 +176,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $this->normalUserClient->requestAccessToProject($projectId);
             $this->fail('Request access should produce error');
         } catch (ClientException $e) {
-            $this->assertEquals(400, $e->getCode());
-        }
-
-        $joinRequests = $this->normalUserClient->listProjectJoinRequests($projectId);
-        $this->assertCount(0, $joinRequests);
-
-        // project without auto-join
-        $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
-        ]);
-
-        try {
-            $this->normalUserClient->requestAccessToProject($projectId);
-            $this->fail('Request access should produce error');
-        } catch (ClientException $e) {
+            $this->assertContains('use join-project method', $e->getMessage());
             $this->assertEquals(400, $e->getCode());
         }
 
