@@ -327,6 +327,9 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($this->normalUser['id'], $joinRequest['user']['id']);
         $this->assertEquals($this->normalUser['email'], $joinRequest['user']['email']);
 
+        $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->normalUser['id']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
         $joinRequests = $this->normalUserClient->listProjectJoinRequests($projectId);
         $this->assertCount(1, $joinRequests);
 
