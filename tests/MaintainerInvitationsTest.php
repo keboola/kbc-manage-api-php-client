@@ -15,7 +15,7 @@ class MaintainerInvitationsTest extends ClientTestCase
         parent::setUp();
 
         $this->maintainer = $this->client->createMaintainer([
-            'name' => self::TESTS_MAINTAINER_PREFIX . " - MaintainerJoinTest",
+            'name' => self::TESTS_MAINTAINER_PREFIX . " - MaintainerInvitationsTest",
         ]);
 
         $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'spam+spam@keboola.com']);
@@ -78,7 +78,7 @@ class MaintainerInvitationsTest extends ClientTestCase
         $member = $this->findMaintainerMember($maintainerId, $this->superAdmin['email']);
         $this->assertNull($member);
 
-        $invitation= $this->normalUserClient->inviteUserToMaintainer($maintainerId, ['email' => $this->superAdmin['email']]);
+        $invitation = $this->normalUserClient->inviteUserToMaintainer($maintainerId, ['email' => $this->superAdmin['email']]);
 
         $this->assertEquals($this->superAdmin['id'], $invitation['user']['id']);
         $this->assertEquals($this->superAdmin['email'], $invitation['user']['email']);
@@ -150,11 +150,6 @@ class MaintainerInvitationsTest extends ClientTestCase
         $invitation = reset($invitations);
 
         $this->assertEquals($maintainerId, $invitation['maintainer']['id']);
-        $this->assertEquals($this->maintainer['name'], $invitation['maintainer']['name']);
-
-        $this->assertEquals($this->superAdmin['id'], $invitation['creator']['id']);
-        $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
-        $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
 
         $this->assertEquals($invitation, $this->normalUserClient->getMyMaintainerInvitation($invitation['id']));
 
@@ -190,11 +185,6 @@ class MaintainerInvitationsTest extends ClientTestCase
         $invitation = reset($invitations);
 
         $this->assertEquals($maintainerId, $invitation['maintainer']['id']);
-        $this->assertEquals($this->maintainer['name'], $invitation['maintainer']['name']);
-
-        $this->assertEquals($this->superAdmin['id'], $invitation['creator']['id']);
-        $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
-        $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
 
         $this->normalUserClient->declineMyMaintainerInvitation($invitation['id']);
 
