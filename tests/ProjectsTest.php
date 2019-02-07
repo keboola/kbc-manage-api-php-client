@@ -94,6 +94,9 @@ class ProjectsTest extends ClientTestCase
         $member = $this->findOrganizationMember($organizationId, $this->superAdmin['email']);
         $this->assertNull($member);
 
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+        $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->superAdmin['id']);
+
         $member = $this->findMaintainerMember($this->testMaintainerId, $this->superAdmin['email']);
         $this->assertNull($member);
 
