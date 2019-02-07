@@ -148,6 +148,51 @@ class Client
         $this->apiDelete("/manage/users/{$userId}");
     }
 
+    public function inviteUserToMaintainer($maintainerId, $params = [])
+    {
+        return $this->apiPost("manage/maintainers/{$maintainerId}/invitations", $params);
+    }
+
+    public function listMaintainerInvitations($id)
+    {
+        return $this->apiGet("/manage/maintainers/{$id}/invitations");
+    }
+
+    public function getMaintainerInvitation($maintainerId, $invitationId)
+    {
+        return $this->apiGet("/manage/maintainers/{$maintainerId}/invitations/{$invitationId}");
+    }
+
+    public function cancelMaintainerInvitation($maintainerId, $invitationId)
+    {
+        $this->apiDelete("/manage/maintainers/{$maintainerId}/invitations/{$invitationId}");
+    }
+
+    public function listMyMaintainerInvitations()
+    {
+        return $this->apiGet("/manage/current-user/maintainers-invitations");
+    }
+
+    public function acceptMyMaintainerInvitation($id)
+    {
+        $this->apiPut("/manage/current-user/maintainers-invitations/{$id}", []);
+    }
+
+    public function getMyMaintainerInvitation($id)
+    {
+        return $this->apiGet("/manage/current-user/maintainers-invitations/{$id}");
+    }
+
+    public function declineMyMaintainerInvitation($id)
+    {
+        $this->apiDelete("/manage/current-user/maintainers-invitations/{$id}");
+    }
+
+    public function joinMaintainer($maintainerId)
+    {
+        $this->apiPost("/manage/maintainers/{$maintainerId}/join-maintainer");
+    }
+
     public function listMaintainerOrganizations($maintainerId)
     {
         return $this->apiGet("/manage/maintainers/{$maintainerId}/organizations");

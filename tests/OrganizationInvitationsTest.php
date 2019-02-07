@@ -14,12 +14,7 @@ class OrganizationInvitationsTest extends ClientTestCase
     {
         parent::setUp();
 
-        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'My org',
-        ]);
-
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam+spam@keboola.com']);
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
@@ -30,6 +25,13 @@ class OrganizationInvitationsTest extends ClientTestCase
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
         }
+
+        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam+spam@keboola.com']);
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->normalUserClient->listMyOrganizationInvitations() as $invitation) {
             $this->normalUserClient->declineMyOrganizationInvitation($invitation['id']);
@@ -414,18 +416,5 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['id'], $invitation['creator']['id']);
         $this->assertEquals($this->superAdmin['email'], $invitation['creator']['email']);
         $this->assertEquals($this->superAdmin['name'], $invitation['creator']['name']);
-    }
-
-    private function findOrganizationMember(int $organizationId, string $userEmail): ?array
-    {
-        $members = $this->client->listOrganizationUsers($organizationId);
-
-        foreach ($members as $member) {
-            if ($member['email'] === $userEmail) {
-                return $member;
-            }
-        }
-
-        return null;
     }
 }
