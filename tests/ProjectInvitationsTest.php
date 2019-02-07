@@ -14,12 +14,7 @@ class ProjectInvitationsTest extends ClientTestCase
     {
         parent::setUp();
 
-        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'My org',
-        ]);
-
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
@@ -30,6 +25,13 @@ class ProjectInvitationsTest extends ClientTestCase
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
         }
+
+        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->normalUserClient->listMyProjectInvitations() as $invitation) {
             $this->normalUserClient->declineMyProjectInvitation($invitation['id']);
@@ -606,19 +608,6 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $invitations = $this->client->listMyProjectInvitations();
         $this->assertCount(0, $invitations);
-    }
-
-    private function findProjectUser(int $projectId, string $userEmail): ?array
-    {
-        $projectUsers = $this->client->listProjectUsers($projectId);
-
-        foreach ($projectUsers as $projectUser) {
-            if ($projectUser['email'] === $userEmail) {
-                return $projectUser;
-            }
-        }
-
-        return null;
     }
 
     private function createProjectWithNormalAdminMember(): int
