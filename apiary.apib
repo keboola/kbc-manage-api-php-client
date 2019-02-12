@@ -409,6 +409,7 @@ An organization object has the following attributes:
 + created
 + allowAutoJoin
 + projects - an array of project objects
++ crmId - CRM id only for internal purposes
 
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization in form of an integer
@@ -420,6 +421,7 @@ An organization object has the following attributes:
         "id": 123,
         "name": "sample org",
         "created": "2014-11-11T08:40:51.620Z",
+        "crmId": "6232456",
         "projects": [
             {
                 "id": 123,
@@ -444,6 +446,7 @@ An organization object has the following attributes:
         "name": "sample org",
         "created": "2015-10-02T11:03:44+0200",
         "allowAutoJoin": true,
+        "crmId": "6232456",
         "projects": [
             {
                 "id": 123,
@@ -463,6 +466,7 @@ Partial update of an organization
     + name:POC - Organization name
     + maintainerId - Assign the organization to another maintainer.
     + allowAutoJoin - Set whether superAdmins need approval to join the organization's projects (default `true`).
+    + crmId:123456 - Set CRM ID. Only maintainer members and superadmins can change this.
 
 + Request (application/json)
     + Headers
@@ -478,6 +482,7 @@ Partial update of an organization
         "name": "POC",
         "created": "2015-10-02T11:03:44+0200",
         "allowAutoJoin": true,
+        "crmId": "123456",
         "projects": [
             {
                 "id": 123,
@@ -508,6 +513,7 @@ Creates a new organization.
 
 + Attributes
     + name:POC - Organization name
+    + crmId:234 - CRM id
 
 + Request (application/json)
     + Headers

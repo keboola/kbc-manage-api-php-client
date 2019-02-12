@@ -88,6 +88,7 @@ class OrganizationsTest extends ClientTestCase
 
         $this->assertEquals($org['name'], $organization['name']);
         $this->assertEmpty($org['projects']);
+        $this->assertEmpty($org['crmId']);
         $this->assertNotEmpty($organization['created']);
 
         // permissions of another user
@@ -141,6 +142,45 @@ class OrganizationsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
+    }
+
+    public function testOrganizationCreateWithCrmId()
+    {
+        $crmId = '1243';
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+            'crmId' => $crmId,
+        ]);
+
+        $organization = $this->client->getOrganization($organization['id']);
+        $this->assertEquals($crmId, $organization['crmId']);
+    }
+
+    public function testMaintainerMemberCanUpdateCrmId()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $crmId = '12334';
+        $organization = $this->client->updateOrganization($organization['id'], [
+            'crmId' => $crmId,
+        ]);
+
+        $this->assertEquals($crmId, $organization['crmId']);
+    }
+
+    public function testOrganizationMemberCannotUpdateCrmId()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(403);
+        $this->normalUserClient->updateOrganization($organization['id'], [
+            'crmId' => 'some id',
+        ]);
     }
 
     public function testOrganizationUsers()
