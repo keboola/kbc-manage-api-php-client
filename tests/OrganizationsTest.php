@@ -177,7 +177,7 @@ class OrganizationsTest extends ClientTestCase
         $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionCode(400);
+        $this->expectExceptionCode(403);
         $this->normalUserClient->updateOrganization($organization['id'], [
             'crmId' => 'some id',
         ]);
