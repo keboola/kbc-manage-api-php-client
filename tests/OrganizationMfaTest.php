@@ -144,4 +144,128 @@ class OrganizationMfaTest extends ClientTestCase
 
         $this->assertSame(false, $this->organization['mfaRequired']);
     }
+
+    public function testSuperAdminWithoutMfaCannotJoinOrganization()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+
+        $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
+
+        $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
+
+        try {
+            $this->client->joinOrganization($this->organization['id']);
+            $this->fail('Invite someone should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
+
+    public function testMaintainerAdminWithoutMfaCannotJoinOrganization()
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+
+        $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
+
+        $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
+
+        try {
+            $this->normalUserClient->joinOrganization($this->organization['id']);
+            $this->fail('Invite someone should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
+
+    public function testSuperAdminWithoutMfaCannotBecameMember()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+
+        $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
+
+        $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
+
+        try {
+            $this->normalUserWithMfaClient->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+            $this->fail('Invite someone should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
+
+    public function testMaintainerAdminWithoutMfaCannotBecameMember()
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+
+        $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
+
+        $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
+
+        try {
+            $this->normalUserWithMfaClient->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+            $this->fail('Invite someone should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
+
+    public function testInviteUserHavingMfaDisabled()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+
+        $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
+
+        $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
+
+        $invitations = $this->normalUserWithMfaClient->listOrganizationInvitations($this->organization['id']);
+        $this->assertCount(0, $invitations);
+
+        $invitation = $this->normalUserWithMfaClient->inviteUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+
+        $invitations = $this->normalUserWithMfaClient->listOrganizationInvitations($this->organization['id']);
+        $this->assertCount(1, $invitations);
+
+        $this->assertEquals($invitation, reset($invitations));
+    }
+
+    public function testInvitedAdminCannotAcceptInvitation()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+
+        $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
+
+        $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
+
+        $invitations = $this->normalUserWithMfaClient->listOrganizationInvitations($this->organization['id']);
+        $this->assertCount(0, $invitations);
+
+        $invitation = $this->normalUserWithMfaClient->inviteUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+
+        $invitations = $this->normalUserWithMfaClient->listOrganizationInvitations($this->organization['id']);
+        $this->assertCount(1, $invitations);
+
+        $this->assertEquals($invitation, reset($invitations));
+
+        try {
+            $this->client->acceptMyOrganizationInvitation($invitation['id']);
+            $this->fail('Invite someone should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
 }
