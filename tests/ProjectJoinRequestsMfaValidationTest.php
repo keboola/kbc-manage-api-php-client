@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class ProjectMfaJoinRequestsTest extends ClientTestCase
+class ProjectJoinRequestsMfaValidationTest extends ClientTestCase
 {
     private const DUMMY_USER_EMAIL = 'spam+spam@keboola.com';
 
