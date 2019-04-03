@@ -72,7 +72,7 @@ class ProjectMfaValidationTest extends ClientTestCase
             $this->fail('Invite someone should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertContains('Project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $member = $this->findProjectUser($projectId, $this->normalUser['email']);
@@ -95,7 +95,7 @@ class ProjectMfaValidationTest extends ClientTestCase
             $this->fail('Invite someone should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertContains('Project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $member = $this->findProjectUser($projectId, $this->superAdmin['email']);
@@ -120,7 +120,7 @@ class ProjectMfaValidationTest extends ClientTestCase
             $this->fail('Invite someone should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertContains('Project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $member = $this->findProjectUser($projectId, $this->normalUser['email']);
