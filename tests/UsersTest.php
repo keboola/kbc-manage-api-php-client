@@ -228,6 +228,30 @@ class UsersTest extends ClientTestCase
         $this->assertSame('DELETED', $deletedUser['name'], 'User name has not been deleted');
     }
 
+    public function testRemoveUserFromEverywhereFailsWhenLastUserInOrg()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
+        $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-1']);
+        $email = 'remove' . uniqid() . '@keboola.com';
+        //PROJECT, ORGANIZATION & MAINTAINER
+        $this->client->addUserToProject($project['id'], ['email' => $email]);
+        $this->client->addUserToOrganization($organization['id'], ['email' => $email]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $email]);
+        //INVITATION
+        $inviteProject = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-2']);
+        $this->client->inviteUserToProject($inviteProject['id'], ['email' => $email]);
+
+        // Ensure superadmin is not in org
+        $this->client->removeUserFromOrganization($organization['id'], $this->superAdmin['id']);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage(sprintf(
+            'Cannot remove "%s" from "%s". Organization must have at least 1 member',
+            $email,
+            $organization['id']
+        ));
+        $this->client->removeUser($email);
+    }
 
     public function testRemoveNonExistingUser()
     {
