@@ -410,6 +410,7 @@ An organization object has the following attributes:
 + allowAutoJoin
 + projects - an array of project objects
 + crmId - CRM id only for internal purposes
++ mfaRequired
 
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization in form of an integer
@@ -422,6 +423,8 @@ An organization object has the following attributes:
         "name": "sample org",
         "created": "2014-11-11T08:40:51.620Z",
         "crmId": "6232456",
+        "allowAutoJoin": true,
+        "mfaRequired": false,
         "projects": [
             {
                 "id": 123,
@@ -447,6 +450,7 @@ An organization object has the following attributes:
         "created": "2015-10-02T11:03:44+0200",
         "allowAutoJoin": true,
         "crmId": "6232456",
+        "mfaRequired": false,
         "projects": [
             {
                 "id": 123,
@@ -467,6 +471,7 @@ Partial update of an organization
     + maintainerId - Assign the organization to another maintainer.
     + allowAutoJoin - Set whether superAdmins need approval to join the organization's projects (default `true`).
     + crmId:123456 - Set CRM ID. Only maintainer members and superadmins can change this.
+    + mfaRequired - Toggle whether all members of or organization and its projects must have enabled multi-factor authentication (default `false`).
 
 + Request (application/json)
     + Headers
@@ -483,6 +488,7 @@ Partial update of an organization
         "created": "2015-10-02T11:03:44+0200",
         "allowAutoJoin": true,
         "crmId": "123456",
+        "mfaRequired": false,
         "projects": [
             {
                 "id": 123,
