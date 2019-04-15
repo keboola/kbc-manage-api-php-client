@@ -15,6 +15,13 @@ class ProjectJoinRequestsMfaValidationTest extends ClientTestCase
 
     private $organization;
 
+    /**
+     * Test setup
+     * - Create empty organization
+     * - Add dummy user to maintainer. Remove all other members
+     * - Add user having MFA enabled to organization. Remove all other members
+     * - Delete all project join requests of super admin and normal user
+     */
     public function setUp()
     {
         parent::setUp();
@@ -22,7 +29,6 @@ class ProjectJoinRequestsMfaValidationTest extends ClientTestCase
         $this->normalUserWithMfaClient = new Client([
             'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
-            'backoffMaxTries' => 0,
         ]);
 
         $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
@@ -30,11 +36,7 @@ class ProjectJoinRequestsMfaValidationTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
-            if ($member['id'] === $this->normalUser['id']) {
-                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
-            }
-
-            if ($member['id'] === $this->superAdmin['id']) {
+            if ($member['email'] !== self::DUMMY_USER_EMAIL) {
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
         }
@@ -56,7 +58,7 @@ class ProjectJoinRequestsMfaValidationTest extends ClientTestCase
         }
     }
 
-    public function testAdminCannotRequestAccess()
+    public function testSuperAdminWithoutMfaCannotRequestAccess()
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled();
 
@@ -83,7 +85,7 @@ class ProjectJoinRequestsMfaValidationTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testJoinRequestCannotBeApproved()
+    public function testJoinRequestOfUserWithoutMfaCannotBeApproved()
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled();
 

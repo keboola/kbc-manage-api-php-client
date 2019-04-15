@@ -15,6 +15,12 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
 
     private $organization;
 
+    /**
+     * Test setup
+     * - Create empty organization
+     * - Add dummy user to maintainer. Remove all other members
+     * - Add user having MFA enabled to organization. Remove all other members
+     */
     public function setUp()
     {
         parent::setUp();
@@ -22,7 +28,6 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
         $this->normalUserWithMfaClient = new Client([
             'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
-            'backoffMaxTries' => 0,
         ]);
 
         $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
@@ -30,11 +35,7 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
-            if ($member['id'] === $this->normalUser['id']) {
-                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
-            }
-
-            if ($member['id'] === $this->superAdmin['id']) {
+            if ($member['email'] !== self::DUMMY_USER_EMAIL) {
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
         }
@@ -45,18 +46,9 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
-
-
-        foreach ($this->normalUserClient->listMyProjectJoinRequests() as $joinRequest) {
-            $this->normalUserClient->deleteMyProjectJoinRequest($joinRequest['id']);
-        }
-
-        foreach ($this->client->listMyProjectJoinRequests() as $joinRequest) {
-            $this->client->deleteMyProjectJoinRequest($joinRequest['id']);
-        }
     }
 
-    public function testAdminCannotJoinProject()
+    public function testSuperAdminWithoutMfaCannotJoinProject()
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled();
 
@@ -77,6 +69,28 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
         $this->assertNull($projectUser);
+    }
+
+    public function testOrganizationAdminWithMfaCanJoinProject()
+    {
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+
+        $this->normalUserWithMfaClient->updateOrganization(
+            $this->organization['id'],
+            [
+                'mfaRequired' => 1,
+            ]
+        );
+
+        $this->normalUserWithMfaClient->removeUserFromProject($projectId, $this->normalUserWithMfa['id']);
+
+        $projectUser = $this->findProjectUser($projectId, $this->normalUserWithMfa['email']);
+        $this->assertNull($projectUser);
+
+        $this->normalUserWithMfaClient->joinProject($projectId);
+
+        $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
+        $this->assertNotNull($projectUser);
     }
 
     private function createProjectWithAdminHavingMfaEnabled(): int
