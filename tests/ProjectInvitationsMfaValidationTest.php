@@ -15,6 +15,13 @@ class ProjectInvitationsMfaValidationTest extends ClientTestCase
 
     private $organization;
 
+    /**
+     * Test setup
+     * - Create empty organization
+     * - Add dummy user to maintainer. Remove all other members
+     * - Add user having MFA enabled to organization. Remove all other members
+     * - Decline all project invitations for super admin and normal user
+     */
     public function setUp()
     {
         parent::setUp();
@@ -22,7 +29,6 @@ class ProjectInvitationsMfaValidationTest extends ClientTestCase
         $this->normalUserWithMfaClient = new Client([
             'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
-            'backoffMaxTries' => 0,
         ]);
 
         $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
@@ -30,11 +36,7 @@ class ProjectInvitationsMfaValidationTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
-            if ($member['id'] === $this->normalUser['id']) {
-                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
-            }
-
-            if ($member['id'] === $this->superAdmin['id']) {
+            if ($member['email'] !== self::DUMMY_USER_EMAIL) {
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
         }
@@ -76,7 +78,7 @@ class ProjectInvitationsMfaValidationTest extends ClientTestCase
 
         try {
             $this->normalUserClient->acceptMyProjectInvitation($invitation['id']);
-            $this->fail('Requesting access to a project should produce error');
+            $this->fail('Accept invitation to project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('Project requires users to have multi-factor authentication enabled', $e->getMessage());

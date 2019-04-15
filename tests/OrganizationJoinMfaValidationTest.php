@@ -16,7 +16,9 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
     private $organization;
 
     /**
-     * Create empty organization without admins, remove admins from test maintainer and delete all their join requests
+     * Test setup
+     * - Create empty organization
+     * - Add dummy user to organization and maintainer. Remove all other members
      */
     public function setUp()
     {
@@ -25,7 +27,6 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
         $this->normalUserWithMfaClient = new Client([
             'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
-            'backoffMaxTries' => 0,
         ]);
 
         $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
@@ -33,11 +34,7 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
-            if ($member['id'] === $this->normalUser['id']) {
-                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
-            }
-
-            if ($member['id'] === $this->superAdmin['id']) {
+            if ($member['email'] !== self::DUMMY_USER_EMAIL) {
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
         }
@@ -50,7 +47,7 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testSuperAdminCannotJoinOrganization()
+    public function testSuperAdminWithoutMfaCannotJoinOrganization()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
 
@@ -61,7 +58,7 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
 
         try {
             $this->client->joinOrganization($this->organization['id']);
-            $this->fail('Invite someone should produce error');
+            $this->fail('Organization join should be restricted for admins without MFA');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
@@ -84,7 +81,7 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
 
         try {
             $this->normalUserClient->joinOrganization($this->organization['id']);
-            $this->fail('Invite someone should produce error');
+            $this->fail('Organization join should be restricted for admins without MFA');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
