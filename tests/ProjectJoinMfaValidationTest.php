@@ -89,7 +89,7 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
 
         $this->normalUserWithMfaClient->joinProject($projectId);
 
-        $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
+        $projectUser = $this->findProjectUser($projectId, $this->normalUserWithMfa['email']);
         $this->assertNotNull($projectUser);
     }
 
