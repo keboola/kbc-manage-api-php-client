@@ -788,6 +788,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canManageTokens']);
         $this->assertFalse($verified['canReadAllFileUploads']);
         $this->assertEmpty($verified['bucketPermissions']);
+        $this->assertFalse($verified['canPurgeTrash']);
     }
 
     public function testCreateProjectStorageTokenWithMorePermissions()
@@ -806,6 +807,7 @@ class ProjectsTest extends ClientTestCase
             'expiresIn' => 60,
             'canManageBuckets' => true,
             'canReadAllFileUploads' => true,
+            'canPurgeTrash' => true,
         ]);
 
         $client = new Client([
@@ -818,6 +820,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($verified['canManageBuckets']);
         $this->assertFalse($verified['canManageTokens']);
         $this->assertTrue($verified['canReadAllFileUploads']);
+        $this->assertTrue($verified['canPurgeTrash']);
     }
 
     public function testCreateProjectStorageTokenWithBucketPermissions()
@@ -864,6 +867,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canManageBuckets']);
         $this->assertFalse($verified['canManageTokens']);
         $this->assertFalse($verified['canReadAllFileUploads']);
+        $this->assertFalse($verified['canPurgeTrash']);
         $this->assertEquals([$newBucketId => 'read'], $verified['bucketPermissions']);
     }
 
@@ -896,6 +900,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($verified['canManageBuckets']);
         $this->assertTrue($verified['canManageTokens']);
         $this->assertTrue($verified['canReadAllFileUploads']);
+        $this->assertFalse($verified['canPurgeTrash']);
     }
 
     public function testProjectEnableDisable()
