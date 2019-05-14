@@ -90,4 +90,17 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
         $member = $this->findOrganizationMember($this->organization['id'], $this->normalUser['email']);
         $this->assertNull($member);
     }
+
+    protected function findOrganizationMember(int $organizationId, string $userEmail): ?array
+    {
+        $members = $this->normalUserWithMfaClient->listOrganizationUsers($organizationId);
+
+        foreach ($members as $member) {
+            if ($member['email'] === $userEmail) {
+                return $member;
+            }
+        }
+
+        return null;
+    }
 }
