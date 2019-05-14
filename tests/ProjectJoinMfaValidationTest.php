@@ -93,6 +93,19 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
         $this->assertNotNull($projectUser);
     }
 
+    protected function findProjectUser(int $projectId, string $userEmail): ?array
+    {
+        $projectUsers = $this->normalUserWithMfaClient->listProjectUsers($projectId);
+
+        foreach ($projectUsers as $projectUser) {
+            if ($projectUser['email'] === $userEmail) {
+                return $projectUser;
+            }
+        }
+
+        return null;
+    }
+
     private function createProjectWithAdminHavingMfaEnabled(): int
     {
         $project = $this->normalUserWithMfaClient->createProject($this->organization['id'], [
