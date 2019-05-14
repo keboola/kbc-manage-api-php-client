@@ -151,4 +151,199 @@ class OrganizationMfaValidationTest extends ClientTestCase
             $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
         }
     }
+
+    public function testLockAccessForOrganizationAdminIfMfaWasForced()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $organization = $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
+        $this->assertTrue($organization['mfaRequired']);
+
+        try {
+            $this->normalUserClient->getOrganization($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->createProject($this->organization['id'], ['name' => 'Test']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->deleteOrganization($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->updateOrganization($this->organization['id'], []);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->listOrganizationUsers($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->listOrganizationProjects($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->listOrganizationInvitations($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+    }
+
+    public function testLockAccessForMaintainerAdminsIfMfaWasForced()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $organization = $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
+        $this->assertTrue($organization['mfaRequired']);
+
+        try {
+            $this->normalUserClient->getOrganization($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->createProject($this->organization['id'], ['name' => 'Test']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->deleteOrganization($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->updateOrganization($this->organization['id'], []);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->listOrganizationUsers($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->listOrganizationProjects($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->normalUserClient->listOrganizationInvitations($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+    }
+
+    public function testLockAccessForSuperAdminIfMfaWasForced()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        try {
+            $this->client->getOrganization($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->client->createProject($this->organization['id'], ['name' => 'Test']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->client->updateOrganization($this->organization['id'], []);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->client->listOrganizationUsers($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $this->client->listOrganizationInvitations($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+        }
+    }
+
+    public function testSuperAdminCanDeleteOrganizationIfMfaWasForced()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $organization = $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
+        $this->assertTrue($organization['mfaRequired']);
+
+        $organizationsListBeforeDelete = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+
+        $this->client->deleteOrganization($this->organization['id']);
+
+        $organizationsListAfterDelete = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+
+        $this->assertCount(count($organizationsListBeforeDelete) - 1, $organizationsListAfterDelete);
+    }
+
+    public function testSuperAdminCanListOrganizationProjectsIfMfaWasForced()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $organization = $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
+        $this->assertTrue($organization['mfaRequired']);
+
+        $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => 'Test']);
+
+        $projects = $this->client->listOrganizationProjects($this->organization['id']);
+        $this->assertGreaterThan(0, count($projects));
+    }
 }
