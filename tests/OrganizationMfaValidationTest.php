@@ -148,7 +148,7 @@ class OrganizationMfaValidationTest extends ClientTestCase
             $this->fail('Adding admins without MFA to organization should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertContains('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
         }
     }
 
