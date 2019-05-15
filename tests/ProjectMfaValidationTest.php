@@ -86,49 +86,49 @@ class ProjectMfaValidationTest extends ClientTestCase
             $this->normalUserClient->getProject($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->updateProject($projectId, []);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->deleteProject($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->listProjectJoinRequests($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->listProjectInvitations($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->listProjectUsers($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->createProjectStorageToken($projectId, []);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
     }
 
@@ -147,49 +147,49 @@ class ProjectMfaValidationTest extends ClientTestCase
             $this->normalUserClient->getProject($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->updateProject($projectId, []);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->deleteProject($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->listProjectJoinRequests($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->listProjectInvitations($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->listProjectUsers($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->createProjectStorageToken($projectId, []);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
     }
 
@@ -206,42 +206,42 @@ class ProjectMfaValidationTest extends ClientTestCase
             $this->client->getProject($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->client->updateProject($projectId, []);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->client->listProjectJoinRequests($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->client->listProjectInvitations($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->client->listProjectUsers($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->client->createProjectStorageToken($projectId, []);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
     }
 
@@ -260,49 +260,49 @@ class ProjectMfaValidationTest extends ClientTestCase
             $this->normalUserClient->getProject($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->updateProject($projectId, []);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->deleteProject($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->listProjectJoinRequests($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->listProjectInvitations($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->listProjectUsers($projectId);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
         try {
             $this->normalUserClient->createProjectStorageToken($projectId, []);
             $this->fail('Admin having MFA disabled should not have access to the project');
         } catch (ClientException $e) {
-            $this->assertEquals('storage.mfaRequired', $e->getStringCode());
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
     }
 
