@@ -1,6 +1,7 @@
 <?php
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
 class OrganizationMfaValidationTest extends ClientMfaTestCase
@@ -147,54 +148,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
         $organization = $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
         $this->assertTrue($organization['mfaRequired']);
 
-        try {
-            $this->normalUserClient->getOrganization($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->createProject($this->organization['id'], ['name' => 'Test']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->deleteOrganization($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->updateOrganization($this->organization['id'], []);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->listOrganizationUsers($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->listOrganizationProjects($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->listOrganizationInvitations($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
+        $this->assertAccessLocked($this->normalUserClient);
     }
 
     public function testLockAccessForMaintainerAdminsIfMfaWasForced()
@@ -207,54 +161,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
         $organization = $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
         $this->assertTrue($organization['mfaRequired']);
 
-        try {
-            $this->normalUserClient->getOrganization($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->createProject($this->organization['id'], ['name' => 'Test']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->deleteOrganization($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->updateOrganization($this->organization['id'], []);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->listOrganizationUsers($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->listOrganizationProjects($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->normalUserClient->listOrganizationInvitations($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
+        $this->assertAccessLocked($this->normalUserClient);
     }
 
     public function testLockAccessForSuperAdminIfMfaWasForced()
@@ -263,40 +170,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
 
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
-        try {
-            $this->client->getOrganization($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->client->createProject($this->organization['id'], ['name' => 'Test']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->client->updateOrganization($this->organization['id'], []);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->client->listOrganizationUsers($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $this->client->listOrganizationInvitations($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
+        $this->assertAccessLocked($this->client);
     }
 
     public function testSuperAdminCanDeleteOrganizationIfMfaWasForced()
@@ -330,5 +204,59 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
 
         $projects = $this->client->listOrganizationProjects($this->organization['id']);
         $this->assertGreaterThan(0, count($projects));
+    }
+
+    private function assertAccessLocked(Client $userClient): void
+    {
+        try {
+            $userClient->getOrganization($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $userClient->createProject($this->organization['id'], ['name' => 'Test']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
+
+        if ($userClient->verifyToken()['user']['isSuperAdmin'] !== true) {
+            try {
+                $userClient->deleteOrganization($this->organization['id']);
+                $this->fail('Admin having MFA disabled should not have access to the organization');
+            } catch (ClientException $e) {
+                $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+            }
+
+            try {
+                $userClient->listOrganizationProjects($this->organization['id']);
+                $this->fail('Admin having MFA disabled should not have access to the organization');
+            } catch (ClientException $e) {
+                $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+            }
+        }
+
+        try {
+            $userClient->updateOrganization($this->organization['id'], []);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $userClient->listOrganizationUsers($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $userClient->listOrganizationInvitations($this->organization['id']);
+            $this->fail('Admin having MFA disabled should not have access to the organization');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
     }
 }
