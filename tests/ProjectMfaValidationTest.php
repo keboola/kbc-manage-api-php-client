@@ -1,18 +1,10 @@
 <?php
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class ProjectMfaValidationTest extends ClientTestCase
+class ProjectMfaValidationTest extends ClientMfaTestCase
 {
-    private const DUMMY_USER_EMAIL = 'spam+spam@keboola.com';
-
-    /** @var Client */
-    private $normalUserWithMfaClient;
-
-    private $normalUserWithMfa;
-
     private $organization;
 
     /**
@@ -24,13 +16,6 @@ class ProjectMfaValidationTest extends ClientTestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->normalUserWithMfaClient = new Client([
-            'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
-        ]);
-
-        $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
@@ -50,7 +35,7 @@ class ProjectMfaValidationTest extends ClientTestCase
 
     public function testAdminWithoutMfaCannotBecameMember()
     {
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->updateOrganization(
             $this->organization['id'],
@@ -75,7 +60,7 @@ class ProjectMfaValidationTest extends ClientTestCase
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
@@ -136,7 +121,7 @@ class ProjectMfaValidationTest extends ClientTestCase
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
@@ -195,7 +180,7 @@ class ProjectMfaValidationTest extends ClientTestCase
 
     public function testLockAccessForSuperAdminIfMfaWasForced()
     {
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
@@ -247,7 +232,7 @@ class ProjectMfaValidationTest extends ClientTestCase
 
     public function testLockAccessForAdminIfMfaWasForced()
     {
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->addUserToProject($projectId, ['email' => $this->normalUser['email']]);
 
@@ -304,27 +289,5 @@ class ProjectMfaValidationTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
-    }
-
-    protected function findProjectUser(int $projectId, string $userEmail): ?array
-    {
-        $projectUsers = $this->normalUserWithMfaClient->listProjectUsers($projectId);
-
-        foreach ($projectUsers as $projectUser) {
-            if ($projectUser['email'] === $userEmail) {
-                return $projectUser;
-            }
-        }
-
-        return null;
-    }
-
-    private function createProjectWithAdminHavingMfaEnabled(): int
-    {
-        $project = $this->normalUserWithMfaClient->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
     }
 }
