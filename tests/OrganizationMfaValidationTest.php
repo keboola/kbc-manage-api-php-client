@@ -203,7 +203,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
         $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => 'Test']);
 
         $projects = $this->client->listOrganizationProjects($this->organization['id']);
-        $this->assertGreaterThan(0, count($projects));
+        $this->assertEquals(1, count($projects));
     }
 
     private function assertAccessLocked(Client $userClient): void
