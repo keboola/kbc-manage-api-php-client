@@ -267,7 +267,6 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());
         }
-
     }
 
     public function testSuperAdminCanListOrganizationProjectsIfMfaWasForced()
