@@ -1,18 +1,10 @@
 <?php
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class OrganizationMfaValidationTest extends ClientTestCase
+class OrganizationMfaValidationTest extends ClientMfaTestCase
 {
-    private const DUMMY_USER_EMAIL = 'spam+spam@keboola.com';
-
-    /** @var Client */
-    private $normalUserWithMfaClient;
-
-    private $normalUserWithMfa;
-
     private $organization;
 
     /**
@@ -23,13 +15,6 @@ class OrganizationMfaValidationTest extends ClientTestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->normalUserWithMfaClient = new Client([
-            'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
-        ]);
-
-        $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
