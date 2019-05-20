@@ -259,13 +259,15 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
 
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
-        $organizationsListBeforeDelete = $this->client->listMaintainerOrganizations($this->testMaintainerId);
-
         $this->client->deleteOrganization($this->organization['id']);
 
-        $organizationsListAfterDelete = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+        try {
+            $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
+            $this->fail('Organization should be deleted');
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
 
-        $this->assertCount(count($organizationsListBeforeDelete) - 1, $organizationsListAfterDelete);
     }
 
     public function testSuperAdminCanListOrganizationProjectsIfMfaWasForced()
