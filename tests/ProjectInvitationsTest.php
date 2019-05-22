@@ -54,6 +54,18 @@ class ProjectInvitationsTest extends ClientTestCase
         ];
     }
 
+    public function inviteUserToProjectWithRoleData(): array
+    {
+        return [
+            [
+                'admin',
+            ],
+            [
+                'guest',
+            ],
+        ];
+    }
+
     /**
      * @dataProvider autoJoinProvider
      * @param bool $allowAutoJoin
@@ -241,6 +253,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitation = $this->normalUserClient->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
 
         $this->assertEquals('', $invitation['reason']);
+        $this->assertEquals('admin', $invitation['role']);
         $this->assertEmpty($invitation['expires']);
 
         $invitee = $this->client->getUser($inviteeEmail);
@@ -537,24 +550,26 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertCount(1, $invitations);
     }
 
-    public function testInvitationReasonAndExpiresPropagationToProjectMembership(): void
+    public function testInvitationAttributesPropagationToProjectMembership(): void
     {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember();
 
-        $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
+        $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
 
-        $invitations = $this->normalUserClient->listProjectInvitations($projectId);
+        $invitations = $this->client->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
 
-        $invitation = $this->normalUserClient->inviteUserToProject($projectId, [
-            'email' => $this->superAdmin['email'],
+        $invitation = $this->client->inviteUserToProject($projectId, [
+            'email' => $this->normalUser['email'],
             'reason' => 'Testing reason propagation',
+            'role' => 'guest',
             'expirationSeconds' => 3600
         ]);
 
         $this->assertEquals('Testing reason propagation', $invitation['reason']);
+        $this->assertEquals('guest', $invitation['role']);
         $this->assertNotEmpty($invitation['expires']);
 
         $this->client->acceptMyProjectInvitation($invitation['id']);
@@ -562,10 +577,11 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitations = $this->client->listMyProjectInvitations();
         $this->assertCount(0, $invitations);
 
-        $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
+        $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNotNull($projectUser);
 
-        $this->assertEquals($projectUser['reason'], $invitation['reason']);
+        $this->assertEquals($invitation['reason'], $projectUser['reason']);
+        $this->assertEquals('guest', $projectUser['role']);
         $this->assertNotEmpty($projectUser['expires']);
     }
 
@@ -607,6 +623,48 @@ class ProjectInvitationsTest extends ClientTestCase
         sleep(120);
 
         $invitations = $this->client->listMyProjectInvitations();
+        $this->assertCount(0, $invitations);
+    }
+
+    /**
+     * @dataProvider inviteUserToProjectWithRoleData
+     */
+    public function testInviteUserToProjectWithRole(string $role): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember();
+
+        $invitation = $this->client->inviteUserToProject($projectId, [
+            'email' => $this->normalUser['email'],
+            'role' => $role,
+        ]);
+
+        $this->assertEquals($role, $invitation['role']);
+
+        $invitations = $this->client->listProjectInvitations($projectId);
+        $this->assertCount(1, $invitations);
+
+        $this->assertEquals($invitation, reset($invitations));
+    }
+
+    public function testInviteUserToProjectWithInvalidRole(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember();
+
+        try {
+            $this->client->inviteUserToProject($projectId, [
+                'email' => $this->normalUser['email'],
+                'role' => 'invalid-role',
+            ]);
+            $this->fail('Create project membership with invalid role should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertRegExp('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
+            $this->assertContains('invalid-role', $e->getMessage());
+        }
+
+        $invitations = $this->client->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
     }
 
