@@ -83,6 +83,18 @@ class ProjectsTest extends ClientTestCase
         return $foundProject;
     }
 
+    public function addUserToProjectWithRoleData(): array
+    {
+        return [
+            [
+                'admin',
+            ],
+            [
+                'guest',
+            ],
+        ];
+    }
+
     public function testSuperAdminCannotCreateProject()
     {
         $organization = $this->initTestOrganization();
@@ -1503,5 +1515,43 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->client->getProject($project['id']);
         $this->assertTrue($project['isDisabled']);
+    }
+
+    /**
+     * @dataProvider addUserToProjectWithRoleData
+     */
+    public function testAddUserToProjectWithRole(string $role): void
+    {
+        $organization = $this->initTestOrganization();
+        $project = $this->initTestProject($organization['id']);
+
+        $this->client->addUserToProject($project['id'], [
+            'email' => $this->normalUser['email'],
+            'role' => $role,
+        ]);
+
+        $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertEquals($role, $member['role']);
+    }
+
+    public function testAddUserToProjectWithInvalidRole(): void
+    {
+        $organization = $this->initTestOrganization();
+        $project = $this->initTestProject($organization['id']);
+
+        try {
+            $this->client->addUserToProject($project['id'], [
+                'email' => $this->normalUser['email'],
+                'role' => 'invalid-role',
+            ]);
+            $this->fail('Create project membership with invalid role should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertRegExp('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
+            $this->assertContains('invalid-role', $e->getMessage());
+        }
+
+        $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertNull($member);
     }
 }
