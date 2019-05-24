@@ -4,15 +4,8 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class ProjectMfaValidationTest extends ClientTestCase
+class ProjectMfaValidationTest extends ClientMfaTestCase
 {
-    private const DUMMY_USER_EMAIL = 'spam+spam@keboola.com';
-
-    /** @var Client */
-    private $normalUserWithMfaClient;
-
-    private $normalUserWithMfa;
-
     private $organization;
 
     /**
@@ -24,13 +17,6 @@ class ProjectMfaValidationTest extends ClientTestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->normalUserWithMfaClient = new Client([
-            'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
-        ]);
-
-        $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
@@ -50,7 +36,7 @@ class ProjectMfaValidationTest extends ClientTestCase
 
     public function testAdminWithoutMfaCannotBecameMember()
     {
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->updateOrganization(
             $this->organization['id'],
@@ -64,19 +50,124 @@ class ProjectMfaValidationTest extends ClientTestCase
             $this->fail('Adding admins without MFA to project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $member = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($member);
     }
 
-    private function createProjectWithAdminHavingMfaEnabled(): int
+    public function testLockAccessForOrganizationAdminIfMfaWasForced()
     {
-        $project = $this->normalUserWithMfaClient->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        return $project['id'];
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $this->assertAccessLocked($this->normalUserClient, $projectId);
+    }
+
+    public function testLockAccessForMaintainerAdminsIfMfaWasForced()
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $this->assertAccessLocked($this->normalUserClient, $projectId);
+    }
+
+    public function testLockAccessForSuperAdminIfMfaWasForced()
+    {
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $this->assertAccessLocked($this->client, $projectId);
+    }
+
+    public function testLockAccessForAdminIfMfaWasForced()
+    {
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+
+        $this->normalUserWithMfaClient->addUserToProject($projectId, ['email' => $this->normalUser['email']]);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $this->assertAccessLocked($this->normalUserClient, $projectId);
+    }
+
+    public function testSuperAdminCanDeleteOrganizationIfMfaWasForced()
+    {
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+
+        $this->normalUserWithMfaClient->addUserToProject($projectId, ['email' => $this->normalUser['email']]);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $this->client->deleteProject($projectId);
+
+        try {
+            $this->normalUserWithMfaClient->getProject($projectId);
+            $this->fail('Project should be deleted');
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
+    }
+
+    private function assertAccessLocked(Client $userClient, int $projectId): void
+    {
+        try {
+            $userClient->getProject($projectId);
+            $this->fail('Admin having MFA disabled should not have access to the project');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $userClient->updateProject($projectId, []);
+            $this->fail('Admin having MFA disabled should not have access to the project');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
+
+        if ($userClient->verifyToken()['user']['isSuperAdmin'] !== true) {
+            try {
+                $userClient->deleteProject($projectId);
+                $this->fail('Admin having MFA disabled should not have access to the project');
+            } catch (ClientException $e) {
+                $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+            }
+        }
+
+        try {
+            $userClient->listProjectJoinRequests($projectId);
+            $this->fail('Admin having MFA disabled should not have access to the project');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $userClient->listProjectInvitations($projectId);
+            $this->fail('Admin having MFA disabled should not have access to the project');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $userClient->listProjectUsers($projectId);
+            $this->fail('Admin having MFA disabled should not have access to the project');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
+
+        try {
+            $userClient->createProjectStorageToken($projectId, []);
+            $this->fail('Admin having MFA disabled should not have access to the project');
+        } catch (ClientException $e) {
+            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+        }
     }
 }
