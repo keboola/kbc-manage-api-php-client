@@ -4,8 +4,15 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class OrganizationMfaValidationTest extends ClientMfaTestCase
+class OrganizationMfaValidationTest extends ClientTestCase
 {
+    private const DUMMY_USER_EMAIL = 'spam+spam@keboola.com';
+
+    /** @var Client */
+    private $normalUserWithMfaClient;
+
+    private $normalUserWithMfa;
+
     private $organization;
 
     /**
@@ -16,6 +23,13 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
     public function setUp()
     {
         parent::setUp();
+
+        $this->normalUserWithMfaClient = new Client([
+            'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+        ]);
+
+        $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
@@ -134,204 +148,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->fail('Adding admins without MFA to organization should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
-        }
-    }
-
-    public function testOrganizationAdminCanForceEnableMfaForOrganization()
-    {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
-
-        $organization = $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
-        $this->assertFalse($organization['mfaRequired']);
-
-        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
-
-        $organization = $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
-        $this->assertTrue($organization['mfaRequired']);
-    }
-
-    public function testOrganizationAdminWithoutMfaCannotForceEnableMfaForOrganization()
-    {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-
-        $organization = $this->client->getOrganization($this->organization['id']);
-        $this->assertFalse($organization['mfaRequired']);
-
-        try {
-            $this->normalUserClient->enableOrganizationMfa($this->organization['id']);
-            $this->fail('Enabling MFA validation for organization should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(400, $e->getCode());
-            $this->assertEquals('You must setup Multi-Factor Authentication on your account first', $e->getMessage());
-        }
-
-        $organization = $this->client->getOrganization($this->organization['id']);
-        $this->assertFalse($organization['mfaRequired']);
-    }
-
-    public function testMaintainerAdminCannotForceEnableMfaForOrganization()
-    {
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUserWithMfa['email']]);
-
-        $organization = $this->client->getOrganization($this->organization['id']);
-        $this->assertFalse($organization['mfaRequired']);
-
-        try {
-            $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
-            $this->fail('Enabling MFA validation for organization should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(400, $e->getCode());
-            $this->assertEquals('manage.updateOrganizationPermissionDenied', $e->getStringCode());
-        }
-
-        $organization = $this->client->getOrganization($this->organization['id']);
-        $this->assertFalse($organization['mfaRequired']);
-    }
-
-    public function testAdminCannotForceEnableMfaForOrganization()
-    {
-        $organization = $this->client->getOrganization($this->organization['id']);
-        $this->assertFalse($organization['mfaRequired']);
-
-        try {
-            $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
-            $this->fail('Enabling MFA validation for organization should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
-        }
-
-        $organization = $this->client->getOrganization($this->organization['id']);
-        $this->assertFalse($organization['mfaRequired']);
-    }
-
-    public function testSuperAdminCannotForceEnableMfaForOrganization()
-    {
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUserWithMfa['email']]);
-
-        $organization = $this->client->getOrganization($this->organization['id']);
-        $this->assertFalse($organization['mfaRequired']);
-
-        try {
-            $this->client->enableOrganizationMfa($this->organization['id']);
-            $this->fail('Enabling MFA validation for organization should produce error');
-        } catch (ClientException $e) {
-            $this->assertEquals(400, $e->getCode());
-            $this->assertEquals('manage.updateOrganizationPermissionDenied', $e->getStringCode());
-        }
-
-        $organization = $this->client->getOrganization($this->organization['id']);
-        $this->assertFalse($organization['mfaRequired']);
-    }
-
-    public function testLockAccessForOrganizationAdminIfMfaWasForced()
-    {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-
-        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
-
-        $this->assertAccessLocked($this->normalUserClient);
-    }
-
-    public function testLockAccessForMaintainerAdminsIfMfaWasForced()
-    {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
-
-        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
-
-        $this->assertAccessLocked($this->normalUserClient);
-    }
-
-    public function testLockAccessForSuperAdminIfMfaWasForced()
-    {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
-
-        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
-
-        $this->assertAccessLocked($this->client);
-    }
-
-    public function testSuperAdminCanDeleteOrganizationIfMfaWasForced()
-    {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
-
-        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
-
-        $this->client->deleteOrganization($this->organization['id']);
-
-        try {
-            $this->normalUserWithMfaClient->getOrganization($this->organization['id']);
-            $this->fail('Organization should be deleted');
-        } catch (ClientException $e) {
-            $this->assertEquals(404, $e->getCode());
-        }
-    }
-
-    public function testSuperAdminCanListOrganizationProjectsIfMfaWasForced()
-    {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
-
-        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
-
-        $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => 'Test']);
-
-        $projects = $this->client->listOrganizationProjects($this->organization['id']);
-        $this->assertEquals(1, count($projects));
-    }
-
-    private function assertAccessLocked(Client $userClient): void
-    {
-        try {
-            $userClient->getOrganization($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $userClient->createProject($this->organization['id'], ['name' => 'Test']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        if ($userClient->verifyToken()['user']['isSuperAdmin'] !== true) {
-            try {
-                $userClient->deleteOrganization($this->organization['id']);
-                $this->fail('Admin having MFA disabled should not have access to the organization');
-            } catch (ClientException $e) {
-                $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-            }
-
-            try {
-                $userClient->listOrganizationProjects($this->organization['id']);
-                $this->fail('Admin having MFA disabled should not have access to the organization');
-            } catch (ClientException $e) {
-                $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-            }
-        }
-
-        try {
-            $userClient->updateOrganization($this->organization['id'], []);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $userClient->listOrganizationUsers($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
-        }
-
-        try {
-            $userClient->listOrganizationInvitations($this->organization['id']);
-            $this->fail('Admin having MFA disabled should not have access to the organization');
-        } catch (ClientException $e) {
-            $this->assertEquals('manage.mfaRequired', $e->getStringCode());
+            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
         }
     }
 }
