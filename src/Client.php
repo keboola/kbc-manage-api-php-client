@@ -567,19 +567,45 @@ class Client
         return $this->apiPut("/manage/notifications", ['read' => $ids]);
     }
 
-    public function createFileStorage(array $options)
+    public function createS3FileStorage(array $options)
     {
-        return $this->apiPost("/manage/file-storage", $options);
+        return $this->apiPost("/manage/file-storage-s3/", $options);
     }
 
-    public function setFileStorageAsDefault($fileStorageId)
+    public function setS3FileStorageAsDefault($fileStorageId)
     {
-        return $this->apiPost("/manage/file-storage/{$fileStorageId}/default");
+        return $this->apiPost("/manage/file-storage-s3/{$fileStorageId}/default");
     }
 
-    public function listFileStorage()
+    public function listS3FileStorage()
     {
-        return $this->apiGet("manage/file-storage");
+        return $this->apiGet("manage/file-storage-s3");
+    }
+
+    public function rotateS3FileStorageCredentials(int $fileStorageId, array $options)
+    {
+        return $this->apiPost('manage/file-storage-s3/' . $fileStorageId . '/credentials', $options);
+    }
+
+    public function createAbsFileStorage(array $options)
+    {
+        return $this->apiPost("/manage/file-storage-abs/", $options);
+    }
+
+    public function setAbsFileStorageAsDefault($fileStorageId)
+    {
+        return $this->apiPost("/manage/file-storage-abs/{$fileStorageId}/default");
+    }
+
+    public function listAbsFileStorage()
+    {
+        return $this->apiGet("manage/file-storage-abs/");
+    }
+
+
+    public function rotateAbsFileStorageCredentials(int $fileStorageId, array $options)
+    {
+        return $this->apiPost('manage/file-storage-abs/' . $fileStorageId . '/credentials', $options);
     }
 
     public function createStorageBackend(array $options)
