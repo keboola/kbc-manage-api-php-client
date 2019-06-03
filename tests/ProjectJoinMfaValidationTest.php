@@ -1,18 +1,10 @@
 <?php
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class ProjectJoinMfaValidationTest extends ClientTestCase
+class ProjectJoinMfaValidationTest extends ClientMfaTestCase
 {
-    private const DUMMY_USER_EMAIL = 'spam+spam@keboola.com';
-
-    /** @var Client */
-    private $normalUserWithMfaClient;
-
-    private $normalUserWithMfa;
-
     private $organization;
 
     /**
@@ -24,13 +16,6 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->normalUserWithMfaClient = new Client([
-            'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
-        ]);
-
-        $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
@@ -50,7 +35,7 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
 
     public function testSuperAdminWithoutMfaCannotJoinProject()
     {
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->updateOrganization(
             $this->organization['id'],
@@ -64,7 +49,7 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
             $this->fail('Joining a project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
@@ -73,7 +58,7 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
 
     public function testOrganizationAdminWithMfaCanJoinProject()
     {
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->updateOrganization(
             $this->organization['id'],
@@ -91,14 +76,5 @@ class ProjectJoinMfaValidationTest extends ClientTestCase
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUserWithMfa['email']);
         $this->assertNotNull($projectUser);
-    }
-
-    private function createProjectWithAdminHavingMfaEnabled(): int
-    {
-        $project = $this->normalUserWithMfaClient->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
     }
 }
