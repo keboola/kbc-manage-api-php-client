@@ -738,6 +738,43 @@ If the organization allows autojoin (`allowAutoJoin` attribute is se to `true`),
 
 + Response 204
 
+## Require Multi-Factor Authentication [/manage/organizations/{organization_id}/force-mfa]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
+
+### Require Multi-Factor Authentication [POST]
+
+With MFA as required, any user that does not have MFA enabled will lose access to the project until they set it up.
+
+Only members of the organization with MFA enabled can perform this action.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    {
+        "id": 123,
+        "name": "POC",
+        "created": "2015-10-02T11:03:44+0200",
+        "allowAutoJoin": true,
+        "crmId": "123456",
+        "mfaRequired": true,
+        "projects": [
+            {
+                "id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+            }
+        ]
+    }
+    ```
+
 
 # Group Projects
 
