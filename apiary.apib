@@ -1064,6 +1064,22 @@ Changing project limits is allowed only for a super admin.
 
     [Project][]
 
+## Remove Project Limit [/manage/projects/{project_id}/limits/{limit_name}]
+
+Remove project limit is allowed only for a super admin.
++ Parameters
+    + project_id (required, int) - Project ID
+    + limit_name (required, string) - Limit name
+
+### Remove project limit [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
 ## Project Invitations [/manage/projects/{project_id}/invitations]
 
 + Parameters
