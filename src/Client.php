@@ -441,6 +441,11 @@ class Client
         ]);
     }
 
+    public function removeProjectLimit($projectId, $limitName)
+    {
+        $this->apiDelete("/manage/projects/{$projectId}/limits/{$limitName}");
+    }
+
     public function createFeature($name, $type, $description)
     {
         return $this->apiPost("/manage/features", [
