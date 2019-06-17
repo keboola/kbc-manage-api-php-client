@@ -1,15 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:29
- */
+
 
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
-use Keboola\StorageApi\Client;
+use function GuzzleHttp\json_encode;
 
 class FileStorageTest extends ClientTestCase
 {
@@ -239,23 +234,26 @@ class FileStorageTest extends ClientTestCase
     public function testCreateS3StorageWithoutRequiredParam()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage("Missing parameters in request: 
-[awsKey] : This field is missing.
-[awsSecret] : This field is missing.
-[filesBucket] : This field is missing.
-[owner] : This field is missing.
-[region] : This field is missing.");
+        $this->expectExceptionMessage(json_encode([
+            "[awsKey] : This field is missing.",
+            "[awsSecret] : This field is missing.",
+            "[filesBucket] : This field is missing.",
+            "[owner] : This field is missing.",
+            "[region] : This field is missing.",
+            ]
+        ));
         $this->client->createS3FileStorage([]);
     }
 
     public function testCreateAbsStorageWithoutRequiredParam()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage("Missing parameters in request: 
-[accountName] : This field is missing.
-[accountKey] : This field is missing.
-[containerName] : This field is missing.
-[owner] : This field is missing.");
+        $this->expectExceptionMessage(json_encode([
+            "[accountName] : This field is missing.",
+            "[accountKey] : This field is missing.",
+            "[containerName] : This field is missing.",
+            "[owner] : This field is missing.",
+        ]));
         $this->client->createAbsFileStorage([]);
     }
 
@@ -268,9 +266,10 @@ class FileStorageTest extends ClientTestCase
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage("Missing parameters in request: 
-[awsKey] : This field is missing.
-[awsSecret] : This field is missing.");
+        $this->expectExceptionMessage(json_encode([
+            "[awsKey] : This field is missing.",
+            "[awsSecret] : This field is missing.",
+        ]));
         $this->client->rotateS3FileStorageCredentials($storage['id'], []);
     }
 
@@ -283,8 +282,10 @@ class FileStorageTest extends ClientTestCase
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage("Missing parameters in request: 
-[accountKey] : This field is missing.");
+        $this->expectExceptionMessage(json_encode([
+            "[accountKey] : This field is missing."
+        ]));
+
         $this->client->rotateAbsFileStorageCredentials($storage['id'], []);
     }
 
