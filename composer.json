@@ -6,7 +6,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0",
-        "keboola/storage-api-client": "^7.0"
+        "keboola/storage-api-client": "^7.0",
+        "keboola/coding-standard": "^8.0"
     },
     "autoload": {
         "psr-4": {
@@ -17,6 +18,9 @@
         "psr-4": {
             "Keboola\\ManageApiTest\\": "tests/"
         }
+    },
+    "scripts": {
+        "phpcs": "phpcs -s -n -p --extensions=php . src tests"
     },
     "authors": [
         {
