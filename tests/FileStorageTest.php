@@ -17,10 +17,10 @@ class FileStorageTest extends ClientTestCase
     private const DISABLE_DEV_TESTS = true;
 
     private const DEFAULT_S3_OPTIONS = [
-        'awsKey' => TEST_AWS_KEY,
-        'awsSecret' => TEST_AWS_SECRET,
-        'region' => TEST_AWS_REGION,
-        'filesBucket' => TEST_AWS_FILES_BUCKET,
+        'awsKey' => TEST_S3_KEY,
+        'awsSecret' => TEST_S3_SECRET,
+        'region' => TEST_S3_REGION,
+        'filesBucket' => TEST_S3_FILES_BUCKET,
         'owner' => 'keboola',
     ];
 
@@ -32,8 +32,8 @@ class FileStorageTest extends ClientTestCase
     ];
 
     private const ROTATE_S3_OPTIONS = [
-        'awsKey' => TEST_AWS_ROTATE_KEY,
-        'awsSecret' => TEST_AWS_ROTATE_SECRET,
+        'awsKey' => TEST_S3_ROTATE_KEY,
+        'awsSecret' => TEST_S3_ROTATE_SECRET,
     ];
 
     private const ROTATE_ABS_OPTIONS = [
@@ -49,9 +49,9 @@ class FileStorageTest extends ClientTestCase
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->assertArrayNotHasKey('awsSecret', $storage);
-        $this->assertSame($storage['awsKey'], TEST_AWS_KEY);
-        $this->assertSame($storage['region'], TEST_AWS_REGION);
-        $this->assertSame($storage['filesBucket'], TEST_AWS_FILES_BUCKET);
+        $this->assertSame($storage['awsKey'], TEST_S3_KEY);
+        $this->assertSame($storage['region'], TEST_S3_REGION);
+        $this->assertSame($storage['filesBucket'], TEST_S3_FILES_BUCKET);
         $this->assertSame($storage['provider'], 'aws');
         $this->assertSame($storage['isDefault'], false);
     }
@@ -81,7 +81,7 @@ class FileStorageTest extends ClientTestCase
 
         $rotatedStorage = $this->client->rotateS3FileStorageCredentials($storage['id'], self::ROTATE_S3_OPTIONS);
 
-        $this->assertSame($rotatedStorage['awsKey'], TEST_AWS_ROTATE_KEY);
+        $this->assertSame($rotatedStorage['awsKey'], TEST_S3_ROTATE_KEY);
     }
 
     public function testRotateAbsKey()

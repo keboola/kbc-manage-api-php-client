@@ -21,12 +21,12 @@ services:
       - TEST_ABS_ACCOUNT_NAME
       - TEST_ABS_CONTAINER_NAME
       - TEST_ABS_ROTATE_ACCOUNT_KEY
-      - TEST_AWS_ROTATE_KEY
-      - TEST_AWS_ROTATE_SECRET
-      - TEST_AWS_FILES_BUCKET
-      - TEST_AWS_KEY
-      - TEST_AWS_REGION
-      - TEST_AWS_SECRET
+      - TEST_S3_ROTATE_KEY
+      - TEST_S3_ROTATE_SECRET
+      - TEST_S3_FILES_BUCKET
+      - TEST_S3_KEY
+      - TEST_S3_REGION
+      - TEST_S3_SECRET
     command: >
          sh -c '
          composer install
