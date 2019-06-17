@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:29
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -62,12 +56,12 @@ class CommandsTest extends ClientTestCase
                     'parameters' => [
                         '--help',
                     ],
-                ]
+                ],
             ],
             [
                 [
                     'command' => 'storage:workers-list',
-                ]
+                ],
             ],
         ];
     }
@@ -79,7 +73,7 @@ class CommandsTest extends ClientTestCase
                 [
                     'command' => 'test',
                     'parameters' => 'unknown',
-                ]
+                ],
             ],
         ];
     }

@@ -77,7 +77,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $projectId = $this->createProjectWithNormalAdminMember();
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $invitations = $this->client->listProjectInvitations($projectId);
@@ -111,7 +111,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -147,7 +147,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $invitations = $this->client->listProjectInvitations($projectId);
@@ -190,7 +190,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
@@ -241,7 +241,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $projectId = $this->createProjectWithNormalAdminMember();
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin,
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
@@ -441,7 +441,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $this->normalUserClient->requestAccessToProject($projectId);
@@ -565,7 +565,7 @@ class ProjectInvitationsTest extends ClientTestCase
             'email' => $this->normalUser['email'],
             'reason' => 'Testing reason propagation',
             'role' => 'guest',
-            'expirationSeconds' => 3600
+            'expirationSeconds' => 3600,
         ]);
 
         $this->assertEquals('Testing reason propagation', $invitation['reason']);

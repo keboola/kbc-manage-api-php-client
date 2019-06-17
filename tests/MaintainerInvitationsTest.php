@@ -15,7 +15,7 @@ class MaintainerInvitationsTest extends ClientTestCase
         parent::setUp();
 
         $this->maintainer = $this->client->createMaintainer([
-            'name' => self::TESTS_MAINTAINER_PREFIX . " - MaintainerInvitationsTest",
+            'name' => self::TESTS_MAINTAINER_PREFIX . ' - MaintainerInvitationsTest',
         ]);
 
         $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'spam+spam@keboola.com']);

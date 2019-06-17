@@ -101,7 +101,7 @@ class ProjectJoinTest extends ClientTestCase
         $projectId = $this->createProjectWithNormalAdminMember();
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
@@ -124,7 +124,7 @@ class ProjectJoinTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -154,7 +154,7 @@ class ProjectJoinTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
@@ -177,7 +177,7 @@ class ProjectJoinTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -207,7 +207,7 @@ class ProjectJoinTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -241,7 +241,7 @@ class ProjectJoinTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
@@ -268,7 +268,7 @@ class ProjectJoinTest extends ClientTestCase
         $projectId = $this->createProjectWithNormalAdminMember();
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
@@ -302,8 +302,8 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
 
         try {
-            $this->normalUserClient->addUserToProject($testProject['id'],[
-                "email" => $this->normalUser['email']
+            $this->normalUserClient->addUserToProject($testProject['id'], [
+                'email' => $this->normalUser['email'],
             ]);
             $this->fail('Project join should produce error');
         } catch (ClientException $e) {
@@ -332,8 +332,8 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
 
         try {
-            $this->normalUserClient->addUserToProject($testProject['id'],[
-                "email" => $this->normalUser['email']
+            $this->normalUserClient->addUserToProject($testProject['id'], [
+                'email' => $this->normalUser['email'],
             ]);
             $this->fail('Project join should produce error');
         } catch (ClientException $e) {
@@ -364,7 +364,7 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
 
         try {
-            $this->client->addUserToProject($testProject['id'],['email' => $this->superAdmin['email']]);
+            $this->client->addUserToProject($testProject['id'], ['email' => $this->superAdmin['email']]);
             $this->fail('Project join should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
