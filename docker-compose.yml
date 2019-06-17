@@ -1,5 +1,11 @@
 version: '3'
 services:
+  app:
+    build: .
+    volumes:
+      - ./:/code
+    working_dir: /code
+
   tests: &tests-config
     build: .
     image: keboola/manage-api-tests

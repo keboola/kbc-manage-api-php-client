@@ -20,6 +20,9 @@
         }
     },
     "scripts": {
+        "ci": [
+            "@phpcs"
+        ],
         "phpcs": "phpcs -s -n -p --extensions=php . src tests"
     },
     "authors": [
