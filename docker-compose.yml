@@ -9,6 +9,7 @@ services:
       - ./:/code
     working_dir: /code
     environment:
+      - ENABLE_DEV_TESTS
       - KBC_MANAGE_API_URL
       - KBC_MANAGE_API_TOKEN
       - KBC_SUPER_API_TOKEN

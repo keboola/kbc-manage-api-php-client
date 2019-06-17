@@ -13,9 +13,6 @@ use Keboola\StorageApi\Client;
 
 class FileStorageTest extends ClientTestCase
 {
-
-    private const DISABLE_DEV_TESTS = true;
-
     private const DEFAULT_S3_OPTIONS = [
         'awsKey' => TEST_S3_KEY,
         'awsSecret' => TEST_S3_SECRET,
@@ -42,7 +39,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testFileStorageS3Create()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -58,7 +55,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testFileStorageAbsCreate()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -73,7 +70,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testRotateS3Key()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -86,7 +83,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testRotateAbsKey()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -97,7 +94,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testListS3Storages()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -116,7 +113,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testListAbsStorages()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -135,7 +132,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testSetS3StorageAsDefault()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -150,7 +147,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testSetAbsStorageAsDefault()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -165,7 +162,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testCrossProviderStorageDefaultAbsS3()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -178,7 +175,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testCrossProviderStorageDefaultS3Abs()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -191,7 +188,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testCrossProviderStorageCredentialsRotateS3Abs()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -204,7 +201,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testCrossProviderStorageCredentialsRotateAbsS3()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -240,7 +237,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testRotateS3CredentialsWithoutRequiredParams()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -255,7 +252,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testRotateAbsCredentialsWithoutRequiredParams()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
 
@@ -269,7 +266,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testProjectAssignS3FileStorage()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
         $name = 'My org';
@@ -291,7 +288,7 @@ class FileStorageTest extends ClientTestCase
 
     public function testProjectAssignAbsFileStorage()
     {
-        if (self::DISABLE_DEV_TESTS) {
+        if (!ENABLE_DEV_TESTS) {
             $this->markTestSkipped('just for development');
         }
         $name = 'My org';
