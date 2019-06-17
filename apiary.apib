@@ -2553,14 +2553,17 @@ Removes a feature assigned to a project template.
 
 # Group SUPER - File Storage Management
 
-Management of file storages. A file storage is represented by the AWS S3 bucket with associated AWS IAM credentials
-with full access to this bucket and access to the AWS STS service.
-At least one file storage has to be registered for one supported region.
+## Management of file storages.
 
+File storage can be pressented:
+1) By the Azure Blob Storage container with associated credentials of Storage account
+2) By the AWS S3 bucket with associated AWS IAM credentials with full access to this bucket and access to the AWS STS service. At least one file storage has to be registered for one supported region.
 
-## File Storage Collection [/manage/file-storage]
+Each type of storage has it's own endpoint.
 
-### Create new Storage [POST]
+## S3 - File Storage Collection [/manage/file-storage-s3]
+
+### Create new AWS S3 Storage [POST]
 
 New S3 file Storage will be registered. Provided AWS credentials are verified and required permissions are validated.
 The Storage region is automatically detected.
@@ -2571,20 +2574,20 @@ The Storage region is automatically detected.
 
             X-KBC-ManageApiToken: your_token
 
-    + Attributes(FileStorageRequest)
+    + Attributes(S3FileStorageRequest)
 
 + Response 201 (application/json)
 
-    + Attributes(FileStorage)
+    + Attributes(S3FileStorage)
 
 
 ### List storages [GET]
 
 + Response 200 (application/json)
 
-    + Attributes (array[FileStorage])
+    + Attributes (array[S3FileStorage])
 
-## Region Default File Storage [/manage/file-storage/{file_storage_id}/default]
+## S3 - Set Default File Storage [/manage/file-storage-s3/{file_storage_id}/default]
 Each region should have associated one default Storage, which is used for every new project in the region.
 Only storage owned by **keboola** can be set as default.
 
@@ -2602,24 +2605,153 @@ Only storage owned by **keboola** can be set as default.
 
 + Response 201 (application/json)
 
-    + Attributes(FileStorage)
+    + Attributes(S3FileStorage)
+
+
+## S3 - Rotate credentials [/manage/file-storage-s3/{file_storage_id}/credentials]
+
+### Rotate credentials [POST]
+
+Method used for rotating credentials. Can be run in production without outage. File storage credentials will be rotated to the given pair of key and secret. Credentials will be tested before rotating.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(S3FileStorageCredentials)
+
++ Response 200 (application/json)
+
+     + Attributes(S3FileStorage)
+
+## Blob Storage - File Storage Collection [/manage/file-storage-abs]
+
+### Create new Azure Blob Storage [POST]
+
+Will register new Azure Blob Storage for using inside KBC. Connection wil be verified during registraion.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(ABSCreate)
+
++ Response 201 (application/json)
+
+    + Attributes(ABSCreated)
+
+### List Azure Blob Storage [GET]
+
+Returns all registered Azure Blob Storages.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(array[ABSCreated])
+
+
+## Blob Storage - Set storage as default [/manage/file-storage-abs/{file_storage_id}/default]
+
+Only storage owned by **keboola** can be set as default.
+
++ Parameters
+    + file_storage_id (required) - File Storage ID
+
+### Set Storage as default [POST]
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(ABSDefault)
+
+
+## Blob Storage - Rotate credentials [/manage/file-storage-abs/{file_storage_id}/credentials]
+
++ Parameters
+    + file_storage_id (required) - File Storage ID
+
+### Rotate credentials [POST]
+
+Credentials can be rotated in production without outage. File storage credentials will be rotated to the given accountKey. Credentials will be tested before rotating.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(ABSCredentials)
+
++ Response 200 (application/json)
+
+    + Attributes(ABSCreated)
 
 ## Data Structures
 
-### FileStorageBase
+### ABSBase
++ accountName: nameofaccount (required)
++ containerName: name-of-container (required)
++ owner: keboola (required)
+
+### ABSCreate(ABSBase)
++ accountKey: TTASDASASDfasdf== (required) - new key to be rotated on
+
+### ABSCreated(ABSBase)
+
++ id: 123
++ isDefault: false
++ provider: azure
++ created: 2019-06-17T15:07:48+01:00
++ creator
+    + id: 123
+    + name: name-of-creator
+
+### ABSDefault(ABSBase)
+
++ id: 123
++ isDefault: true
+
+### ABSCredentials
++ accountKey: TTASDASASDfasdf== (required)
+
+
+### S3FileStorageBase
 
 + awsKey: SFASDF (required)
 + filesBucket: `kbc-sapi-files` (required)
 + region: `us-east-1` (required)
 + owner: keboola (required) - Associated AWS account owner
 
-### FileStorage(FileStorageBase)
+### S3FileStorage(S3FileStorageBase)
 
 + id: 123 (required)
 + isDefault: false
++ provider: aws
++ created: 2019-06-17T15:07:48+01:00
++ creator
+    + id: 123
+    + name: name-of-creator
 
-## FileStorageRequest(FileStorageBase)
+## S3FileStorageRequest(S3FileStorageBase)
 
++ awsSecret: xxxx (required)
+
+## S3FileStorageCredentials
++ awsKey: SFASDF (required)
 + awsSecret: xxxx (required)
 
 
