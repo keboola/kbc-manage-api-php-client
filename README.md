@@ -66,9 +66,10 @@ Tests requires valid Keboola Management API tokens and an endpoint URL of the AP
 
 *Note: The test environment should be running a cronjob for `token-expirator` otherwise the `testTemporaryAccess` test will fail.*
 
-Create file `.env` with environment variables:
+Create file `.env` with environment variables or copy `.env.dist`:
 
 ```bash
+#REQUIRED - must be filled before running any test
 KBC_MANAGE_API_URL=https://connection.keboola.com  
 KBC_MANAGE_API_TOKEN=your_token
 KBC_SUPER_API_TOKEN=your_token
@@ -77,6 +78,21 @@ KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled
 KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled
 KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled
 KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled
+
+ENABLE_DEV_TESTS=0
+
+# OPTIONAL - required only for running file storage test (tests is skipped by default)
+TEST_ABS_ACCOUNT_KEY=
+TEST_ABS_ACCOUNT_NAME=
+TEST_ABS_CONTAINER_NAME=
+TEST_ABS_ROTATE_ACCOUNT_KEY=
+TEST_S3_ROTATE_KEY=
+TEST_S3_ROTATE_SECRET=
+TEST_S3_FILES_BUCKET=
+TEST_S3_KEY=
+TEST_S3_REGION=
+TEST_S3_SECRET=
+
 ```
 
 Source newly created file and run tests:
@@ -85,7 +101,7 @@ Source newly created file and run tests:
 docker-compose run --rm tests
 ```
 
-Description of mentioned variables:
+### Required variables
 
 - `KBC_MANAGE_API_URL` - URL where Keboola Connection is running
 - `KBC_MANAGE_API_TOKEN` - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens. User must have Multi-Factor Authentication disabled.
@@ -95,5 +111,20 @@ Description of mentioned variables:
 - `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have Multi-Factor Authentication disabled.
 - `KBC_TEST_ADMIN_WITH_MFA_EMAIL` - email address of another user without any organizations and having Multi-Factor Authentication enabled
 - `KBC_TEST_ADMIN_WITH_MFA_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` or `KBC_TEST_ADMIN_TOKEN`
+- `ENABLE_DEV_TEST` - will enable tests, which can be executed only in development environment 
 
+### Optional variables
 
+These variables are used for testing file storage. You have to copy these values from Azure and AWS portal.  
+ - `TEST_ABS_ACCOUNT_KEY` - First secret key for Azure Storage account
+ - `TEST_ABS_ACCOUNT_NAME` - Name of Azure Storage account
+ - `TEST_ABS_CONTAINER_NAME` - Name of container created inside Azure Storage Account
+ - `TEST_ABS_ROTATE_ACCOUNT_KEY` - Second secret key for Azure Storage account
+ - `TEST_S3_ROTATE_KEY` - Second AWS key
+ - `TEST_S3_ROTATE_SECRET` - Second AWS secret
+ - `TEST_S3_FILES_BUCKET` - Name of file bucker on S3
+ - `TEST_S3_KEY` - First AWS key
+ - `TEST_S3_REGION` - Region where your S3 is located
+ - `TEST_S3_SECRET` - First AWS secret
+ 
+ Variable prefixed with _ROTATE_ are used for rotating credentials and they MUST be working credentials.
