@@ -3,11 +3,6 @@ namespace Keboola\ManageApi;
 
 class Exception extends \Exception
 {
-    /**
-     * @var null|\Exception
-     */
-    private $previous = null;
-
     protected $stringCode;
 
     protected $contextParams;
@@ -21,11 +16,11 @@ class Exception extends \Exception
      * @param  string $stringCode
      * @param  mixed|array $params
      */
-    public function __construct($message = NULL, $code = NULL, $previous = NULL, $stringCode = NULL, $params = NULL)
+    public function __construct($message = null, $code = null, $previous = null, $stringCode = null, $params = null)
     {
         $this->setStringCode($stringCode);
         $this->setContextParams($params);
-        parent::__construct($message, (int)$code, $previous);
+        parent::__construct($message, (int) $code, $previous);
     }
 
 
@@ -41,9 +36,9 @@ class Exception extends \Exception
     public function setStringCode($stringCode)
     {
         if ($stringCode) {
-            $this->stringCode = (string)$stringCode;
+            $this->stringCode = (string) $stringCode;
         } else {
-            $this->stringCode = "APPLICATION_ERROR";
+            $this->stringCode = 'APPLICATION_ERROR';
         }
         return $this;
     }
@@ -59,8 +54,7 @@ class Exception extends \Exception
      */
     public function setContextParams($contextParams)
     {
-        $this->contextParams = (array)$contextParams;
+        $this->contextParams = (array) $contextParams;
         return $this;
     }
-
 }
