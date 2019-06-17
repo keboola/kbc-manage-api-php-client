@@ -78,7 +78,12 @@ class FileStorageTest extends ClientTestCase
 
         $rotatedStorage = $this->client->rotateS3FileStorageCredentials($storage['id'], self::ROTATE_S3_OPTIONS);
 
+        $this->assertArrayNotHasKey('awsSecret', $storage);
         $this->assertSame($rotatedStorage['awsKey'], TEST_S3_ROTATE_KEY);
+        $this->assertSame($rotatedStorage['region'], TEST_S3_REGION);
+        $this->assertSame($rotatedStorage['filesBucket'], TEST_S3_FILES_BUCKET);
+        $this->assertSame($rotatedStorage['provider'], 'aws');
+        $this->assertSame($rotatedStorage['isDefault'], false);
     }
 
     public function testRotateAbsKey()
@@ -89,7 +94,12 @@ class FileStorageTest extends ClientTestCase
 
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
-        $this->client->rotateAbsFileStorageCredentials($storage['id'], self::ROTATE_ABS_OPTIONS);
+        $rotatedStorage = $this->client->rotateAbsFileStorageCredentials($storage['id'], self::ROTATE_ABS_OPTIONS);
+        $this->assertArrayNotHasKey('accountKey', $storage);
+        $this->assertSame($rotatedStorage['accountName'], TEST_ABS_ACCOUNT_NAME);
+        $this->assertSame($rotatedStorage['containerName'], TEST_ABS_CONTAINER_NAME);
+        $this->assertSame($rotatedStorage['provider'], 'azure');
+        $this->assertSame($rotatedStorage['isDefault'], false);
     }
 
     public function testListS3Storages()
@@ -105,7 +115,7 @@ class FileStorageTest extends ClientTestCase
         $this->assertSame($initCount + 1, count($storages));
 
         foreach ($storages as $storage) {
-            if ($storage['provider'] === 'azure') {
+            if ($storage['provider'] !== 'aws') {
                $this->fail('List of S3 storages contains also Azure Blob Storages');
             }
         }
@@ -124,7 +134,7 @@ class FileStorageTest extends ClientTestCase
         $this->assertSame($initCount + 1, count($storages));
 
         foreach ($storages as $storage) {
-            if ($storage['provider'] === 'aws') {
+            if ($storage['provider'] !== 'azure') {
                $this->fail('List of Azure Blob Storages contains also S3 Storage');
             }
         }
