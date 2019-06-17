@@ -7,6 +7,8 @@ services:
 
 script:
  - docker-compose build tests
+ - docker network create connection_api-tests
+ - docker-compose run app --rm composer ci
 
 deploy:
   provider: script
