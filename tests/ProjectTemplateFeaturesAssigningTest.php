@@ -45,5 +45,4 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
     {
         $this->client->createFeature($feature['name'], $feature['type'], $feature['description']);
     }
-
 }

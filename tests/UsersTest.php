@@ -123,8 +123,8 @@ class UsersTest extends ClientTestCase
 
         try {
             $this->client->disableUserMFA($userId);
-            $this->fail("you cannot disable mfa for user having mfa disabled");
-        } catch(ClientException $e) {
+            $this->fail('you cannot disable mfa for user having mfa disabled');
+        } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
         }
     }
@@ -141,8 +141,8 @@ class UsersTest extends ClientTestCase
 
         try {
             $this->normalUserClient->disableUserMFA($userId);
-            $this->fail("normal user should not be able to enable mfa via thea api");
-        } catch(ClientException $e) {
+            $this->fail('normal user should not be able to enable mfa via thea api');
+        } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
     }
@@ -165,7 +165,6 @@ class UsersTest extends ClientTestCase
 
         $deletedUser = $this->client->getUser($user['id']);
         $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
-
     }
 
     public function testRemoveUserFromEverywhere()

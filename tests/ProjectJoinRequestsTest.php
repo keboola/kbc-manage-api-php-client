@@ -59,7 +59,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $projectId = $this->createProjectWithNormalAdminMember();
@@ -109,7 +109,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -165,7 +165,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
@@ -196,7 +196,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember();
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
@@ -235,7 +235,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         try {
@@ -310,7 +310,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertNull($projectUser);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -332,7 +332,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         try {
@@ -368,7 +368,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertNull($projectUser);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -387,7 +387,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         try {
@@ -423,7 +423,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertNull($projectUser);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $joinRequest = $this->client->requestAccessToProject($projectId);
@@ -440,7 +440,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         try {
@@ -476,7 +476,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertNull($projectUser);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -497,7 +497,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         try {
@@ -533,7 +533,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $projectId = $this->createProjectWithNormalAdminMember();
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
@@ -542,7 +542,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $projectId,
             [
                 'reason' => 'Testing reason propagation',
-                'expirationSeconds' => 3600
+                'expirationSeconds' => 3600,
             ]
         );
 
@@ -588,7 +588,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $projectId = $this->createProjectWithNormalAdminMember();
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
@@ -625,7 +625,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -655,7 +655,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -683,7 +683,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -718,7 +718,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -747,7 +747,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->updateOrganization($this->organization['id'], [
-            "allowAutoJoin" => 0
+            'allowAutoJoin' => 0,
         ]);
 
         $projectId = $this->createProjectWithSuperAdminMember();
