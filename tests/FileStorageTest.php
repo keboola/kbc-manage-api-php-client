@@ -153,6 +153,13 @@ class FileStorageTest extends ClientTestCase
         $storage = $this->client->setS3FileStorageAsDefault($storage['id']);
 
         $this->assertTrue($storage['isDefault']);
+
+        $storageList = $this->client->listS3FileStorage();
+        foreach ($storageList as $item) {
+            if ($item['isDefault'] && $item['id'] !== $storage['id']) {
+                $this->fail('There are more storage with default flag');
+            }
+        }
     }
 
     public function testSetAbsStorageAsDefault()
@@ -168,6 +175,13 @@ class FileStorageTest extends ClientTestCase
         $storage = $this->client->setAbsFileStorageAsDefault($storage['id']);
 
         $this->assertTrue($storage['isDefault']);
+
+        $storageList = $this->client->listAbsFileStorage();
+        foreach ($storageList as $item) {
+            if ($item['isDefault'] && $item['id'] !== $storage['id']) {
+                $this->fail('There are more storage with default flag');
+            }
+        }
     }
 
     public function testCrossProviderStorageDefaultAbsS3()
