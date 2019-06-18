@@ -79,8 +79,6 @@ KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled
 KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled
 KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled
 
-ENABLE_DEV_TESTS=0
-
 # OPTIONAL - required only for running file storage test (tests are skipped by default)
 TEST_ABS_ACCOUNT_KEY=
 TEST_ABS_ACCOUNT_NAME=
@@ -111,7 +109,6 @@ docker-compose run --rm tests
 - `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have Multi-Factor Authentication disabled.
 - `KBC_TEST_ADMIN_WITH_MFA_EMAIL` - email address of another user without any organizations and having Multi-Factor Authentication enabled
 - `KBC_TEST_ADMIN_WITH_MFA_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` or `KBC_TEST_ADMIN_TOKEN`
-- `ENABLE_DEV_TEST` - will enable tests, which can be executed only in development environment 
 
 ### Optional variables
 
