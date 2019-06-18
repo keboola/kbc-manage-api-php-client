@@ -81,7 +81,7 @@ KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled
 
 ENABLE_DEV_TESTS=0
 
-# OPTIONAL - required only for running file storage test (tests is skipped by default)
+# OPTIONAL - required only for running file storage test (tests are skipped by default)
 TEST_ABS_ACCOUNT_KEY=
 TEST_ABS_ACCOUNT_NAME=
 TEST_ABS_CONTAINER_NAME=
