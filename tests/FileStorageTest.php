@@ -188,7 +188,7 @@ class FileStorageTest extends ClientTestCase
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(sprintf('File storage with id "%d" and provider "aws" was not found.', $storage['id']));
+        $this->expectExceptionMessage(sprintf('AWS S3 file storage "%d" not found', $storage['id']));
         $this->client->setS3FileStorageAsDefault($storage['id']);
     }
 
@@ -201,7 +201,7 @@ class FileStorageTest extends ClientTestCase
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(sprintf('File storage with id "%d" and provider "azure" was not found.', $storage['id']));
+        $this->expectExceptionMessage(sprintf('Azure Blob Storage file storage "%d" not found', $storage['id']));
         $this->client->setAbsFileStorageAsDefault($storage['id']);
     }
 
@@ -214,7 +214,7 @@ class FileStorageTest extends ClientTestCase
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(sprintf('File storage with id "%d" and provider "azure" was not found.', $storage['id']));
+        $this->expectExceptionMessage(sprintf('Azure Blob Storage file storage "%d" not found', $storage['id']));
         $this->client->rotateAbsFileStorageCredentials($storage['id'], self::ROTATE_ABS_OPTIONS);
     }
 
@@ -227,7 +227,7 @@ class FileStorageTest extends ClientTestCase
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(sprintf('File storage with id "%d" and provider "aws" was not found.', $storage['id']));
+        $this->expectExceptionMessage(sprintf('AWS S3 file storage "%d" not found', $storage['id']));
         $this->client->rotateS3FileStorageCredentials($storage['id'], self::ROTATE_S3_OPTIONS);
     }
 
