@@ -148,4 +148,13 @@ class FileStorageS3Test extends ClientTestCase
         $project = $this->client->getProject($project['id']);
         $this->assertEquals($storage['id'], $project['fileStorage']['id']);
     }
+
+    public function testSetDeafultWithoutIdParam()
+    {
+        $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Missing param "id" in request query');
+        $this->client->setS3FileStorageAsDefault(null);
+    }
 }

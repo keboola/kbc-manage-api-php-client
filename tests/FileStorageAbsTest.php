@@ -139,4 +139,13 @@ class FileStorageAbsTest extends ClientTestCase
         $this->expectExceptionMessage(sprintf('AWS S3 file storage "%d" not found', $storage['id']));
         $this->client->rotateS3FileStorageCredentials($storage['id'], self::ROTATE_S3_OPTIONS);
     }
+
+    public function testSetDeafultWithoutIdParam()
+    {
+        $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Missing param "id" in request query');
+        $this->client->setAbsFileStorageAsDefault(null);
+    }
 }
