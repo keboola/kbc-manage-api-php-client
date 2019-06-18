@@ -29,10 +29,6 @@ class FileStorageS3Test extends ClientTestCase
 
     public function testFileStorageS3Create()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->assertArrayNotHasKey('awsSecret', $storage);
@@ -45,10 +41,6 @@ class FileStorageS3Test extends ClientTestCase
 
     public function testRotateS3Key()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $rotatedStorage = $this->client->rotateS3FileStorageCredentials($storage['id'], self::ROTATE_S3_OPTIONS);
@@ -63,10 +55,6 @@ class FileStorageS3Test extends ClientTestCase
 
     public function testListS3Storages()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $initCount = count($this->client->listS3FileStorage());
         $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
         $storages = $this->client->listS3FileStorage();
@@ -82,10 +70,6 @@ class FileStorageS3Test extends ClientTestCase
 
     public function testSetS3StorageAsDefault()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->assertFalse($storage['isDefault']);
@@ -104,10 +88,6 @@ class FileStorageS3Test extends ClientTestCase
 
     public function testCrossProviderStorageDefaultS3Abs()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->expectException(ClientException::class);
@@ -117,10 +97,6 @@ class FileStorageS3Test extends ClientTestCase
 
     public function testCrossProviderStorageCredentialsRotateS3Abs()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->expectException(ClientException::class);
@@ -144,10 +120,6 @@ class FileStorageS3Test extends ClientTestCase
 
     public function testRotateS3CredentialsWithoutRequiredParams()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->expectException(ClientException::class);
@@ -160,9 +132,6 @@ class FileStorageS3Test extends ClientTestCase
 
     public function testProjectAssignS3FileStorage()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => $name,

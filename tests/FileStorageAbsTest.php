@@ -25,10 +25,6 @@ class FileStorageAbsTest extends ClientTestCase
 
     public function testFileStorageAbsCreate()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->assertArrayNotHasKey('accountKey', $storage);
@@ -40,10 +36,6 @@ class FileStorageAbsTest extends ClientTestCase
 
     public function testRotateAbsKey()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $rotatedStorage = $this->client->rotateAbsFileStorageCredentials($storage['id'], self::ROTATE_ABS_OPTIONS);
@@ -56,10 +48,6 @@ class FileStorageAbsTest extends ClientTestCase
 
     public function testListAbsStorages()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $initCount = count($this->client->listAbsFileStorage());
         $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
         $storages = $this->client->listAbsFileStorage();
@@ -75,10 +63,6 @@ class FileStorageAbsTest extends ClientTestCase
 
     public function testSetAbsStorageAsDefault()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->assertFalse($storage['isDefault']);
@@ -97,10 +81,6 @@ class FileStorageAbsTest extends ClientTestCase
 
     public function testCrossProviderStorageDefaultAbsS3()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->expectException(ClientException::class);
@@ -122,10 +102,6 @@ class FileStorageAbsTest extends ClientTestCase
 
     public function testRotateAbsCredentialsWithoutRequiredParams()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->expectException(ClientException::class);
@@ -138,9 +114,6 @@ class FileStorageAbsTest extends ClientTestCase
 
     public function testProjectAssignAbsFileStorage()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => $name,
@@ -160,10 +133,6 @@ class FileStorageAbsTest extends ClientTestCase
 
     public function testCrossProviderStorageCredentialsRotateAbsS3()
     {
-        if (!ENABLE_DEV_TESTS) {
-            $this->markTestSkipped('just for development');
-        }
-
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->expectException(ClientException::class);

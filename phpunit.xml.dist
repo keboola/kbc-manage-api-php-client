@@ -4,6 +4,8 @@
     <testsuites>
         <testsuite>
             <directory>tests</directory>
+            <exclude>tests/FileStorageAbsTest.php</exclude>
+            <exclude>tests/FileStorageS3Test.php</exclude>
         </testsuite>
     </testsuites>
     <filter>
