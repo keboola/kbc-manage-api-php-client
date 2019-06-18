@@ -2608,6 +2608,24 @@ Only storage owned by **keboola** can be set as default.
     + Attributes(S3FileStorage)
 
 
+## S3 - Rotate credentials [/manage/file-storage-s3/{file_storage_id}/credentials]
+
+### Rotate credentials [POST]
+
+Method used for rotating credentials. Can be run in production without outage. File storage credentials will be rotated to the given pair of key and secret. Credentials will be tested before rotating.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(S3FileStorageCredentials)
+
++ Response 200 (application/json)
+
+     + Attributes(S3FileStorage)
+
 ## Blob Storage - File Storage Collection [/manage/file-storage-abs]
 
 ### Create new Azure Blob Storage [POST]
@@ -2660,6 +2678,28 @@ Only storage owned by **keboola** can be set as default.
 
     + Attributes(ABSDefault)
 
+
+## Blob Storage - Rotate credentials [/manage/file-storage-abs/{file_storage_id}/credentials]
+
++ Parameters
+    + file_storage_id (required) - File Storage ID
+
+### Rotate credentials [POST]
+
+Credentials can be rotated in production without outage. File storage credentials will be rotated to the given accountKey. Credentials will be tested before rotating.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(ABSCredentials)
+
++ Response 200 (application/json)
+
+    + Attributes(ABSCreated)
+
 ## Data Structures
 
 ### ABSBase
@@ -2685,6 +2725,9 @@ Only storage owned by **keboola** can be set as default.
 + id: 123
 + isDefault: true
 
+### ABSCredentials
++ accountKey: TTASDASASDfasdf== (required)
+
 
 ### S3FileStorageBase
 
@@ -2706,6 +2749,11 @@ Only storage owned by **keboola** can be set as default.
 ## S3FileStorageRequest(S3FileStorageBase)
 
 + awsSecret: xxxx (required)
+
+## S3FileStorageCredentials
++ awsKey: SFASDF (required)
++ awsSecret: xxxx (required)
+
 
 # Group SUPER - Storage Backends Management
 Storage backends power Keboola Connection buckets and the main tabular data storage.
