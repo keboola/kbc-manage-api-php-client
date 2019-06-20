@@ -6,6 +6,9 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\ClientException;
 use function GuzzleHttp\json_encode;
 
+/**
+ * @group FileStorage
+ */
 class FileStorageS3Test extends ClientTestCase
 {
 
@@ -107,14 +110,9 @@ class FileStorageS3Test extends ClientTestCase
     public function testCreateS3StorageWithoutRequiredParam()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(json_encode([
-            "[awsKey] : This field is missing.",
-            "[awsSecret] : This field is missing.",
-            "[filesBucket] : This field is missing.",
-            "[owner] : This field is missing.",
-            "[region] : This field is missing.",
-            ]
-        ));
+        $this->expectExceptionMessage(
+            '"awsKey": This field is missing. "awsSecret": This field is missing. "filesBucket": This field is missing. "owner": This field is missing. "region": This field is missing.'
+            );
         $this->client->createS3FileStorage([]);
     }
 
@@ -123,10 +121,7 @@ class FileStorageS3Test extends ClientTestCase
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(json_encode([
-            "[awsKey] : This field is missing.",
-            "[awsSecret] : This field is missing.",
-        ]));
+        $this->expectExceptionMessage('"awsKey": This field is missing. "awsSecret": This field is missing.');
         $this->client->rotateS3FileStorageCredentials($storage['id'], []);
     }
 
