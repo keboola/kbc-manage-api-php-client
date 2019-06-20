@@ -223,6 +223,11 @@ class Client
         return $this->apiPatch("/manage/organizations/{$organizationId}", $params);
     }
 
+    public function enableOrganizationMfa($organizationId)
+    {
+        return $this->apiPatch("/manage/organizations/{$organizationId}/force-mfa", []);
+    }
+
     public function listOrganizationUsers($organizationId)
     {
         return $this->apiGet("manage/organizations/{$organizationId}/users");

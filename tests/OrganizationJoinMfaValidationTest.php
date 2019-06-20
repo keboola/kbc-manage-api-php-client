@@ -1,18 +1,10 @@
 <?php
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class OrganizationJoinMfaValidationTest extends ClientTestCase
+class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
 {
-    private const DUMMY_USER_EMAIL = 'spam+spam@keboola.com';
-
-    /** @var Client */
-    private $normalUserWithMfaClient;
-
-    private $normalUserWithMfa;
-
     private $organization;
 
     /**
@@ -23,13 +15,6 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->normalUserWithMfaClient = new Client([
-            'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
-        ]);
-
-        $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
@@ -61,7 +46,7 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
             $this->fail('Organization join should be restricted for admins without MFA');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertContains('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $member = $this->findOrganizationMember($this->organization['id'], $this->superAdmin['email']);
@@ -84,7 +69,7 @@ class OrganizationJoinMfaValidationTest extends ClientTestCase
             $this->fail('Organization join should be restricted for admins without MFA');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Organization requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertContains('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $member = $this->findOrganizationMember($this->organization['id'], $this->normalUser['email']);

@@ -73,8 +73,8 @@ KBC_MANAGE_API_URL=https://connection.keboola.com
 KBC_MANAGE_API_TOKEN=your_token
 KBC_SUPER_API_TOKEN=your_token
 KBC_TEST_MAINTAINER_ID=2
-KBC_TEST_ADMIN_EMAIL=email_of_another_admin
-KBC_TEST_ADMIN_TOKEN=token_of_another_admin
+KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled
+KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled
 KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled
 KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled
 ```
@@ -88,11 +88,11 @@ docker-compose run --rm tests
 Description of mentioned variables:
 
 - `KBC_MANAGE_API_URL` - URL where Keboola Connection is running
-- `KBC_MANAGE_API_TOKEN` - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens 
+- `KBC_MANAGE_API_TOKEN` - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens. User must have Multi-Factor Authentication disabled.
 - `KBC_SUPER_API_TOKEN` - can be created in manage-apps on the Tokens tab
 - `KBC_TEST_MAINTAINER_ID` - `id` of maintainer. Please create a new maintainer dedicated to test suite. All maintainer's organizations and projects all purged before tests!
 - `KBC_TEST_ADMIN_EMAIL` - email address of another user without any organizations
-- `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`
+- `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have Multi-Factor Authentication disabled.
 - `KBC_TEST_ADMIN_WITH_MFA_EMAIL` - email address of another user without any organizations and having Multi-Factor Authentication enabled
 - `KBC_TEST_ADMIN_WITH_MFA_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` or `KBC_TEST_ADMIN_TOKEN`
 

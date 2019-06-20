@@ -1,18 +1,10 @@
 <?php
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class ProjectInvitationsMfaValidationTest extends ClientTestCase
+class ProjectInvitationsMfaValidationTest extends ClientMfaTestCase
 {
-    private const DUMMY_USER_EMAIL = 'spam+spam@keboola.com';
-
-    /** @var Client */
-    private $normalUserWithMfaClient;
-
-    private $normalUserWithMfa;
-
     private $organization;
 
     /**
@@ -25,13 +17,6 @@ class ProjectInvitationsMfaValidationTest extends ClientTestCase
     public function setUp()
     {
         parent::setUp();
-
-        $this->normalUserWithMfaClient = new Client([
-            'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
-        ]);
-
-        $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => self::DUMMY_USER_EMAIL]);
 
@@ -60,7 +45,7 @@ class ProjectInvitationsMfaValidationTest extends ClientTestCase
 
     public function testInvitedAdminCannotAcceptInvitation()
     {
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->updateOrganization(
             $this->organization['id'],
@@ -81,7 +66,7 @@ class ProjectInvitationsMfaValidationTest extends ClientTestCase
             $this->fail('Accept invitation to project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $invitations = $this->normalUserWithMfaClient->listProjectInvitations($projectId);
@@ -93,7 +78,7 @@ class ProjectInvitationsMfaValidationTest extends ClientTestCase
 
     public function testInvitedAdminCanDeclineInvitation()
     {
-        $projectId = $this->createProjectWithAdminHavingMfaEnabled();
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->normalUserWithMfaClient->updateOrganization(
             $this->organization['id'],
@@ -113,14 +98,5 @@ class ProjectInvitationsMfaValidationTest extends ClientTestCase
 
         $invitations = $this->normalUserWithMfaClient->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
-    }
-
-    private function createProjectWithAdminHavingMfaEnabled(): int
-    {
-        $project = $this->normalUserWithMfaClient->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
     }
 }
