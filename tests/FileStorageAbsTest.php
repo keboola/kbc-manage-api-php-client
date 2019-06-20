@@ -5,6 +5,9 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\ClientException;
 use function GuzzleHttp\json_encode;
 
+/**
+ * @group FileStorage
+ */
 class FileStorageAbsTest extends ClientTestCase
 {
     private const DEFAULT_ABS_OPTIONS = [
@@ -91,12 +94,7 @@ class FileStorageAbsTest extends ClientTestCase
     public function testCreateAbsStorageWithoutRequiredParam()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(json_encode([
-            "[accountName] : This field is missing.",
-            "[accountKey] : This field is missing.",
-            "[containerName] : This field is missing.",
-            "[owner] : This field is missing.",
-        ]));
+        $this->expectExceptionMessage('"accountName": This field is missing. "accountKey": This field is missing. "containerName": This field is missing. "owner": This field is missing.');
         $this->client->createAbsFileStorage([]);
     }
 
@@ -105,9 +103,7 @@ class FileStorageAbsTest extends ClientTestCase
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(json_encode([
-            "[accountKey] : This field is missing."
-        ]));
+        $this->expectExceptionMessage('"accountKey": This field is missing');
 
         $this->client->rotateAbsFileStorageCredentials($storage['id'], []);
     }
