@@ -15,6 +15,8 @@ services:
       - KBC_TEST_MAINTAINER_ID
       - KBC_TEST_ADMIN_EMAIL
       - KBC_TEST_ADMIN_TOKEN
+      - KBC_TEST_ADMIN_WITH_MFA_EMAIL
+      - KBC_TEST_ADMIN_WITH_MFA_TOKEN
     command: >
          sh -c '
          composer install
