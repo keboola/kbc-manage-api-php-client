@@ -34,7 +34,7 @@ class FileStorageAbsTest extends ClientTestCase
         $this->assertSame($storage['accountName'], TEST_ABS_ACCOUNT_NAME);
         $this->assertSame($storage['containerName'], TEST_ABS_CONTAINER_NAME);
         $this->assertSame($storage['provider'], 'azure');
-        $this->assertSame($storage['isDefault'], false);
+        $this->assertFalse($storage['isDefault']);
     }
 
     public function testRotateAbsKey()
@@ -46,7 +46,7 @@ class FileStorageAbsTest extends ClientTestCase
         $this->assertSame($rotatedStorage['accountName'], TEST_ABS_ACCOUNT_NAME);
         $this->assertSame($rotatedStorage['containerName'], TEST_ABS_CONTAINER_NAME);
         $this->assertSame($rotatedStorage['provider'], 'azure');
-        $this->assertSame($rotatedStorage['isDefault'], false);
+        $this->assertFalse($rotatedStorage['isDefault']);
     }
 
     public function testListAbsStorages()
@@ -77,7 +77,7 @@ class FileStorageAbsTest extends ClientTestCase
         $storageList = $this->client->listAbsFileStorage();
         foreach ($storageList as $item) {
             if ($item['isDefault'] && $item['id'] !== $storage['id']) {
-                $this->fail('There are more storage with default flag');
+                $this->fail('There are more storage backends with default flag');
             }
         }
     }

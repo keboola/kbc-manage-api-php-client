@@ -39,7 +39,7 @@ class FileStorageS3Test extends ClientTestCase
         $this->assertSame($storage['region'], TEST_S3_REGION);
         $this->assertSame($storage['filesBucket'], TEST_S3_FILES_BUCKET);
         $this->assertSame($storage['provider'], 'aws');
-        $this->assertSame($storage['isDefault'], false);
+        $this->assertFalse($storage['isDefault']);
     }
 
     public function testRotateS3Key()
@@ -53,7 +53,7 @@ class FileStorageS3Test extends ClientTestCase
         $this->assertSame($rotatedStorage['region'], TEST_S3_REGION);
         $this->assertSame($rotatedStorage['filesBucket'], TEST_S3_FILES_BUCKET);
         $this->assertSame($rotatedStorage['provider'], 'aws');
-        $this->assertSame($rotatedStorage['isDefault'], false);
+        $this->assertFalse($rotatedStorage['isDefault']);
     }
 
     public function testListS3Storages()
@@ -84,7 +84,7 @@ class FileStorageS3Test extends ClientTestCase
         $storageList = $this->client->listS3FileStorage();
         foreach ($storageList as $item) {
             if ($item['isDefault'] && $item['id'] !== $storage['id']) {
-                $this->fail('There are more storage with default flag');
+                $this->fail('There are more storage backends with default flag');
             }
         }
     }
