@@ -66,7 +66,7 @@ Tests requires valid Keboola Management API tokens and an endpoint URL of the AP
 
 *Note: The test environment should be running a cronjob for `token-expirator` otherwise the `testTemporaryAccess` test will fail.*
 
-Create file `.env` with environment variables or copy `.env.dist`:
+Create file `.env` with environment variables`:
 
 ```bash
 #REQUIRED - must be filled before running any test
