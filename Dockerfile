@@ -1,4 +1,4 @@
-FROM php:7.1
+FROM php:7.1 as common
 MAINTAINER Martin Halamicek <martin@keboola.com>
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -15,6 +15,17 @@ ADD ./ /code
 
 WORKDIR /code
 RUN composer install --prefer-dist --no-interaction
+
+FROM common as dev
+
+WORKDIR /code
+
+RUN composer install \
+    --prefer-dist \
+    --no-interaction \
+    --dev
+
+FROM common as prod
 
 
 
