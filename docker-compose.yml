@@ -7,9 +7,7 @@ services:
     working_dir: /code
 
   tests: &tests-config
-    build:
-      context: .
-      target: dev
+    build: .
     image: keboola/manage-api-tests
     tty: true
     stdin_open: true
@@ -42,6 +40,12 @@ services:
          composer install
          && ./vendor/bin/phpunit
          '
+  dev:
+    build:
+      context: .
+      target: dev
+    image: keboola/manage-api-tests-build
+
   tests-xdebug:
     <<: *tests-config
     build: docker/xdebug
