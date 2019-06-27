@@ -13,9 +13,6 @@ RUN cd \
 
 ADD ./ /code
 
-WORKDIR /code
-RUN composer install --prefer-dist --no-interaction
-
 FROM common as dev
 
 WORKDIR /code
@@ -27,6 +24,9 @@ RUN composer install \
 
 FROM common as prod
 
+WORKDIR /code
+
+RUN composer install --prefer-dist --no-interaction
 
 
 
