@@ -110,9 +110,15 @@ class FileStorageS3Test extends ClientTestCase
     public function testCreateS3StorageWithoutRequiredParam()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(
-            '"awsKey": This field is missing. "awsSecret": This field is missing. "filesBucket": This field is missing. "owner": This field is missing. "region": This field is missing.'
-            );
+        $this->expectExceptionMessage('Provided data are not valid.
+Errors:
+"awsKey": This field is missing.
+"awsSecret": This field is missing.
+"filesBucket": This field is missing.
+"owner": This field is missing.
+"region": This field is missing.
+'
+        );
         $this->client->createS3FileStorage([]);
     }
 
@@ -121,7 +127,11 @@ class FileStorageS3Test extends ClientTestCase
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('"awsKey": This field is missing. "awsSecret": This field is missing.');
+        $this->expectExceptionMessage('Provided data are not valid.
+Errors:
+"awsKey": This field is missing.
+"awsSecret": This field is missing.
+');
         $this->client->rotateS3FileStorageCredentials($storage['id'], []);
     }
 
