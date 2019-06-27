@@ -1,4 +1,4 @@
-version: '3'
+version: '3.4'
 services:
   app:
     build: .
@@ -7,7 +7,9 @@ services:
     working_dir: /code
 
   tests: &tests-config
-    build: .
+    build:
+      context: .
+      target: dev
     image: keboola/manage-api-tests
     tty: true
     stdin_open: true
