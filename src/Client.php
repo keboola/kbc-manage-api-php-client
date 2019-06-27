@@ -748,7 +748,7 @@ class Client
             }
 
             throw new ClientException(
-                isset($body['error']) ? $body['error'] : $e->getMessage(),
+                $this->composeErrorMessage($e, $body),
                 $response ? $response->getStatusCode() : $e->getCode(),
                 $e,
                 isset($body['code']) ? $body['code'] : "",
@@ -761,5 +761,21 @@ class Client
         }
 
         return (string)$response->getBody();
+    }
+
+    private function composeErrorMessage(RequestException $requestException, ?array $body = null)
+    {
+        if($body !== null && isset($body['error'])) {
+            $message = $body['error'];
+            if (isset($body['errors'])) {
+               $message .= "\nErrors:\n";
+               foreach ($body['errors'] as $error) {
+                   $message .= sprintf("\"%s\": %s\n", $error['key'], $error['message']);
+               }
+            }
+            return $message;
+        } else {
+            return $requestException->getMessage();
+        }
     }
 }
