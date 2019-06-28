@@ -1554,4 +1554,25 @@ class ProjectsTest extends ClientTestCase
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
         $this->assertNull($member);
     }
+
+    public function testMembershipRoleChange()
+    {
+        $organization = $this->initTestOrganization();
+        $project = $this->initTestProject($organization['id']);
+
+        $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email'],]);
+
+        $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertEquals('admin', $member['role']);
+
+        $this->client->updateUserProjectMembership($project['id'], $this->normalUser['id'], ['role' => 'guest']);
+
+        $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertEquals('guest', $member['role']);
+
+        $this->client->updateUserProjectMembership($project['id'], $this->normalUser['id'], ['role' => 'admin']);
+
+        $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertEquals('admin', $member['role']);
+    }
 }
