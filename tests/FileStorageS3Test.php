@@ -110,7 +110,7 @@ class FileStorageS3Test extends ClientTestCase
     public function testCreateS3StorageWithoutRequiredParam()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('Provided data are not valid.
+        $this->expectExceptionMessage('Invalid request
 Errors:
 "awsKey": This field is missing.
 "awsSecret": This field is missing.
@@ -127,7 +127,7 @@ Errors:
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('Provided data are not valid.
+        $this->expectExceptionMessage('Invalid request
 Errors:
 "awsKey": This field is missing.
 "awsSecret": This field is missing.
