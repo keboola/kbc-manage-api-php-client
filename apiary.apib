@@ -1178,6 +1178,7 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 + Attributes
 
     + email: martin@keboola.com (string, required) - Email of an invited user
+    + role: admin (string) - User role in the project. Roles `admin` and `guest` are allowed (default `admin`).
     + expirationSeconds: 3600 (number) - After how many seconds the invitation and membership of a user will expire
     + reason: Help with component configuration (string) - Reason for inviting user
 
@@ -1195,6 +1196,7 @@ An optional expiration (seconds) and reason for joining can be added to the requ
         "created": "2018-07-10T10:50:00+0200",
         "expires": "2018-07-10T11:50:00+0200",
         "reason": "Help with component configuration",
+        "role": "admin",
         "user": {
             "id": 125,
             "name": "test user 3",
@@ -1231,6 +1233,7 @@ An optional expiration (seconds) and reason for joining can be added to the requ
         "created": "2018-07-10T10:50:00+0200",
         "expires": "2018-07-10T11:50:00+0200",
         "reason": "Help with component configuration",
+        "reason": "admin",
         "user": {
             "id": 125,
             "name": "test user 3",
@@ -1279,6 +1282,7 @@ Only members of the project or its organization are allowed to cancel project in
             "expires": null,
             "created": "2016-02-29T08:01:13+0200",
             "reason": "",
+            "role": "admin",
             "status": "active",
             "invitor": {
                 "id": 124,
@@ -1295,6 +1299,7 @@ Only members of the project or its organization are allowed to cancel project in
             "expires": "2016-03-22T15:01:13+0200",
             "created": "2016-02-22T15:01:13+0200",
             "reason": "temporary test",
+            "role": "guest",
             "status": "active",
             "invitor": null,
             "approver": {
@@ -1315,6 +1320,7 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 + Attributes
 
     + email: martin@keboola.com (required) - Email of an invited user
+    + role: admin (string) - User role in the project. Roles `admin` and `guest` are allowed (default `admin`).
     + expirationSeconds: 3600 (number) - After how many seconds the membership of a user will expire
 
 
@@ -2225,6 +2231,7 @@ Invitation will be accepted and current user will become a member of the organiz
             "created": "2018-07-10T11:13:00+0200",
             "expires": null,
             "reason": "",
+            "role": "admin",
             "project": {
                 "id": 7,
                 "name": "Martinovo"
@@ -2258,6 +2265,7 @@ Invitation will be accepted and current user will become a member of the organiz
         "created": "2018-07-10T11:13:00+0200",
         "expires": null,
         "reason": "",
+        "role": "admin",
         "project": {
             "id": 7,
             "name": "Martinovo"
