@@ -270,6 +270,26 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals('admin', $membership['role']);
     }
 
+    public function testGuestAdministratorCannotChangeOrganization()
+    {
+        $organization = $this->normalUserWithMfaClient->createOrganization($this->testMaintainerId, [
+            'name' => 'My destination org',
+        ]);
+
+        try {
+            $this->guestRoleMemberClient->changeProjectOrganization(
+                $this->project['id'],
+                $organization['id']
+            );
+            $this->fail('Action should not be allowed to guest users');
+        } catch (ClientException $e) {
+            $this->restrictedActionTest($e);
+        }
+
+        $project = $this->guestRoleMemberClient->getProject($this->project['id']);
+        $this->assertEquals($this->organization['id'], $project['organization']['id']);
+    }
+
     private function restrictedActionTest(ClientException $e)
     {
         $this->assertEquals(403, $e->getCode());
