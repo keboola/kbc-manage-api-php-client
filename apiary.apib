@@ -1331,11 +1331,43 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
 + Response 204
 
-## Delete User From Project [/manage/projects/{project_id}/users/{user_id}]
+## Change Role or Delete User [/manage/projects/{project_id}/users/{user_id}]
 
 + Parameters
     + project_id (required, int) - Project ID
     + user_id (required, int) - User ID
+
+### Change role of a user in a project [PATCH]
+
++ Attributes
+    + role: admin (string) - User role in the project. Roles `admin` and `guest` are allowed (default `admin`).
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    {
+        "id": 123,
+        "name": "test user",
+        "email": "martin@keboola.com",
+        "features": [],
+        "expires": null,
+        "created": "2016-02-29T08:01:13+0200",
+        "reason": "",
+        "role": "admin",
+        "status": "active",
+        "invitor": {
+            "id": 124,
+            "name": "test user 2",
+            "email": "spam@keboola.com"
+        },
+        "approver": null
+    }
+    ```
 
 ### Delete a user from a project [DELETE]
 
