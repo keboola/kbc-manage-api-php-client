@@ -2,6 +2,7 @@
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
 class ProjectMembershipRolesTest extends ClientMfaTestCase
@@ -13,6 +14,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     private $project;
 
     private const ROLE_GUEST = 'guest';
+
+    /** @var Client */
+    private $guestRoleMemberClient;
 
     public function setUp()
     {
@@ -37,6 +41,8 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $member = $this->findProjectUser($this->project['id'], $this->normalUser['email']);
         $this->assertEquals(self::ROLE_GUEST, $member['role']);
 
+        $this->guestRoleMemberClient = $this->normalUserClient;
+
         foreach ($this->normalUserWithMfaClient->listProjectInvitations($this->project['id']) as $invitation) {
             $this->normalUserWithMfaClient->cancelProjectInvitation($this->project['id'], $invitation['id']);
         }
@@ -48,14 +54,14 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
 
     public function testGuestAdministratorCanViewProjectDetails()
     {
-        $project = $this->normalUserClient->getProject($this->project['id']);
+        $project = $this->guestRoleMemberClient->getProject($this->project['id']);
         $this->assertEquals($this->project['id'], $project['id']);
     }
 
     public function testGuestAdministratorCannotDeleteProject()
     {
         try {
-            $this->normalUserClient->deleteProject($this->project['id']);
+            $this->guestRoleMemberClient->deleteProject($this->project['id']);
             $this->fail('Action should not be allowed to guest users');
         } catch (ClientException $e) {
             $this->restrictedActionTest($e);
@@ -68,7 +74,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     public function testGuestAdministratorCannotUpdateProject()
     {
         try {
-            $this->normalUserClient->updateProject(
+            $this->guestRoleMemberClient->updateProject(
                 $this->project['id'],
                 [
                     'name' => 'Test'
@@ -85,7 +91,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
 
     public function testGuestAdministratorCanListAndGetProjectInvitations()
     {
-        $this->assertCount(0, $this->normalUserClient->listProjectInvitations($this->project['id']));
+        $this->assertCount(0, $this->guestRoleMemberClient->listProjectInvitations($this->project['id']));
 
         $invitation = $this->normalUserWithMfaClient->inviteUserToProject(
             $this->project['id'],
@@ -95,18 +101,18 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             ]
         );
 
-        $invitations = $this->normalUserClient->listProjectInvitations($this->project['id']);
+        $invitations = $this->guestRoleMemberClient->listProjectInvitations($this->project['id']);
         $this->assertCount(1, $invitations);
 
         $this->assertEquals($invitation, reset($invitations));
 
-        $this->assertEquals($invitation, $this->normalUserClient->getProjectInvitation($this->project['id'], $invitation['id']));
+        $this->assertEquals($invitation, $this->guestRoleMemberClient->getProjectInvitation($this->project['id'], $invitation['id']));
     }
 
     public function testGuestAdministratorCannotInviteAdministrator()
     {
         try {
-            $this->normalUserClient->inviteUserToProject(
+            $this->guestRoleMemberClient->inviteUserToProject(
                 $this->project['id'],
                 [
                     'email' => 'spam@keboola.com',
@@ -134,7 +140,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         );
 
         try {
-            $this->normalUserClient->cancelProjectInvitation($this->project['id'], $invitation['id']);
+            $this->guestRoleMemberClient->cancelProjectInvitation($this->project['id'], $invitation['id']);
             $this->fail('Action should not be allowed to guest users');
         } catch (ClientException $e) {
             $this->restrictedActionTest($e);
@@ -145,14 +151,14 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
 
     public function testGuestAdministratorCanListProjectUsers()
     {
-        $members = $this->normalUserClient->listProjectUsers($this->project['id']);
+        $members = $this->guestRoleMemberClient->listProjectUsers($this->project['id']);
         $this->assertCount(2, $members);
     }
 
     public function testGuestAdministratorCannotAddAdministrator()
     {
         try {
-            $this->normalUserClient->addUserToProject(
+            $this->guestRoleMemberClient->addUserToProject(
                 $this->project['id'],
                 [
                     'email' => 'spam@keboola.com',
@@ -171,7 +177,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     public function testGuestAdministratorCannotRemoveAdministrator()
     {
         try {
-            $this->normalUserClient->removeUserFromProject(
+            $this->guestRoleMemberClient->removeUserFromProject(
                 $this->project['id'],
                 $this->normalUserWithMfa['email']
             );
@@ -187,17 +193,17 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
 
     public function testGuestAdministratorCanListAndGetProjectJoinRequests()
     {
-        $this->assertCount(0, $this->normalUserClient->listProjectJoinRequests($this->project['id']));
+        $this->assertCount(0, $this->guestRoleMemberClient->listProjectJoinRequests($this->project['id']));
 
         $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['allowAutoJoin' => false]);
 
         $this->client->requestAccessToProject($this->project['id']);
 
-        $joinRequests = $this->normalUserClient->listProjectJoinRequests($this->project['id']);
+        $joinRequests = $this->guestRoleMemberClient->listProjectJoinRequests($this->project['id']);
         $this->assertCount(1, $joinRequests);
 
         $joinRequest = reset($joinRequests);
-        $this->assertEquals($joinRequest, $this->normalUserClient->getProjectJoinRequest($this->project['id'], $joinRequest['id']));
+        $this->assertEquals($joinRequest, $this->guestRoleMemberClient->getProjectJoinRequest($this->project['id'], $joinRequest['id']));
     }
 
     public function testGuestAdministratorCannotApproveOrDeclineJoinRequest()
@@ -212,7 +218,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $joinRequest = reset($joinRequests);
 
         try {
-            $this->normalUserClient->rejectProjectJoinRequest($this->project['id'], $joinRequest['id']);
+            $this->guestRoleMemberClient->rejectProjectJoinRequest($this->project['id'], $joinRequest['id']);
             $this->fail('Action should not be allowed to guest users');
         } catch (ClientException $e) {
             $this->restrictedActionTest($e);
@@ -222,7 +228,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertCount(1, $joinRequests);
 
         try {
-            $this->normalUserClient->approveProjectJoinRequest($this->project['id'], $joinRequest['id']);
+            $this->guestRoleMemberClient->approveProjectJoinRequest($this->project['id'], $joinRequest['id']);
             $this->fail('Action should not be allowed to guest users');
         } catch (ClientException $e) {
             $this->restrictedActionTest($e);
@@ -235,7 +241,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     public function testGuestAdministratorCannotCreateStorageToken()
     {
         try {
-            $this->normalUserClient->createProjectStorageToken(
+            $this->guestRoleMemberClient->createProjectStorageToken(
                 $this->project['id'],
                 [
                 ]
@@ -249,7 +255,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     public function testGuestAdministratorCannotChangeMembershipRole()
     {
         try {
-            $this->normalUserClient->updateUserProjectMembership(
+            $this->guestRoleMemberClient->updateUserProjectMembership(
                 $this->project['id'],
                 $this->normalUserWithMfa['id'],
                 ['role' => self::ROLE_GUEST]
