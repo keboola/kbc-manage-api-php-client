@@ -931,19 +931,24 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($verified['canReadAllFileUploads']);
     }
 
-    public function testProjectEnableDisable()
+    public function testSuperAdminCanDisableAndEnableProject()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+        $this->client->removeUserFromOrganization($organization['id'], $this->superAdmin['id']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+        $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->superAdmin['id']);
+
+        $project = $this->normalUserClient->createProject($organization['id'], [
             'name' => 'My test',
         ]);
 
         $this->assertFalse($project['isDisabled']);
 
-        $storageToken = $this->client->createProjectStorageToken($project['id'], [
+        $storageToken = $this->normalUserClient->createProjectStorageToken($project['id'], [
             'description' => 'test',
         ]);
 
@@ -1352,5 +1357,151 @@ class ProjectsTest extends ClientTestCase
 
         $users = $this->client->listProjectUsers($project['id']);
         $this->assertCount(0, $users);
+    }
+
+    public function testMaintainerAdminCannotDisableAndEnableProject()
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        // disable test
+        try {
+            $this->normalUserClient->disableProject($project['id'], ['disableReason' => 'Disable test']);
+            $this->fail('Maintainer admin should not be able to disable project');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertFalse($project['isDisabled']);
+
+        // enable test
+        $this->client->disableProject($project['id'], ['disableReason' => 'Disable test']);
+
+        try {
+            $this->normalUserClient->enableProject($project['id']);
+            $this->fail('Maintainer admin should not be able to enable project');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertTrue($project['isDisabled']);
+    }
+
+    public function testOrganizationAdminCannotDisableAndEnableProject()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        // disable test
+        try {
+            $this->normalUserClient->disableProject($project['id'], ['disableReason' => 'Disable test']);
+            $this->fail('Organization admin should not be able to disable project');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertFalse($project['isDisabled']);
+
+        // enable test
+        $this->client->disableProject($project['id'], ['disableReason' => 'Disable test']);
+
+        try {
+            $this->normalUserClient->enableProject($project['id']);
+            $this->fail('Organization admin should not be able to enable project');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertTrue($project['isDisabled']);
+    }
+
+    public function testProjectAdminCannotDisableAndEnableProject()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
+
+        // disable test
+        try {
+            $this->normalUserClient->disableProject($project['id'], ['disableReason' => 'Disable test']);
+            $this->fail('Organization admin should not be able to disable project');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertFalse($project['isDisabled']);
+
+        // enable test
+        $this->client->disableProject($project['id'], ['disableReason' => 'Disable test']);
+
+        try {
+            $this->normalUserClient->enableProject($project['id']);
+            $this->fail('Organization admin should not be able to enable project');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertTrue($project['isDisabled']);
+    }
+
+    public function testRandomAdminCannotDisableAndEnableProject()
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        // disable test
+        try {
+            $this->normalUserClient->disableProject($project['id'], ['disableReason' => 'Disable test']);
+            $this->fail('Organization admin should not be able to disable project');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertFalse($project['isDisabled']);
+
+        // enable test
+        $this->client->disableProject($project['id'], ['disableReason' => 'Disable test']);
+
+        try {
+            $this->normalUserClient->enableProject($project['id']);
+            $this->fail('Organization admin should not be able to enable project');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertTrue($project['isDisabled']);
     }
 }
