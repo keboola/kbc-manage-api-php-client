@@ -191,6 +191,17 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertNotNull($membership);
     }
 
+    public function testGuestAdministratorCanLeaveProject()
+    {
+        $this->guestRoleMemberClient->removeUserFromProject(
+            $this->project['id'],
+            $this->normalUser['id']
+        );
+
+        $membership = $this->findProjectUser($this->project['id'], $this->normalUser['email']);
+        $this->assertNull($membership);
+    }
+
     public function testGuestAdministratorCanListAndGetProjectJoinRequests()
     {
         $this->assertCount(0, $this->guestRoleMemberClient->listProjectJoinRequests($this->project['id']));
