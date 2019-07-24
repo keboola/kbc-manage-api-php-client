@@ -18,6 +18,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /** @var Client */
     private $guestRoleMemberClient;
 
+    /** @var array */
+    private $guestUser;
+
     public function setUp()
     {
         parent::setUp();
@@ -38,18 +41,8 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             ]
         );
 
-        $member = $this->findProjectUser($this->project['id'], $this->normalUser['email']);
-        $this->assertEquals(self::ROLE_GUEST, $member['role']);
-
         $this->guestRoleMemberClient = $this->normalUserClient;
-
-        foreach ($this->normalUserWithMfaClient->listProjectInvitations($this->project['id']) as $invitation) {
-            $this->normalUserWithMfaClient->cancelProjectInvitation($this->project['id'], $invitation['id']);
-        }
-
-        foreach ($this->client->listMyProjectJoinRequests() as $joinRequest) {
-            $this->client->deleteMyProjectJoinRequest($joinRequest['id']);
-        }
+        $this->guestUser = $this->normalUser;
     }
 
     public function testGuestAdministratorCanViewProjectDetails()
@@ -195,10 +188,10 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     {
         $this->guestRoleMemberClient->removeUserFromProject(
             $this->project['id'],
-            $this->normalUser['id']
+            $this->guestUser['id']
         );
 
-        $membership = $this->findProjectUser($this->project['id'], $this->normalUser['email']);
+        $membership = $this->findProjectUser($this->project['id'], $this->guestUser['email']);
         $this->assertNull($membership);
     }
 
