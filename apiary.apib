@@ -1183,7 +1183,6 @@ An optional expiration (seconds) and reason for joining can be added to the requ
         + Default: `admin`
         
         + Members
-            + `admin`
             + `guest`
     + expirationSeconds: 3600 (number) - After how many seconds the invitation and membership of a user will expire
     + reason: Help with component configuration (string) - Reason for inviting user
@@ -1326,7 +1325,12 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 + Attributes
 
     + email: martin@keboola.com (required) - Email of an invited user
-    + role: admin (string) - User role in the project. Roles `admin` and `guest` are allowed (default `admin`).
+    + role: admin (enum[string]) - User role in the project. Roles `admin` and `guest` are allowed (default `admin`).
+
+        + Default: `admin`
+
+        + Members
+            + `guest`
     + expirationSeconds: 3600 (number) - After how many seconds the membership of a user will expire
 
 
@@ -1346,7 +1350,12 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 ### Change role of a user in a project [PATCH]
 
 + Attributes
-    + role: admin (string) - User role in the project. Roles `admin` and `guest` are allowed (default `admin`).
+    + role: admin (enum[string]) - User role in the project. Roles `admin` and `guest` are allowed (default `admin`).
+
+        + Default: `admin`
+
+        + Members
+            + `guest`
 
 + Request (application/json)
     + Headers
