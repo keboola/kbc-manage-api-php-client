@@ -572,9 +572,9 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertEquals('guest', $invitation['role']);
         $this->assertNotEmpty($invitation['expires']);
 
-        $this->client->acceptMyProjectInvitation($invitation['id']);
+        $this->normalUserClient->acceptMyProjectInvitation($invitation['id']);
 
-        $invitations = $this->client->listMyProjectInvitations();
+        $invitations = $this->normalUserClient->listMyProjectInvitations();
         $this->assertCount(0, $invitations);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
