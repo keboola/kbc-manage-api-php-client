@@ -384,6 +384,11 @@ class Client
         $this->apiDelete("/manage/projects/{$projectId}/users/{$userId}");
     }
 
+    public function updateUserProjectMembership($projectId, $userId, $params)
+    {
+        return $this->apiPatch("/manage/projects/{$projectId}/users/{$userId}", $params);
+    }
+
     public function getProjectInvitation($projectId, $invitationId)
     {
         return $this->apiGet("/manage/projects/{$projectId}/invitations/{$invitationId}");
