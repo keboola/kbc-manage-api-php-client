@@ -83,6 +83,7 @@ KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled
 TEST_ABS_ACCOUNT_KEY=
 TEST_ABS_ACCOUNT_NAME=
 TEST_ABS_CONTAINER_NAME=
+TEST_ABS_REGION=
 TEST_ABS_ROTATE_ACCOUNT_KEY=
 TEST_S3_ROTATE_KEY=
 TEST_S3_ROTATE_SECRET=
@@ -116,6 +117,7 @@ These variables are used for testing file storage. You have to copy these values
  - `TEST_ABS_ACCOUNT_KEY` - First secret key for Azure Storage account
  - `TEST_ABS_ACCOUNT_NAME` - Name of Azure Storage account
  - `TEST_ABS_CONTAINER_NAME` - Name of container created inside Azure Storage Account
+ - `TEST_ABS_REGION` - Name of region where Azure Storage Account is located. (Note: AWS region list is used)
  - `TEST_ABS_ROTATE_ACCOUNT_KEY` - Second secret key for Azure Storage account
  - `TEST_S3_ROTATE_KEY` - Second AWS key
  - `TEST_S3_ROTATE_SECRET` - Second AWS secret

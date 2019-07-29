@@ -15,6 +15,7 @@ class FileStorageAbsTest extends ClientTestCase
         'accountKey' => TEST_ABS_ACCOUNT_KEY,
         'containerName' => TEST_ABS_CONTAINER_NAME,
         'owner' => 'keboola',
+        'region' => TEST_ABS_REGION,
     ];
 
     private const ROTATE_ABS_OPTIONS = [
@@ -118,6 +119,8 @@ Errors:
 
     public function testProjectAssignAbsFileStorage()
     {
+        $this->markTestSkipped('Will be enabled after Azure FS will be fully working');
+
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => $name,
