@@ -3,6 +3,7 @@ error_reporting(-1);
 date_default_timezone_set('UTC');
 
 define('TEST_ABS_ACCOUNT_KEY', getenv('TEST_ABS_ACCOUNT_KEY'));
+define('TEST_ABS_REGION', getenv('TEST_ABS_REGION'));
 define('TEST_ABS_ACCOUNT_NAME', getenv('TEST_ABS_ACCOUNT_NAME'));
 define('TEST_ABS_CONTAINER_NAME', getenv('TEST_ABS_CONTAINER_NAME'));
 define('TEST_ABS_ROTATE_ACCOUNT_KEY', getenv('TEST_ABS_ROTATE_ACCOUNT_KEY'));
