@@ -71,6 +71,7 @@ class FileStorageS3Test extends ClientTestCase
         }
     }
 
+
     public function testSetS3StorageAsDefault()
     {
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
@@ -82,9 +83,65 @@ class FileStorageS3Test extends ClientTestCase
         $this->assertTrue($storage['isDefault']);
 
         $storageList = $this->client->listS3FileStorage();
+        $regions = [];
         foreach ($storageList as $item) {
-            if ($item['isDefault'] && $item['id'] !== $storage['id']) {
-                $this->fail('There are more storage backends with default flag');
+
+            if ($item['isDefault'] && in_array($item['region'], $regions)) {
+                $this->fail('There are more default storage backends with default flag in one region');
+            }
+
+            if ($item['isDefault']) {
+                array_push($regions, $item['region']);
+            }
+
+            if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === self::DEFAULT_S3_OPTIONS['region']) {
+                $this->fail('Eu storage backend was not set as default correctly');
+            }
+        }
+    }
+
+    public function testSetS3StorageDefaultInMultipleRegions()
+    {
+        $this->markTestSkipped('This tests requires working us-east-1 S3 credentials and bucket');
+        $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
+
+        $this->assertFalse($storage['isDefault']);
+
+        $storage = $this->client->setS3FileStorageAsDefault($storage['id']);
+
+        $this->assertTrue($storage['isDefault']);
+
+        $usRegionStorage = $this->client->createS3FileStorage(array_merge(self::DEFAULT_S3_OPTIONS, [
+            'region' => 'us-east-1',
+            'awsKey' => '### FILL BEFORE RUNNING TEST ###',
+            'awsSecret' => '### FILL BEFORE RUNNING TEST ###',
+            'filesBucket' => '### FILL BEFORE RUNNING TEST ###',
+        ]));
+
+        $this->assertFalse($usRegionStorage['isDefault']);
+
+        $usRegionStorage = $this->client->setS3FileStorageAsDefault($usRegionStorage['id']);
+
+        $this->assertTrue($usRegionStorage['isDefault']);
+
+        $storageList = $this->client->listS3FileStorage();
+        $regions = [];
+        foreach ($storageList as $item) {
+
+            if ($item['isDefault'] && in_array($item['region'], $regions)) {
+                $this->fail('There are more default storage backends with default flag in one region');
+            }
+
+            if ($item['isDefault']) {
+                array_push($regions, $item['region']);
+            }
+
+            if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === self::DEFAULT_S3_OPTIONS['region']) {
+                $this->fail('Eu storage was not set as default correctly');
+            }
+
+            if ($item['isDefault'] && $item['id'] !== $usRegionStorage['id'] && $item['region'] === 'us-east-1') {
+                $this->fail('Us storage was not set as default correctly');
             }
         }
     }
