@@ -76,9 +76,19 @@ class FileStorageAbsTest extends ClientTestCase
         $this->assertTrue($storage['isDefault']);
 
         $storageList = $this->client->listAbsFileStorage();
+        $regions = [];
         foreach ($storageList as $item) {
-            if ($item['isDefault'] && $item['id'] !== $storage['id']) {
-                $this->fail('There are more storage backends with default flag');
+
+            if ($item['isDefault'] && in_array($item['region'], $regions)) {
+                $this->fail('There are more default storage backends with default flag in one region');
+            }
+
+            if ($item['isDefault']) {
+                array_push($regions, $item['region']);
+            }
+
+            if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === self::DEFAULT_ABS_OPTIONS['region']) {
+                $this->fail('Eu storage backend was not set as default correctly');
             }
         }
     }
