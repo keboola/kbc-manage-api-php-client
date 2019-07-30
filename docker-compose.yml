@@ -9,6 +9,7 @@ services:
       - ./:/code
     working_dir: /code
     environment:
+      - ENABLE_DEV_TESTS
       - KBC_MANAGE_API_URL
       - KBC_MANAGE_API_TOKEN
       - KBC_SUPER_API_TOKEN
@@ -17,6 +18,17 @@ services:
       - KBC_TEST_ADMIN_TOKEN
       - KBC_TEST_ADMIN_WITH_MFA_EMAIL
       - KBC_TEST_ADMIN_WITH_MFA_TOKEN
+      - TEST_ABS_ACCOUNT_KEY
+      - TEST_ABS_REGION
+      - TEST_ABS_ACCOUNT_NAME
+      - TEST_ABS_CONTAINER_NAME
+      - TEST_ABS_ROTATE_ACCOUNT_KEY
+      - TEST_S3_ROTATE_KEY
+      - TEST_S3_ROTATE_SECRET
+      - TEST_S3_FILES_BUCKET
+      - TEST_S3_KEY
+      - TEST_S3_REGION
+      - TEST_S3_SECRET
     command: >
          sh -c '
          composer install
