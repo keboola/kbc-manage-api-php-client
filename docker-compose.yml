@@ -34,7 +34,7 @@ services:
          composer install
          && ./vendor/bin/phpunit
          '
-  dev:
+  app:
     build:
       context: .
       target: dev
