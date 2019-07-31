@@ -2,6 +2,7 @@
     "name": "keboola/kbc-manage-api-php-client",
     "description": "Keboola Management API Client",
     "require": {
+        "php" : "^7.1",
         "guzzlehttp/guzzle": "^6.1"
     },
     "require-dev": {
