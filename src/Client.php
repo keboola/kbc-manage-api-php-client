@@ -588,7 +588,7 @@ class Client
 
     public function createS3FileStorage(array $options)
     {
-        return $this->apiPost("/manage/file-storage-s3/", $options);
+        return $this->apiPost('/manage/file-storage-s3/', $options);
     }
 
     public function setS3FileStorageAsDefault($fileStorageId)
@@ -598,7 +598,7 @@ class Client
 
     public function listS3FileStorage()
     {
-        return $this->apiGet("manage/file-storage-s3");
+        return $this->apiGet('manage/file-storage-s3');
     }
 
     public function rotateS3FileStorageCredentials(int $fileStorageId, array $options)
@@ -608,7 +608,7 @@ class Client
 
     public function createAbsFileStorage(array $options)
     {
-        return $this->apiPost("/manage/file-storage-abs/", $options);
+        return $this->apiPost('/manage/file-storage-abs/', $options);
     }
 
     public function setAbsFileStorageAsDefault($fileStorageId)
@@ -618,7 +618,7 @@ class Client
 
     public function listAbsFileStorage()
     {
-        return $this->apiGet("manage/file-storage-abs/");
+        return $this->apiGet('manage/file-storage-abs/');
     }
 
 
@@ -769,13 +769,13 @@ class Client
 
     private function composeErrorMessage(RequestException $requestException, ?array $body = null)
     {
-        if($body !== null && isset($body['error'])) {
+        if ($body !== null && isset($body['error'])) {
             $message = $body['error'];
             if (isset($body['errors'])) {
-               $message .= "\nErrors:\n";
-               foreach ($body['errors'] as $error) {
-                   $message .= sprintf("\"%s\": %s\n", $error['key'], $error['message']);
-               }
+                $message .= "\nErrors:\n";
+                foreach ($body['errors'] as $error) {
+                    $message .= sprintf("\"%s\": %s\n", $error['key'], $error['message']);
+                }
             }
             return $message;
         } else {
