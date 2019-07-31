@@ -78,7 +78,6 @@ class FileStorageAbsTest extends ClientTestCase
         $storageList = $this->client->listAbsFileStorage();
         $regions = [];
         foreach ($storageList as $item) {
-
             if ($item['isDefault'] && in_array($item['region'], $regions)) {
                 $this->fail('There are more default storage backends with default flag in one region');
             }

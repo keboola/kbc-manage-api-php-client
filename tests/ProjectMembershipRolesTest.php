@@ -70,7 +70,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->guestRoleMemberClient->updateProject(
                 $this->project['id'],
                 [
-                    'name' => 'Test'
+                    'name' => 'Test',
                 ]
             );
             $this->fail('Action should not be allowed to guest users');
@@ -179,7 +179,6 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->restrictedActionTest($e);
         }
 
-
         $membership = $this->findProjectUser($this->project['id'], $this->normalUserWithMfa['email']);
         $this->assertNotNull($membership);
     }
@@ -268,7 +267,6 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         } catch (ClientException $e) {
             $this->restrictedActionTest($e);
         }
-
 
         $membership = $this->findProjectUser($this->project['id'], $this->normalUserWithMfa['email']);
         $this->assertEquals('admin', $membership['role']);

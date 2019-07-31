@@ -676,7 +676,7 @@ class ProjectsTest extends ClientTestCase
             [
                 'name' => 'goodData.usersCount',
                 'value' => 20,
-            ]
+            ],
         ];
 
         $this->client->setProjectLimits($project['id'], $limits);
