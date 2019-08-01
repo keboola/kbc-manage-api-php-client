@@ -6,9 +6,9 @@ services:
   - docker
 
 script:
- - docker-compose build app
+ - docker-compose build dev
  - docker network create connection_api-tests
- - docker-compose run --rm app composer ci
+ - docker-compose run --rm dev
 
 deploy:
   provider: script
