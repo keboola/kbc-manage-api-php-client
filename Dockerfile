@@ -1,4 +1,4 @@
-FROM php:7.1 as common
+FROM php:7.1
 MAINTAINER Martin Halamicek <martin@keboola.com>
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -11,22 +11,9 @@ RUN cd \
   && curl -sS https://getcomposer.org/installer | php \
   && ln -s /root/composer.phar /usr/local/bin/composer
 
-
-FROM common as dev
-ADD ./ /code
 WORKDIR /code
+ADD ./ /code
 
 RUN composer install \
     --prefer-dist \
-    --no-interaction \
-    --dev
-
-FROM common as prod
-ADD ./ /code
-WORKDIR /code
-
-RUN composer install --prefer-dist --no-interaction
-
-
-
-
+    --no-interaction

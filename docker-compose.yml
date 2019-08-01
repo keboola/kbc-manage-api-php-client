@@ -1,5 +1,15 @@
 version: '3.4'
 services:
+  dev:
+    build: .
+    volumes:
+      - ./:/code
+    working_dir: /code
+    command: >
+      sh -c '
+      composer install
+      && composer ci
+      '
   tests: &tests-config
     build: .
     image: keboola/manage-api-tests
@@ -34,11 +44,6 @@ services:
          composer install
          && ./vendor/bin/phpunit
          '
-  app:
-    build:
-      context: .
-      target: dev
-    image: keboola/manage-api-tests-build
 
   tests-xdebug:
     <<: *tests-config
