@@ -24,7 +24,8 @@
         "ci": [
             "@phpcs"
         ],
-        "phpcs": "phpcs -s -n -p --extensions=php . src tests"
+        "phpcs": "phpcs -s -n -p --extensions=php . src tests",
+        "tests": "phpunit"
     },
     "authors": [
         {
