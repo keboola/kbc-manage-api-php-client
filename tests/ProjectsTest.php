@@ -711,7 +711,7 @@ class ProjectsTest extends ClientTestCase
             $clientWithSuperApiToken = new \Keboola\ManageApi\Client([
                 'token' => getenv('KBC_SUPER_API_TOKEN'),
                 'url' => getenv('KBC_MANAGE_API_URL'),
-                'backoffMaxTries' => 0,
+                'backoffMaxTries' => 1,
             ]);
 
             $clientWithSuperApiToken->setProjectLimits($projectAfterCreation['id'], []);

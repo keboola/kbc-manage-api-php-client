@@ -51,7 +51,7 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
         $client = new Client([
             'token' => getenv('KBC_MANAGE_API_TOKEN'),
             'url' => $manageApiUrl,
-            'backoffMaxTries' => 0,
+            'backoffMaxTries' => 1,
         ]);
         $organizations = $client->listMaintainerOrganizations(getenv('KBC_TEST_MAINTAINER_ID'));
         foreach ($organizations as $organization) {
@@ -67,12 +67,12 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
         $this->client = new Client([
             'token' => getenv('KBC_MANAGE_API_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
-            'backoffMaxTries' => 0,
+            'backoffMaxTries' => 1,
         ]);
         $this->normalUserClient = new \Keboola\ManageApi\Client([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
-            'backoffMaxTries' => 0,
+            'backoffMaxTries' => 1,
         ]);
         $this->testMaintainerId = (int) getenv('KBC_TEST_MAINTAINER_ID');
 
