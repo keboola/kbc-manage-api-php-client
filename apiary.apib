@@ -1341,6 +1341,64 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
 + Response 204
 
+## Project Templates [/manage/projects/{project_id}/templates]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+### List templates [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+    ```js
+    [
+        {
+            "stringId" => "poc15Days",
+            "name" => "POC 15 days",
+            "description" => "Proof of concept. 15 days trial.",
+            "expirationDays" => 15,
+            "billedMonthlyPrice" => null,
+            "hasTryModeOn" => 0
+        },
+        {
+            "stringId" => "poc15DaysGuideMode",
+            "name" => "POC Guide Mode",
+            "description" => "Proof of concept. 15 days trial - Guide Mode.",
+            "expirationDays" => 15,
+            "billedMonthlyPrice" => null,
+            "hasTryModeOn" => 1
+        }
+    ]
+    ```
+
+## Detail Project Template [/manage/project-template/{template_string_id}]
+
++ Parameters
+    + template_string_id (required, string) - Project string ID
+
+### Detail project template [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+    ```js
+    {
+        "stringId" => "poc15Days",
+        "name" => "POC 15 days",
+        "description" => "Proof of concept. 15 days trial.",
+        "expirationDays" => 15,
+        "billedMonthlyPrice" => null,
+        "hasTryModeOn" => 0
+    }
+    ```
+
 ## Change Role or Delete User [/manage/projects/{project_id}/users/{user_id}]
 
 + Parameters
