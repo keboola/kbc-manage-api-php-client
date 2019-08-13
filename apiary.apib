@@ -2406,6 +2406,106 @@ Invitation will be accepted and current user will be added to the project.
 
 + Response 204
 
+# Group Promo codes
+
+## Promo codes [/manage/maintainers/{maintainer_id}/promo-codes]
+
+### Retrieve all promo codes [GET]
+
++ Parameters
+    + maintainer_id: 1 (required, integer)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "code": "GUIDE-MODE",
+            "expires": "2029-08-06 23:59:59",
+            "organization": {
+                "id": "1",
+                "name": "Keboola Internal",
+                "created": null,
+                "allowAutoJoin": "1",
+                "crmId": "",
+                "mfaRequired": null
+            },
+            "projectTemplate": {
+                "stringId": "poc15DaysGuideMode",
+                "name": "POC Guide Mode",
+                "description": "Proof of concept. 15 days trial - Guide Mode.",
+                "expirationDays": "15",
+                "billedMonthlyPrice": null,
+                "hasTryModeOn": "1"
+            }
+        },
+        {
+            "code": "test",
+            "expires": "2019-11-12 14:07:48",
+            "organization": {
+                "id": "1",
+                "name": "Keboola Internal",
+                "created": null,
+                "allowAutoJoin": "1",
+                "crmId": "",
+                "mfaRequired": null
+            },
+            "projectTemplate": {
+                "stringId": "poc15DaysGuideMode",
+                "name": "POC Guide Mode",
+                "description": "Proof of concept. 15 days trial - Guide Mode.",
+                "expirationDays": "15",
+                "billedMonthlyPrice": null,
+                "hasTryModeOn": "1"
+            }
+        }
+    ]
+    ```
+
+### Create new promo codes [POST]
+
+To create a new promo-code, provide the following parameters as JSON in the request body:
++ Attributes
+
+    + code: TEST (required) - Promo-code name
+    + expirationDays: 10 (required) - Promo-code expiration days
+    + organizationId: 1 (required) - Add to organization
+    + projectTemplateStringId: poc15DaysGuideMode (required) - Use project template
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "code": "TEST",
+        "expires": "2019-08-23 23:59:59",
+        "organization": {
+            "id": "1",
+            "name": "Keboola Internal",
+            "created": null,
+            "allowAutoJoin": "1",
+            "crmId": "",
+            "mfaRequired": null
+        },
+        "projectTemplate": {
+            "stringId": "poc15DaysGuideMode",
+            "name": "POC Guide Mode",
+            "description": "Proof of concept. 15 days trial - Guide Mode.",
+            "expirationDays": "15",
+            "billedMonthlyPrice": null,
+            "hasTryModeOn": "1"
+        }
+    }
+    ```
 
 # Group SUPER - Features
 
