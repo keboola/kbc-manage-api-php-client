@@ -697,6 +697,15 @@ class Client
         $this->apiDelete("/manage/projects/{$projectId}/join-requests/{$joinRequestId}");
     }
 
+    public function listPromoCodesRequest($maintainerId)
+    {
+        $this->apiGet("/manage/maintainers/{$maintainerId}/promo-codes/");
+    }
+
+    public function createPromoCodeRequest($maintainerId, $params = []) {
+        $this->apiPost("/manage/maintainers/{$maintainerId}/promo-codes/", $params);
+    }
+
     private function apiGet($url)
     {
         return $this->request('GET', $url);
