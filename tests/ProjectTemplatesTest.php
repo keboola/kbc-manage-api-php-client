@@ -20,7 +20,7 @@ class ProjectTemplatesTest extends ClientTestCase
     {
         $template = $this->client->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
 
-        $this->assertArrayHasKey('stringId', $template);
+        $this->assertArrayHasKey('id', $template);
         $this->assertArrayHasKey('name', $template);
         $this->assertArrayHasKey('description', $template);
         $this->assertArrayHasKey('expirationDays', $template);

@@ -535,7 +535,7 @@ class Client
 
     public function getProjectTemplates($projectStringId)
     {
-        return $this->apiGet("/manage/projects/{$projectStringId}/templates");
+        return $this->apiGet("/manage/project-templates");
     }
 
     public function getProjectTemplateFeatures($templateStringId)
