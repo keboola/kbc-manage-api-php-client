@@ -10,7 +10,7 @@ class ProjectTemplatesTest extends ClientTestCase
 
     public function testListProjectTemplates()
     {
-        $templates = $this->client->getProjectTemplates(self::TEST_PROJECT_TEMPLATE_STRING_ID);
+        $templates = $this->client->getProjectTemplates();
 
         $this->assertGreaterThan(0, count($templates));
 
