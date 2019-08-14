@@ -14,6 +14,17 @@ class ProjectTemplatesTest extends ClientTestCase
 
         $this->assertGreaterThan(0, count($templates));
 
+        $filteredTemplates = array_filter($templates, function ($item) {
+            if ($item['id'] !== self::TEST_PROJECT_TEMPLATE_STRING_ID) {
+                return false;
+            }
+            return true;
+        });
+        $this->assertGreaterThan(0, count($filteredTemplates));
+
+        $templateDetail = $this->client->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
+
+        $this->assertEquals($templateDetail, current($filteredTemplates));
     }
 
     public function testFetchProjectTemplate()
