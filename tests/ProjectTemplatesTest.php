@@ -7,17 +7,19 @@ use Keboola\ManageApi\ClientException;
 class ProjectTemplatesTest extends ClientTestCase
 {
     const TEST_PROJECT_TEMPLATE_STRING_ID = 'production';
-
     const TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID = 'poc15DaysGuideMode';
 
     private $organization;
+
     /**
-     * Create empty organization without admins, remove admins from test maintainer and delete all their join requests
+     * Delete organizations and remove admins from test maintainer, create empty organization without admin
      */
     public function setUp()
     {
         parent::setUp();
+
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
+
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
@@ -26,13 +28,16 @@ class ProjectTemplatesTest extends ClientTestCase
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
         }
+
         $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
         foreach ($organizations as $organization) {
             $this->client->deleteOrganization($organization['id']);
         }
+
         $this->organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
         ]);
+
         $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam+spam@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
@@ -40,21 +45,26 @@ class ProjectTemplatesTest extends ClientTestCase
     public function testSuperAdminCanViewAndListProjectTemplates()
     {
         $templates = $this->client->getProjectTemplates();
-
-        $this->assertGreaterThan(0, count($templates));
+        $this->assertGreaterThan(2, count($templates));
 
         $filteredTemplates = array_filter($templates, function ($item) {
-            if ($item['id'] !== self::TEST_PROJECT_TEMPLATE_STRING_ID) {
-                return false;
-            }
-            return true;
+            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
         });
-        $this->assertGreaterThan(0, count($filteredTemplates));
+
+        $this->assertCount(1, $filteredTemplates);
 
         $templateDetail = $this->client->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
-
         $this->assertEquals($templateDetail, current($filteredTemplates));
 
+        // system templates
+        $filteredTemplates = array_filter($templates, function ($item) {
+            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
+        });
+
+        $this->assertCount(1, $filteredTemplates);
+
+        $templateDetail = $this->client->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
+        $this->assertEquals($templateDetail, current($filteredTemplates));
     }
 
     public function testOrganizationAdminCanViewAndListProjectTemplates()
@@ -66,16 +76,16 @@ class ProjectTemplatesTest extends ClientTestCase
         $filteredTemplates = array_filter($templates, function ($item) {
             return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
         });
-        $this->assertGreaterThan(0, count($filteredTemplates));
+
+        $this->assertCount(1, $filteredTemplates);
 
         $templateDetail = $this->normalUserClient->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
-
         $this->assertEquals($templateDetail, current($filteredTemplates));
     }
 
-    public function testSuperAdminCanViewHiddenProjectTemplate()
+    public function testTemplateDetail()
     {
-        $template = $this->client->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
+        $template = $this->client->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertArrayHasKey('id', $template);
         $this->assertArrayHasKey('name', $template);
@@ -88,6 +98,14 @@ class ProjectTemplatesTest extends ClientTestCase
     public function testOrganizationAdminCannotViewHiddenProjectTemplate()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $templates = $this->normalUserClient->getProjectTemplates();
+
+        $filteredTemplates = array_filter($templates, function ($item) {
+            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
+        });
+
+        $this->assertCount(0, $filteredTemplates);
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(404);
