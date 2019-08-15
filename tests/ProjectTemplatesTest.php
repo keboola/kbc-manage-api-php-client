@@ -64,14 +64,11 @@ class ProjectTemplatesTest extends ClientTestCase
         $templates = $this->normalUserClient->getProjectTemplates();
 
         $filteredTemplates = array_filter($templates, function ($item) {
-            if ($item['id'] !== self::TEST_PROJECT_TEMPLATE_STRING_ID) {
-                return false;
-            }
-            return true;
+            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
         });
         $this->assertGreaterThan(0, count($filteredTemplates));
 
-        $templateDetail = $this->client->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
+        $templateDetail = $this->normalUserClient->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertEquals($templateDetail, current($filteredTemplates));
     }
@@ -84,13 +81,16 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertArrayHasKey('name', $template);
         $this->assertArrayHasKey('description', $template);
         $this->assertArrayHasKey('expirationDays', $template);
+        $this->assertArrayHasKey('billedMonthlyPrice', $template);
         $this->assertArrayHasKey('hasTryModeOn', $template);
     }
 
     public function testOrganizationAdminCannotViewHiddenProjectTemplate()
     {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
         $this->expectException(ClientException::class);
-        $this->expectExceptionCode(403);
+        $this->expectExceptionCode(404);
 
         $this->normalUserClient->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
     }
