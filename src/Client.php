@@ -528,6 +528,16 @@ class Client
         $this->apiDelete("/manage/users/{$emailOrId}/features/{$feature}");
     }
 
+    public function getProjectTemplate($templateStringId)
+    {
+        return $this->apiGet("/manage/project-templates/{$templateStringId}");
+    }
+
+    public function getProjectTemplates()
+    {
+        return $this->apiGet("/manage/project-templates");
+    }
+
     public function getProjectTemplateFeatures($templateStringId)
     {
         return $this->apiGet("/manage/project-templates/{$templateStringId}/features");
