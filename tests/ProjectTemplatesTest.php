@@ -31,12 +31,6 @@ class ProjectTemplatesTest extends ClientTestCase
         ]);
         $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam+spam@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
-        foreach ($this->normalUserClient->listMyOrganizationInvitations() as $invitation) {
-            $this->normalUserClient->declineMyOrganizationInvitation($invitation['id']);
-        }
-        foreach ($this->client->listMyOrganizationInvitations() as $invitation) {
-            $this->client->declineMyOrganizationInvitation($invitation['id']);
-        }
     }
 
     public function testSuperAdminCanViewAndListProjectTemplates()
