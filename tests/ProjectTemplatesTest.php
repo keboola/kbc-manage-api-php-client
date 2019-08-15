@@ -26,6 +26,10 @@ class ProjectTemplatesTest extends ClientTestCase
                 $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
             }
         }
+        $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+        foreach ($organizations as $organization) {
+            $this->client->deleteOrganization($organization['id']);
+        }
         $this->organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
         ]);
@@ -93,8 +97,6 @@ class ProjectTemplatesTest extends ClientTestCase
 
     public function testRandomAdminCannotViewAndListProjectTemplates()
     {
-        $this->removeNormalUserFromOrganization();
-
         try {
             $this->normalUserClient->getProjectTemplates();
             $this->fail('Forbidden');
@@ -110,19 +112,6 @@ class ProjectTemplatesTest extends ClientTestCase
             $this->fail('Project template not found');
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());
-        }
-    }
-
-    private function removeNormalUserFromOrganization()
-    {
-        $filteredUsers = array_filter($this->client->listOrganizationUsers($this->organization['id']), function ($input) {
-            if ($input['id'] === $this->normalUser['id']) {
-                return true;
-            }
-            return false;
-        });
-        if (count($filteredUsers) > 0) {
-            $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
         }
     }
 }
