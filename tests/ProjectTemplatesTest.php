@@ -1,0 +1,135 @@
+<?php
+
+namespace Keboola\ManageApiTest;
+
+use Keboola\ManageApi\ClientException;
+
+class ProjectTemplatesTest extends ClientTestCase
+{
+    const TEST_PROJECT_TEMPLATE_STRING_ID = 'production';
+    const TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID = 'poc15DaysGuideMode';
+
+    private $organization;
+
+    /**
+     * Delete organizations and remove admins from test maintainer, create empty organization without admin
+     */
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
+
+        foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
+            if ($member['id'] === $this->normalUser['id']) {
+                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
+            }
+            if ($member['id'] === $this->superAdmin['id']) {
+                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
+            }
+        }
+
+        $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+        foreach ($organizations as $organization) {
+            $this->client->deleteOrganization($organization['id']);
+        }
+
+        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam+spam@keboola.com']);
+        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+    }
+
+    public function testSuperAdminCanViewAndListProjectTemplates()
+    {
+        $templates = $this->client->getProjectTemplates();
+        $this->assertGreaterThan(2, count($templates));
+
+        $filteredTemplates = array_filter($templates, function ($item) {
+            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
+        });
+
+        $this->assertCount(1, $filteredTemplates);
+
+        $templateDetail = $this->client->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
+        $this->assertEquals($templateDetail, current($filteredTemplates));
+
+        // system templates
+        $filteredTemplates = array_filter($templates, function ($item) {
+            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
+        });
+
+        $this->assertCount(1, $filteredTemplates);
+
+        $templateDetail = $this->client->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
+        $this->assertEquals($templateDetail, current($filteredTemplates));
+    }
+
+    public function testOrganizationAdminCanViewAndListProjectTemplates()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $templates = $this->normalUserClient->getProjectTemplates();
+
+        $filteredTemplates = array_filter($templates, function ($item) {
+            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
+        });
+
+        $this->assertCount(1, $filteredTemplates);
+
+        $templateDetail = $this->normalUserClient->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
+        $this->assertEquals($templateDetail, current($filteredTemplates));
+    }
+
+    public function testTemplateDetail()
+    {
+        $template = $this->client->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
+
+        $this->assertArrayHasKey('id', $template);
+        $this->assertArrayHasKey('name', $template);
+        $this->assertArrayHasKey('description', $template);
+        $this->assertArrayHasKey('expirationDays', $template);
+        $this->assertArrayHasKey('billedMonthlyPrice', $template);
+        $this->assertArrayHasKey('hasTryModeOn', $template);
+    }
+
+    public function testOrganizationAdminCannotViewHiddenProjectTemplate()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $templates = $this->normalUserClient->getProjectTemplates();
+
+        $filteredTemplates = array_filter($templates, function ($item) {
+            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
+        });
+
+        $this->assertCount(0, $filteredTemplates);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(404);
+
+        $this->normalUserClient->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
+    }
+
+    public function testRandomAdminCannotViewAndListProjectTemplates()
+    {
+        try {
+            $this->normalUserClient->getProjectTemplates();
+            $this->fail('Forbidden');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+    }
+
+    public function testGetNonExistProjectTemplate()
+    {
+        try {
+            $this->client->getProjectTemplate('random-template-name-' . time());
+            $this->fail('Project template not found');
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
+    }
+}
