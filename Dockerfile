@@ -11,12 +11,9 @@ RUN cd \
   && curl -sS https://getcomposer.org/installer | php \
   && ln -s /root/composer.phar /usr/local/bin/composer
 
+WORKDIR /code
 ADD ./ /code
 
-WORKDIR /code
-RUN composer install --prefer-dist --no-interaction
-
-
-
-
-
+RUN composer install \
+    --prefer-dist \
+    --no-interaction

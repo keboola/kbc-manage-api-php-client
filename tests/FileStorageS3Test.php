@@ -66,7 +66,7 @@ class FileStorageS3Test extends ClientTestCase
 
         foreach ($storages as $storage) {
             if ($storage['provider'] !== 'aws') {
-               $this->fail('List of S3 storages contains also Azure Blob Storages');
+                $this->fail('List of S3 storages contains also Azure Blob Storages');
             }
         }
     }
@@ -85,7 +85,6 @@ class FileStorageS3Test extends ClientTestCase
         $storageList = $this->client->listS3FileStorage();
         $regions = [];
         foreach ($storageList as $item) {
-
             if ($item['isDefault'] && in_array($item['region'], $regions)) {
                 $this->fail('There are more default storage backends with default flag in one region');
             }
@@ -127,7 +126,6 @@ class FileStorageS3Test extends ClientTestCase
         $storageList = $this->client->listS3FileStorage();
         $regions = [];
         foreach ($storageList as $item) {
-
             if ($item['isDefault'] && in_array($item['region'], $regions)) {
                 $this->fail('There are more default storage backends with default flag in one region');
             }
@@ -174,8 +172,7 @@ Errors:
 "filesBucket": This field is missing.
 "owner": This field is missing.
 "region": This field is missing.
-'
-        );
+');
         $this->client->createS3FileStorage([]);
     }
 

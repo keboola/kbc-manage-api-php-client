@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:29
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -45,8 +39,7 @@ class StorageBackendTest extends ClientTestCase
 
         $this->assertArrayHasKey('snowflake', $backends);
         $this->assertArrayNotHasKey('redshift', $backends);
-        
-        
+
         $this->client->assignProjectStorageBackend($project['id'], $redshiftBackend['id']);
 
         $project = $this->client->getProject($project['id']);
@@ -122,7 +115,7 @@ class StorageBackendTest extends ClientTestCase
         $this->assertArrayHasKey('backends', $project);
         $this->assertEquals('snowflake', $project['defaultBackend']);
         $this->assertCount(1, $project['backends']);
-        
+
         $this->client->removeProjectStorageBackend($project['id'], reset($project['backends'])['id']);
 
         $project = $this->client->getProject($project['id']);
@@ -153,13 +146,11 @@ class StorageBackendTest extends ClientTestCase
         $sapiClient->createBucket('test', 'in');
 
         try {
-
             $this->client->removeProjectStorageBackend($project['id'], reset($project['backends'])['id']);
             $this->fail('Backend should not be removed');
-        } catch(ClientException $e) {
+        } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertEquals('bucketsExists', $e->getStringCode());
         }
     }
-
 }

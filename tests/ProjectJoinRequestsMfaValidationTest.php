@@ -33,7 +33,6 @@ class ProjectJoinRequestsMfaValidationTest extends ClientMfaTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
-
         foreach ($this->normalUserClient->listMyProjectJoinRequests() as $joinRequest) {
             $this->normalUserClient->deleteMyProjectJoinRequest($joinRequest['id']);
         }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:29
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -62,7 +56,7 @@ class OrganizationsTest extends ClientTestCase
            'name' => 'My org',
         ]);
 
-        $fromList = array_values(array_filter($this->client->listOrganizations(), function($org) use($organization) {
+        $fromList = array_values(array_filter($this->client->listOrganizations(), function ($org) use ($organization) {
             return $org['id'] === $organization['id'];
         }));
         $this->assertNotEmpty($fromList);
@@ -96,7 +90,7 @@ class OrganizationsTest extends ClientTestCase
             $this->normalUserClient->getOrganization($organization['id']);
             $this->fail('User should not have permissions to organization');
         } catch (ClientException $e) {
-           $this->assertEquals(403, $e->getCode());
+            $this->assertEquals(403, $e->getCode());
         }
 
         try {
@@ -110,33 +104,33 @@ class OrganizationsTest extends ClientTestCase
 
         try {
             $org = $this->client->getOrganization($organization['id']);
-            $this->fail("Organisation has been deleted, should not exist.");
+            $this->fail('Organisation has been deleted, should not exist.');
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());
         }
     }
-    
+
     public function testUpdateOrganization()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
         ]);
 
-        $this->assertEquals("Test org", $organization['name']);
+        $this->assertEquals('Test org', $organization['name']);
         $this->assertEquals(1, (int) $organization['allowAutoJoin']);
 
         $org = $this->client->updateOrganization($organization['id'], [
-            "name" => "new name",
-            "allowAutoJoin" => 0
+            'name' => 'new name',
+            'allowAutoJoin' => 0,
         ]);
 
-        $this->assertEquals("new name", $org['name']);
+        $this->assertEquals('new name', $org['name']);
         $this->assertEquals(0, (int) $org['allowAutoJoin']);
 
         // permissions of another user
         try {
             $this->normalUserClient->updateOrganization($organization['id'], [
-                "name" => "my name",
+                'name' => 'my name',
             ]);
             $this->fail('User should not have permissions to rename the organization');
         } catch (ClientException $e) {
@@ -238,7 +232,7 @@ class OrganizationsTest extends ClientTestCase
             'name' => 'Test org',
         ]);
         $this->client->addUserToOrganization($organization['id'], [
-            "email" => $normalUser['email']
+            'email' => $normalUser['email'],
         ]);
         $this->assertTrue($organization['allowAutoJoin']);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
@@ -246,17 +240,17 @@ class OrganizationsTest extends ClientTestCase
         $this->assertCount(1, $orgUsers);
 
         // make sure superAdmin can add someone to the organization, allowAutoJoin is true
-        $org = $this->client->addUserToOrganization($organization['id'], ["email" => "spammer@keboola.com"]);
+        $org = $this->client->addUserToOrganization($organization['id'], ['email' => 'spammer@keboola.com']);
         $orgUsers = $this->client->listOrganizationUsers($organization['id']);
         $this->assertCount(2, $orgUsers);
 
         // now set allowAutoJoin to false and super should no longer be able to add user to org
         $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
         try {
-            $this->client->addUserToOrganization($organization['id'], ["email" => "spammer@keboola.com"]);
-            $this->fail("Should not be able to add the user");
+            $this->client->addUserToOrganization($organization['id'], ['email' => 'spammer@keboola.com']);
+            $this->fail('Should not be able to add the user');
         } catch (ClientException $e) {
-            $this->assertEquals("manage.joinOrganizationPermissionDenied", $e->getStringCode());
+            $this->assertEquals('manage.joinOrganizationPermissionDenied', $e->getStringCode());
         }
     }
 
@@ -269,7 +263,7 @@ class OrganizationsTest extends ClientTestCase
             'name' => 'Test org',
         ]);
         $this->client->addUserToOrganization($organization['id'], [
-            "email" => $normalUser['email']
+            'email' => $normalUser['email'],
         ]);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
@@ -278,7 +272,7 @@ class OrganizationsTest extends ClientTestCase
             $org = $this->client->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
             $this->fail("Superadmins not allowed to alter 'allowAutoJoin` parameter");
         } catch (ClientException $e) {
-            $this->assertEquals("manage.updateOrganizationPermissionDenied", $e->getStringCode());
+            $this->assertEquals('manage.updateOrganizationPermissionDenied', $e->getStringCode());
         }
         $this->assertEquals(true, $organization['allowAutoJoin']);
         $org = $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
@@ -294,7 +288,7 @@ class OrganizationsTest extends ClientTestCase
             'name' => 'Test org',
         ]);
         $this->client->addUserToOrganization($organization['id'], [
-            "email" => $normalUser['email']
+            'email' => $normalUser['email'],
         ]);
 
         $testProject = $this->normalUserClient->createProject($organization['id'], [
@@ -304,8 +298,8 @@ class OrganizationsTest extends ClientTestCase
         $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
         $this->assertNull($projectUser);
 
-        $this->client->addUserToProject($testProject['id'],[
-            "email" => $superAdmin['email']
+        $this->client->addUserToProject($testProject['id'], [
+            'email' => $superAdmin['email'],
         ]);
 
         $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
@@ -325,8 +319,8 @@ class OrganizationsTest extends ClientTestCase
 
         $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
 
-        $this->client->addUserToProject($testProject['id'],[
-            "email" => $superAdmin['email']
+        $this->client->addUserToProject($testProject['id'], [
+            'email' => $superAdmin['email'],
         ]);
 
         $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
@@ -349,7 +343,7 @@ class OrganizationsTest extends ClientTestCase
             'name' => 'Test org',
         ]);
         $this->client->addUserToOrganization($organization['id'], [
-            "email" => $normalUser['email']
+            'email' => $normalUser['email'],
         ]);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
@@ -361,8 +355,8 @@ class OrganizationsTest extends ClientTestCase
         $this->assertNull($projectUser);
 
         try {
-            $this->client->addUserToProject($testProject['id'],[
-                "email" => $superAdmin['email']
+            $this->client->addUserToProject($testProject['id'], [
+                'email' => $superAdmin['email'],
             ]);
             $this->fail('Project join should produce error');
         } catch (ClientException $e) {
@@ -375,8 +369,8 @@ class OrganizationsTest extends ClientTestCase
         $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
 
         try {
-            $this->client->addUserToProject($testProject['id'],[
-                "email" => $superAdmin['email']
+            $this->client->addUserToProject($testProject['id'], [
+                'email' => $superAdmin['email'],
             ]);
             $this->fail('Project join should produce error');
         } catch (ClientException $e) {
@@ -396,7 +390,7 @@ class OrganizationsTest extends ClientTestCase
             'name' => 'Test org',
         ]);
         $this->client->addUserToOrganization($organization['id'], [
-            "email" => $normalUser['email']
+            'email' => $normalUser['email'],
         ]);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
@@ -407,17 +401,17 @@ class OrganizationsTest extends ClientTestCase
         $org = $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
         $this->assertEquals(false, $org['allowAutoJoin']);
 
-        $this->normalUserClient->addUserToProject($testProject['id'],[
-            "email" => $superAdmin['email']
+        $this->normalUserClient->addUserToProject($testProject['id'], [
+            'email' => $superAdmin['email'],
         ]);
 
         $projUsers = $this->client->listProjectUsers($testProject['id']);
-        $this->assertCount(2,$projUsers);
+        $this->assertCount(2, $projUsers);
         foreach ($projUsers as $projUser) {
-            $this->assertEquals("active", $projUser['status']);
+            $this->assertEquals('active', $projUser['status']);
             if ($projUser['email'] === $superAdmin['email']) {
                 $this->assertEquals($projUser['id'], $superAdmin['id']);
-                $this->assertEquals("active", $projUser['status']);
+                $this->assertEquals('active', $projUser['status']);
             } else {
                 $this->assertEquals($projUser['email'], $normalUser['email']);
             }

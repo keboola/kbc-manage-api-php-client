@@ -33,7 +33,6 @@ class ProjectInvitationsMfaValidationTest extends ClientMfaTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
-
         foreach ($this->normalUserClient->listMyProjectInvitations() as $invitation) {
             $this->normalUserClient->declineMyProjectInvitation($invitation['id']);
         }

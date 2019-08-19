@@ -6,7 +6,7 @@ use Keboola\ManageApi\ClientException;
 
 class ProjectTemplateFeaturesTest extends ClientTestCase
 {
-    const TEST_PROJECT_TEMPLATE_STRING_ID = 'productionRedshift';
+    public const TEST_PROJECT_TEMPLATE_STRING_ID = 'productionRedshift';
 
     public function testListAddAndDeleteFeatures()
     {

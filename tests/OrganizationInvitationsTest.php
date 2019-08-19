@@ -66,7 +66,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->client->addUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->updateOrganization($organizationId, [
-            'allowAutoJoin' => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $invitations = $this->client->listOrganizationInvitations($organizationId);
@@ -101,7 +101,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->client->addUserToOrganization($organizationId, ['email' => $this->superAdmin['email']]);
 
         $this->client->updateOrganization($organizationId, [
-            'allowAutoJoin' => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -138,7 +138,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->client->addUserToOrganization($organizationId, ['email' => $this->superAdmin['email']]);
 
         $this->client->updateOrganization($organizationId, [
-            'allowAutoJoin' => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $invitations = $this->client->listOrganizationInvitations($organizationId);
@@ -180,7 +180,7 @@ class OrganizationInvitationsTest extends ClientTestCase
         $this->client->addUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->updateOrganization($organizationId, [
-            'allowAutoJoin' => $allowAutoJoin
+            'allowAutoJoin' => $allowAutoJoin,
         ]);
 
         $invitations = $this->normalUserClient->listOrganizationInvitations($organizationId);

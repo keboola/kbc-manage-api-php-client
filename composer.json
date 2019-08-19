@@ -2,11 +2,13 @@
     "name": "keboola/kbc-manage-api-php-client",
     "description": "Keboola Management API Client",
     "require": {
+        "php" : "^7.1",
         "guzzlehttp/guzzle": "^6.1"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0",
-        "keboola/storage-api-client": "^7.0"
+        "keboola/storage-api-client": "^7.0",
+        "keboola/coding-standard": "^8.0"
     },
     "autoload": {
         "psr-4": {
@@ -17,6 +19,13 @@
         "psr-4": {
             "Keboola\\ManageApiTest\\": "tests/"
         }
+    },
+    "scripts": {
+        "ci": [
+            "@phpcs"
+        ],
+        "phpcs": "phpcs -s -n -p --extensions=php . src tests",
+        "tests": "phpunit"
     },
     "authors": [
         {

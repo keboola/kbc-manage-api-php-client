@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:29
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -307,7 +301,7 @@ class ProjectsTest extends ClientTestCase
                 'name' => 'My test',
                 'defaultBackend' => 'file',
             ]);
-            $this->fail("Project should not be created");
+            $this->fail('Project should not be created');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertEquals('storage.unsupportedBackend', $e->getStringCode());
@@ -410,14 +404,14 @@ class ProjectsTest extends ClientTestCase
         $resp = $this->client->addUserToProject($project['id'], [
             'email' => $this->normalUser['email'],
             'reason' => 'created by test',
-            'expirationSeconds' => '20'
+            'expirationSeconds' => '20',
         ]);
 
         $admins = $this->normalUserClient->listProjectUsers($project['id']);
         $this->assertCount(2, $admins);
 
         foreach ($admins as $projUser) {
-            $this->assertEquals("active", $projUser['status']);
+            $this->assertEquals('active', $projUser['status']);
             if ($projUser['email'] === $this->superAdmin['email']) {
                 $this->assertEquals($projUser['id'], $this->superAdmin['id']);
             } else {
@@ -442,7 +436,7 @@ class ProjectsTest extends ClientTestCase
 
         // let's add the expired user back to the project
         $resp = $this->client->addUserToProject($project['id'], [
-            'email' => $this->normalUser['email']
+            'email' => $this->normalUser['email'],
         ]);
 
         // the project should have 2 users now
@@ -466,7 +460,7 @@ class ProjectsTest extends ClientTestCase
         $resp = $this->client->addUserToProject($project['id'], [
             'email' => 'spam@keboola.com',
             'reason' => 'created by test',
-            'expirationSeconds' => '20'
+            'expirationSeconds' => '20',
         ]);
 
         $admins = $this->client->listProjectUsers($project['id']);
@@ -482,8 +476,8 @@ class ProjectsTest extends ClientTestCase
         if (!$foundUser) {
             $this->fail('User should be in list');
         } else {
-            $this->assertEquals("created by test", $foundUser["reason"]);
-            $this->assertGreaterThan(date("Y-m-d H:i:s", time()),$foundUser["expires"]);
+            $this->assertEquals('created by test', $foundUser['reason']);
+            $this->assertGreaterThan(date('Y-m-d H:i:s', time()), $foundUser['expires']);
         }
 
         // wait for the new guy to get removed from the project during next cron run
@@ -497,7 +491,6 @@ class ProjectsTest extends ClientTestCase
             sleep(pow(2, $tries++));
         }
         $this->assertCount(1, $admins);
-
     }
 
     public function testProjectUpdate()
@@ -545,7 +538,6 @@ class ProjectsTest extends ClientTestCase
         // fetch again
         $project = $this->client->getProject($project['id']);
         $this->assertEquals('redshift', $project['defaultBackend']);
-
 
         $this->assertNull($project['expires']);
         // update - project type and expiration
@@ -616,7 +608,6 @@ class ProjectsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
-
     }
 
 
@@ -634,8 +625,8 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org 2',
         ]);
 
-       $changedProject = $this->client->changeProjectOrganization($project['id'], $newOrganization['id']);
-       $this->assertEquals($newOrganization['id'], $changedProject['organization']['id']);
+        $changedProject = $this->client->changeProjectOrganization($project['id'], $newOrganization['id']);
+        $this->assertEquals($newOrganization['id'], $changedProject['organization']['id']);
     }
 
     public function testChangeProjectLimits()
@@ -656,7 +647,7 @@ class ProjectsTest extends ClientTestCase
             [
                 'name' => 'goodData.usersCount',
                 'value' => 20,
-            ]
+            ],
         ];
         $project = $this->client->setProjectLimits($project['id'], $limits);
         $this->assertEquals($limits[0], $project['limits']['goodData.prodTokenEnabled']);
@@ -685,7 +676,7 @@ class ProjectsTest extends ClientTestCase
             [
                 'name' => 'goodData.usersCount',
                 'value' => 20,
-            ]
+            ],
         ];
 
         $this->client->setProjectLimits($project['id'], $limits);
@@ -896,7 +887,7 @@ class ProjectsTest extends ClientTestCase
             'expiresIn' => 60,
             'bucketPermissions' => [
                 $newBucketId => 'read',
-            ]
+            ],
         ]);
 
         $clientWithReadBucketPermission = new Client([
@@ -1120,7 +1111,6 @@ class ProjectsTest extends ClientTestCase
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(0, $projects);
 
-
         $this->client->deleteOrganization($organization['id']);
     }
 
@@ -1144,7 +1134,7 @@ class ProjectsTest extends ClientTestCase
         // permission validation
         $client = new \Keboola\ManageApi\Client([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL')
+            'url' => getenv('KBC_MANAGE_API_URL'),
         ]);
 
         try {
@@ -1162,7 +1152,6 @@ class ProjectsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
-
     }
 
     public function testProjectUnDelete()
@@ -1328,7 +1317,6 @@ class ProjectsTest extends ClientTestCase
 
         $project = reset($projects);
         $this->assertNotEmpty($project['expires']);
-
 
         $this->client->deleteProject($project['id']);
 
