@@ -6,8 +6,8 @@ use Keboola\ManageApi\ClientException;
 
 class ProjectTemplatesTest extends ClientTestCase
 {
-    const TEST_PROJECT_TEMPLATE_STRING_ID = 'production';
-    const TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID = 'poc15DaysGuideMode';
+    private const TEST_PROJECT_TEMPLATE_STRING_ID = 'production';
+    private const TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID = 'poc15DaysGuideMode';
 
     private $organization;
 
