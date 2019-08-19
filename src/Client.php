@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:24
- */
 
 namespace Keboola\ManageApi;
 
@@ -52,7 +46,7 @@ class Client
         $this->apiUrl = $config['url'];
 
         if (isset($config['backoffMaxTries'])) {
-            $this->backoffMaxTries = (int)$config['backoffMaxTries'];
+            $this->backoffMaxTries = (int) $config['backoffMaxTries'];
         }
         $this->initClient();
     }
@@ -76,7 +70,7 @@ class Client
         return function (
             $retries,
             RequestInterface $request,
-            ResponseInterface $response = null,
+            ?ResponseInterface $response = null,
             $error = null
         ) use ($maxRetries) {
             if ($retries >= $maxRetries) {
@@ -94,23 +88,23 @@ class Client
     private static function createExponentialDelay()
     {
         return function ($retries) {
-            return (int)pow(2, $retries - 1) * 1000;
+            return (int) pow(2, $retries - 1) * 1000;
         };
     }
 
     public function verifyToken()
     {
-        return $this->apiGet("/manage/tokens/verify");
+        return $this->apiGet('/manage/tokens/verify');
     }
 
     public function listMaintainers()
     {
-        return $this->apiGet("/manage/maintainers");
+        return $this->apiGet('/manage/maintainers');
     }
 
     public function createMaintainer($params)
     {
-        return $this->apiPost("/manage/maintainers", $params);
+        return $this->apiPost('/manage/maintainers', $params);
     }
 
     public function updateMaintainer($maintainerId, $params = [])
@@ -170,7 +164,7 @@ class Client
 
     public function listMyMaintainerInvitations()
     {
-        return $this->apiGet("/manage/current-user/maintainers-invitations");
+        return $this->apiGet('/manage/current-user/maintainers-invitations');
     }
 
     public function acceptMyMaintainerInvitation($id)
@@ -200,7 +194,7 @@ class Client
 
     public function listOrganizations()
     {
-        return $this->apiGet("/manage/organizations");
+        return $this->apiGet('/manage/organizations');
     }
 
     public function listOrganizationProjects($organizationId)
@@ -210,7 +204,7 @@ class Client
 
     public function createOrganization($maintainerId, $params)
     {
-        return $this->apiPost("/manage/maintainers/{$maintainerId}/organizations",$params);
+        return $this->apiPost("/manage/maintainers/{$maintainerId}/organizations", $params);
     }
 
     public function getOrganization($organizationId)
@@ -232,7 +226,7 @@ class Client
     {
         return $this->apiGet("manage/organizations/{$organizationId}/users");
     }
-    
+
     public function addUserToOrganization($organizationId, $params = [])
     {
         return $this->apiPost("manage/organizations/{$organizationId}/users", $params);
@@ -270,7 +264,7 @@ class Client
 
     public function listMyOrganizationInvitations()
     {
-        return $this->apiGet("/manage/current-user/organizations-invitations");
+        return $this->apiGet('/manage/current-user/organizations-invitations');
     }
 
     public function acceptMyOrganizationInvitation($id)
@@ -326,7 +320,7 @@ class Client
         );
 
         $queryParams = array_merge($defaultParams, $params);
-        return $this->apiGet("/manage/deleted-projects?" . http_build_query($queryParams));
+        return $this->apiGet('/manage/deleted-projects?' . http_build_query($queryParams));
     }
 
     public function getDeletedProject($id)
@@ -351,7 +345,7 @@ class Client
 
     public function listMyProjectInvitations()
     {
-        return $this->apiGet("/manage/current-user/projects-invitations");
+        return $this->apiGet('/manage/current-user/projects-invitations');
     }
 
     public function acceptMyProjectInvitation($id)
@@ -458,7 +452,7 @@ class Client
 
     public function createFeature($name, $type, $description)
     {
-        return $this->apiPost("/manage/features", [
+        return $this->apiPost('/manage/features', [
             'name' => $name,
             'type' => $type,
             'description' => $description,
@@ -535,7 +529,7 @@ class Client
 
     public function getProjectTemplates()
     {
-        return $this->apiGet("/manage/project-templates");
+        return $this->apiGet('/manage/project-templates');
     }
 
     public function getProjectTemplateFeatures($templateStringId)
@@ -562,7 +556,7 @@ class Client
 
     public function addNotification($data)
     {
-        return $this->apiPost("/manage/notifications", $data);
+        return $this->apiPost('/manage/notifications', $data);
     }
 
     /**
@@ -573,28 +567,28 @@ class Client
      */
     public function getNotifications($params = [])
     {
-        $url = "/manage/notifications";
+        $url = '/manage/notifications';
         if (!empty($params['fromId'])) {
-            $url .= "?fromId=" .$params['fromId'];
+            $url .= '?fromId=' .$params['fromId'];
         }
         return $this->apiGet($url);
     }
 
     public function markAllNotificationsAsRead()
     {
-        return $this->apiPut("/manage/notifications", [
+        return $this->apiPut('/manage/notifications', [
            'allRead' => true,
         ]);
     }
 
     public function markReadNotifications(array $ids)
     {
-        return $this->apiPut("/manage/notifications", ['read' => $ids]);
+        return $this->apiPut('/manage/notifications', ['read' => $ids]);
     }
 
     public function createS3FileStorage(array $options)
     {
-        return $this->apiPost("/manage/file-storage-s3/", $options);
+        return $this->apiPost('/manage/file-storage-s3/', $options);
     }
 
     public function setS3FileStorageAsDefault($fileStorageId)
@@ -604,7 +598,7 @@ class Client
 
     public function listS3FileStorage()
     {
-        return $this->apiGet("manage/file-storage-s3");
+        return $this->apiGet('manage/file-storage-s3');
     }
 
     public function rotateS3FileStorageCredentials(int $fileStorageId, array $options)
@@ -614,7 +608,7 @@ class Client
 
     public function createAbsFileStorage(array $options)
     {
-        return $this->apiPost("/manage/file-storage-abs/", $options);
+        return $this->apiPost('/manage/file-storage-abs/', $options);
     }
 
     public function setAbsFileStorageAsDefault($fileStorageId)
@@ -624,7 +618,7 @@ class Client
 
     public function listAbsFileStorage()
     {
-        return $this->apiGet("manage/file-storage-abs/");
+        return $this->apiGet('manage/file-storage-abs/');
     }
 
 
@@ -635,27 +629,27 @@ class Client
 
     public function createStorageBackend(array $options)
     {
-        return $this->apiPost("/manage/storage-backend", $options);
+        return $this->apiPost('/manage/storage-backend', $options);
     }
 
     public function listStorageBackend($options = [])
     {
-        return $this->apiGet("manage/storage-backend?" . http_build_query($options));
+        return $this->apiGet('manage/storage-backend?' . http_build_query($options));
     }
 
     public function listUiApps()
     {
-        return $this->apiGet("manage/ui-apps");
+        return $this->apiGet('manage/ui-apps');
     }
 
     public function runCommand(array $options)
     {
-        return $this->apiPost("/manage/commands", $options);
+        return $this->apiPost('/manage/commands', $options);
     }
 
     public function listMyProjectJoinRequests()
     {
-        return $this->apiGet("/manage/current-user/projects-join-requests");
+        return $this->apiGet('/manage/current-user/projects-join-requests');
     }
 
     public function getMyProjectJoinRequest($id)
@@ -741,7 +735,7 @@ class Client
                 'X-KBC-ManageApiToken' => $this->tokenString,
                 'Accept-Encoding' => 'gzip',
                 'User-Agent' => $this->userAgent,
-            ]
+            ],
         ]);
 
         try {
@@ -751,37 +745,37 @@ class Client
             $response = $this->client->request($method, $url, $requestOptions);
         } catch (RequestException $e) {
             $response = $e->getResponse();
-            $body = $response ? json_decode((string)$response->getBody(), true) : [];
+            $body = $response ? json_decode((string) $response->getBody(), true) : [];
 
             if ($response && $response->getStatusCode() == 503) {
-                throw new MaintenanceException(isset($body["reason"]) ? $body['reason'] : 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string)$response->getHeader('Retry-After')[0] : null, $body);
+                throw new MaintenanceException(isset($body['reason']) ? $body['reason'] : 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
             }
 
             throw new ClientException(
                 $this->composeErrorMessage($e, $body),
                 $response ? $response->getStatusCode() : $e->getCode(),
                 $e,
-                isset($body['code']) ? $body['code'] : "",
+                isset($body['code']) ? $body['code'] : '',
                 $body
             );
         }
 
         if ($response->hasHeader('Content-Type') && $response->getHeader('Content-Type')[0] == 'application/json') {
-            return json_decode((string)$response->getBody(), true);
+            return json_decode((string) $response->getBody(), true);
         }
 
-        return (string)$response->getBody();
+        return (string) $response->getBody();
     }
 
     private function composeErrorMessage(RequestException $requestException, ?array $body = null)
     {
-        if($body !== null && isset($body['error'])) {
+        if ($body !== null && isset($body['error'])) {
             $message = $body['error'];
             if (isset($body['errors'])) {
-               $message .= "\nErrors:\n";
-               foreach ($body['errors'] as $error) {
-                   $message .= sprintf("\"%s\": %s\n", $error['key'], $error['message']);
-               }
+                $message .= "\nErrors:\n";
+                foreach ($body['errors'] as $error) {
+                    $message .= sprintf("\"%s\": %s\n", $error['key'], $error['message']);
+                }
             }
             return $message;
         } else {

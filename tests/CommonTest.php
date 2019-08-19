@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:29
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -66,7 +60,7 @@ class CommonTest extends ClientTestCase
                 'Content-Type' => 'application/json',
                 'User-Agent' => 'Keboola Manage API PHP Client',
             ],
-            'body' => '{"key": "invalid json}'
+            'body' => '{"key": "invalid json}',
         ];
 
         try {

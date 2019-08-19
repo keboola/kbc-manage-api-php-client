@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:29
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -29,5 +23,4 @@ class UiAppsTest extends ClientTestCase
         $this->assertNotEmpty($app['styles']);
         $this->assertNotEmpty($app['scripts']);
     }
-
 }

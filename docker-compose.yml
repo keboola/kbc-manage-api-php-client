@@ -1,13 +1,14 @@
-version: '3'
+version: '3.4'
 services:
-  tests: &tests-config
+  release:
     build: .
     image: keboola/manage-api-tests
-    tty: true
-    stdin_open: true
+    command: composer ci
+
+  dev: &dev-config
+    build: .
     volumes:
       - ./:/code
-    working_dir: /code
     environment:
       - ENABLE_DEV_TESTS
       - KBC_MANAGE_API_URL
@@ -29,15 +30,10 @@ services:
       - TEST_S3_KEY
       - TEST_S3_REGION
       - TEST_S3_SECRET
-    command: >
-         sh -c '
-         composer install
-         && ./vendor/bin/phpunit
-         '
-  tests-xdebug:
-    <<: *tests-config
+
+  dev-xdebug:
+    <<: *dev-config
     build: docker/xdebug
-    image: keboola/manage-api-tests-xdebug
     volumes:
       - ./:/code/
       - ./docker/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini

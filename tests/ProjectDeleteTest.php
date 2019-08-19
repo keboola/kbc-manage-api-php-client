@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:29
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -51,12 +45,12 @@ class ProjectDeleteTest extends ClientTestCase
         $workspace = $workspaces->createWorkspace();
 
         $workspaces->loadWorkspaceData($workspace['id'], [
-            "input" => [
+            'input' => [
                 [
-                    "source" => $tableId,
-                    "destination" => "users",
-                ]
-            ]
+                    'source' => $tableId,
+                    'destination' => 'users',
+                ],
+            ],
         ]);
 
         // add some configuration to project
@@ -114,10 +108,10 @@ class ProjectDeleteTest extends ClientTestCase
         do {
             $deletedProject = $this->client->getDeletedProject($project['id']);
             if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception("Project purge timeout.");
+                throw new \Exception('Project purge timeout.');
             }
             sleep(1);
-        } while($deletedProject['isPurged'] !== true);
+        } while ($deletedProject['isPurged'] !== true);
         $this->assertNotNull($deletedProject['purgedTime']);
     }
 }

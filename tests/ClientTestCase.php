@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: martinhalamicek
- * Date: 15/10/15
- * Time: 15:26
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -13,7 +7,7 @@ use Keboola\ManageApi\Client;
 class ClientTestCase extends \PHPUnit_Framework_TestCase
 {
 
-    const PRODUCTION_HOSTS = [
+    public const PRODUCTION_HOSTS = [
         'connection.keboola.com',
         'connection.eu-central-1.keboola.com',
     ];
@@ -21,7 +15,7 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
     /**
      * Prefix of all maintainers created by tests
      */
-    const TESTS_MAINTAINER_PREFIX = 'KBC_MANAGE_TESTS';
+    public const TESTS_MAINTAINER_PREFIX = 'KBC_MANAGE_TESTS';
 
     /**
      * @var Client

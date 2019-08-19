@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: miroslavcillik
- * Date: 02/02/16
- * Time: 11:21
- */
 
 namespace Keboola\ManageApiTest;
 
@@ -29,8 +23,8 @@ class NotificationsTest extends ClientTestCase
             'projectId' => $project['id'],
             'title' => 'Project is over quota',
             'payload' => [
-                'limit' => 'kbc.adminsCount'
-            ]
+                'limit' => 'kbc.adminsCount',
+            ],
         ]);
 
         $notification = $this->getNotificationById($addRes['id']);
@@ -56,7 +50,7 @@ class NotificationsTest extends ClientTestCase
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'DEMO project outage',
-            'message' => 'In 30 days this DEMO project will be deleted.'
+            'message' => 'In 30 days this DEMO project will be deleted.',
         ]);
 
         // it takes a while to update child feeds
@@ -91,7 +85,7 @@ class NotificationsTest extends ClientTestCase
         ]);
 
         $this->client->addUserToProject($project['id'], [
-            'email' => getenv('KBC_TEST_ADMIN_EMAIL')
+            'email' => getenv('KBC_TEST_ADMIN_EMAIL'),
         ]);
 
         $msg = 'anotherAdminTestMessage' . microtime();
@@ -100,13 +94,13 @@ class NotificationsTest extends ClientTestCase
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'anotherAdminTest',
-            'message' => $msg
+            'message' => $msg,
         ]);
 
         $origClient = $this->client;
         $this->client = new Client([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL')
+            'url' => getenv('KBC_MANAGE_API_URL'),
         ]);
 
         $notification = $this->getNotificationById($addRes['id']);
@@ -144,8 +138,8 @@ class NotificationsTest extends ClientTestCase
             'projectId' => $project['id'],
             'title' => 'Limit is over quota',
             'payload' => [
-                'limit' => 'kbc.storageSize'
-            ]
+                'limit' => 'kbc.storageSize',
+            ],
         ]);
 
         $notification = $this->getNotificationById($res['id']);
@@ -153,7 +147,7 @@ class NotificationsTest extends ClientTestCase
         $this->assertFalse($notification['isRead']);
 
         $this->client->markReadNotifications([
-            $notification['id']
+            $notification['id'],
         ]);
 
         $notification = $this->getNotificationById($res['id']);
@@ -176,8 +170,8 @@ class NotificationsTest extends ClientTestCase
             'projectId' => $project['id'],
             'title' => 'Limit is over quota',
             'payload' => [
-                'limit' => 'kbc.storageSize'
-            ]
+                'limit' => 'kbc.storageSize',
+            ],
         ]);
 
         $notification2 = $this->client->addNotification([
@@ -185,8 +179,8 @@ class NotificationsTest extends ClientTestCase
             'projectId' => $project['id'],
             'title' => 'Limit is over quota',
             'payload' => [
-                'limit' => 'kbc.storageSize'
-            ]
+                'limit' => 'kbc.storageSize',
+            ],
         ]);
 
         // wait for notifications
@@ -204,8 +198,6 @@ class NotificationsTest extends ClientTestCase
         foreach ($notifications as $notification) {
             $this->assertTrue($notification['isRead']);
         }
-
-
     }
 
     public function testNotificationsAdminRemovedFromProject()
@@ -221,7 +213,7 @@ class NotificationsTest extends ClientTestCase
 
         $adminEmail = getenv('KBC_TEST_ADMIN_EMAIL');
         $this->client->addUserToProject($project['id'], [
-            'email' => $adminEmail
+            'email' => $adminEmail,
         ]);
 
         $msg1 = 'anotherAdminTestMessage' . microtime();
@@ -229,13 +221,13 @@ class NotificationsTest extends ClientTestCase
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'anotherAdminTest',
-            'message' => $msg1
+            'message' => $msg1,
         ]);
 
         $origClient = $this->client;
         $this->client = new Client([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL')
+            'url' => getenv('KBC_MANAGE_API_URL'),
         ]);
 
         $notification = $this->getNotificationById($res1['id']);
@@ -250,12 +242,12 @@ class NotificationsTest extends ClientTestCase
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'anotherAdminTest',
-            'message' => $msg2
+            'message' => $msg2,
         ]);
 
         try {
             $this->getNotificationById($res2['id']);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
         }
 
         $response = $this->client->getNotifications();
@@ -285,7 +277,7 @@ class NotificationsTest extends ClientTestCase
             'type' => 'common',
             'projectId' => $project['id'],
             'title' => 'notificationBeforeAdminEnters',
-            'message' => $msg1
+            'message' => $msg1,
         ]);
 
         // ensure that current admin which is member of project will receive notification
@@ -294,18 +286,18 @@ class NotificationsTest extends ClientTestCase
         // add new user to project
         $adminEmail = getenv('KBC_TEST_ADMIN_EMAIL');
         $this->client->addUserToProject($project['id'], [
-            'email' => $adminEmail
+            'email' => $adminEmail,
         ]);
 
         $newAdminClient = new Client([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL')
+            'url' => getenv('KBC_MANAGE_API_URL'),
         ]);
 
         $notifications = $newAdminClient->getNotifications();
 
-        $received = array_filter($notifications, function($iteratedNotification) use($notification) {
-           return $iteratedNotification['id'] === $notification['id'];
+        $received = array_filter($notifications, function ($iteratedNotification) use ($notification) {
+            return $iteratedNotification['id'] === $notification['id'];
         });
         $this->assertCount(0, $received, 'New project admin should not receive old notifications');
     }
@@ -316,7 +308,6 @@ class NotificationsTest extends ClientTestCase
         do {
             $response = $this->client->getNotifications();
             foreach ($response as $r) {
-
                 if ($id == $r['id']) {
                     return $r;
                 }

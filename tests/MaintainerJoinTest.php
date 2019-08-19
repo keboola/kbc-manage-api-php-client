@@ -15,7 +15,7 @@ class MaintainerJoinTest extends ClientTestCase
         parent::setUp();
 
         $this->maintainer = $this->client->createMaintainer([
-            'name' => self::TESTS_MAINTAINER_PREFIX . " - MaintainerJoinTest",
+            'name' => self::TESTS_MAINTAINER_PREFIX . ' - MaintainerJoinTest',
         ]);
 
         $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'spam+spam@keboola.com']);
@@ -75,7 +75,6 @@ class MaintainerJoinTest extends ClientTestCase
         $this->assertEquals($this->normalUser['id'], $invitation['creator']['id']);
         $this->assertEquals($this->normalUser['email'], $invitation['creator']['email']);
         $this->assertEquals($this->normalUser['name'], $invitation['creator']['name']);
-
     }
 
     public function testRandomAdminCannotJoinMaintainer(): void

@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
 {
-    const TEST_PROJECT_TEMPLATE_STRING_ID = 'demo';
+    public const TEST_PROJECT_TEMPLATE_STRING_ID = 'demo';
 
     public function testAutomatedFeatureAssigning()
     {
@@ -45,5 +45,4 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
     {
         $this->client->createFeature($feature['name'], $feature['type'], $feature['description']);
     }
-
 }
