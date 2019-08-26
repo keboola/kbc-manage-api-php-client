@@ -33,6 +33,30 @@ class PromoCodesTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
+    public function testDifferentOrganizationMaintainerCannotCreatePromoCodes()
+    {
+        $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
+
+        $maintainerName = self::TESTS_MAINTAINER_PREFIX . " - test maintainer";
+        $newMaintainer = $this->client->createMaintainer([
+            'name' => $maintainerName,
+            'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
+            'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
+            'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
+        ]);
+
+        $this->client->addUserToMaintainer($newMaintainer['id'], ['id' => $this->normalUser['id']]);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(404);
+        $this->normalUserClient->createPromoCodeRequest($this->testMaintainerId, [
+            'code' => 'TEST-' . time(),
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc15DaysGuideMode',
+        ]);
+    }
+
     public function testSuperAdminCanListAndCreatePromoCodes()
     {
         $promoCodesBeforeCreate = $this->client->listPromoCodesRequest($this->testMaintainerId);
@@ -46,7 +70,7 @@ class PromoCodesTest extends ClientTestCase
 
         $this->assertEquals(count($promoCodesBeforeCreate) + 1, count($promoCodesAfterCreate));
 
-        $this->assertEquals($promoCode, $promoCodesAfterCreate[0]);
+        $this->assertEquals($promoCode, end($promoCodesAfterCreate));
     }
 
     public function testCannotCreateDuplicatePromoCode()
@@ -94,8 +118,7 @@ class PromoCodesTest extends ClientTestCase
     public function testRandomAdminCannotCreatePromoCode()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionCode(403);
-
+        $this->expectExceptionCode(404);
         $this->normalUserClient->createPromoCodeRequest($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
