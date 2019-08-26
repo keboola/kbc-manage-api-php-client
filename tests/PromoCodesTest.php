@@ -91,6 +91,19 @@ class PromoCodesTest extends ClientTestCase
         ]);
     }
 
+    public function testRandomAdminCannotCreatePromoCode()
+    {
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(403);
+
+        $this->normalUserClient->createPromoCodeRequest($this->testMaintainerId, [
+            'code' => 'TEST-' . time(),
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc15DaysGuideMode',
+        ]);
+    }
+
     public function testInvalidOrganization()
     {
         try {
