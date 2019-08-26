@@ -68,6 +68,8 @@ class PromoCodesTest extends ClientTestCase
 
     public function testOrganizationAdminCannotListPromoCode()
     {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
 
@@ -76,8 +78,10 @@ class PromoCodesTest extends ClientTestCase
 
     public function testOrganizationAdminCannotCreatePromoCode()
     {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
         $this->expectException(ClientException::class);
-        $this->expectExceptionCode(403);
+        $this->expectExceptionCode(404);
 
         $this->normalUserClient->createPromoCodeRequest($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
