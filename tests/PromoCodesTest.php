@@ -33,6 +33,27 @@ class PromoCodesTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
+    public function testMaintainerAdminCanListAndCreatePromoCodes()
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['id' => $this->normalUser['id']]);
+        $this->normalUserClient->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $this->normalUserClient->listPromoCodesRequest($this->testMaintainerId);
+
+        $promoCodesBeforeCreate = $this->normalUserClient->listPromoCodesRequest($this->testMaintainerId);
+        $promoCode = $this->normalUserClient->createPromoCodeRequest($this->testMaintainerId, [
+            'code' => 'TEST-' . time(),
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc6months',
+        ]);
+        $promoCodesAfterCreate = $this->normalUserClient->listPromoCodesRequest($this->testMaintainerId);
+
+        $this->assertEquals(count($promoCodesBeforeCreate) + 1, count($promoCodesAfterCreate));
+
+        $this->assertEquals($promoCode, end($promoCodesAfterCreate));
+    }
+
     public function testDifferentOrganizationMaintainerCannotCreatePromoCodes()
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
