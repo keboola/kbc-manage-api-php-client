@@ -25,6 +25,14 @@ class PromoCodesTest extends ClientTestCase
             }
         }
 
+        $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+        foreach ($organizations as $organization) {
+            foreach ($this->client->listOrganizationProjects($organization['id']) as $project) {
+                $this->client->deleteProject($project['id']);
+            }
+            $this->client->deleteOrganization($organization['id']);
+        }
+
         $this->organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org for promo codes',
         ]);
