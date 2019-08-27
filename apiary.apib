@@ -2406,6 +2406,19 @@ Invitation will be accepted and current user will be added to the project.
 
 + Response 204
 
+## Create project via promo code [/manage/current-user/create-projects-from-promo-code]
+
+### Create project [POST]
+
++ Attributes
+
+    + code: TEST (required) - Promo-code name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
 # Group Promo codes
 
 ## Promo codes [/manage/maintainers/{maintainer_id}/promo-codes]
