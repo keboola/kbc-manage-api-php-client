@@ -544,6 +544,13 @@ class Client
         ]);
     }
 
+    public function addProjectFromPromoCode($promoCode)
+    {
+        return $this->apiPost('/manage/current-user/create-projects-from-promo-code', [
+            'code' => $promoCode
+        ]);
+    }
+
     public function removeProjectTemplateFeature($templateStringId, $featureName)
     {
         $this->apiDelete("/manage/project-templates/{$templateStringId}/features/{$featureName}");

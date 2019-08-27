@@ -200,4 +200,73 @@ class PromoCodesTest extends ClientTestCase
             'projectTemplateStringId' => ProjectTemplatesTest::TEST_NONEXISTS_PROJECT_TEMPLATE_STRING_ID,
         ]);
     }
+
+    public function testSuperAdminCreateProjectFromPromoCodes()
+    {
+        $testingPromoCode = 'TEST-' . time();
+        $this->client->createPromoCodeRequest($this->testMaintainerId, [
+            'code' => $testingPromoCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc',
+        ]);
+
+        $project = $this->client->addProjectFromPromoCode($testingPromoCode);
+
+        $this->assertNotNull($project);
+    }
+
+    public function testCannotCreateDuplicateProjectFromPromoCode()
+    {
+        $testingPromoCode = 'TEST-' . time();
+
+        $this->client->createPromoCodeRequest($this->testMaintainerId, [
+            'code' => $testingPromoCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc',
+        ]);
+
+        try {
+            $this->client->addProjectFromPromoCode($testingPromoCode);
+            $this->client->addProjectFromPromoCode($testingPromoCode);
+            $this->fail('Cannot create duplicate project over promo code');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+        }
+    }
+
+    public function testOrganizationAdminCanCreateProjectFromPromoCode()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $testingPromoCode = 'TEST-' . time();
+
+        $this->client->createPromoCodeRequest($this->testMaintainerId, [
+            'code' => $testingPromoCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc',
+        ]);
+
+        $project = $this->normalUserClient->addProjectFromPromoCode($testingPromoCode);
+
+        $this->assertNotNull($project);
+    }
+
+    public function testRandomAdminCannotCreateProjectFromPromoCode()
+    {
+        $testingPromoCode = 'TEST-' . time();
+
+        $this->client->createPromoCodeRequest($this->testMaintainerId, [
+            'code' => $testingPromoCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc',
+        ]);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(400);
+        $this->normalUserClient->addProjectFromPromoCode($testingPromoCode);
+    }
 }
