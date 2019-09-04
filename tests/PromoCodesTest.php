@@ -38,16 +38,16 @@ class PromoCodesTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['id' => $this->normalUser['id']]);
         $this->normalUserClient->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        $this->normalUserClient->listPromoCodesRequest($this->testMaintainerId);
+        $this->normalUserClient->listPromoCodes($this->testMaintainerId);
 
-        $promoCodesBeforeCreate = $this->normalUserClient->listPromoCodesRequest($this->testMaintainerId);
-        $promoCode = $this->normalUserClient->createPromoCodeRequest($this->testMaintainerId, [
+        $promoCodesBeforeCreate = $this->normalUserClient->listPromoCodes($this->testMaintainerId);
+        $promoCode = $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
-        $promoCodesAfterCreate = $this->normalUserClient->listPromoCodesRequest($this->testMaintainerId);
+        $promoCodesAfterCreate = $this->normalUserClient->listPromoCodes($this->testMaintainerId);
 
         $this->assertEquals(count($promoCodesBeforeCreate) + 1, count($promoCodesAfterCreate));
 
@@ -56,18 +56,18 @@ class PromoCodesTest extends ClientTestCase
 
     public function testCannotListPromoCodesFromRemovedOrganization()
     {
-        $this->client->createPromoCodeRequest($this->testMaintainerId, [
+        $this->client->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
 
-        $listBeforeRemoveOrganization = $this->client->listPromoCodesRequest($this->testMaintainerId);
+        $listBeforeRemoveOrganization = $this->client->listPromoCodes($this->testMaintainerId);
 
         $this->client->deleteOrganization($this->organization['id']);
 
-        $listAfterRemoveOrganization = $this->client->listPromoCodesRequest($this->testMaintainerId);
+        $listAfterRemoveOrganization = $this->client->listPromoCodes($this->testMaintainerId);
 
         $this->assertLessThan(count($listBeforeRemoveOrganization), count($listAfterRemoveOrganization));
     }
@@ -88,7 +88,7 @@ class PromoCodesTest extends ClientTestCase
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(404);
-        $this->normalUserClient->createPromoCodeRequest($this->testMaintainerId, [
+        $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
@@ -98,14 +98,14 @@ class PromoCodesTest extends ClientTestCase
 
     public function testSuperAdminCanListAndCreatePromoCodes()
     {
-        $promoCodesBeforeCreate = $this->client->listPromoCodesRequest($this->testMaintainerId);
-        $promoCode = $this->client->createPromoCodeRequest($this->testMaintainerId, [
+        $promoCodesBeforeCreate = $this->client->listPromoCodes($this->testMaintainerId);
+        $promoCode = $this->client->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc15DaysGuideMode',
         ]);
-        $promoCodesAfterCreate = $this->client->listPromoCodesRequest($this->testMaintainerId);
+        $promoCodesAfterCreate = $this->client->listPromoCodes($this->testMaintainerId);
 
         $this->assertEquals(count($promoCodesBeforeCreate) + 1, count($promoCodesAfterCreate));
 
@@ -120,13 +120,13 @@ class PromoCodesTest extends ClientTestCase
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc15DaysGuideMode',
         ];
-        $addedPromoCode = $this->client->createPromoCodeRequest($this->testMaintainerId, $promoCode);
+        $addedPromoCode = $this->client->createPromoCode($this->testMaintainerId, $promoCode);
 
         $this->assertEquals($promoCode['code'], $addedPromoCode['code']);
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
-        $this->client->createPromoCodeRequest($this->testMaintainerId, $promoCode);
+        $this->client->createPromoCode($this->testMaintainerId, $promoCode);
     }
 
     public function testOrganizationAdminCannotListPromoCode()
@@ -136,7 +136,7 @@ class PromoCodesTest extends ClientTestCase
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
 
-        $this->normalUserClient->listPromoCodesRequest($this->testMaintainerId);
+        $this->normalUserClient->listPromoCodes($this->testMaintainerId);
     }
 
     public function testOrganizationAdminCannotCreatePromoCode()
@@ -146,7 +146,7 @@ class PromoCodesTest extends ClientTestCase
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(404);
 
-        $this->normalUserClient->createPromoCodeRequest($this->testMaintainerId, [
+        $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
@@ -158,7 +158,7 @@ class PromoCodesTest extends ClientTestCase
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(404);
-        $this->normalUserClient->createPromoCodeRequest($this->testMaintainerId, [
+        $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
@@ -169,7 +169,7 @@ class PromoCodesTest extends ClientTestCase
     public function testInvalidOrganization()
     {
         try {
-            $this->client->createPromoCodeRequest($this->testMaintainerId, [
+            $this->client->createPromoCode($this->testMaintainerId, [
                 'code' => 'TEST-' . time(),
                 'expirationDays' => rand(5, 20),
                 'organizationId' => 0,
@@ -187,7 +187,7 @@ class PromoCodesTest extends ClientTestCase
             'name' => 'My org for promo codes',
         ]);
         try {
-            $this->client->createPromoCodeRequest($this->testMaintainerId, [
+            $this->client->createPromoCode($this->testMaintainerId, [
                 'code' => 'TEST-' . time(),
                 'expirationDays' => rand(5, 20),
                 'organizationId' => $organization->id,
