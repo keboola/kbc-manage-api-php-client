@@ -699,7 +699,7 @@ class Client
 
     public function listPromoCodesRequest($maintainerId)
     {
-        return $this->apiGet("/manage/maintainers/{$maintainerId}/promo-codes/");
+        return $this->apiGet("/manage/maintainers/{$maintainerId}/promo-codes");
     }
 
     public function createPromoCodeRequest($maintainerId, $params = []) {
