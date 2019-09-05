@@ -93,12 +93,12 @@ class PromoCodesTest extends ClientTestCase
         $this->client->addUserToMaintainer($newMaintainer['id'], ['id' => $this->normalUser['id']]);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionCode(404);
+        $this->expectExceptionCode(403);
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
-            'projectTemplateStringId' => 'poc15DaysGuideMode',
+            'projectTemplateStringId' => 'poc6months',
         ]);
     }
 
@@ -109,7 +109,7 @@ class PromoCodesTest extends ClientTestCase
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
-            'projectTemplateStringId' => 'poc15DaysGuideMode',
+            'projectTemplateStringId' => 'poc6months',
         ]);
         $promoCodesAfterCreate = $this->client->listPromoCodes($this->testMaintainerId);
 
@@ -125,7 +125,7 @@ class PromoCodesTest extends ClientTestCase
             'code' => $promoCodeCode,
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
-            'projectTemplateStringId' => 'poc15DaysGuideMode',
+            'projectTemplateStringId' => 'poc6months',
         ];
         $addedPromoCode = $this->client->createPromoCode($this->testMaintainerId, $promoCode);
 
@@ -152,25 +152,24 @@ class PromoCodesTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionCode(404);
-
+        $this->expectExceptionCode(403);
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
-            'projectTemplateStringId' => 'poc15DaysGuideMode',
+            'projectTemplateStringId' => 'poc6months',
         ]);
     }
 
     public function testRandomAdminCannotCreatePromoCode()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionCode(404);
+        $this->expectExceptionCode(403);
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
-            'projectTemplateStringId' => 'poc15DaysGuideMode',
+            'projectTemplateStringId' => 'poc6months',
         ]);
     }
 
@@ -181,7 +180,7 @@ class PromoCodesTest extends ClientTestCase
                 'code' => 'TEST-' . time(),
                 'expirationDays' => rand(5, 20),
                 'organizationId' => 0,
-                'projectTemplateStringId' => 'poc15DaysGuideMode',
+                'projectTemplateStringId' => 'poc6months',
             ]);
             $this->fail('Organization not found');
         } catch (ClientException $e) {
