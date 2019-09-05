@@ -56,20 +56,26 @@ class PromoCodesTest extends ClientTestCase
 
     public function testCannotListPromoCodesFromRemovedOrganization()
     {
+        $promoCodeCode = 'TEST-' . time();
         $this->client->createPromoCode($this->testMaintainerId, [
-            'code' => 'TEST-' . time(),
+            'code' => $promoCodeCode,
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
 
         $listBeforeRemoveOrganization = $this->client->listPromoCodes($this->testMaintainerId);
+        $this->assertCount(1, array_filter($listBeforeRemoveOrganization, function ($item) use ($promoCodeCode) {
+            return $item['code'] === $promoCodeCode;
+        }));
 
         $this->client->deleteOrganization($this->organization['id']);
 
         $listAfterRemoveOrganization = $this->client->listPromoCodes($this->testMaintainerId);
+        $this->assertCount(0, array_filter($listAfterRemoveOrganization, function ($item) use ($promoCodeCode) {
+            return $item['code'] === $promoCodeCode;
+        }));
 
-        $this->assertLessThan(count($listBeforeRemoveOrganization), count($listAfterRemoveOrganization));
     }
 
     public function testDifferentOrganizationMaintainerCannotCreatePromoCodes()
