@@ -114,8 +114,9 @@ class PromoCodesTest extends ClientTestCase
 
     public function testCannotCreateDuplicatePromoCode()
     {
+        $promoCodeCode = 'TEST-' . time();
         $promoCode = [
-            'code' => 'TEST-' . time(),
+            'code' => $promoCodeCode,
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc15DaysGuideMode',
@@ -126,6 +127,7 @@ class PromoCodesTest extends ClientTestCase
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
+        $this->expectExceptionMessage(sprintf('Promo code %s already exists', $promoCodeCode));
         $this->client->createPromoCode($this->testMaintainerId, $promoCode);
     }
 
