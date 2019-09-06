@@ -73,14 +73,13 @@ class PromoCodesTest extends ClientTestCase
         $this->assertCount(0, array_filter($listAfterRemoveOrganization, function ($item) use ($promoCodeCode) {
             return $item['code'] === $promoCodeCode;
         }));
-
     }
 
     public function testDifferentOrganizationMaintainerCannotCreatePromoCodes()
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
-        $maintainerName = self::TESTS_MAINTAINER_PREFIX . " - test maintainer";
+        $maintainerName = self::TESTS_MAINTAINER_PREFIX . ' - test maintainer';
         $newMaintainer = $this->client->createMaintainer([
             'name' => $maintainerName,
             'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
@@ -98,7 +97,6 @@ class PromoCodesTest extends ClientTestCase
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
-
     }
 
     public function testSuperAdminCanListAndCreatePromoCodes()
@@ -133,6 +131,7 @@ class PromoCodesTest extends ClientTestCase
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage(sprintf('Promo code %s already exists', $promoCodeCode));
+
         $this->client->createPromoCode($this->testMaintainerId, $promoCode);
     }
 
