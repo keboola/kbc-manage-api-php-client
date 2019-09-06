@@ -67,6 +67,22 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertEquals($templateDetail, current($filteredTemplates));
     }
 
+    public function testMaintainerAdminCanViewAndListProjectTemplates()
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $templates = $this->normalUserClient->getProjectTemplates();
+
+        $filteredTemplates = array_filter($templates, function ($item) {
+            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
+        });
+
+        $this->assertCount(1, $filteredTemplates);
+
+        $templateDetail = $this->normalUserClient->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
+        $this->assertEquals($templateDetail, current($filteredTemplates));
+    }
+
     public function testOrganizationAdminCanViewAndListProjectTemplates()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -98,6 +114,24 @@ class ProjectTemplatesTest extends ClientTestCase
     public function testOrganizationAdminCannotViewHiddenProjectTemplate()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $templates = $this->normalUserClient->getProjectTemplates();
+
+        $filteredTemplates = array_filter($templates, function ($item) {
+            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
+        });
+
+        $this->assertCount(0, $filteredTemplates);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(404);
+
+        $this->normalUserClient->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
+    }
+
+    public function testMaintainerAdminCannotViewHiddenProjectTemplate()
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $templates = $this->normalUserClient->getProjectTemplates();
 
