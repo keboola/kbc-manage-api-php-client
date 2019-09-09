@@ -91,6 +91,7 @@ class PromoCodesTest extends ClientTestCase
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
+        $this->expectExceptionMessage(sprintf('You don\'t have access to the organization %s', $this->organization['id']));
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
@@ -141,6 +142,7 @@ class PromoCodesTest extends ClientTestCase
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
+        $this->expectExceptionMessage(sprintf('You don\'t have access to maintainer %s', $this->testMaintainerId));
 
         $this->normalUserClient->listPromoCodes($this->testMaintainerId);
     }
@@ -151,6 +153,7 @@ class PromoCodesTest extends ClientTestCase
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
+        $this->expectExceptionMessage(sprintf('You don\'t have access to maintainer %s', $this->testMaintainerId));
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
@@ -163,6 +166,7 @@ class PromoCodesTest extends ClientTestCase
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
+        $this->expectExceptionMessage(sprintf('You don\'t have access to the organization %s', $this->organization['id']));
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
@@ -173,34 +177,27 @@ class PromoCodesTest extends ClientTestCase
 
     public function testInvalidOrganization()
     {
-        try {
-            $this->client->createPromoCode($this->testMaintainerId, [
-                'code' => 'TEST-' . time(),
-                'expirationDays' => rand(5, 20),
-                'organizationId' => 0,
-                'projectTemplateStringId' => 'poc6months',
-            ]);
-            $this->fail('Organization not found');
-        } catch (ClientException $e) {
-            $this->assertEquals(404, $e->getCode());
-        }
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(404);
+        $this->expectExceptionMessage('Organization 0 not found');
+        $this->client->createPromoCode($this->testMaintainerId, [
+            'code' => 'TEST-' . time(),
+            'expirationDays' => rand(5, 20),
+            'organizationId' => 0,
+            'projectTemplateStringId' => 'poc6months',
+        ]);
     }
 
-    public function testInvalidProjectTemplate()
+    public function testNonexistsProjectTemplate()
     {
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'My org for promo codes',
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(404);
+        $this->expectExceptionMessage('Project template not found');
+        $this->client->createPromoCode($this->testMaintainerId, [
+            'code' => 'TEST-' . time(),
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => ProjectTemplatesTest::TEST_NONEXISTS_PROJECT_TEMPLATE_STRING_ID,
         ]);
-        try {
-            $this->client->createPromoCode($this->testMaintainerId, [
-                'code' => 'TEST-' . time(),
-                'expirationDays' => rand(5, 20),
-                'organizationId' => $organization->id,
-                'projectTemplateStringId' => 'testInvalidProjectTemplate',
-            ]);
-            $this->fail('Project template not found');
-        } catch (ClientException $e) {
-            $this->assertEquals(404, $e->getCode());
-        }
     }
 }
