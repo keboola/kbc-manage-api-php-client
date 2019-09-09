@@ -2426,42 +2426,42 @@ Invitation will be accepted and current user will be added to the project.
     [
         {
             "code": "GUIDE-MODE",
-            "expires": "2029-08-06 23:59:59",
+            "expires": "2029-08-06T23:59:59+0200",
             "organization": {
-                "id": "1",
+                "id": 1,
                 "name": "Keboola Internal",
-                "created": null,
-                "allowAutoJoin": "1",
+                "created": "2019-09-09T14:43:29+0200",
+                "allowAutoJoin": true,
                 "crmId": "",
-                "mfaRequired": null
+                "mfaRequired": false
             },
             "projectTemplate": {
                 "stringId": "poc15DaysGuideMode",
                 "name": "POC Guide Mode",
                 "description": "Proof of concept. 15 days trial - Guide Mode.",
-                "expirationDays": "15",
+                "expirationDays": 15,
                 "billedMonthlyPrice": null,
-                "hasTryModeOn": "1"
+                "hasTryModeOn": true
             }
         },
         {
             "code": "test",
-            "expires": "2019-11-12 14:07:48",
+            "expires": "2019-11-12T14:07:48+0200",
             "organization": {
-                "id": "1",
+                "id": 1,
                 "name": "Keboola Internal",
-                "created": null,
-                "allowAutoJoin": "1",
+                "created": "2019-09-09T14:43:29+0200",
+                "allowAutoJoin": true,
                 "crmId": "",
-                "mfaRequired": null
+                "mfaRequired": false
             },
             "projectTemplate": {
                 "stringId": "poc15DaysGuideMode",
                 "name": "POC Guide Mode",
                 "description": "Proof of concept. 15 days trial - Guide Mode.",
-                "expirationDays": "15",
+                "expirationDays": 15,
                 "billedMonthlyPrice": null,
-                "hasTryModeOn": "1"
+                "hasTryModeOn": true
             }
         }
     ]
@@ -2473,8 +2473,8 @@ To create a new promo-code, provide the following parameters as JSON in the requ
 + Attributes
 
     + code: TEST (required) - Promo-code name
-    + expirationDays: 10 (required) - Promo-code expiration days
-    + organizationId: 1 (required) - Add to organization
+    + expirationDays: 10 (required, number) - Promo-code expiration days
+    + organizationId: 1 (required, number) - Add to organization
     + projectTemplateStringId: poc15DaysGuideMode (required) - Use project template
 
 + Request (application/json)
@@ -2482,27 +2482,27 @@ To create a new promo-code, provide the following parameters as JSON in the requ
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200 (application/json)
++ Response 201 (application/json)
 
     ```js
     {
         "code": "TEST",
         "expires": "2019-08-23 23:59:59",
         "organization": {
-            "id": "1",
+            "id": 1,
             "name": "Keboola Internal",
-            "created": null,
-            "allowAutoJoin": "1",
+            "created": "2019-09-09T14:43:29+0200",
+            "allowAutoJoin": true,
             "crmId": "",
-            "mfaRequired": null
+            "mfaRequired": false
         },
         "projectTemplate": {
             "stringId": "poc15DaysGuideMode",
             "name": "POC Guide Mode",
             "description": "Proof of concept. 15 days trial - Guide Mode.",
-            "expirationDays": "15",
+            "expirationDays": 15,
             "billedMonthlyPrice": null,
-            "hasTryModeOn": "1"
+            "hasTryModeOn": true
         }
     }
     ```
