@@ -102,7 +102,7 @@ class ProjectTemplatesTest extends ClientTestCase
 
     public function testTemplateDetail()
     {
-        $template = $this->client->getProjectTemplate(self::TEST_PROJECT_TEMPLATE_STRING_ID);
+        $template = $this->client->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertArrayHasKey('id', $template);
         $this->assertArrayHasKey('name', $template);
@@ -110,6 +110,11 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertArrayHasKey('expirationDays', $template);
         $this->assertArrayHasKey('billedMonthlyPrice', $template);
         $this->assertArrayHasKey('hasTryModeOn', $template);
+
+        $this->assertEquals(15, $template['expirationDays']);
+        $this->assertInternalType('int', $template['expirationDays']);
+        $this->assertEquals(true, $template['hasTryModeOn']);
+        $this->assertInternalType('boolean', $template['hasTryModeOn']);
     }
 
     public function testOrganizationAdminCannotViewHiddenProjectTemplate()
