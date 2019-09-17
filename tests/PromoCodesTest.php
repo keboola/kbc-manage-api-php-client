@@ -108,6 +108,30 @@ class PromoCodesTest extends ClientTestCase
         ]);
     }
 
+    public function testListUsedPromoCodesCreateProjectRemoveProject()
+    {
+        $usedPromoCodesBeforeCreateProject = $this->client->listUsedPromoCodes();
+
+        $promoCodeCode = 'TEST-' . time();
+        $this->client->createPromoCode($this->testMaintainerId, [
+            'code' => $promoCodeCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc6months',
+        ]);
+        $project = $this->client->createProjectFromPromoCode($promoCodeCode);
+
+        $usedPromoCodesAfterCreateProject = $this->client->listUsedPromoCodes();
+
+        $this->assertGreaterThan(count($usedPromoCodesBeforeCreateProject), count($usedPromoCodesAfterCreateProject));
+
+        $this->client->deleteProject($project['id']);
+
+        $usedPromoCodesAfterRemoveProject = $this->client->listUsedPromoCodes();
+
+        $this->assertEquals($usedPromoCodesBeforeCreateProject, $usedPromoCodesAfterRemoveProject);
+    }
+
     public function testSuperAdminCanListAndCreatePromoCodes()
     {
         $promoCodesBeforeCreate = $this->client->listPromoCodes($this->testMaintainerId);
@@ -219,7 +243,7 @@ class PromoCodesTest extends ClientTestCase
             'projectTemplateStringId' => 'poc',
         ]);
 
-        $newProject = $this->client->addProjectFromPromoCode($testingPromoCode);
+        $newProject = $this->client->createProjectFromPromoCode($testingPromoCode);
         $detailProject = $this->client->getProject($newProject['id']);
         unset($detailProject['organization'], $detailProject['backends'], $detailProject['fileStorage']);
 
@@ -239,7 +263,7 @@ class PromoCodesTest extends ClientTestCase
             'projectTemplateStringId' => 'poc',
         ]);
 
-        $newProject = $this->normalUserClient->addProjectFromPromoCode($testingPromoCode);
+        $newProject = $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
         $detailProject = $this->client->getProject($newProject['id']);
         unset($detailProject['organization'], $detailProject['backends'], $detailProject['fileStorage']);
 
@@ -257,11 +281,11 @@ class PromoCodesTest extends ClientTestCase
             'projectTemplateStringId' => 'poc',
         ]);
 
-        $this->client->addProjectFromPromoCode($testingPromoCode);
+        $this->client->createProjectFromPromoCode($testingPromoCode);
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage(sprintf('Promo code %s is already used.', $testingPromoCode));
-        $this->client->addProjectFromPromoCode($testingPromoCode);
+        $this->client->createProjectFromPromoCode($testingPromoCode);
     }
 
     public function testCreateProjectFromNonexistsPromoCode()
@@ -271,6 +295,6 @@ class PromoCodesTest extends ClientTestCase
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage(sprintf('Promo Code %s doen\'t exists', $testingPromoCode));
-        $this->client->addProjectFromPromoCode($testingPromoCode);
+        $this->client->createProjectFromPromoCode($testingPromoCode);
     }
 }
