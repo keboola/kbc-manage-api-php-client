@@ -553,7 +553,7 @@ class Client
 
     public function listUsedPromoCodes()
     {
-        return $this->apiGet("/manage/current-user/promo-codes");
+        return $this->apiGet('/manage/current-user/promo-codes');
     }
 
     public function removeProjectTemplateFeature($templateStringId, $featureName)
