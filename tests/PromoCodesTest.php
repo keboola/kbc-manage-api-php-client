@@ -221,6 +221,7 @@ class PromoCodesTest extends ClientTestCase
 
         $newProject = $this->client->addProjectFromPromoCode($testingPromoCode);
         $detailProject = $this->client->getProject($newProject['id']);
+        unset($detailProject['organization'], $detailProject['backends'], $detailProject['fileStorage']);
 
         $this->assertEquals($detailProject, $newProject);
     }
@@ -240,6 +241,7 @@ class PromoCodesTest extends ClientTestCase
 
         $newProject = $this->normalUserClient->addProjectFromPromoCode($testingPromoCode);
         $detailProject = $this->client->getProject($newProject['id']);
+        unset($detailProject['organization'], $detailProject['backends'], $detailProject['fileStorage']);
 
         $this->assertEquals($detailProject, $newProject);
     }
@@ -260,23 +262,6 @@ class PromoCodesTest extends ClientTestCase
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage(sprintf('Promo code %s is already used.', $testingPromoCode));
         $this->client->addProjectFromPromoCode($testingPromoCode);
-    }
-
-    public function testRandomAdminCannotCreateProjectFromPromoCode()
-    {
-        $testingPromoCode = 'TEST-' . time();
-
-        $this->client->createPromoCode($this->testMaintainerId, [
-            'code' => $testingPromoCode,
-            'expirationDays' => rand(5, 20),
-            'organizationId' => $this->organization['id'],
-            'projectTemplateStringId' => 'poc',
-        ]);
-
-        $this->expectException(ClientException::class);
-        $this->expectExceptionCode(400);
-        $this->expectExceptionMessage('Only organization members can create new projects');
-        $this->normalUserClient->addProjectFromPromoCode($testingPromoCode);
     }
 
     public function testCreateProjectFromNonexistsPromoCode()
