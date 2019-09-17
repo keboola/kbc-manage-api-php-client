@@ -174,7 +174,7 @@ class PromoCodesTest extends ClientTestCase
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
-        $this->expectExceptionMessage(sprintf('You don\'t have access to the organization %s', $this->organization['id']));
+        $this->expectExceptionMessage('You can\'t access project templates');
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
