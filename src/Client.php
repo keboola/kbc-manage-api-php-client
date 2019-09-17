@@ -546,8 +546,8 @@ class Client
 
     public function addProjectFromPromoCode($promoCode)
     {
-        return $this->apiPost('/manage/current-user/create-projects-from-promo-code', [
-            'code' => $promoCode
+        return $this->apiPost('/manage/current-user/promo-codes', [
+            'code' => $promoCode,
         ]);
     }
 
