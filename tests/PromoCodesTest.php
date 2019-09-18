@@ -280,7 +280,25 @@ class PromoCodesTest extends ClientTestCase
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
-        $this->expectExceptionMessage(sprintf('Specified code was not found or is no longer valid.', $testingPromoCode));
+        $this->expectExceptionMessage(sprintf('Specified code was not found or is no longer valid.'));
+        $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
+    }
+
+    public function testCannotCreateProjectFromPromoCodeDeletedOrganization()
+    {
+        $testingPromoCode = 'TEST-' . time();
+
+        $this->client->createPromoCode($this->testMaintainerId, [
+            'code' => $testingPromoCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc',
+        ]);
+
+        $this->client->deleteOrganization($this->organization['id']);
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(400);
+        $this->expectExceptionMessage(sprintf('Specified code was not found or is no longer valid.'));
         $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
     }
 }
