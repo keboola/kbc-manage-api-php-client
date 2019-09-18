@@ -280,7 +280,7 @@ class PromoCodesTest extends ClientTestCase
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
-        $this->expectExceptionMessage(sprintf('Promo Code %s doen\'t exists', $testingPromoCode));
+        $this->expectExceptionMessage(sprintf('Specified code was not found or is no longer valid.', $testingPromoCode));
         $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
     }
 }
