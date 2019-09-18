@@ -233,7 +233,7 @@ class PromoCodesTest extends ClientTestCase
         ]);
     }
 
-    public function testSuperAdminCreateProjectFromPromoCodes()
+    public function testRandomAdminCreateProjectFromPromoCodes()
     {
         $testingPromoCode = 'TEST-' . time();
         $this->client->createPromoCode($this->testMaintainerId, [
@@ -245,26 +245,6 @@ class PromoCodesTest extends ClientTestCase
 
         $newProject = $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
         $detailProject = $this->normalUserClient->getProject($newProject['id']);
-        unset($detailProject['organization'], $detailProject['backends'], $detailProject['fileStorage']);
-
-        $this->assertEquals($detailProject, $newProject);
-    }
-
-    public function testOrganizationAdminCanCreateProjectFromPromoCode()
-    {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-
-        $testingPromoCode = 'TEST-' . time();
-
-        $this->client->createPromoCode($this->testMaintainerId, [
-            'code' => $testingPromoCode,
-            'expirationDays' => rand(5, 20),
-            'organizationId' => $this->organization['id'],
-            'projectTemplateStringId' => 'poc',
-        ]);
-
-        $newProject = $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
-        $detailProject = $this->client->getProject($newProject['id']);
         unset($detailProject['organization'], $detailProject['backends'], $detailProject['fileStorage']);
 
         $this->assertEquals($detailProject, $newProject);
