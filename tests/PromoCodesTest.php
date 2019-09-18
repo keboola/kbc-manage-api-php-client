@@ -110,8 +110,6 @@ class PromoCodesTest extends ClientTestCase
 
     public function testListUsedPromoCodesCreateProjectRemoveProject()
     {
-        $usedPromoCodesBeforeCreateProject = $this->client->listUsedPromoCodes();
-
         $promoCodeCode = 'TEST-' . time();
         $this->client->createPromoCode($this->testMaintainerId, [
             'code' => $promoCodeCode,
@@ -121,15 +119,23 @@ class PromoCodesTest extends ClientTestCase
         ]);
         $project = $this->normalUserClient->createProjectFromPromoCode($promoCodeCode);
 
-        $usedPromoCodesAfterCreateProject = $this->client->listUsedPromoCodes();
+        $usedPromoCodesAfterCreateProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function ($val) use ($promoCodeCode) {
+            if ($val['code'] === $promoCodeCode) {
+                return true;
+            }
+            return false;
+        });
+        $this->assertEquals(1, count($usedPromoCodesAfterCreateProject));
 
-        $this->assertGreaterThan(count($usedPromoCodesBeforeCreateProject), count($usedPromoCodesAfterCreateProject));
+        $this->normalUserClient->deleteProject($project['id']);
 
-        $this->client->deleteProject($project['id']);
-
-        $usedPromoCodesAfterRemoveProject = $this->client->listUsedPromoCodes();
-
-        $this->assertEquals($usedPromoCodesBeforeCreateProject, $usedPromoCodesAfterRemoveProject);
+        $usedPromoCodesAfterRemoveProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function ($val) use ($promoCodeCode) {
+            if ($val['code'] === $promoCodeCode) {
+                return true;
+            }
+            return false;
+        });
+        $this->assertEquals(0, count($usedPromoCodesAfterRemoveProject));
     }
 
     public function testSuperAdminCanListAndCreatePromoCodes()
