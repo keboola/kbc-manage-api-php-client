@@ -119,7 +119,7 @@ class PromoCodesTest extends ClientTestCase
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
-        $project = $this->client->createProjectFromPromoCode($promoCodeCode);
+        $project = $this->normalUserClient->createProjectFromPromoCode($promoCodeCode);
 
         $usedPromoCodesAfterCreateProject = $this->client->listUsedPromoCodes();
 
@@ -243,8 +243,8 @@ class PromoCodesTest extends ClientTestCase
             'projectTemplateStringId' => 'poc',
         ]);
 
-        $newProject = $this->client->createProjectFromPromoCode($testingPromoCode);
-        $detailProject = $this->client->getProject($newProject['id']);
+        $newProject = $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
+        $detailProject = $this->normalUserClient->getProject($newProject['id']);
         unset($detailProject['organization'], $detailProject['backends'], $detailProject['fileStorage']);
 
         $this->assertEquals($detailProject, $newProject);
@@ -281,11 +281,11 @@ class PromoCodesTest extends ClientTestCase
             'projectTemplateStringId' => 'poc',
         ]);
 
-        $this->client->createProjectFromPromoCode($testingPromoCode);
+        $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage(sprintf('Promo code %s is already used.', $testingPromoCode));
-        $this->client->createProjectFromPromoCode($testingPromoCode);
+        $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
     }
 
     public function testCreateProjectFromNonexistsPromoCode()
@@ -295,6 +295,6 @@ class PromoCodesTest extends ClientTestCase
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage(sprintf('Promo Code %s doen\'t exists', $testingPromoCode));
-        $this->client->createProjectFromPromoCode($testingPromoCode);
+        $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
     }
 }
