@@ -544,6 +544,18 @@ class Client
         ]);
     }
 
+    public function createProjectFromPromoCode($promoCode)
+    {
+        return $this->apiPost('/manage/current-user/promo-codes', [
+            'code' => $promoCode,
+        ]);
+    }
+
+    public function listUsedPromoCodes()
+    {
+        return $this->apiGet('/manage/current-user/promo-codes');
+    }
+
     public function removeProjectTemplateFeature($templateStringId, $featureName)
     {
         $this->apiDelete("/manage/project-templates/{$templateStringId}/features/{$featureName}");
