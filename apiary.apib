@@ -2406,6 +2406,122 @@ Invitation will be accepted and current user will be added to the project.
 
 + Response 204
 
+## Promo codes [/manage/current-user/promo-codes]
+
+### Create project [POST]
+
+Create a new project from given promo code
+
++ Attributes
+
+    + code: TEST1568723795 (required) - Promo-code name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+    ```js
+    {
+        "id": 89,
+        "name": "dev user (TEST1568723795)",
+        "description": "",
+        "type": "poc6months",
+        "region": "eu-central-1",
+        "created": "2019-09-17T15:14:24+0200",
+        "expires": "2020-03-18T14:14:24+0100",
+        "features": [],
+        "dataSizeBytes": 0,
+        "rowsCount": 0,
+        "hasMysql": false,
+        "hasRedshift": false,
+        "hasSnowflake": true,
+        "defaultBackend": "snowflake",
+        "hasTryModeOn": "0",
+        "limits": {
+            "components.jobsParallelism": {
+              "name": "components.jobsParallelism",
+              "value": 10
+            },
+            "goodData.dataSizeBytes": {
+              "name": "goodData.dataSizeBytes",
+              "value": 500000000
+            },
+            "goodData.demoTokenEnabled": {
+              "name": "goodData.demoTokenEnabled",
+              "value": 1
+            },
+            "goodData.prodTokenEnabled": {
+              "name": "goodData.prodTokenEnabled",
+              "value": 0
+            },
+            "goodData.usersCount": {
+              "name": "goodData.usersCount",
+              "value": 10
+            },
+            "kbc.adminsCount": {
+              "name": "kbc.adminsCount",
+              "value": 10
+            },
+            "kbc.extractorsCount": {
+              "name": "kbc.extractorsCount",
+              "value": 0
+            },
+            "kbc.writersCount": {
+              "name": "kbc.writersCount",
+              "value": 0
+            },
+            "orchestrations.count": {
+              "name": "orchestrations.count",
+              "value": 3
+            },
+            "storage.dataSizeBytes": {
+              "name": "storage.dataSizeBytes",
+              "value": 3500000000
+            },
+            "storage.jobsParallelism": {
+              "name": "storage.jobsParallelism",
+              "value": 10
+            }
+        },
+        "metrics": {},
+        "isDisabled": false,
+        "billedMonthlyPrice": null,
+        "dataRetentionTimeInDays": 1
+    }
+    ```
+
+### List used promo codes [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "code": "TEST1568723795",
+            "usedAt": "2019-09-17T15:14:38+0200",
+            "project": {
+                "id": 89,
+                "name": "dev user (TEST-1568723795)"
+            }
+        },
+        {
+            "code": "TEST1568723853",
+            "usedAt": "2019-09-17T15:17:38+0200",
+            "project": {
+                "id": 90,
+                "name": "dev user (TEST-1568723853)"
+            }
+        }
+    ]
+    ```
+
 # Group Promo codes
 
 ## Promo codes [/manage/maintainers/{maintainer_id}/promo-codes]

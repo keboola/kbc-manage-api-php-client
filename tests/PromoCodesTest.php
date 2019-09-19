@@ -25,6 +25,14 @@ class PromoCodesTest extends ClientTestCase
             }
         }
 
+        $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+        foreach ($organizations as $organization) {
+            foreach ($this->client->listOrganizationProjects($organization['id']) as $project) {
+                $this->client->deleteProject($project['id']);
+            }
+            $this->client->deleteOrganization($organization['id']);
+        }
+
         $this->organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org for promo codes',
         ]);
@@ -100,6 +108,36 @@ class PromoCodesTest extends ClientTestCase
         ]);
     }
 
+    public function testListUsedPromoCodesCreateProjectRemoveProject()
+    {
+        $promoCodeCode = 'TEST-' . time();
+        $this->client->createPromoCode($this->testMaintainerId, [
+            'code' => $promoCodeCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc6months',
+        ]);
+        $project = $this->normalUserClient->createProjectFromPromoCode($promoCodeCode);
+
+        $usedPromoCodesAfterCreateProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function ($val) use ($promoCodeCode) {
+            if ($val['code'] === $promoCodeCode) {
+                return true;
+            }
+            return false;
+        });
+        $this->assertEquals(1, count($usedPromoCodesAfterCreateProject));
+
+        $this->normalUserClient->deleteProject($project['id']);
+
+        $usedPromoCodesAfterRemoveProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function ($val) use ($promoCodeCode) {
+            if ($val['code'] === $promoCodeCode) {
+                return true;
+            }
+            return false;
+        });
+        $this->assertEquals(0, count($usedPromoCodesAfterRemoveProject));
+    }
+
     public function testSuperAdminCanListAndCreatePromoCodes()
     {
         $promoCodesBeforeCreate = $this->client->listPromoCodes($this->testMaintainerId);
@@ -166,7 +204,7 @@ class PromoCodesTest extends ClientTestCase
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
-        $this->expectExceptionMessage(sprintf('You don\'t have access to the organization %s', $this->organization['id']));
+        $this->expectExceptionMessage('You can\'t access project templates');
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
@@ -199,5 +237,68 @@ class PromoCodesTest extends ClientTestCase
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => ProjectTemplatesTest::TEST_NONEXISTS_PROJECT_TEMPLATE_STRING_ID,
         ]);
+    }
+
+    public function testRandomAdminCreateProjectFromPromoCodes()
+    {
+        $testingPromoCode = 'TEST-' . time();
+        $this->client->createPromoCode($this->testMaintainerId, [
+            'code' => $testingPromoCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc',
+        ]);
+
+        $newProject = $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
+        $detailProject = $this->normalUserClient->getProject($newProject['id']);
+        unset($detailProject['organization'], $detailProject['backends'], $detailProject['fileStorage']);
+
+        $this->assertEquals($detailProject, $newProject);
+    }
+
+    public function testCannotCreateDuplicateProjectFromPromoCode()
+    {
+        $testingPromoCode = 'TEST-' . time();
+
+        $this->client->createPromoCode($this->testMaintainerId, [
+            'code' => $testingPromoCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc',
+        ]);
+
+        $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(400);
+        $this->expectExceptionMessage(sprintf('Promo code %s is already used.', $testingPromoCode));
+        $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
+    }
+
+    public function testCreateProjectFromNonexistsPromoCode()
+    {
+        $testingPromoCode = 'TEST-' . time();
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(400);
+        $this->expectExceptionMessage(sprintf('Specified code was not found or is no longer valid.'));
+        $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
+    }
+
+    public function testCannotCreateProjectFromPromoCodeDeletedOrganization()
+    {
+        $testingPromoCode = 'TEST-' . time();
+
+        $this->client->createPromoCode($this->testMaintainerId, [
+            'code' => $testingPromoCode,
+            'expirationDays' => rand(5, 20),
+            'organizationId' => $this->organization['id'],
+            'projectTemplateStringId' => 'poc',
+        ]);
+
+        $this->client->deleteOrganization($this->organization['id']);
+        $this->expectException(ClientException::class);
+        $this->expectExceptionCode(400);
+        $this->expectExceptionMessage(sprintf('Specified code was not found or is no longer valid.'));
+        $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
     }
 }
