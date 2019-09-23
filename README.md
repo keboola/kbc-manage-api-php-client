@@ -97,7 +97,7 @@ TEST_S3_SECRET=
 Source newly created file and run tests:
 
 ```bash
-docker-compose run --rm tests
+docker-compose run --rm dev composer tests
 ```
 
 ### Required variables
