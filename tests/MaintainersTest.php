@@ -49,6 +49,8 @@ class MaintainersTest extends ClientTestCase
     public function testUpdateMaintainer()
     {
         $backends = $this->client->listStorageBackend();
+        $mysqlBackend = null;
+        $redshiftBackend = null;
         foreach ($backends as $backend) {
             switch ($backend['backend']) {
                 case 'mysql':
