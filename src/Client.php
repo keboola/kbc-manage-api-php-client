@@ -227,6 +227,11 @@ class Client
         return $this->apiGet("manage/organizations/{$organizationId}/users");
     }
 
+    public function listOrganizationProjectsUsers($organizationId)
+    {
+        return $this->apiGet("manage/organizations/{$organizationId}/projects-users");
+    }
+
     public function addUserToOrganization($organizationId, $params = [])
     {
         return $this->apiPost("manage/organizations/{$organizationId}/users", $params);
