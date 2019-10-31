@@ -281,6 +281,23 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
         $this->assertEquals(1, count($projects));
     }
 
+    public function testOrganizationAdminWithoutMfaCannotListProjectsUser()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $project = $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => 'Test']);
+        $this->normalUserWithMfaClient->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('This organization requires users to have multi-factor authentication enabled');
+        $this->expectExceptionCode(400);
+
+        $this->normalUserClient->listOrganizationProjectsUsers($this->organization['id']);
+    }
+
     private function assertAccessLocked(Client $userClient): void
     {
         try {

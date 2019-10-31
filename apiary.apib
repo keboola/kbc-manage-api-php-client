@@ -720,7 +720,34 @@ Either `id` or `email` of a user must be set. If the email is not associated wit
 
 + Response 204
 
+## Projects Users In Organization [/manage/organizations/{organization_id}/projects-users]
 
+### List users [GET]
+
+List of all users who are members of at least one project in the organization. Only members of the organization can get this list.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        },
+        {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        }
+    ]
+    ```
+    
 ## Join Organization [/manage/organizations/{organization_id}/join-organization]
 
 + Parameters
