@@ -6,7 +6,7 @@ use Keboola\ManageApi\ClientException;
 
 class ListProjectsUsersTest extends ClientTestCase
 {
-    private const LIST_ORGANIZATION_PROJECTS_USERS_EXCEPTION_MESSAGE = 'Only organization members can get list of projects users';
+    private const EXCEPTION_MESSAGE = 'Only organization members can get list of projects users';
 
     private $organization;
 
@@ -34,29 +34,29 @@ class ListProjectsUsersTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testSuperAdminCannotGetList()
+    public function testSuperAdminCannotGetList(): void
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(self::LIST_ORGANIZATION_PROJECTS_USERS_EXCEPTION_MESSAGE);
+        $this->expectExceptionMessage(self::EXCEPTION_MESSAGE);
         $this->expectExceptionCode(403);
 
         $this->client->listOrganizationProjectsUsers($this->organization['id']);
     }
 
-    public function testMaintainerCannotGetList()
+    public function testMaintainerCannotGetList(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, [
             'email' => $this->normalUser['email'],
         ]);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage(self::LIST_ORGANIZATION_PROJECTS_USERS_EXCEPTION_MESSAGE);
+        $this->expectExceptionMessage(self::EXCEPTION_MESSAGE);
         $this->expectExceptionCode(403);
 
         $this->normalUserClient->listOrganizationProjectsUsers($this->organization['id']);
     }
 
-    public function testOrganizationUserCanGetList()
+    public function testOrganizationUserCanGetList(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], [
             'email' => $this->normalUser['email'],
@@ -86,7 +86,7 @@ class ListProjectsUsersTest extends ClientTestCase
         }
     }
 
-    public function testUserOneOfProjectInOrg()
+    public function testUserOneOfProjectInOrg(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], [
             'email' => $this->normalUser['email'],
@@ -105,7 +105,7 @@ class ListProjectsUsersTest extends ClientTestCase
         $this->normalUserClient->listOrganizationProjectsUsers($this->organization['id']);
     }
 
-    public function testNormalUserCannotGetList()
+    public function testNormalUserCannotGetList(): void
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
