@@ -720,11 +720,11 @@ Either `id` or `email` of a user must be set. If the email is not associated wit
 
 + Response 204
 
-## Project Members In Organization [/manage/organizations/{organization_id}/projects-users]
+## Projects Users In Organization [/manage/organizations/{organization_id}/projects-users]
 
-### List members [GET]
+### List users [GET]
 
-List of available project members in organization. Only projects members of the organization can get this list.
+List of all users who are members of at least one project in the organization. Only members of the organization can get this list.
 
 + Request (application/json)
     + Headers
@@ -736,9 +736,14 @@ List of available project members in organization. Only projects members of the 
     ```js
     [
         {
-            "id": 1,
-            "name": "Karel Novák",
-            "email": "karel@keboola.com"
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        },
+        {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
         }
     ]
     ```
