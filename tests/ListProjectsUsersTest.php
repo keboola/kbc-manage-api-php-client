@@ -99,7 +99,6 @@ class ListProjectsUsersTest extends ClientTestCase
         $this->normalUserClient->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 
         $this->expectException(ClientException::class);
-//        @todo You don't have access to the organization
         $this->expectExceptionCode(403);
 
         $this->normalUserClient->listOrganizationProjectsUsers($this->organization['id']);
