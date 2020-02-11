@@ -69,7 +69,7 @@ class StorageBackendTest extends ClientTestCase
 
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
-            'expiresIn' => 120,
+            'expiresIn' => 60,
             'canManageBuckets' => true,
         ]);
 
