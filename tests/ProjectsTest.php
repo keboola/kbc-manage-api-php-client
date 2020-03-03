@@ -2,21 +2,11 @@
 
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
 
 class ProjectsTest extends ClientTestCase
 {
-    public function supportedBackends(): array
-    {
-        return [
-            [Backend::SNOWFLAKE],
-            [Backend::REDSHIFT],
-            [Backend::SYNAPSE],
-        ];
-    }
-
     /**
      * @return array
      */
@@ -256,12 +246,9 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotEmpty($project['expires']);
     }
 
-    /**
-     * @dataProvider supportedBackends
-     * @param string $backend
-     */
-    public function testCreateProjectWithBackend(string $backend): void
+    public function testCreateProjectWithRedshiftBackend()
     {
+        $backend = 'redshift';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
         ]);
@@ -273,6 +260,7 @@ class ProjectsTest extends ClientTestCase
 
         $this->assertEquals($backend, $project['defaultBackend']);
     }
+
 
     public function testCreateProjectWithRedshiftBackendFromTemplate()
     {
