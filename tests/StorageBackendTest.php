@@ -2,35 +2,25 @@
 
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
+use Keboola\StorageApi\Client;
 
 class StorageBackendTest extends ClientTestCase
 {
-    public function supportedNonDefaultBackends(): array
-    {
-        return [
-            [Backend::REDSHIFT],
-            [Backend::SYNAPSE],
-        ];
-    }
 
-    /**
-     * @dataProvider supportedNonDefaultBackends
-     * @param string $backendName
-     */
-    public function testStorageAssignBackend(string $backendName): void
+    public function testStorageAssignRedshiftBackend()
     {
-        // get redshift and synapse backend
+        // get redshift backend
         $backends = $this->client->listStorageBackend();
-        $backendToAssign = null;
-        foreach ($backends as $item) {
-            if ($item['backend'] === $backendName) {
-                $backendToAssign = $item;
+        $redshiftBackend = null;
+        foreach ($backends as $backend) {
+            if ($backend['backend'] == 'redshift') {
+                $redshiftBackend = $backend;
+                break;
             }
         }
-        if (!$backendToAssign) {
-            $this->fail(sprintf('%s backend not found', ucfirst($backendName)));
+        if (!$redshiftBackend) {
+            $this->fail('Redshift backend not found');
         }
 
         $name = 'My org';
@@ -45,25 +35,21 @@ class StorageBackendTest extends ClientTestCase
         $this->assertArrayHasKey('backends', $project);
         $this->assertEquals('snowflake', $project['defaultBackend']);
 
-        if ($backendName === Backend::SYNAPSE) {
-            $storage = $this->client->createAbsFileStorage(FileStorageAbsTest::DEFAULT_ABS_OPTIONS);
-            $this->client->assignFileStorage($project['id'], $storage['id']);
-        }
-
         $backends = $project['backends'];
 
         $this->assertArrayHasKey('snowflake', $backends);
-        $this->assertArrayNotHasKey($backendName, $backends);
+        $this->assertArrayNotHasKey('redshift', $backends);
 
-        $this->client->assignProjectStorageBackend($project['id'], $backendToAssign['id']);
+        $this->client->assignProjectStorageBackend($project['id'], $redshiftBackend['id']);
 
         $project = $this->client->getProject($project['id']);
         $backends = $project['backends'];
 
-        $this->assertArrayHasKey($backendName, $backends);
-        $this->assertEquals($backendName, $project['defaultBackend']);
+        $this->assertArrayHasKey('redshift', $backends);
+        $this->assertEquals('redshift', $project['defaultBackend']);
 
-        $this->assertEquals($backendToAssign['id'], $backends[$backendName]['id']);
+        $redshift = $backends['redshift'];
+        $this->assertEquals($redshiftBackend['id'], $redshift['id']);
 
         // let's try to create a bucket in project now
 
@@ -79,11 +65,11 @@ class StorageBackendTest extends ClientTestCase
         ]);
         $bucketId = $sapiClient->createBucket('test', 'in');
         $bucket = $sapiClient->getBucket($bucketId);
-        $this->assertEquals($backendName, $bucket['backend']);
+        $this->assertEquals('redshift', $bucket['backend']);
 
         $sapiClient->dropBucket($bucketId);
 
-        $this->client->removeProjectStorageBackend($project['id'], $backendToAssign['id']);
+        $this->client->removeProjectStorageBackend($project['id'], $redshiftBackend['id']);
     }
 
     public function testStorageBackendList()
