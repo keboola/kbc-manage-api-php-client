@@ -3156,6 +3156,10 @@ According to the previous example, the parameters for creating Storage will be:
 - `password` - `YOUR_PASSWORD`
 
 
+#### Synapse
+
+Credentials for sql server admin must be provided with database name.
+
 + Request (application/json)
 
     + Headers
@@ -3172,29 +3176,47 @@ According to the previous example, the parameters for creating Storage will be:
 
 + Response 200 (application/json)
 
-    + Attributes (array[StorageBackend])
+    + Attributes (array[StorageBackendList])
 
 
 ## Data Structures
 
 ### StorageBackendCreate
 
-+ backend: Snowflake (required) - can be Redshift or Snowflake
++ backend: Snowflake (required) - can be Redshift, Snowflake or Synapse
 + host: `sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com` (required)
 + warehouse: `production` - required only for Snowflake
 + username: keboola (required)
 + password: 1234 (required)
-+ region: `us-east-1` (required)
++ region: `us-east-1` - required only for Snowflake and Redshift
 + owner: keboola (required) - associated AWS account owner
++ database: MyDataWarehouse - required only for Synapse
 
 ## StorageBackend
 
 + id: 123 (required)
-+ backend: redshift (required)
 + host: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
-+ username: keboola (required)
-+ password: 1234 (required)
++ backend: redshift (required)
++ region: us-east-1
+
+## StorageBackendList
+
++ id: 123 (required)
++ host: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
++ backend: redshift (required)
++ region: us-east-1 (required)
 + owner: keboola (required)
++ stats
+    + projectsCount: 10 (required)
+    + bucketsCount: 100 (required)
+    + dataSizeGB: 100 (required)
+    + rowsCount: 1000000 (required)
++ created: 2008-05-11T15:30:00Z datetime ISO8601 'Y-m-d\TH:i:sO' (required)
++ creator
+    + id: 10 (required)
+    + name: keboola (required)
++ warehouse: keboola
++ database: keboola
 
 
 # Group SUPER - Commands
