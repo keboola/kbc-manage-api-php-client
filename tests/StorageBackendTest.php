@@ -46,8 +46,13 @@ class StorageBackendTest extends ClientTestCase
         $this->assertEquals('snowflake', $project['defaultBackend']);
 
         if ($backendName === Backend::SYNAPSE) {
-            $storage = $this->client->createAbsFileStorage(FileStorageAbsTest::DEFAULT_ABS_OPTIONS);
-            $this->client->assignFileStorage($project['id'], $storage['id']);
+            $absFileStorages = $this->client->listAbsFileStorage();
+            foreach ($absFileStorages as $storage) {
+                if ($storage['provider'] === 'azure') {
+                    $this->client->assignFileStorage($project['id'], $storage['id']);
+                    break;
+                }
+            }
         }
 
         $backends = $project['backends'];
