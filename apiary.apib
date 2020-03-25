@@ -952,7 +952,7 @@ Returns a project with associated limits and metrics.
 
     + name: Test - Rename project
     + description: My new project
-    + defaultBackend: Snowflake - Change project default backend type
+    + defaultBackend: snowflake - Change project default backend type
     + type:demo - Change project type (demo, production, poc, ...) - allowed only for a super admin
     + expirationDays: 7 - Change project expiration - allowed only for a super admin
     + billedMonthlyPrice: 2000 - Change project monthly fee - allowed only for a super admin
@@ -3183,7 +3183,7 @@ Credentials for sql server admin must be provided with database name.
 
 ### StorageBackendCreate
 
-+ backend: Snowflake (required) - can be Redshift, Snowflake or Synapse
++ backend: snowflake (required) - can be redshift, snowflake or synapse
 + host: `sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com` (required)
 + warehouse: `production` - required only for Snowflake
 + username: keboola (required)
