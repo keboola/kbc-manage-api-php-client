@@ -10,7 +10,7 @@ use function GuzzleHttp\json_encode;
  */
 class FileStorageAbsTest extends ClientTestCase
 {
-    private const DEFAULT_ABS_OPTIONS = [
+    public const DEFAULT_ABS_OPTIONS = [
         'accountName' => TEST_ABS_ACCOUNT_NAME,
         'accountKey' => TEST_ABS_ACCOUNT_KEY,
         'containerName' => TEST_ABS_CONTAINER_NAME,
