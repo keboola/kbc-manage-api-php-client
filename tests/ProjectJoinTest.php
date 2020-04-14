@@ -74,6 +74,22 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['name'], $projectUser['approver']['name']);
     }
 
+    public function testSuperAdminCanCreateStorageToken(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
+
+        $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
+        $this->assertNull($projectUser);
+
+        $token = $this->client->createProjectStorageToken($projectId, [
+            'description' => 'test',
+            'expiresIn' => 60,
+        ]);
+
+        $this->assertArrayHasKey('token', $token);
+    }
+
     public function testMaintainerAdminCanJoinProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -93,6 +109,24 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertEquals($this->normalUser['id'], $projectUser['approver']['id']);
         $this->assertEquals($this->normalUser['email'], $projectUser['approver']['email']);
         $this->assertEquals($this->normalUser['name'], $projectUser['approver']['name']);
+    }
+
+    public function testMaintainerAdminCanCreateStorageToken(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
+        $this->assertNull($projectUser);
+
+        $token = $this->normalUserClient->createProjectStorageToken($projectId, [
+            'description' => 'test',
+            'expiresIn' => 60,
+        ]);
+
+        $this->assertArrayHasKey('token', $token);
     }
 
     public function testSuperAdminCannotJoinProjectIfAllowAutoJoinIsDisabled(): void
@@ -118,6 +152,31 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
+    public function testSuperAdminCannotCreateStorageTokenIfAllowAutoJoinIsDisabled(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
+
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => 0,
+        ]);
+
+        $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
+        $this->assertNull($projectUser);
+
+        try {
+            $this->client->createProjectStorageToken($projectId, [
+                'description' => 'test',
+                'expiresIn' => 60,
+            ]);
+
+            $this->fail('Project token create should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+            $this->assertContains('You don\'t have access to project', $e->getMessage());
+        }
+    }
+
     public function testMaintainerAdminCannotJoinProjectIfAllowAutoJoinIsDisabled(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -141,6 +200,33 @@ class ProjectJoinTest extends ClientTestCase
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
+    }
+
+    public function testMaintainerAdminCannotCreateStorageTokenIfAllowAutoJoinIsDisabled(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => 0,
+        ]);
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
+        $this->assertNull($projectUser);
+
+        try {
+            $this->normalUserClient->createProjectStorageToken($projectId, [
+                'description' => 'test',
+                'expiresIn' => 60,
+            ]);
+
+            $this->fail('Project token create should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+            $this->assertContains('You don\'t have access to project', $e->getMessage());
+        }
     }
 
     /**
@@ -169,6 +255,31 @@ class ProjectJoinTest extends ClientTestCase
         $this->assertEquals($this->normalUser['id'], $projectUser['approver']['id']);
         $this->assertEquals($this->normalUser['email'], $projectUser['approver']['email']);
         $this->assertEquals($this->normalUser['name'], $projectUser['approver']['name']);
+    }
+
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testOrganizationAdminCanCreateStorageTokenRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
+        ]);
+
+        $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
+        $this->assertNull($projectUser);
+
+        $token = $this->normalUserClient->createProjectStorageToken($projectId, [
+            'description' => 'test',
+            'expiresIn' => 60,
+        ]);
+
+        $this->assertArrayHasKey('token', $token);
     }
 
     public function testOrganizationAdminJoiningProjectDeletesCorrespondingJoinRequest(): void
@@ -262,6 +373,35 @@ class ProjectJoinTest extends ClientTestCase
      * @dataProvider autoJoinProvider
      * @param bool $allowAutoJoin
      */
+    public function testRandomAdminCannotCreateStorageTokenRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember();
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
+        ]);
+
+        $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
+        $this->assertNull($projectUser);
+
+        try {
+            $this->normalUserClient->createProjectStorageToken($projectId, [
+                'description' => 'test',
+                'expiresIn' => 60,
+            ]);
+
+            $this->fail('Project token create should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+            $this->assertContains('You don\'t have access to project', $e->getMessage());
+        }
+    }
+
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
     public function testProjectMemberCannotJoinProjectAgainRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -280,6 +420,30 @@ class ProjectJoinTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
         }
+    }
+
+    /**
+     * @dataProvider autoJoinProvider
+     * @param bool $allowAutoJoin
+     */
+    public function testProjectMemberCanCreateStorageTokenRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember();
+
+        $this->normalUserClient->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => $allowAutoJoin,
+        ]);
+
+        $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
+        $this->assertNotNull($projectUser);
+
+        $token = $this->normalUserClient->createProjectStorageToken($projectId, [
+            'description' => 'test',
+            'expiresIn' => 60,
+        ]);
+
+        $this->assertArrayHasKey('token', $token);
     }
 
     /**
