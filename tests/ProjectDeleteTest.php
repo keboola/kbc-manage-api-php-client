@@ -3,16 +3,31 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\Csv\CsvFile;
-use Keboola\ManageApi\ClientException;
-use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Metadata;
 use Keboola\StorageApi\Workspaces;
 
 class ProjectDeleteTest extends ClientTestCase
 {
-    private const BACKEND = 'snowflake';
+    public function deleteAndPurgeProjectWithData(): array
+    {
+        return [
+            [
+                'snowflake',
+            ],
+            [
+                'synapse',
+            ],
+            [
+                'redshift',
+            ],
+        ];
 
-    public function testDeleteAndPurgeProjectWithData()
+    }
+
+    /**
+     * @dataProvider deleteAndPurgeProjectWithData
+     */
+    public function testDeleteAndPurgeProjectWithData($backend): void
     {
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -21,7 +36,10 @@ class ProjectDeleteTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'defaultBackend' => $backend,
         ]);
+
+        $this->assertEquals($backend, $project['defaultBackend']);
 
         // Create tables, bucket, configuration and workspaces
         $token = $this->client->createProjectStorageToken($project['id'], [
@@ -38,15 +56,15 @@ class ProjectDeleteTest extends ClientTestCase
         // create bucket and table with data
         $bucketId = $sapiClient->createBucket('test', 'in');
         $bucket = $sapiClient->getBucket($bucketId);
-        $this->assertEquals(self::BACKEND, $bucket['backend']);
+        $this->assertEquals($backend, $bucket['backend']);
 
         $tableId = $sapiClient->createTable($bucketId, 'users', new CsvFile(__DIR__ . '/_data/users.csv'));
 
         // create and load workspace
         $workspaces = new Workspaces($sapiClient);
-        $workspace = $workspaces->createWorkspace(['backend' => self::BACKEND]);
+        $workspace = $workspaces->createWorkspace(['backend' => $backend]);
 
-        $this->assertEquals(self::BACKEND, $workspace['connection']['backend']);
+        $this->assertEquals($backend, $workspace['connection']['backend']);
 
         $workspaces->loadWorkspaceData($workspace['id'], [
             'input' => [
