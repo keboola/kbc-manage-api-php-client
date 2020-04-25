@@ -10,6 +10,8 @@ use Keboola\StorageApi\Workspaces;
 
 class ProjectDeleteTest extends ClientTestCase
 {
+    private const BACKEND = 'snowflake';
+
     public function testDeleteAndPurgeProjectWithData()
     {
         $name = 'My org';
@@ -36,13 +38,15 @@ class ProjectDeleteTest extends ClientTestCase
         // create bucket and table with data
         $bucketId = $sapiClient->createBucket('test', 'in');
         $bucket = $sapiClient->getBucket($bucketId);
-        $this->assertEquals('snowflake', $bucket['backend']);
+        $this->assertEquals(self::BACKEND, $bucket['backend']);
 
         $tableId = $sapiClient->createTable($bucketId, 'users', new CsvFile(__DIR__ . '/_data/users.csv'));
 
         // create and load workspace
         $workspaces = new Workspaces($sapiClient);
-        $workspace = $workspaces->createWorkspace();
+        $workspace = $workspaces->createWorkspace(['backend' => self::BACKEND]);
+
+        $this->assertEquals(self::BACKEND, $workspace['connection']['backend']);
 
         $workspaces->loadWorkspaceData($workspace['id'], [
             'input' => [
