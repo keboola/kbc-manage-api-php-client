@@ -15,13 +15,12 @@ class ProjectDeleteTest extends ClientTestCase
                 'snowflake',
             ],
             [
-                'synapse',
-            ],
-            [
                 'redshift',
             ],
+            [
+                'synapse',
+            ],
         ];
-
     }
 
     /**
