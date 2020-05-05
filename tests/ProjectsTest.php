@@ -833,6 +833,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canManageTokens']);
         $this->assertFalse($verified['canReadAllFileUploads']);
         $this->assertFalse($verified['canPurgeTrash']);
+        $this->assertFalse($verified['canUseDirectAccess']);
         $this->assertEmpty($verified['bucketPermissions']);
     }
 
@@ -853,6 +854,7 @@ class ProjectsTest extends ClientTestCase
             'canManageBuckets' => true,
             'canReadAllFileUploads' => true,
             'canPurgeTrash' => true,
+            'canUseDirectAccess' => true,//test created token will be canUseDirectAccess=false
         ]);
 
         $client = new Client([
@@ -866,6 +868,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canManageTokens']);
         $this->assertTrue($verified['canReadAllFileUploads']);
         $this->assertTrue($verified['canPurgeTrash']);
+        $this->assertFalse($verified['canUseDirectAccess']);
     }
 
     public function testCreateProjectStorageTokenWithBucketPermissions()
@@ -912,6 +915,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canManageBuckets']);
         $this->assertFalse($verified['canManageTokens']);
         $this->assertFalse($verified['canReadAllFileUploads']);
+        $this->assertFalse($verified['canUseDirectAccess']);
         $this->assertEquals([$newBucketId => 'read'], $verified['bucketPermissions']);
     }
 
@@ -944,6 +948,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($verified['canManageBuckets']);
         $this->assertTrue($verified['canManageTokens']);
         $this->assertTrue($verified['canReadAllFileUploads']);
+        $this->assertFalse($verified['canUseDirectAccess']);
     }
 
     public function testSuperAdminCanDisableAndEnableProject()
