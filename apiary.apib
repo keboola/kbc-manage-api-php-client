@@ -1672,6 +1672,7 @@ Only members of the project can reject join requests.
     + canManageBuckets: true (boolean) - Token has full permissions on tabular storage
     + canManageTokens: true (boolean) - Token has permission to create tokens in project
     + canReadAllFileUploads: true (boolean) - Token has full permissions to files staging
+    + canPurgeTrash: true (boolean) - Allows permanently remove deleted configurations.
     + expiresIn: 60 (number) - Token lifetime
     + bucketPermissions (object)
         - in.c-main: read
@@ -1689,10 +1690,12 @@ Only members of the project can reject join requests.
         "token": "TOKEN_VALUE",
         "created":"2013-03-28T13:31:50+0100",
         "description":"martin@keboola.com",
+        "uri": "https://connection.keboola.com/v2/storage/tokens/3846",
         "isMasterToken":true,
         "canManageBuckets":true,
         "canManageTokens":true,
         "canReadAllFileUploads":true,
+        "canPurgeTrash": true,
         "canUseDirectAccess": false,
         "expires":null,
         "isExpired":false,
