@@ -1,24 +1,32 @@
 <?php
+declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
 use Keboola\Csv\CsvFile;
+use Keboola\ManageApi\Backend;
 use Keboola\StorageApi\Metadata;
 use Keboola\StorageApi\Workspaces;
 
 class ProjectDeleteTest extends ClientTestCase
 {
-    public function deleteAndPurgeProjectWithData(): array
+    private const FILE_STORAGE_PROVIDER_S3 = 'aws';
+    private const FILE_STORAGE_PROVIDER_ABS = 'azure';
+
+    public function deleteAndPurgeProjectWithData(): \Generator
     {
         return [
-            [
-                'snowflake',
+            yield 'snowflake with S3 file storage' => [
+                'backend' => Backend::SNOWFLAKE,
+                'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
             ],
-            [
-                'redshift',
+            yield 'redshift with S3 file storage' => [
+                'backend' => Backend::REDSHIFT,
+                'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
             ],
-            [
-                'synapse',
+            yield 'synapse with S3 file storage' => [
+                'backend' => Backend::SYNAPSE,
+                'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
             ],
         ];
     }
@@ -26,8 +34,34 @@ class ProjectDeleteTest extends ClientTestCase
     /**
      * @dataProvider deleteAndPurgeProjectWithData
      */
-    public function testDeleteAndPurgeProjectWithData($backend): void
+    public function testDeleteAndPurgeProjectWithData(string $backend, string $fileStorageProvider): void
     {
+        $connectionParam = sprintf('defaultConnection%sId', ucfirst($backend));
+        $maintainer =  $this->client->getMaintainer($this->testMaintainerId);
+
+        if ($maintainer[$connectionParam] === null) {
+            $this->markTestSkipped(sprintf('Test maintainer does not have set default connection for %s backend', $backend));
+        }
+
+        // get file storage for given provider
+        if ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_ABS) {
+            $fileStorages = array_filter(
+                $this->client->listAbsFileStorage(),
+                function(array $fileStorage) {
+                    return $fileStorage['owner'] === 'keboola';
+                }
+            );
+        } else {
+            $fileStorages = array_filter(
+                $this->client->listS3FileStorage(),
+                function(array $fileStorage) {
+                    return $fileStorage['owner'] === 'keboola';
+                }
+            );
+        }
+
+        $fileStorage = end($fileStorages);
+
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => $name,
@@ -39,6 +73,12 @@ class ProjectDeleteTest extends ClientTestCase
         ]);
 
         $this->assertEquals($backend, $project['defaultBackend']);
+
+        $hasBackend = 'has' . ucfirst($backend);
+        $this->assertTrue($project[$hasBackend]);
+
+        // Setup project file storage backend
+        $this->client->assignFileStorage($project['id'], $fileStorage['id']);
 
         // Create tables, bucket, configuration and workspaces
         $token = $this->client->createProjectStorageToken($project['id'], [
