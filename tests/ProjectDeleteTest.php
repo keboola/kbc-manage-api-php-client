@@ -1,11 +1,12 @@
 <?php
-declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
 use Keboola\Csv\CsvFile;
 use Keboola\ManageApi\Backend;
+use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Metadata;
+use Keboola\StorageApi\Options\Components as ComponentsOptions;
 use Keboola\StorageApi\Workspaces;
 
 class ProjectDeleteTest extends ClientTestCase
@@ -24,7 +25,7 @@ class ProjectDeleteTest extends ClientTestCase
                 'backend' => Backend::REDSHIFT,
                 'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
             ],
-            yield 'synapse with S3 file storage' => [
+            yield 'synapse with ABS file storage' => [
                 'backend' => Backend::SYNAPSE,
                 'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
             ],
@@ -36,31 +37,12 @@ class ProjectDeleteTest extends ClientTestCase
      */
     public function testDeleteAndPurgeProjectWithData(string $backend, string $fileStorageProvider): void
     {
-        $connectionParam = sprintf('defaultConnection%sId', ucfirst($backend));
+        $connectionParamName = sprintf('defaultConnection%sId', ucfirst($backend));
         $maintainer =  $this->client->getMaintainer($this->testMaintainerId);
 
-        if ($maintainer[$connectionParam] === null) {
+        if ($maintainer[$connectionParamName] === null) {
             $this->markTestSkipped(sprintf('Test maintainer does not have set default connection for %s backend', $backend));
         }
-
-        // get file storage for given provider
-        if ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_ABS) {
-            $fileStorages = array_filter(
-                $this->client->listAbsFileStorage(),
-                function(array $fileStorage) {
-                    return $fileStorage['owner'] === 'keboola';
-                }
-            );
-        } else {
-            $fileStorages = array_filter(
-                $this->client->listS3FileStorage(),
-                function(array $fileStorage) {
-                    return $fileStorage['owner'] === 'keboola';
-                }
-            );
-        }
-
-        $fileStorage = end($fileStorages);
 
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -74,11 +56,14 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->assertEquals($backend, $project['defaultBackend']);
 
-        $hasBackend = 'has' . ucfirst($backend);
-        $this->assertTrue($project[$hasBackend]);
+        $this->client->assignFileStorage($project['id'], $this->loadFileStorageId($fileStorageProvider));
 
-        // Setup project file storage backend
-        $this->client->assignFileStorage($project['id'], $fileStorage['id']);
+        if ($backend === Backend::REDSHIFT) {
+            $this->client->assignProjectStorageBackend($project['id'], $maintainer[$connectionParamName]);
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertTrue($project['has' . ucfirst($backend)]);
 
         // Create tables, bucket, configuration and workspaces
         $token = $this->client->createProjectStorageToken($project['id'], [
@@ -115,7 +100,7 @@ class ProjectDeleteTest extends ClientTestCase
         ]);
 
         // add some configuration to project
-        $configuration = (new \Keboola\StorageApi\Options\Components\Configuration())
+        $configuration = (new ComponentsOptions\Configuration())
             ->setComponentId('wr-db')
             ->setConfigurationId('main-1')
             ->setName('Main')
@@ -129,10 +114,10 @@ class ProjectDeleteTest extends ClientTestCase
                 ),
             ));
 
-        $components = new \Keboola\StorageApi\Components($sapiClient);
+        $components = new Components($sapiClient);
         $components->addConfiguration($configuration);
 
-        $configurationRow = new \Keboola\StorageApi\Options\Components\ConfigurationRow($configuration);
+        $configurationRow = new ComponentsOptions\ConfigurationRow($configuration);
         $components->addConfigurationRow($configurationRow);
 
         // add some metadata
@@ -174,5 +159,27 @@ class ProjectDeleteTest extends ClientTestCase
             sleep(1);
         } while ($deletedProject['isPurged'] !== true);
         $this->assertNotNull($deletedProject['purgedTime']);
+    }
+
+    private function loadFileStorageId(string $fileStorageProvider): int
+    {
+        if ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_ABS) {
+            $fileStorages = array_filter(
+                $this->client->listAbsFileStorage(),
+                function (array $fileStorage) {
+                    return $fileStorage['owner'] === 'keboola';
+                }
+            );
+        } else {
+            $fileStorages = array_filter(
+                $this->client->listS3FileStorage(),
+                function (array $fileStorage) {
+                    return $fileStorage['owner'] === 'keboola';
+                }
+            );
+        }
+
+        $fileStorage = end($fileStorages);
+        return $fileStorage['id'];
     }
 }
