@@ -11,8 +11,14 @@ script:
  - docker-compose run --rm release composer ci
 
 deploy:
-  provider: script
-  skip_cleanup: true
-  script: ./deploy.sh
-  on:
-    branch: master
+  - provider: script
+    skip_cleanup: true
+    script: ./deploy.sh
+    on:
+      branch: master
+  - provider: script
+    skip_cleanup: true
+    script: ./deploy-tag.sh
+    on:
+      tags: true
+      condition: $TRAVIS_TAG =~ ^test-
