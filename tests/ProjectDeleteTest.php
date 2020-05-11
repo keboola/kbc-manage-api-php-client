@@ -16,19 +16,21 @@ class ProjectDeleteTest extends ClientTestCase
 
     public function deleteAndPurgeProjectWithData(): \Generator
     {
-        return [
-            yield 'snowflake with S3 file storage' => [
-                'backend' => Backend::SNOWFLAKE,
-                'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
-            ],
-            yield 'redshift with S3 file storage' => [
-                'backend' => Backend::REDSHIFT,
-                'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
-            ],
-            yield 'synapse with ABS file storage' => [
-                'backend' => Backend::SYNAPSE,
-                'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
-            ],
+        yield 'snowflake with S3 file storage' => [
+            'backend' => Backend::SNOWFLAKE,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
+        ];
+        yield 'snowflake with ABS file storage test' => [
+            'backend' => Backend::SNOWFLAKE,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
+        ];
+        yield 'redshift with S3 file storage' => [
+            'backend' => Backend::REDSHIFT,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
+        ];
+        yield 'synapse with ABS file storage' => [
+            'backend' => Backend::SYNAPSE,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
         ];
     }
 
