@@ -641,6 +641,30 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($newOrganization['id'], $changedProject['organization']['id']);
     }
 
+    public function testTemporaryDirectAccessRestrictions()
+    {
+        $client = new \Keboola\ManageApi\Client([
+            'token' => getenv('KBC_MANAGE_API_TOKEN_LOCAL_DEV'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 0,
+        ]);
+
+        $projectId = 58;
+        $organizationId = 543;
+        $bucketStringId = 'in.c-API-sharing';
+
+        try {
+            $client->changeProjectOrganization($projectId, $organizationId);
+            $this->fail('Should have thrown!');
+        } catch (ClientException $e) {
+            $this->assertSame(
+                'Bucket "'.$bucketStringId.'" has direct access enabled, please disable direct access first',
+                $e->getMessage()
+            );
+        }
+
+    }
+
     public function testChangeProjectLimits()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
