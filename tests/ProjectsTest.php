@@ -650,19 +650,18 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $projectId = 58;
-        $organizationId = 543;
-        $bucketStringId = 'in.c-API-sharing';
+        $organizationId = 542;
+        $bucketStringId = 'out.c-API-sharing';
 
         try {
             $client->changeProjectOrganization($projectId, $organizationId);
             $this->fail('Should have thrown!');
         } catch (ClientException $e) {
             $this->assertSame(
-                'Bucket "'.$bucketStringId.'" has direct access enabled, please disable direct access first',
+                'There are buckets "['.$bucketStringId.']" with direct access enabled, please disable direct access first',
                 $e->getMessage()
             );
         }
-
     }
 
     public function testChangeProjectLimits()
