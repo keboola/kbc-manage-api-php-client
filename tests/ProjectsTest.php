@@ -652,13 +652,24 @@ class ProjectsTest extends ClientTestCase
         $projectId = 58;
         $organizationId = 542;
         $bucketStringId = 'out.c-API-sharing';
+        $user = 'Roman Bracinik (devTEstRemoveUser@keboola.com)';
+
+//        try {
+//            $client->changeProjectOrganization($projectId, $organizationId);
+//            $this->fail('Should have thrown!');
+//        } catch (ClientException $e) {
+//            $this->assertSame(
+//                'There are buckets "['.$bucketStringId.']" with direct access enabled, please disable direct access first',
+//                $e->getMessage()
+//            );
+//        }
 
         try {
             $client->changeProjectOrganization($projectId, $organizationId);
             $this->fail('Should have thrown!');
         } catch (ClientException $e) {
             $this->assertSame(
-                'There are buckets "['.$bucketStringId.']" with direct access enabled, please disable direct access first',
+                'Following users "['.$user.']" have created direct access credentials, please remove credentials first',
                 $e->getMessage()
             );
         }
