@@ -118,8 +118,34 @@ class ProjectsTest extends ClientTestCase
 
         $stage = 'in';
         $bucketName = 'test-remove';
+        $bucketId = $stage . '.c-' . $bucketName;
 
-        $client->dropBucket($stage.'.c-'.$bucketName, ['force' => true, 'async' => true ]);
+        $credentials = new DirectAccess($client);
+
+        try {
+            $this->client->addProjectFeature($projectId, 'direct-access');
+        } catch (ClientException $e) {
+            // noop
+            echo $e->getMessage() . \PHP_EOL;
+        }
+        try {
+            $client->disableBucketDirectAccess($bucketId);
+        } catch (\Keboola\StorageApi\ClientException $e) {
+            // noop
+            echo $e->getMessage() . \PHP_EOL;
+        }
+        try {
+            $credentials->deleteCredentials('snowflake');
+        } catch (\Keboola\StorageApi\ClientException $e) {
+            // noop
+            echo $e->getMessage() . \PHP_EOL;
+        }
+        try {
+            $client->dropBucket($bucketId, ['force' => true, 'async' => true]);
+        } catch (\Keboola\StorageApi\ClientException $e) {
+            //noop
+            echo $e->getMessage() . \PHP_EOL;
+        }
 
         $bucketId = $client->createBucket($bucketName, $stage);
         $client->createTable($bucketId, 'users', new CsvFile(__DIR__ . '/_data/users.csv'));
