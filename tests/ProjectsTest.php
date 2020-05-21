@@ -153,27 +153,11 @@ class ProjectsTest extends ClientTestCase
         $client->enableBucketDirectAccess($bucketId);
 
         $credentials = new DirectAccess($client);
-        $daCredentials = $credentials->createCredentials('snowflake');
+        $credentials->createCredentials('snowflake');
 
-
-        $connection = new Connection([
-            'host' => $daCredentials['host'],
-            'user' => $daCredentials['username'],
-            'password' => $daCredentials['password'],
-        ]);
-
-        $schemas = $connection->fetchAll('SHOW SCHEMAS');
-        $this->assertCount(2, $schemas, 'There should be INFORMATION SCHEMA and one bucket');
 
         $this->client->deleteProject($projectId);
         $this->client->purgeDeletedProject($projectId);
-
-        try {
-            $connection->fetchAll('SHOW SCHEMAS');
-            $this->fail('Should not happen');
-        } catch (\Throwable $e) {
-            $this->assertSame('xxx', $e->getMessage());
-        }
     }
 
     public function testSuperAdminCannotCreateProject()
