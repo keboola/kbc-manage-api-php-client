@@ -2,9 +2,13 @@
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\Csv\CsvFile;
+use Keboola\Db\Import\Snowflake\Connection;
+use Keboola\Db\Import\Snowflake\ExceptionHandler;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
+use Keboola\StorageApi\DirectAccess;
 
 class ProjectsTest extends ClientTestCase
 {
@@ -97,6 +101,53 @@ class ProjectsTest extends ClientTestCase
                 'guest',
             ],
         ];
+    }
+
+    public function testTemporaryProjectPurgeWithBucketDirectAccessEnabled()
+    {
+        $projectId = 395;
+
+        $client = new Client([
+            'token' => '395-1099-p5xFp3CZDPTmC99fnokedclkBhMOrzOPGCkicet5',
+            'url' => 'http://connection-apache/',
+            'backoffMaxTries' => 1,
+            'maxJobPollWaitPeriodSeconds' => 1,
+        ]);
+
+//        $this->client->addProjectFeature($projectId, 'direct-access');
+
+        $stage = 'in';
+        $bucketName = 'test-remove';
+
+        $client->dropBucket($stage.'.c-'.$bucketName, ['force' => true, 'async' => true ]);
+
+        $bucketId = $client->createBucket($bucketName, $stage);
+        $client->createTable($bucketId, 'users', new CsvFile(__DIR__ . '/_data/users.csv'));
+
+        $client->enableBucketDirectAccess($bucketId);
+
+        $credentials = new DirectAccess($client);
+        $daCredentials = $credentials->createCredentials('snowflake');
+
+
+        $connection = new Connection([
+            'host' => $daCredentials['host'],
+            'user' => $daCredentials['username'],
+            'password' => $daCredentials['password'],
+        ]);
+
+        $schemas = $connection->fetchAll('SHOW SCHEMAS');
+        $this->assertCount(2, $schemas, 'There should be INFORMATION SCHEMA and one bucket');
+
+        $this->client->deleteProject($projectId);
+        $this->client->purgeDeletedProject($projectId);
+
+        try {
+            $connection->fetchAll('SHOW SCHEMAS');
+            $this->fail('Should not happen');
+        } catch (\Throwable $e) {
+            $this->assertSame('xxx', $e->getMessage());
+        }
     }
 
     public function testSuperAdminCannotCreateProject()

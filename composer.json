@@ -7,8 +7,9 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^5.0",
-        "keboola/storage-api-client": "^7.0",
-        "keboola/coding-standard": "^8.0"
+        "keboola/storage-api-client": "dev-KBC-346-da-enable",
+        "keboola/coding-standard": "^8.0",
+        "keboola/php-csv-db-import": "^5.1"
     },
     "autoload": {
         "psr-4": {
