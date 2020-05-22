@@ -105,16 +105,14 @@ class ProjectsTest extends ClientTestCase
 
     public function testTemporaryProjectPurgeWithBucketDirectAccessEnabled()
     {
-        $projectId = 395;
+        $projectId = 0;
 
         $client = new Client([
-            'token' => '395-1099-p5xFp3CZDPTmC99fnokedclkBhMOrzOPGCkicet5',
+            'token' => 'add-your-token',
             'url' => 'http://connection-apache/',
             'backoffMaxTries' => 1,
             'maxJobPollWaitPeriodSeconds' => 1,
         ]);
-
-//        $this->client->addProjectFeature($projectId, 'direct-access');
 
         $stage = 'in';
         $bucketName = 'test-remove';
@@ -154,7 +152,6 @@ class ProjectsTest extends ClientTestCase
 
         $credentials = new DirectAccess($client);
         $credentials->createCredentials('snowflake');
-
 
         $this->client->deleteProject($projectId);
         $this->client->purgeDeletedProject($projectId);
