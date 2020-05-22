@@ -60,7 +60,7 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->client->assignFileStorage($project['id'], $this->loadFileStorageId($fileStorageProvider));
 
-        if ($backend === Backend::REDSHIFT) {
+        if ($backend === Backend::REDSHIFT || $backend === Backend::SYNAPSE) {
             $this->client->assignProjectStorageBackend($project['id'], $maintainer[$connectionParamName]);
         }
 
