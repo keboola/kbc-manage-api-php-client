@@ -105,6 +105,8 @@ class ProjectsTest extends ClientTestCase
 
     public function testTemporaryProjectPurgeWithBucketDirectAccessEnabled()
     {
+        $this->markTestSkipped('SKIP ! - Dummy test for local testing');
+
         $projectId = 0;
 
         $client = new Client([
