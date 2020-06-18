@@ -659,6 +659,16 @@ class Client
         return $this->apiGet('manage/ui-apps');
     }
 
+    public function registerUiApp(array $options)
+    {
+        return $this->apiPost('manage/ui-apps', $options);
+    }
+
+    public function deleteUiApp($name)
+    {
+        $this->apiDelete("manage/ui-apps/{$name}");
+    }
+
     public function runCommand(array $options)
     {
         return $this->apiPost('/manage/commands', $options);
