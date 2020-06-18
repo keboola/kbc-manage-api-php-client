@@ -3320,6 +3320,20 @@ Returns active applications. This resource doesn't require authentication.
     }
     ```
 
+## Delete Application [DELETE /manage/ui-apps/{id}]
+
+Deletes application and its versions
+
++ Parameters
+    + id (required, string) - stringId/name of application
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
 # Group Syrup API Integration
 
 This is an example of an API call returning all running worker processes and their state. This resource is accessible for tokens of the type `super` with `super_monitoring` scope.
