@@ -3290,28 +3290,6 @@ Returns active applications. This resource doesn't require authentication.
     ]
     ```
 
-## Activate/Deactivate Application Version [PATCH /manage/ui-apps-versions/{version_id}]
-
-+ Attributes
-    + isActive: true (required, boolean) - Active state of a version. Only one version of the app can be active, the previous active version will be disabled.
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 200 (application/json)
-
-    ```js
-    {
-        "id":1646,
-        "created":"2015-08-17 17:43:37",
-        "version":"0.1.21-17-g3cae4c0",
-        "isActive":true,
-        "buildUrl":""
-    }
-    ```
-
 ## Register New Application/Version [POST /manage/ui-apps?{manifest_url,activate}]
 
 + Parameters
