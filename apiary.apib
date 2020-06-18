@@ -3290,40 +3290,6 @@ Returns active applications. This resource doesn't require authentication.
     ]
     ```
 
-## Get Application Detail [GET /manage/ui-apps/{app_id}]
-Retrieves an application detail with all its versions.
-
-+ Parameters
-    + app_id (required, id) - Application ID
-
-+ Request (application/json)
-
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 200 (application/json)
-
-    ```js
-    [
-        {
-            "id":"41",
-            "stringId":"kbc",
-            "name":"kbc",
-            "created":"2015-02-12 11:10:09",
-            "versions":[
-                {
-                    "id":1646,
-                    "created":"2015-08-17 17:43:37",
-                    "version":"0.1.21-17-g3cae4c0",
-                    "isActive":true,
-                    "buildUrl":""
-                }
-            ]
-        }
-    ]
-    ```
-
 ## Activate/Deactivate Application Version [PATCH /manage/ui-apps-versions/{version_id}]
 
 + Attributes
