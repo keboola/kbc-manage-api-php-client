@@ -8,6 +8,9 @@ use Keboola\StorageApi\Client;
 
 class ProjectsTest extends ClientTestCase
 {
+    private const FILE_STORAGE_PROVIDER_S3 = 'aws';
+    private const FILE_STORAGE_PROVIDER_ABS = 'azure';
+
     public function supportedBackends(): array
     {
         return [
@@ -15,6 +18,69 @@ class ProjectsTest extends ClientTestCase
             [Backend::REDSHIFT],
             [Backend::SYNAPSE],
         ];
+    }
+
+    public function unsupportedBackendFileStorageCombinations(): array
+    {
+        return [
+            [
+                Backend::REDSHIFT,
+                self::FILE_STORAGE_PROVIDER_ABS,
+                'Redshift does not support other file storage than S3.',
+            ],
+            [
+                Backend::SYNAPSE,
+                self::FILE_STORAGE_PROVIDER_S3,
+                'Synapse storage backend supports only ABS file storage.',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider unsupportedBackendFileStorageCombinations
+     */
+    public function testUnsupportedFileStorageForBackend(
+        string $backend,
+        string $fileStorage,
+        string $expectedMessage
+    ): void {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        // create with snflk backend
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => Backend::SNOWFLAKE,
+        ]);
+        switch ($fileStorage) {
+            case self::FILE_STORAGE_PROVIDER_S3:
+                $storage = $this->client->listS3FileStorage()[0];
+                break;
+            case self::FILE_STORAGE_PROVIDER_ABS:
+                $storage = $this->client->listAbsFileStorage()[0];
+                break;
+        }
+
+        $backends = $this->client->listStorageBackend();
+        $backendToAssign = null;
+        foreach ($backends as $item) {
+            if ($item['backend'] === $backend) {
+                $backendToAssign = $item;
+            }
+        }
+
+        $this->client->assignFileStorage(
+            $project['id'],
+            $storage['id']
+        );
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage($expectedMessage);
+        $this->client->assignProjectStorageBackend(
+            $project['id'],
+            $backendToAssign['id']
+        );
     }
 
     /**
