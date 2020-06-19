@@ -21,6 +21,10 @@ class UiAppsTest extends ClientTestCase
         }, $client->listUiApps());
         sort($listOfAppsBeforeCreation);
 
+        if (in_array($newAppName, $listOfAppsBeforeCreation)) {
+            $client->deleteUiApp($newAppName);
+        }
+
         $client->registerUiApp([
             'manifestUrl' => 'https://keboola.github.io/kbc-ui-app-manifest-file/sample.json',
             'activate' => true,
@@ -38,8 +42,8 @@ class UiAppsTest extends ClientTestCase
         }, $client->listUiApps());
         sort($listOfAppsAfterDeletion);
 
-        $this->assertTrue(count($listOfAppsBeforeCreation) === (count($listOfAppsAfterCreation) - 1));
-        $this->assertTrue(array_search($newAppName, $listOfAppsAfterCreation) !== false);
+        $this->assertSame(count($listOfAppsBeforeCreation), (count($listOfAppsAfterCreation) - 1));
+        $this->assertNotFalse(array_search($newAppName, $listOfAppsAfterCreation));
         $this->assertEquals($listOfAppsBeforeCreation, $listOfAppsAfterDeletion);
     }
 
