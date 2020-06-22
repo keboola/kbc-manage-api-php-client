@@ -75,12 +75,21 @@ class ProjectsTest extends ClientTestCase
             $storage['id']
         );
 
-        $this->expectException(ClientException::class);
-        $this->expectExceptionMessage($expectedMessage);
-        $this->client->assignProjectStorageBackend(
-            $project['id'],
-            $backendToAssign['id']
-        );
+        try {
+            $this->client->assignProjectStorageBackend(
+                $project['id'],
+                $backendToAssign['id']
+            );
+            $this->fail('Exception should be thrown.');
+        } catch (\Throwable $e) {
+            $this->assertSame(
+                $expectedMessage,
+                $e->getMessage()
+            );
+        } finally {
+            $this->client->deleteProject($project['id']);
+            $this->client->purgeDeletedProject($project['id']);
+        }
     }
 
     /**
@@ -134,12 +143,21 @@ class ProjectsTest extends ClientTestCase
             $backendToAssign['id']
         );
 
-        $this->expectException(ClientException::class);
-        $this->expectExceptionMessage($expectedMessage);
-        $this->client->assignFileStorage(
-            $project['id'],
-            $unsupportedFileStorage['id']
-        );
+        try {
+            $this->client->assignFileStorage(
+                $project['id'],
+                $unsupportedFileStorage['id']
+            );
+            $this->fail('Exception should be thrown.');
+        } catch (\Throwable $e) {
+            $this->assertSame(
+                $expectedMessage,
+                $e->getMessage()
+            );
+        } finally {
+            $this->client->deleteProject($project['id']);
+            $this->client->purgeDeletedProject($project['id']);
+        }
     }
 
     /**
@@ -397,6 +415,8 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $this->assertEquals($backend, $project['defaultBackend']);
+        $this->client->deleteProject($project['id']);
+        $this->client->purgeDeletedProject($project['id']);
     }
 
     public function testCreateProjectWithRedshiftBackendFromTemplate()
