@@ -89,6 +89,9 @@ class StorageBackendTest extends ClientTestCase
         $sapiClient->dropBucket($bucketId);
 
         $this->client->removeProjectStorageBackend($project['id'], $backendToAssign['id']);
+
+        $this->client->deleteProject($project['id']);
+        $this->client->purgeDeletedProject($project['id']);
     }
 
     public function testStorageBackendList()
