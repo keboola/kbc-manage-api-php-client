@@ -8,6 +8,9 @@ use Keboola\StorageApi\Client;
 
 class ProjectsTest extends ClientTestCase
 {
+    private const FILE_STORAGE_PROVIDER_S3 = 'aws';
+    private const FILE_STORAGE_PROVIDER_ABS = 'azure';
+
     public function supportedBackends(): array
     {
         return [
@@ -15,6 +18,146 @@ class ProjectsTest extends ClientTestCase
             [Backend::REDSHIFT],
             [Backend::SYNAPSE],
         ];
+    }
+
+    public function unsupportedBackendFileStorageCombinations(): array
+    {
+        return [
+            [
+                Backend::REDSHIFT,
+                self::FILE_STORAGE_PROVIDER_ABS,
+                'Redshift does not support other file storage than S3.',
+            ],
+            [
+                Backend::SYNAPSE,
+                self::FILE_STORAGE_PROVIDER_S3,
+                'Synapse storage backend supports only ABS file storage.',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider unsupportedBackendFileStorageCombinations
+     */
+    public function testUnsupportedFileStorageForBackend(
+        string $backend,
+        string $unsupportedFileStorageProvider,
+        string $expectedMessage
+    ): void {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        // create with snflk backend
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => Backend::SNOWFLAKE,
+        ]);
+        switch ($unsupportedFileStorageProvider) {
+            case self::FILE_STORAGE_PROVIDER_S3:
+                $storage = $this->client->listS3FileStorage()[0];
+                break;
+            case self::FILE_STORAGE_PROVIDER_ABS:
+                $storage = $this->client->listAbsFileStorage()[0];
+                break;
+        }
+
+        $backends = $this->client->listStorageBackend();
+        $backendToAssign = null;
+        foreach ($backends as $item) {
+            if ($item['backend'] === $backend) {
+                $backendToAssign = $item;
+            }
+        }
+
+        $this->client->assignFileStorage(
+            $project['id'],
+            $storage['id']
+        );
+
+        try {
+            $this->client->assignProjectStorageBackend(
+                $project['id'],
+                $backendToAssign['id']
+            );
+            $this->fail('Exception should be thrown.');
+        } catch (\Throwable $e) {
+            $this->assertSame(
+                $expectedMessage,
+                $e->getMessage()
+            );
+        } finally {
+            $this->client->deleteProject($project['id']);
+            $this->client->purgeDeletedProject($project['id']);
+        }
+    }
+
+    /**
+     * @dataProvider unsupportedBackendFileStorageCombinations
+     */
+    public function testUnsupportedBackendForFileStorage(
+        string $backend,
+        string $unsupportedFileStorageProvide,
+        string $expectedMessage
+    ): void {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        // create with snflk backend
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => Backend::SNOWFLAKE,
+        ]);
+
+        $s3Storage = $this->client->listS3FileStorage()[0];
+        $AbsStorage = $this->client->listAbsFileStorage()[0];
+
+        $backends = $this->client->listStorageBackend();
+        $backendToAssign = null;
+        foreach ($backends as $item) {
+            if ($item['backend'] === $backend) {
+                $backendToAssign = $item;
+            }
+        }
+
+        switch ($unsupportedFileStorageProvide) {
+            case self::FILE_STORAGE_PROVIDER_S3:
+                $unsupportedFileStorage = $s3Storage;
+                $supportedFileStorage = $AbsStorage;
+                break;
+            case self::FILE_STORAGE_PROVIDER_ABS:
+                $unsupportedFileStorage = $AbsStorage;
+                $supportedFileStorage = $s3Storage;
+                break;
+        }
+
+        // assign supported storage
+        $this->client->assignFileStorage(
+            $project['id'],
+            $supportedFileStorage['id']
+        );
+        // assign backend
+        $this->client->assignProjectStorageBackend(
+            $project['id'],
+            $backendToAssign['id']
+        );
+
+        try {
+            $this->client->assignFileStorage(
+                $project['id'],
+                $unsupportedFileStorage['id']
+            );
+            $this->fail('Exception should be thrown.');
+        } catch (\Throwable $e) {
+            $this->assertSame(
+                $expectedMessage,
+                $e->getMessage()
+            );
+        } finally {
+            $this->client->deleteProject($project['id']);
+            $this->client->purgeDeletedProject($project['id']);
+        }
     }
 
     /**
@@ -272,6 +415,8 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $this->assertEquals($backend, $project['defaultBackend']);
+        $this->client->deleteProject($project['id']);
+        $this->client->purgeDeletedProject($project['id']);
     }
 
     public function testCreateProjectWithRedshiftBackendFromTemplate()
