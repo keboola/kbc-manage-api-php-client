@@ -1731,11 +1731,11 @@ class ProjectsTest extends ClientTestCase
         $feature = 'pay-as-you-go';
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'My org',
+            'name' => __CLASS__,
         ]);
 
         $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
+            'name' => __METHOD__,
         ]);
 
         $projectId = $project['id'];
