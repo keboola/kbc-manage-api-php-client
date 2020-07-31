@@ -1725,4 +1725,47 @@ class ProjectsTest extends ClientTestCase
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
         $this->assertEquals('admin', $member['role']);
     }
+
+    public function testPayAsYoGoDetails()
+    {
+        $feature = 'pay-as-you-go';
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => __CLASS__,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => __METHOD__,
+        ]);
+
+        $projectId = $project['id'];
+
+        $project = $this->client->getProject($projectId);
+        $this->assertArrayNotHasKey('payAsYouGo', $project);
+
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $this->assertCount(1, $projects);
+
+        $project = reset($projects);
+        $this->assertEquals($projectId, $project['id']);
+        $this->assertArrayNotHasKey('payAsYouGo', $project);
+
+        $this->client->addProjectFeature($projectId, $feature);
+
+        $project = $this->client->getProject($projectId);
+        $this->assertArrayHasKey('payAsYouGo', $project);
+
+        $payAsYouGo = $project['payAsYouGo'];
+        $this->assertInternalType('integer', $payAsYouGo['purchasedCredits']);
+
+        $projects = $this->client->listOrganizationProjects($organization['id']);
+        $this->assertCount(1, $projects);
+
+        $project = reset($projects);
+        $this->assertEquals($projectId, $project['id']);
+        $this->assertArrayHasKey('payAsYouGo', $project);
+
+        $payAsYouGo = $project['payAsYouGo'];
+        $this->assertInternalType('integer', $payAsYouGo['purchasedCredits']);
+    }
 }

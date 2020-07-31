@@ -922,6 +922,9 @@ Only members of the organization with MFA enabled can perform this action.
           "host": "keboola.snowflakecomputing.com",
           "region": "us-east-1"
         }
+      },
+      "payAsYouGo": {
+        "purchasedCredits": 123
       }
     }
     ```
@@ -933,6 +936,8 @@ Returns a project with associated limits and metrics.
 
 * limits  - These are limits assigned to a project (number of admins, number of orchestrations, parallelization).
 * metrics - Latest values of the monitored project metrics
+
+If the project is configured with pay as you go billing, `payAsYouGo` section is also included in the project details.
 
 + Parameters
     + project_id (required, int) - Project ID
