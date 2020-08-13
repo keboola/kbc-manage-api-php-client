@@ -538,6 +538,16 @@ class ProjectsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(422, $e->getCode());
         }
+
+        // try to add user with empty email address
+        try {
+            $this->client->addUserToProject($project['id'], [
+                'email' => '',
+            ]);
+            $this->fail('User with empty email cannot be created.');
+        } catch (ClientException $e) {
+            $this->assertEquals(422, $e->getCode());
+        }
     }
 
     public function testExpiringUserDeletedProject()
