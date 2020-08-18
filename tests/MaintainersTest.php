@@ -17,7 +17,7 @@ class MaintainersTest extends ClientTestCase
 
         try {
             $this->client->createMaintainer([]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->assertEquals('A name must be set', $e->getMessage());
         }
 
