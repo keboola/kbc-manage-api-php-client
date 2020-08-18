@@ -14,6 +14,13 @@ class MaintainersTest extends ClientTestCase
 
         $initialMaintainersCount = count($this->client->listMaintainers());
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . ' - test maintainer';
+
+        try {
+            $this->client->createMaintainer([]);
+        } catch (\Exception $e) {
+            $this->assertEquals('A name must be set', $e->getMessage());
+        }
+
         $newMaintainer = $this->client->createMaintainer([
             'name' => $maintainerName,
             'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
