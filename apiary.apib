@@ -3170,6 +3170,11 @@ According to the previous example, the parameters for creating Storage will be:
 
 Credentials for sql server admin must be provided with database name.
 
+Master key for exports must be created on SQL pool
+```
+CREATE MASTER KEY
+```
+
 + Request (application/json)
 
     + Headers
@@ -3201,6 +3206,7 @@ Credentials for sql server admin must be provided with database name.
 + region: `us-east-1` (required)
 + owner: keboola (required) - associated AWS account owner
 + database: MyDataWarehouse - required only for Synapse
++ useSynapseManagedIdentity: true - optional for Synapse
 
 ## StorageBackend
 
@@ -3227,6 +3233,7 @@ Credentials for sql server admin must be provided with database name.
     + name: keboola (required)
 + warehouse: keboola
 + database: keboola
++ useSynapseManagedIdentity: false
 
 
 # Group SUPER - Commands
