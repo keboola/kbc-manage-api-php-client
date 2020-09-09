@@ -3191,7 +3191,7 @@ CREATE MASTER KEY
 
 + Response 200 (application/json)
 
-    + Attributes (array[StorageBackendList])
+    + Attributes (array[StorageBackendListRedshift,StorageBackendListSnowflake,StorageBackendListSynapse])
 
 
 ## Data Structures
@@ -3215,10 +3215,10 @@ CREATE MASTER KEY
 + backend: redshift (required)
 + region: us-east-1
 
-## StorageBackendList
+## StorageBackendListRedshift
 
 + id: 123 (required)
-+ host: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
++ host: demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
 + backend: redshift (required)
 + region: us-east-1 (required)
 + owner: keboola (required)
@@ -3231,10 +3231,43 @@ CREATE MASTER KEY
 + creator
     + id: 10 (required)
     + name: keboola (required)
+
+## StorageBackendListSnowflake
+
++ id: 124 (required)
++ host: demo.snowflakecomputing.com (required)
++ backend: snowflake (required)
++ region: us-east-1 (required)
++ owner: keboola (required)
++ stats
+    + projectsCount: 10 (required)
+    + bucketsCount: 100 (required)
+    + dataSizeGB: 100 (required)
+    + rowsCount: 1000000 (required)
++ created: 2008-05-11T15:30:00Z datetime ISO8601 'Y-m-d\TH:i:sO' (required)
++ creator
+    + id: 10 (required)
+    + name: keboola (required)
 + warehouse: keboola
+
+## StorageBackendListSynapse
+
++ id: 125 (required)
++ host: demo-synapse.database.windows.net (required)
++ backend: synapse (required)
++ region: us-east-1 (required)
++ owner: keboola (required)
++ stats
+    + projectsCount: 10 (required)
+    + bucketsCount: 100 (required)
+    + dataSizeGB: 100 (required)
+    + rowsCount: 1000000 (required)
++ created: 2008-05-11T15:30:00Z datetime ISO8601 'Y-m-d\TH:i:sO' (required)
++ creator
+    + id: 10 (required)
+    + name: keboola (required)
 + database: keboola
 + useSynapseManagedIdentity: false
-
 
 # Group SUPER - Commands
 
