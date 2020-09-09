@@ -3209,63 +3209,37 @@ CREATE MASTER KEY
 + useSynapseManagedIdentity: true - optional for Synapse
 
 ## StorageBackend
-
-+ id: 123 (required)
++ id: 123 (number, required)
 + host: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
 + backend: redshift (required)
 + region: us-east-1
 
-## StorageBackendListRedshift
+## StorageBackendListBase
++ id: 123 (number, required)
++ region: us-east-1 (required)
++ owner: keboola (required)
++ stats
+    + projectsCount: 10 (number, required)
+    + bucketsCount: 100 (number, required)
+    + dataSizeGB: 100 (number, required)
+    + rowsCount: 1000000 (number, required)
++ created: `2020-05-11T15:30:00Z` (required, string) - The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
++ creator
+    + id: 10 (number, required)
+    + name: keboola (required)
 
-+ id: 123 (required)
+## StorageBackendListRedshift (StorageBackendListBase)
 + host: demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
 + backend: redshift (required)
-+ region: us-east-1 (required)
-+ owner: keboola (required)
-+ stats
-    + projectsCount: 10 (required)
-    + bucketsCount: 100 (required)
-    + dataSizeGB: 100 (required)
-    + rowsCount: 1000000 (required)
-+ created: 2008-05-11T15:30:00Z datetime ISO8601 'Y-m-d\TH:i:sO' (required)
-+ creator
-    + id: 10 (required)
-    + name: keboola (required)
 
-## StorageBackendListSnowflake
-
-+ id: 124 (required)
+## StorageBackendListSnowflake (StorageBackendListBase)
 + host: demo.snowflakecomputing.com (required)
 + backend: snowflake (required)
-+ region: us-east-1 (required)
-+ owner: keboola (required)
-+ stats
-    + projectsCount: 10 (required)
-    + bucketsCount: 100 (required)
-    + dataSizeGB: 100 (required)
-    + rowsCount: 1000000 (required)
-+ created: 2008-05-11T15:30:00Z datetime ISO8601 'Y-m-d\TH:i:sO' (required)
-+ creator
-    + id: 10 (required)
-    + name: keboola (required)
 + warehouse: keboola
 
-## StorageBackendListSynapse
-
-+ id: 125 (required)
+## StorageBackendListSynapse (StorageBackendListBase)
 + host: demo-synapse.database.windows.net (required)
 + backend: synapse (required)
-+ region: us-east-1 (required)
-+ owner: keboola (required)
-+ stats
-    + projectsCount: 10 (required)
-    + bucketsCount: 100 (required)
-    + dataSizeGB: 100 (required)
-    + rowsCount: 1000000 (required)
-+ created: 2008-05-11T15:30:00Z datetime ISO8601 'Y-m-d\TH:i:sO' (required)
-+ creator
-    + id: 10 (required)
-    + name: keboola (required)
 + database: keboola
 + useSynapseManagedIdentity: false
 
