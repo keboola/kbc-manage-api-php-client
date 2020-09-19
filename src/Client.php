@@ -417,6 +417,11 @@ class Client
         return $this->apiPost("/manage/projects/{$projectId}/tokens", $params);
     }
 
+    public function chargeProjectCredits($projectId, $params = [])
+    {
+        return $this->apiPost("/manage/projects/{$projectId}/credits", $params);
+    }
+
     public function assignProjectStorageBackend($projectId, $backendId)
     {
         return $this->apiPost("/manage/projects/{$projectId}/storage-backend", [
