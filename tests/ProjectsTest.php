@@ -1800,7 +1800,6 @@ class ProjectsTest extends ClientTestCase
             'amount' => 100,
             'description' => 'Charged by admin',
         ]);
-
     }
 
     public function testSuperAdminCanChargeProjectCredits(): void
@@ -2015,5 +2014,4 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->getProject($project['id']);
         $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
     }
-
 }
