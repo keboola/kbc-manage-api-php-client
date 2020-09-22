@@ -417,7 +417,7 @@ class Client
         return $this->apiPost("/manage/projects/{$projectId}/tokens", $params);
     }
 
-    public function chargeProjectCredits($projectId, $params = [])
+    public function giveProjectCredits($projectId, $params = [])
     {
         return $this->apiPost("/manage/projects/{$projectId}/credits", $params);
     }
