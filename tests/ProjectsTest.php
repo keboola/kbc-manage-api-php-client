@@ -1740,7 +1740,7 @@ class ProjectsTest extends ClientTestCase
 
     public function testPayAsYoGoDetails()
     {
-        $feature = self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME;
+        $feature = self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME;
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => __CLASS__,
@@ -1796,13 +1796,13 @@ class ProjectsTest extends ClientTestCase
         $this->expectExceptionCode(400);
         $this->expectExceptionMessage('is not Pay As You Go project');
 
-        $this->client->chargeProjectCredits($project['id'], [
+        $this->client->giveProjectCredits($project['id'], [
             'amount' => 100,
-            'description' => 'Charged by admin',
+            'description' => 'Promo',
         ]);
     }
 
-    public function testSuperAdminCanChargeProjectCredits(): void
+    public function testSuperAdminCanGiveProjectCredits(): void
     {
         $this->client->removeUserFeature($this->superAdmin['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
 
@@ -1821,9 +1821,9 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->getProject($project['id']);
         $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
 
-        $response = $this->client->chargeProjectCredits($project['id'], [
+        $response = $this->client->giveProjectCredits($project['id'], [
             'amount' => 100,
-            'description' => 'Charged by admin',
+            'description' => 'Promo',
         ]);
 
         $this->assertArrayHasKey('id', $response);
@@ -1835,7 +1835,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('idStripeInvoice', $response);
         $this->assertNull($response['moneyAmount']);
         $this->assertArrayHasKey('description', $response);
-        $this->assertSame('Charged by admin', $response['description']);
+        $this->assertSame('Promo', $response['description']);
         $this->assertArrayHasKey('created', $response);
         $this->assertNotNull($response['created']);
 
@@ -1843,7 +1843,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertSame($purchasedCredits + 100, $project['payAsYouGo']['purchasedCredits']);
     }
 
-    public function testAdminWithFeatureCanChargeProjectCredits(): void
+    public function testAdminWithFeatureCanGiveProjectCredits(): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
         $this->client->addUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
@@ -1863,9 +1863,9 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->getProject($project['id']);
         $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
 
-        $response = $this->client->chargeProjectCredits($project['id'], [
+        $response = $this->client->giveProjectCredits($project['id'], [
             'amount' => 100,
-            'description' => 'Charged by admin',
+            'description' => 'Promo',
         ]);
 
         $this->assertArrayHasKey('id', $response);
@@ -1877,7 +1877,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('idStripeInvoice', $response);
         $this->assertNull($response['moneyAmount']);
         $this->assertArrayHasKey('description', $response);
-        $this->assertSame('Charged by admin', $response['description']);
+        $this->assertSame('Promo', $response['description']);
         $this->assertArrayHasKey('created', $response);
         $this->assertNotNull($response['created']);
 
@@ -1885,7 +1885,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertSame($purchasedCredits + 100, $project['payAsYouGo']['purchasedCredits']);
     }
 
-    public function testMaintainerAdminCannotChargeProjectCredits(): void
+    public function testMaintainerAdminCannotGiveProjectCredits(): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
 
@@ -1905,11 +1905,11 @@ class ProjectsTest extends ClientTestCase
         $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
 
         try {
-            $this->normalUserClient->chargeProjectCredits($project['id'], [
+            $this->normalUserClient->giveProjectCredits($project['id'], [
                 'amount' => 100,
-                'description' => 'Charged by admin',
+                'description' => 'Promo',
             ]);
-            $this->fail('Maintainer admin should not be able to charge credits');
+            $this->fail('Maintainer admin should not be able to give credits');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
@@ -1918,7 +1918,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
     }
 
-    public function testOrganizationAdminCannotChargeProjectCredits(): void
+    public function testOrganizationAdminCannotGiveProjectCredits(): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
 
@@ -1938,11 +1938,11 @@ class ProjectsTest extends ClientTestCase
         $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
 
         try {
-            $this->normalUserClient->chargeProjectCredits($project['id'], [
+            $this->normalUserClient->giveProjectCredits($project['id'], [
                 'amount' => 100,
-                'description' => 'Charged by admin',
+                'description' => 'Promo',
             ]);
-            $this->fail('Organization admin should not be able to charge credits');
+            $this->fail('Organization admin should not be able to give credits');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
@@ -1951,7 +1951,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
     }
 
-    public function testProjectAdminCannotChargeProjectCredits(): void
+    public function testProjectAdminCannotGiveProjectCredits(): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
 
@@ -1971,11 +1971,11 @@ class ProjectsTest extends ClientTestCase
         $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
 
         try {
-            $this->normalUserClient->chargeProjectCredits($project['id'], [
+            $this->normalUserClient->giveProjectCredits($project['id'], [
                 'amount' => 100,
-                'description' => 'Charged by admin',
+                'description' => 'Promo',
             ]);
-            $this->fail('Project admin should not be able to charge credits');
+            $this->fail('Project admin should not be able to give credits');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
@@ -1984,7 +1984,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
     }
 
-    public function testRandomAdminCannotChargeProjectCredits(): void
+    public function testRandomAdminCannotGiveProjectCredits(): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
 
@@ -2002,11 +2002,11 @@ class ProjectsTest extends ClientTestCase
         $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
 
         try {
-            $this->normalUserClient->chargeProjectCredits($project['id'], [
+            $this->normalUserClient->giveProjectCredits($project['id'], [
                 'amount' => 100,
-                'description' => 'Charged by admin',
+                'description' => 'Promo',
             ]);
-            $this->fail('Maintainer admin should not be able to charge credits');
+            $this->fail('Maintainer admin should not be able to give credits');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
