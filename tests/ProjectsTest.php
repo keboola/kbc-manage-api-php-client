@@ -1781,7 +1781,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertInternalType('integer', $payAsYouGo['purchasedCredits']);
     }
 
-    public function testCreditsCannotBeChardetToNonPaygoProject(): void
+    public function testCreditsCannotBeGivenToNonPaygoProject(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
