@@ -941,24 +941,26 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
-        $this->assertEmpty($project['features']);
-
         $firstFeatureName = 'first-feature-' . $this->getRandomFeatureSuffix();
+
+        $this->assertNotContains($firstFeatureName, $project['features']);
+
         $this->client->createFeature($firstFeatureName, 'project', $firstFeatureName);
         $this->client->addProjectFeature($project['id'], $firstFeatureName);
         $project = $this->client->getProject($project['id']);
 
-        $this->assertEquals([$firstFeatureName], $project['features']);
+        $this->assertContains($firstFeatureName, $project['features']);
 
         $secondFeatureName = 'second-feature-' . $this->getRandomFeatureSuffix();
         $this->client->createFeature($secondFeatureName, 'project', $secondFeatureName);
         $this->client->addProjectFeature($project['id'], $secondFeatureName);
         $project = $this->client->getProject($project['id']);
-        $this->assertCount(2, $project['features']);
+        $this->assertGreaterThanOrEqual(2, count($project['features']));
 
         $this->client->removeProjectFeature($project['id'], $secondFeatureName);
         $project = $this->client->getProject($project['id']);
-        $this->assertEquals([$firstFeatureName], $project['features']);
+        $this->assertContains($firstFeatureName, $project['features']);
+        $this->assertNotContains($secondFeatureName, $project['features']);
     }
 
     public function testCreateProjectStorageTokenWithoutPermissions()
