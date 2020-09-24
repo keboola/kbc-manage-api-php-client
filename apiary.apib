@@ -1710,6 +1710,40 @@ Only members of the project can reject join requests.
     }
     ```
 
+## Project Credits [/manage/projects/{project_id}/credits]
+
+### Give credits [POST]
+
+Changing balance of credits for PayGo projects.
+
+*Note: Only superadmin or user having assigned `pay-as-you-go-credits-admin` can change project credits balance.*
+
++ Parameters
+    + project_id (required, int) - Project ID
+
++ Attributes
+
+    + amount: 10 (required, number) - Credits amount
+    + description: Promo credits (required) - Reason or label of given credits
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+    ```js
+    {
+        "id": 259,
+        "creditsAmount": 10,
+        "moneyAmount": null,
+        "idStripeInvoice": null,
+        "description": "Promo credits",
+        "created": "2019-06-17T15:07:48+01:00"
+    }
+    ```
+
 # Group Deleted Projects
 
 Operations on deleted projects are allowed only for a super admin.
