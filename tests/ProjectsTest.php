@@ -10,6 +10,8 @@ class ProjectsTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';
+    private const PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME = 'pay-as-you-go-credits-admin';
+    private const PAY_AS_YOU_GO_PROJECT_FEATURE_NAME = 'pay-as-you-go';
 
     public function supportedBackends(): array
     {
@@ -1740,7 +1742,7 @@ class ProjectsTest extends ClientTestCase
 
     public function testPayAsYoGoDetails()
     {
-        $feature = 'pay-as-you-go';
+        $feature = self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME;
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => __CLASS__,
@@ -1779,5 +1781,239 @@ class ProjectsTest extends ClientTestCase
 
         $payAsYouGo = $project['payAsYouGo'];
         $this->assertInternalType('integer', $payAsYouGo['purchasedCredits']);
+    }
+
+    public function testCreditsCannotBeGivenToNonPaygoProject(): void
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+
+        $project = $this->normalUserClient->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->expectExceptionCode(400);
+        $this->expectExceptionMessage('is not Pay As You Go project');
+
+        $this->client->giveProjectCredits($project['id'], [
+            'amount' => 100,
+            'description' => 'Promo',
+        ]);
+    }
+
+    public function testSuperAdminCanGiveProjectCredits(): void
+    {
+        $this->client->removeUserFeature($this->superAdmin['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+
+        $project = $this->normalUserClient->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->client->addProjectFeature($project['id'], self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME);
+
+        $project = $this->client->getProject($project['id']);
+        $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
+
+        $response = $this->client->giveProjectCredits($project['id'], [
+            'amount' => 100,
+            'description' => 'Promo',
+        ]);
+
+        $this->assertArrayHasKey('id', $response);
+        $this->assertInternalType('int', $response['id']);
+        $this->assertArrayHasKey('creditsAmount', $response);
+        $this->assertSame(100, $response['creditsAmount']);
+        $this->assertArrayHasKey('moneyAmount', $response);
+        $this->assertNull($response['moneyAmount']);
+        $this->assertArrayHasKey('idStripeInvoice', $response);
+        $this->assertNull($response['moneyAmount']);
+        $this->assertArrayHasKey('description', $response);
+        $this->assertSame('Promo', $response['description']);
+        $this->assertArrayHasKey('created', $response);
+        $this->assertNotNull($response['created']);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertSame($purchasedCredits + 100, $project['payAsYouGo']['purchasedCredits']);
+    }
+
+    public function testAdminWithFeatureCanGiveProjectCredits(): void
+    {
+        $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
+        $this->client->addUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+
+        $project = $this->normalUserClient->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->client->addProjectFeature($project['id'], self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME);
+
+        $project = $this->client->getProject($project['id']);
+        $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
+
+        $response = $this->client->giveProjectCredits($project['id'], [
+            'amount' => 100,
+            'description' => 'Promo',
+        ]);
+
+        $this->assertArrayHasKey('id', $response);
+        $this->assertInternalType('int', $response['id']);
+        $this->assertArrayHasKey('creditsAmount', $response);
+        $this->assertSame(100, $response['creditsAmount']);
+        $this->assertArrayHasKey('moneyAmount', $response);
+        $this->assertNull($response['moneyAmount']);
+        $this->assertArrayHasKey('idStripeInvoice', $response);
+        $this->assertNull($response['moneyAmount']);
+        $this->assertArrayHasKey('description', $response);
+        $this->assertSame('Promo', $response['description']);
+        $this->assertArrayHasKey('created', $response);
+        $this->assertNotNull($response['created']);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertSame($purchasedCredits + 100, $project['payAsYouGo']['purchasedCredits']);
+    }
+
+    public function testMaintainerAdminCannotGiveProjectCredits(): void
+    {
+        $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->client->addProjectFeature($project['id'], self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME);
+
+        $project = $this->client->getProject($project['id']);
+        $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
+
+        try {
+            $this->normalUserClient->giveProjectCredits($project['id'], [
+                'amount' => 100,
+                'description' => 'Promo',
+            ]);
+            $this->fail('Maintainer admin should not be able to give credits');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
+    }
+
+    public function testOrganizationAdminCannotGiveProjectCredits(): void
+    {
+        $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->client->addProjectFeature($project['id'], self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME);
+
+        $project = $this->client->getProject($project['id']);
+        $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
+
+        try {
+            $this->normalUserClient->giveProjectCredits($project['id'], [
+                'amount' => 100,
+                'description' => 'Promo',
+            ]);
+            $this->fail('Organization admin should not be able to give credits');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
+    }
+
+    public function testProjectAdminCannotGiveProjectCredits(): void
+    {
+        $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->client->addProjectFeature($project['id'], self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME);
+
+        $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
+
+        $project = $this->client->getProject($project['id']);
+        $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
+
+        try {
+            $this->normalUserClient->giveProjectCredits($project['id'], [
+                'amount' => 100,
+                'description' => 'Promo',
+            ]);
+            $this->fail('Project admin should not be able to give credits');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
+    }
+
+    public function testRandomAdminCannotGiveProjectCredits(): void
+    {
+        $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+
+        $this->client->addProjectFeature($project['id'], self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME);
+
+        $project = $this->client->getProject($project['id']);
+        $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
+
+        try {
+            $this->normalUserClient->giveProjectCredits($project['id'], [
+                'amount' => 100,
+                'description' => 'Promo',
+            ]);
+            $this->fail('Maintainer admin should not be able to give credits');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
     }
 }
