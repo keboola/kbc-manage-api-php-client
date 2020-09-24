@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
+use Keboola\StorageApi\Client as StorageClient;
 
 class ClientTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -61,16 +62,6 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getClient(array $options)
     {
-        $testSuiteName = '';
-        if (getenv('SUITE_NAME')) {
-            $testSuiteName = sprintf('Suite: %s, ', getenv('SUITE_NAME'));
-        }
-
-        $buildId = '';
-        if (getenv('TRAVIS_BUILD_ID')) {
-            $buildId = sprintf('Build id: %s, ', getenv('TRAVIS_BUILD_ID'));
-        }
-
         $tokenParts = explode('-', $options['token']);
         $tokenAgentString = '';
         if (count($tokenParts) === 2) {
@@ -82,13 +73,40 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
 
         $options['userAgent'] = sprintf(
             '%s%sStack: %s, %sTest: %s',
-            $buildId,
-            $testSuiteName,
+            $this->getBuildId(),
+            $this->getSuiteName(),
             $options['url'],
             $tokenAgentString,
             $this->getTestName()
         );
         return new Client($options);
+    }
+
+    /**
+     * @param array $token
+     * @return StorageClient
+     */
+    protected function getStorageClient($options)
+    {
+        $tokenParts = explode('-', $options['token']);
+        $tokenAgentString = '';
+        if (count($tokenParts) === 3) {
+            $tokenAgentString = sprintf(
+                'Project: %s, Token: %s, ',
+                $tokenParts[1],
+                $tokenParts[0]
+            );
+        }
+        $options['userAgent'] = sprintf(
+            '%s%sStack: %s, %sTest: %s',
+            $this->getBuildId(),
+            $this->getSuiteName(),
+            $options['url'],
+            $tokenAgentString,
+            $this->getTestName()
+        );
+
+        return new StorageClient($options);
     }
 
     /**
@@ -183,5 +201,29 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBuildId()
+    {
+        $buildId = '';
+        if (getenv('TRAVIS_BUILD_ID')) {
+            $buildId = sprintf('Build id: %s, ', getenv('TRAVIS_BUILD_ID'));
+        }
+        return $buildId;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getSuiteName()
+    {
+        $testSuiteName = '';
+        if (getenv('SUITE_NAME')) {
+            $testSuiteName = sprintf('Suite: %s, ', getenv('SUITE_NAME'));
+        }
+        return $testSuiteName;
     }
 }
