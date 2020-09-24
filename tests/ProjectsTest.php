@@ -733,7 +733,7 @@ class ProjectsTest extends ClientTestCase
             'email' => getenv('KBC_TEST_ADMIN_EMAIL'),
         ]);
 
-        $client = new \Keboola\ManageApi\Client([
+        $client = $this->getClient([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 1,
@@ -866,7 +866,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         try {
-            $clientWithSuperApiToken = new \Keboola\ManageApi\Client([
+            $clientWithSuperApiToken = $this->getClient([
                 'token' => getenv('KBC_SUPER_API_TOKEN'),
                 'url' => getenv('KBC_MANAGE_API_URL'),
                 'backoffMaxTries' => 0,
@@ -979,7 +979,7 @@ class ProjectsTest extends ClientTestCase
             'expiresIn' => 60,
         ]);
 
-        $client = new Client([
+        $client = $this->getClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
@@ -1014,7 +1014,7 @@ class ProjectsTest extends ClientTestCase
             'canUseDirectAccess' => true,//test created token will be canUseDirectAccess=false
         ]);
 
-        $client = new Client([
+        $client = $this->getClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
@@ -1045,7 +1045,7 @@ class ProjectsTest extends ClientTestCase
             'canReadAllFileUploads' => true,
         ]);
 
-        $client = new Client([
+        $client = $this->getClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $tokenWithManageBucketsPermission['token'],
         ]);
@@ -1062,7 +1062,7 @@ class ProjectsTest extends ClientTestCase
             ],
         ]);
 
-        $clientWithReadBucketPermission = new Client([
+        $clientWithReadBucketPermission = $this->getClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $tokenWithReadPermissionToOneBucket['token'],
         ]);
@@ -1095,7 +1095,7 @@ class ProjectsTest extends ClientTestCase
             'canManageTokens' => true,
         ]);
 
-        $client = new Client([
+        $client = $this->getClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
@@ -1141,7 +1141,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($disableReason, $project['disabled']['reason']);
         $this->assertNotEmpty($project['disabled']['estimatedEndTime']);
 
-        $client = new Client([
+        $client = $this->getClient([
             'url' =>  getenv('KBC_MANAGE_API_URL'),
             'token' => $storageToken['token'],
             'backoffMaxTries' => 1,
@@ -1306,7 +1306,7 @@ class ProjectsTest extends ClientTestCase
         }
 
         // permission validation
-        $client = new \Keboola\ManageApi\Client([
+        $client = $this->getClient([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
         ]);
