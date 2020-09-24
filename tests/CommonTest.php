@@ -3,7 +3,6 @@
 namespace Keboola\ManageApiTest;
 
 use GuzzleHttp\Exception\ClientException;
-use Keboola\ManageApi\Client;
 
 class CommonTest extends ClientTestCase
 {
@@ -30,7 +29,7 @@ class CommonTest extends ClientTestCase
 
     public function testVerifySuperToken()
     {
-        $client = new Client([
+        $client = $this->getClient([
             'token' => getenv('KBC_SUPER_API_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 1,

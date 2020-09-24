@@ -2,7 +2,6 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
-use Keboola\ManageApi\ClientException;
 
 abstract class ClientMfaTestCase extends ClientTestCase
 {
@@ -24,7 +23,7 @@ abstract class ClientMfaTestCase extends ClientTestCase
     {
         parent::setUp();
 
-        $this->normalUserWithMfaClient = new Client([
+        $this->normalUserWithMfaClient = $this->getClient([
             'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
         ]);
