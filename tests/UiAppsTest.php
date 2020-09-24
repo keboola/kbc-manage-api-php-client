@@ -49,7 +49,7 @@ class UiAppsTest extends ClientTestCase
 
     public function testPublicList()
     {
-        $client = new Client([
+        $client = $this->getClient([
             'token' => 'token is not required for this api all',
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 1,

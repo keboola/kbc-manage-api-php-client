@@ -72,13 +72,21 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
         }
 
         $tokenParts = explode('-', $options['token']);
+        $tokenAgentString = '';
+        if (count($tokenParts) === 3) {
+            $tokenAgentString = sprintf(
+                'Project: %s, Token: %s, ',
+                $tokenParts[1],
+                $tokenParts[0]
+            );
+        }
+
         $options['userAgent'] = sprintf(
-            '%s%sStack: %s, Project: %s, Token: %s, Test: %s',
+            '%s%sStack: %s, %sTest: %s',
             $buildId,
             $testSuiteName,
             $options['url'],
-            $tokenParts[1],
-            $tokenParts[0],
+            $tokenAgentString,
             $this->getTestName()
         );
         return new Client($options);
