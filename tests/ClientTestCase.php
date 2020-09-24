@@ -56,14 +56,58 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @return Client
+     */
+    protected function getClient(array $options)
+    {
+        $testSuiteName = '';
+        if (getenv('SUITE_NAME')) {
+            $testSuiteName = sprintf('Suite: %s, ', getenv('SUITE_NAME'));
+        }
+
+        $buildId = '';
+        if (getenv('TRAVIS_BUILD_ID')) {
+            $buildId = sprintf('Build id: %s, ', getenv('TRAVIS_BUILD_ID'));
+        }
+
+        $tokenParts = explode('-', $options['token']);
+        $tokenAgentString = '';
+        if (count($tokenParts) === 2) {
+            $tokenAgentString = sprintf(
+                'Token: %s, ',
+                $tokenParts[0]
+            );
+        }
+
+        $options['userAgent'] = sprintf(
+            '%s%sStack: %s, %sTest: %s',
+            $buildId,
+            $testSuiteName,
+            $options['url'],
+            $tokenAgentString,
+            $this->getTestName()
+        );
+        return new Client($options);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTestName()
+    {
+        return get_class($this) . '::' . $this->getName();
+    }
+
+
     public function setUp()
     {
-        $this->client = new Client([
+        $this->client = $this->getClient([
             'token' => getenv('KBC_MANAGE_API_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 0,
         ]);
-        $this->normalUserClient = new \Keboola\ManageApi\Client([
+        $this->normalUserClient = $this->getClient([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 0,

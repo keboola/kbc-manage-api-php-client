@@ -2,8 +2,6 @@
 
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Client;
-
 class NotificationsTest extends ClientTestCase
 {
     public function testCreateNotification()
@@ -98,7 +96,7 @@ class NotificationsTest extends ClientTestCase
         ]);
 
         $origClient = $this->client;
-        $this->client = new Client([
+        $this->client = $this->getClient([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
         ]);
@@ -225,7 +223,7 @@ class NotificationsTest extends ClientTestCase
         ]);
 
         $origClient = $this->client;
-        $this->client = new Client([
+        $this->client = $this->getClient([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
         ]);
@@ -289,7 +287,7 @@ class NotificationsTest extends ClientTestCase
             'email' => $adminEmail,
         ]);
 
-        $newAdminClient = new Client([
+        $newAdminClient = $this->getClient([
             'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
         ]);

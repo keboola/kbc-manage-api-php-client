@@ -40,6 +40,10 @@ class Client
         }
         $this->tokenString = $config['token'];
 
+        if (isset($config['userAgent'])) {
+            $this->userAgent .= ' ' . $config['userAgent'];
+        }
+
         if (!isset($config['url'])) {
             throw new \InvalidArgumentException('url must be set');
         }
