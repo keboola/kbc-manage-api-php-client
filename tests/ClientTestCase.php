@@ -62,9 +62,6 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getClient(array $options)
     {
-        $testSuiteName = $this->getSuiteName();
-        $buildId = $this->getBuildId();
-
         $tokenParts = explode('-', $options['token']);
         $tokenAgentString = '';
         if (count($tokenParts) === 2) {
@@ -76,8 +73,8 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
 
         $options['userAgent'] = sprintf(
             '%s%sStack: %s, %sTest: %s',
-            $buildId,
-            $testSuiteName,
+            $this->getBuildId(),
+            $this->getSuiteName(),
             $options['url'],
             $tokenAgentString,
             $this->getTestName()
@@ -91,8 +88,6 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getStorageClient($options)
     {
-        $testSuiteName = $this->getSuiteName();
-        $buildId = $this->getBuildId();
         $tokenParts = explode('-', $options['token']);
         $tokenAgentString = '';
         if (count($tokenParts) === 3) {
@@ -104,8 +99,8 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
         }
         $options['userAgent'] = sprintf(
             '%s%sStack: %s, %sTest: %s',
-            $buildId,
-            $testSuiteName,
+            $this->getBuildId(),
+            $this->getSuiteName(),
             $options['url'],
             $tokenAgentString,
             $this->getTestName()
