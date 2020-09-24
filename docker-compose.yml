@@ -31,6 +31,8 @@ services:
       - TEST_S3_KEY
       - TEST_S3_REGION
       - TEST_S3_SECRET
+      - SUITE_NAME
+      - TRAVIS_BUILD_ID
 
   dev-xdebug:
     <<: *dev-config
