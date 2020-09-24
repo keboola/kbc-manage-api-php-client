@@ -981,7 +981,7 @@ class ProjectsTest extends ClientTestCase
             'expiresIn' => 60,
         ]);
 
-        $client = $this->getClient([
+        $client = $this->getStorageClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
@@ -1016,7 +1016,7 @@ class ProjectsTest extends ClientTestCase
             'canUseDirectAccess' => true,//test created token will be canUseDirectAccess=false
         ]);
 
-        $client = $this->getClient([
+        $client = $this->getStorageClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
@@ -1047,7 +1047,7 @@ class ProjectsTest extends ClientTestCase
             'canReadAllFileUploads' => true,
         ]);
 
-        $client = $this->getClient([
+        $client = $this->getStorageClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $tokenWithManageBucketsPermission['token'],
         ]);
@@ -1064,7 +1064,7 @@ class ProjectsTest extends ClientTestCase
             ],
         ]);
 
-        $clientWithReadBucketPermission = $this->getClient([
+        $clientWithReadBucketPermission = $this->getStorageClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $tokenWithReadPermissionToOneBucket['token'],
         ]);
@@ -1097,7 +1097,7 @@ class ProjectsTest extends ClientTestCase
             'canManageTokens' => true,
         ]);
 
-        $client = $this->getClient([
+        $client = $this->getStorageClient([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
@@ -1143,7 +1143,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($disableReason, $project['disabled']['reason']);
         $this->assertNotEmpty($project['disabled']['estimatedEndTime']);
 
-        $client = $this->getClient([
+        $client = $this->getStorageClient([
             'url' =>  getenv('KBC_MANAGE_API_URL'),
             'token' => $storageToken['token'],
             'backoffMaxTries' => 1,
