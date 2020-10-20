@@ -14,6 +14,17 @@ class ProjectDeleteTest extends ClientTestCase
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';
 
+    private $organization;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+    }
+
     public function deleteAndPurgeProjectWithData(): \Generator
     {
         yield 'snowflake with S3 file storage' => [
@@ -46,12 +57,7 @@ class ProjectDeleteTest extends ClientTestCase
             $this->markTestSkipped(sprintf('Test maintainer does not have set default connection for %s backend', $backend));
         }
 
-        $name = 'My org';
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => $name,
-        ]);
-
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->client->createProject($this->organization['id'], [
             'name' => 'My test',
             'defaultBackend' => $backend,
         ]);
