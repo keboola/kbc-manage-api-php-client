@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\Csv\CsvFile;
 use Keboola\ManageApi\Backend;
+use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Metadata;
 use Keboola\StorageApi\Options\Components as ComponentsOptions;
@@ -45,6 +46,66 @@ class ProjectDeleteTest extends ClientTestCase
         ];
     }
 
+    public function testPurgeExpiredProjectRemoveJoinRequest()
+    {
+        $normalJoinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+
+        foreach ($normalJoinRequests as $invitation) {
+            $this->normalUserClient->deleteMyProjectJoinRequest($invitation['id']);
+        }
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => 0,
+        ]);
+
+        $project = $this->client->createProject($this->organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => 'snowflake',
+        ]);
+
+        $this->normalUserClient->requestAccessToProject($project['id']);
+
+        $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(1, $joinRequests);
+        $this->assertSame($project['id'], $joinRequests[0]['project']['id']);
+
+        $this->client->updateProject($project['id'], ['expirationDays' => -1]);
+
+        $startTime = time();
+        $maxWaitTimeSeconds = 120;
+
+        // wait until project will be deleted
+        do {
+            $isProjectDeleted = false;
+            try {
+                $this->client->getProject($project['id']);
+            } catch (ClientException $e) {
+                $isProjectDeleted = true;
+            }
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($isProjectDeleted !== true);
+
+        // purge all data async
+        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
+        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
+        $this->assertNotNull($purgeResponse['commandExecutionId']);
+        do {
+            $deletedProject = $this->client->getDeletedProject($project['id']);
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($deletedProject['isPurged'] !== true);
+        $this->assertNotNull($deletedProject['purgedTime']);
+
+        $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(0, $joinRequests);
+    }
     /**
      * @dataProvider deleteAndPurgeProjectWithData
      */
