@@ -106,6 +106,63 @@ class ProjectDeleteTest extends ClientTestCase
         $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
         $this->assertCount(0, $joinRequests);
     }
+
+    public function testPurgeExpiredProjectRemoveUserInvitation()
+    {
+        $normalUserInvitations = $this->normalUserClient->listMyProjectInvitations();
+
+        foreach ($normalUserInvitations as $invitation) {
+            $this->normalUserClient->declineMyProjectInvitation($invitation['id']);
+        }
+
+        $project = $this->client->createProject($this->organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => 'snowflake',
+        ]);
+
+        $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
+
+        $normalUserInvitations = $this->normalUserClient->listMyProjectInvitations();
+
+        $this->assertCount(1, $normalUserInvitations);
+        $this->assertSame($project['id'], $normalUserInvitations[0]['project']['id']);
+
+        $this->client->updateProject($project['id'], ['expirationDays' => -1]);
+
+        $startTime = time();
+        $maxWaitTimeSeconds = 120;
+
+        // wait until project will be deleted
+        do {
+            $isProjectDeleted = false;
+            try {
+                $this->client->getProject($project['id']);
+            } catch (ClientException $e) {
+                $isProjectDeleted = true;
+            }
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($isProjectDeleted !== true);
+
+        // purge all data async
+        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
+        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
+        $this->assertNotNull($purgeResponse['commandExecutionId']);
+        do {
+            $deletedProject = $this->client->getDeletedProject($project['id']);
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($deletedProject['isPurged'] !== true);
+        $this->assertNotNull($deletedProject['purgedTime']);
+
+        $normalUserInvitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(0, $normalUserInvitations);
+    }
+
     /**
      * @dataProvider deleteAndPurgeProjectWithData
      */
