@@ -62,7 +62,7 @@ class ProjectDeleteTest extends ClientTestCase
 
         $project = $this->client->createProject($this->organization['id'], [
             'name' => 'My test',
-            'defaultBackend' => 'snowflake',
+            'defaultBackend' => Backend::SNOWFLAKE,
         ]);
 
         $this->normalUserClient->requestAccessToProject($project['id']);
@@ -117,7 +117,7 @@ class ProjectDeleteTest extends ClientTestCase
 
         $project = $this->client->createProject($this->organization['id'], [
             'name' => 'My test',
-            'defaultBackend' => 'snowflake',
+            'defaultBackend' => Backend::SNOWFLAKE,
         ]);
 
         $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
