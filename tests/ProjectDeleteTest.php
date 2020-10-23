@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\Csv\CsvFile;
 use Keboola\ManageApi\Backend;
+use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Metadata;
 use Keboola\StorageApi\Options\Components as ComponentsOptions;
@@ -13,6 +14,17 @@ class ProjectDeleteTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';
+
+    private $organization;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+    }
 
     public function deleteAndPurgeProjectWithData(): \Generator
     {
@@ -34,6 +46,123 @@ class ProjectDeleteTest extends ClientTestCase
         ];
     }
 
+    public function testPurgeExpiredProjectRemoveJoinRequest()
+    {
+        $normalJoinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+
+        foreach ($normalJoinRequests as $invitation) {
+            $this->normalUserClient->deleteMyProjectJoinRequest($invitation['id']);
+        }
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => 0,
+        ]);
+
+        $project = $this->client->createProject($this->organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => Backend::SNOWFLAKE,
+        ]);
+
+        $this->normalUserClient->requestAccessToProject($project['id']);
+
+        $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(1, $joinRequests);
+        $this->assertSame($project['id'], $joinRequests[0]['project']['id']);
+
+        $this->client->updateProject($project['id'], ['expirationDays' => -1]);
+
+        $startTime = time();
+        $maxWaitTimeSeconds = 120;
+
+        // wait until project will be deleted
+        do {
+            $isProjectDeleted = false;
+            try {
+                $this->client->getProject($project['id']);
+            } catch (ClientException $e) {
+                $isProjectDeleted = true;
+            }
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($isProjectDeleted !== true);
+
+        // purge all data async
+        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
+        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
+        $this->assertNotNull($purgeResponse['commandExecutionId']);
+        do {
+            $deletedProject = $this->client->getDeletedProject($project['id']);
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($deletedProject['isPurged'] !== true);
+        $this->assertNotNull($deletedProject['purgedTime']);
+
+        $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
+        $this->assertCount(0, $joinRequests);
+    }
+
+    public function testPurgeExpiredProjectRemoveUserInvitation()
+    {
+        $normalUserInvitations = $this->normalUserClient->listMyProjectInvitations();
+
+        foreach ($normalUserInvitations as $invitation) {
+            $this->normalUserClient->declineMyProjectInvitation($invitation['id']);
+        }
+
+        $project = $this->client->createProject($this->organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => Backend::SNOWFLAKE,
+        ]);
+
+        $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
+
+        $normalUserInvitations = $this->normalUserClient->listMyProjectInvitations();
+
+        $this->assertCount(1, $normalUserInvitations);
+        $this->assertSame($project['id'], $normalUserInvitations[0]['project']['id']);
+
+        $this->client->updateProject($project['id'], ['expirationDays' => -1]);
+
+        $startTime = time();
+        $maxWaitTimeSeconds = 120;
+
+        // wait until project will be deleted
+        do {
+            $isProjectDeleted = false;
+            try {
+                $this->client->getProject($project['id']);
+            } catch (ClientException $e) {
+                $isProjectDeleted = true;
+            }
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($isProjectDeleted !== true);
+
+        // purge all data async
+        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
+        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
+        $this->assertNotNull($purgeResponse['commandExecutionId']);
+        do {
+            $deletedProject = $this->client->getDeletedProject($project['id']);
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($deletedProject['isPurged'] !== true);
+        $this->assertNotNull($deletedProject['purgedTime']);
+
+        $normalUserInvitations = $this->normalUserClient->listMyProjectInvitations();
+        $this->assertCount(0, $normalUserInvitations);
+    }
+
     /**
      * @dataProvider deleteAndPurgeProjectWithData
      */
@@ -46,12 +175,7 @@ class ProjectDeleteTest extends ClientTestCase
             $this->markTestSkipped(sprintf('Test maintainer does not have set default connection for %s backend', $backend));
         }
 
-        $name = 'My org';
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => $name,
-        ]);
-
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->client->createProject($this->organization['id'], [
             'name' => 'My test',
             'defaultBackend' => $backend,
         ]);
