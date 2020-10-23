@@ -242,6 +242,9 @@ class ProjectsTest extends ClientTestCase
             [
                 ProjectRole::GUEST,
             ],
+            [
+                ProjectRole::READ_ONLY,
+            ],
         ];
     }
 
