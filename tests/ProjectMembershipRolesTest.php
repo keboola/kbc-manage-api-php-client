@@ -121,7 +121,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->project['id'],
             [
                 'email' => 'spam@keboola.com',
-                'role' => ProjectRole::GUEST,
+                'role' => $role,
             ]
         );
 
@@ -145,7 +145,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
                 $this->project['id'],
                 [
                     'email' => 'spam@keboola.com',
-                    'role' => ProjectRole::GUEST,
+                    'role' => $role,
                 ]
             );
             $this->fail('Action should not be allowed to guest users');
@@ -169,7 +169,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->project['id'],
             [
                 'email' => 'spam@keboola.com',
-                'role' => ProjectRole::GUEST,
+                'role' => $role,
             ]
         );
 
@@ -206,7 +206,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
                 $this->project['id'],
                 [
                     'email' => 'spam@keboola.com',
-                    'role' => ProjectRole::GUEST,
+                    'role' => $role,
                 ]
             );
             $this->fail('Action should not be allowed to guest users');
