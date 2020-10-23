@@ -2,6 +2,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApi\ProjectRole;
 
 class ProjectInvitationsTest extends ClientTestCase
 {
@@ -58,10 +59,10 @@ class ProjectInvitationsTest extends ClientTestCase
     {
         return [
             [
-                'admin',
+                ProjectRole::ADMIN,
             ],
             [
-                'guest',
+                ProjectRole::GUEST,
             ],
         ];
     }
@@ -564,7 +565,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitation = $this->client->inviteUserToProject($projectId, [
             'email' => $this->normalUser['email'],
             'reason' => 'Testing reason propagation',
-            'role' => 'guest',
+            'role' => ProjectRole::GUEST,
             'expirationSeconds' => 3600,
         ]);
 

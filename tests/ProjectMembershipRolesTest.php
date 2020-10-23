@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApi\ProjectRole;
 
 class ProjectMembershipRolesTest extends ClientMfaTestCase
 {
@@ -12,8 +13,6 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
 
     /** @var array */
     private $project;
-
-    private const ROLE_GUEST = 'guest';
 
     /** @var Client */
     private $guestRoleMemberClient;
@@ -37,7 +36,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->project['id'],
             [
                 'email' => $this->normalUser['email'],
-                'role' => self::ROLE_GUEST,
+                'role' => ProjectRole::GUEST,
             ]
         );
 
@@ -90,7 +89,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->project['id'],
             [
                 'email' => 'spam@keboola.com',
-                'role' => self::ROLE_GUEST,
+                'role' => ProjectRole::GUEST,
             ]
         );
 
@@ -109,7 +108,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
                 $this->project['id'],
                 [
                     'email' => 'spam@keboola.com',
-                    'role' => self::ROLE_GUEST,
+                    'role' => ProjectRole::GUEST,
                 ]
             );
             $this->fail('Action should not be allowed to guest users');
@@ -128,7 +127,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->project['id'],
             [
                 'email' => 'spam@keboola.com',
-                'role' => self::ROLE_GUEST,
+                'role' => ProjectRole::GUEST,
             ]
         );
 
@@ -155,7 +154,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
                 $this->project['id'],
                 [
                     'email' => 'spam@keboola.com',
-                    'role' => self::ROLE_GUEST,
+                    'role' => ProjectRole::GUEST,
                 ]
             );
             $this->fail('Action should not be allowed to guest users');
@@ -261,7 +260,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->guestRoleMemberClient->updateUserProjectMembership(
                 $this->project['id'],
                 $this->normalUserWithMfa['id'],
-                ['role' => self::ROLE_GUEST]
+                ['role' => ProjectRole::GUEST]
             );
             $this->fail('Action should not be allowed to guest users');
         } catch (ClientException $e) {
