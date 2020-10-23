@@ -551,7 +551,10 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertCount(1, $invitations);
     }
 
-    public function testInvitationAttributesPropagationToProjectMembership(): void
+    /**
+     * @dataProvider inviteUserToProjectWithRoleData
+     */
+    public function testInvitationAttributesPropagationToProjectMembership(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember();
@@ -565,12 +568,12 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitation = $this->client->inviteUserToProject($projectId, [
             'email' => $this->normalUser['email'],
             'reason' => 'Testing reason propagation',
-            'role' => ProjectRole::GUEST,
+            'role' => $role,
             'expirationSeconds' => 3600,
         ]);
 
         $this->assertEquals('Testing reason propagation', $invitation['reason']);
-        $this->assertEquals('guest', $invitation['role']);
+        $this->assertEquals($role, $invitation['role']);
         $this->assertNotEmpty($invitation['expires']);
 
         $this->normalUserClient->acceptMyProjectInvitation($invitation['id']);
@@ -582,7 +585,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertNotNull($projectUser);
 
         $this->assertEquals($invitation['reason'], $projectUser['reason']);
-        $this->assertEquals('guest', $projectUser['role']);
+        $this->assertEquals($role, $projectUser['role']);
         $this->assertNotEmpty($projectUser['expires']);
     }
 
