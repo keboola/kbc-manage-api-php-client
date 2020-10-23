@@ -44,13 +44,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->guestUser = $this->normalUser;
     }
 
-    public function testGuestAdministratorCanViewProjectDetails()
+    public function testAdministrorWithLimitedRoleCanViewProjectDetails()
     {
         $project = $this->guestRoleMemberClient->getProject($this->project['id']);
         $this->assertEquals($this->project['id'], $project['id']);
     }
 
-    public function testGuestAdministratorCannotDeleteProject()
+    public function testAdministrorWithLimitedRoleCannotDeleteProject()
     {
         try {
             $this->guestRoleMemberClient->deleteProject($this->project['id']);
@@ -63,7 +63,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($this->project['id'], $project['id']);
     }
 
-    public function testGuestAdministratorCannotUpdateProject()
+    public function testAdministrorWithLimitedRoleCannotUpdateProject()
     {
         try {
             $this->guestRoleMemberClient->updateProject(
@@ -81,7 +81,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($this->project['name'], $project['name']);
     }
 
-    public function testGuestAdministratorCanListAndGetProjectInvitations()
+    public function testAdministrorWithLimitedRoleCanListAndGetProjectInvitations()
     {
         $this->assertCount(0, $this->guestRoleMemberClient->listProjectInvitations($this->project['id']));
 
@@ -101,7 +101,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($invitation, $this->guestRoleMemberClient->getProjectInvitation($this->project['id'], $invitation['id']));
     }
 
-    public function testGuestAdministratorCannotInviteAdministrator()
+    public function testAdministrorWithLimitedRoleCannotInviteAdministrator()
     {
         try {
             $this->guestRoleMemberClient->inviteUserToProject(
@@ -119,7 +119,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertCount(0, $this->normalUserWithMfaClient->listProjectInvitations($this->project['id']));
     }
 
-    public function testGuestAdministratorCannotCancelAdministratorInvitation()
+    public function testAdministrorWithLimitedRoleCannotCancelAdministratorInvitation()
     {
         $this->assertCount(0, $this->normalUserWithMfaClient->listProjectInvitations($this->project['id']));
 
@@ -141,13 +141,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertCount(1, $this->normalUserWithMfaClient->listProjectInvitations($this->project['id']));
     }
 
-    public function testGuestAdministratorCanListProjectUsers()
+    public function testAdministrorWithLimitedRoleCanListProjectUsers()
     {
         $members = $this->guestRoleMemberClient->listProjectUsers($this->project['id']);
         $this->assertCount(2, $members);
     }
 
-    public function testGuestAdministratorCannotAddAdministrator()
+    public function testAdministrorWithLimitedRoleCannotAddAdministrator()
     {
         try {
             $this->guestRoleMemberClient->addUserToProject(
@@ -166,7 +166,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertNull($membership);
     }
 
-    public function testGuestAdministratorCannotRemoveAdministrator()
+    public function testAdministrorWithLimitedRoleCannotRemoveAdministrator()
     {
         try {
             $this->guestRoleMemberClient->removeUserFromProject(
@@ -182,7 +182,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertNotNull($membership);
     }
 
-    public function testGuestAdministratorCanLeaveProject()
+    public function testAdministrorWithLimitedRoleCanLeaveProject()
     {
         $this->guestRoleMemberClient->removeUserFromProject(
             $this->project['id'],
@@ -193,7 +193,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertNull($membership);
     }
 
-    public function testGuestAdministratorCanListAndGetProjectJoinRequests()
+    public function testAdministrorWithLimitedRoleCanListAndGetProjectJoinRequests()
     {
         $this->assertCount(0, $this->guestRoleMemberClient->listProjectJoinRequests($this->project['id']));
 
@@ -208,7 +208,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($joinRequest, $this->guestRoleMemberClient->getProjectJoinRequest($this->project['id'], $joinRequest['id']));
     }
 
-    public function testGuestAdministratorCannotApproveOrDeclineJoinRequest()
+    public function testAdministrorWithLimitedRoleCannotApproveOrDeclineJoinRequest()
     {
         $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['allowAutoJoin' => false]);
 
@@ -240,7 +240,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertCount(1, $joinRequests);
     }
 
-    public function testGuestAdministratorCannotCreateStorageToken()
+    public function testAdministrorWithLimitedRoleCannotCreateStorageToken()
     {
         try {
             $this->guestRoleMemberClient->createProjectStorageToken(
@@ -254,7 +254,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         }
     }
 
-    public function testGuestAdministratorCannotChangeMembershipRole()
+    public function testAdministrorWithLimitedRoleCannotChangeMembershipRole()
     {
         try {
             $this->guestRoleMemberClient->updateUserProjectMembership(
@@ -271,7 +271,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals('admin', $membership['role']);
     }
 
-    public function testGuestAdministratorCannotChangeOrganization()
+    public function testAdministrorWithLimitedRoleCannotChangeOrganization()
     {
         $organization = $this->normalUserWithMfaClient->createOrganization($this->testMaintainerId, [
             'name' => 'My destination org',
