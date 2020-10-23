@@ -8,4 +8,5 @@ final class ProjectRole
 {
     public const ADMIN = 'admin';
     public const GUEST = 'guest';
+    public const READ_ONLY = 'readOnly';
 }

@@ -64,6 +64,9 @@ class ProjectInvitationsTest extends ClientTestCase
             [
                 ProjectRole::GUEST,
             ],
+            [
+                ProjectRole::READ_ONLY,
+            ],
         ];
     }
 

@@ -42,6 +42,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             [
                 ProjectRole::GUEST,
             ],
+            [
+                ProjectRole::READ_ONLY,
+            ],
         ];
     }
 
