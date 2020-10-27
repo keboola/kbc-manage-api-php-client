@@ -48,7 +48,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         ];
     }
 
-    private function addNormalUserToProjectAsAdministrorWithLimitedRole(string $role): void
+    private function addNormalUserToProjectAsAdministratorWithLimitedRole(string $role): void
     {
         $this->normalUserWithMfaClient->addUserToProject(
             $this->project['id'],
@@ -62,9 +62,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCanViewProjectDetails(string $role): void
+    public function testAdministratorWithLimitedRoleCanViewProjectDetails(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         $project = $this->guestRoleMemberClient->getProject($this->project['id']);
         $this->assertEquals($this->project['id'], $project['id']);
@@ -73,9 +73,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotDeleteProject(string $role): void
+    public function testAdministratorWithLimitedRoleCannotDeleteProject(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         try {
             $this->guestRoleMemberClient->deleteProject($this->project['id']);
@@ -91,9 +91,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotUpdateProject(string $role): void
+    public function testAdministratorWithLimitedRoleCannotUpdateProject(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         try {
             $this->guestRoleMemberClient->updateProject(
@@ -114,9 +114,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCanListAndGetProjectInvitations(string $role): void
+    public function testAdministratorWithLimitedRoleCanListAndGetProjectInvitations(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         $this->assertCount(0, $this->guestRoleMemberClient->listProjectInvitations($this->project['id']));
 
@@ -139,9 +139,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotInviteAdministrator(string $role): void
+    public function testAdministratorWithLimitedRoleCannotInviteAdministrator(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         try {
             $this->guestRoleMemberClient->inviteUserToProject(
@@ -162,9 +162,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotCancelAdministratorInvitation(string $role): void
+    public function testAdministratorWithLimitedRoleCannotCancelAdministratorInvitation(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         $this->assertCount(0, $this->normalUserWithMfaClient->listProjectInvitations($this->project['id']));
 
@@ -189,9 +189,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCanListProjectUsers(string $role): void
+    public function testAdministratorWithLimitedRoleCanListProjectUsers(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         $members = $this->guestRoleMemberClient->listProjectUsers($this->project['id']);
         $this->assertCount(2, $members);
@@ -200,9 +200,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotAddAdministrator(string $role): void
+    public function testAdministratorWithLimitedRoleCannotAddAdministrator(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         try {
             $this->guestRoleMemberClient->addUserToProject(
@@ -224,9 +224,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotRemoveAdministrator(string $role): void
+    public function testAdministratorWithLimitedRoleCannotRemoveAdministrator(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         try {
             $this->guestRoleMemberClient->removeUserFromProject(
@@ -245,9 +245,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCanLeaveProject(string $role): void
+    public function testAdministratorWithLimitedRoleCanLeaveProject(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         $this->guestRoleMemberClient->removeUserFromProject(
             $this->project['id'],
@@ -261,9 +261,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCanListAndGetProjectJoinRequests(string $role): void
+    public function testAdministratorWithLimitedRoleCanListAndGetProjectJoinRequests(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         $this->assertCount(0, $this->guestRoleMemberClient->listProjectJoinRequests($this->project['id']));
 
@@ -281,9 +281,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotApproveOrDeclineJoinRequest(string $role): void
+    public function testAdministratorWithLimitedRoleCannotApproveOrDeclineJoinRequest(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['allowAutoJoin' => false]);
 
@@ -318,9 +318,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotCreateStorageToken(string $role): void
+    public function testAdministratorWithLimitedRoleCannotCreateStorageToken(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         try {
             $this->guestRoleMemberClient->createProjectStorageToken(
@@ -337,9 +337,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotChangeMembershipRole(string $role): void
+    public function testAdministratorWithLimitedRoleCannotChangeMembershipRole(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         try {
             $this->guestRoleMemberClient->updateUserProjectMembership(
@@ -359,9 +359,9 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /**
      * @dataProvider limitedRolesData
      */
-    public function testAdministrorWithLimitedRoleCannotChangeOrganization(string $role): void
+    public function testAdministratorWithLimitedRoleCannotChangeOrganization(string $role): void
     {
-        $this->addNormalUserToProjectAsAdministrorWithLimitedRole($role);
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
 
         $organization = $this->normalUserWithMfaClient->createOrganization($this->testMaintainerId, [
             'name' => 'My destination org',
