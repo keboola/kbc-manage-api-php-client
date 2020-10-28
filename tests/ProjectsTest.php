@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApi\ProjectRole;
 use Keboola\StorageApi\Client;
 
 class ProjectsTest extends ClientTestCase
@@ -236,10 +237,13 @@ class ProjectsTest extends ClientTestCase
     {
         return [
             [
-                'admin',
+                ProjectRole::ADMIN,
             ],
             [
-                'guest',
+                ProjectRole::GUEST,
+            ],
+            [
+                ProjectRole::READ_ONLY,
             ],
         ];
     }
@@ -1729,7 +1733,7 @@ class ProjectsTest extends ClientTestCase
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
         $this->assertEquals('admin', $member['role']);
 
-        $this->client->updateUserProjectMembership($project['id'], $this->normalUser['id'], ['role' => 'guest']);
+        $this->client->updateUserProjectMembership($project['id'], $this->normalUser['id'], ['role' => ProjectRole::GUEST]);
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
         $this->assertEquals('guest', $member['role']);

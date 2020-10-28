@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApi\ProjectRole;
 
 class ProjectMembershipRolesTest extends ClientMfaTestCase
 {
@@ -12,8 +13,6 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
 
     /** @var array */
     private $project;
-
-    private const ROLE_GUEST = 'guest';
 
     /** @var Client */
     private $guestRoleMemberClient;
@@ -33,26 +32,51 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
 
         $this->project = $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => ProjectMembershipRolesTest::class]);
 
-        $this->normalUserWithMfaClient->addUserToProject(
-            $this->project['id'],
-            [
-                'email' => $this->normalUser['email'],
-                'role' => self::ROLE_GUEST,
-            ]
-        );
-
         $this->guestRoleMemberClient = $this->normalUserClient;
         $this->guestUser = $this->normalUser;
     }
 
-    public function testGuestAdministratorCanViewProjectDetails()
+    public function limitedRolesData(): array
     {
+        return [
+            [
+                ProjectRole::GUEST,
+            ],
+            [
+                ProjectRole::READ_ONLY,
+            ],
+        ];
+    }
+
+    private function addNormalUserToProjectAsAdministratorWithLimitedRole(string $role): void
+    {
+        $this->normalUserWithMfaClient->addUserToProject(
+            $this->project['id'],
+            [
+                'email' => $this->normalUser['email'],
+                'role' => $role,
+            ]
+        );
+    }
+
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCanViewProjectDetails(string $role): void
+    {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         $project = $this->guestRoleMemberClient->getProject($this->project['id']);
         $this->assertEquals($this->project['id'], $project['id']);
     }
 
-    public function testGuestAdministratorCannotDeleteProject()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotDeleteProject(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         try {
             $this->guestRoleMemberClient->deleteProject($this->project['id']);
             $this->fail('Action should not be allowed to guest users');
@@ -64,8 +88,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($this->project['id'], $project['id']);
     }
 
-    public function testGuestAdministratorCannotUpdateProject()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotUpdateProject(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         try {
             $this->guestRoleMemberClient->updateProject(
                 $this->project['id'],
@@ -82,15 +111,20 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($this->project['name'], $project['name']);
     }
 
-    public function testGuestAdministratorCanListAndGetProjectInvitations()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCanListAndGetProjectInvitations(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         $this->assertCount(0, $this->guestRoleMemberClient->listProjectInvitations($this->project['id']));
 
         $invitation = $this->normalUserWithMfaClient->inviteUserToProject(
             $this->project['id'],
             [
                 'email' => 'spam@keboola.com',
-                'role' => self::ROLE_GUEST,
+                'role' => $role,
             ]
         );
 
@@ -102,14 +136,19 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($invitation, $this->guestRoleMemberClient->getProjectInvitation($this->project['id'], $invitation['id']));
     }
 
-    public function testGuestAdministratorCannotInviteAdministrator()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotInviteAdministrator(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         try {
             $this->guestRoleMemberClient->inviteUserToProject(
                 $this->project['id'],
                 [
                     'email' => 'spam@keboola.com',
-                    'role' => self::ROLE_GUEST,
+                    'role' => $role,
                 ]
             );
             $this->fail('Action should not be allowed to guest users');
@@ -120,15 +159,20 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertCount(0, $this->normalUserWithMfaClient->listProjectInvitations($this->project['id']));
     }
 
-    public function testGuestAdministratorCannotCancelAdministratorInvitation()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotCancelAdministratorInvitation(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         $this->assertCount(0, $this->normalUserWithMfaClient->listProjectInvitations($this->project['id']));
 
         $invitation = $this->normalUserWithMfaClient->inviteUserToProject(
             $this->project['id'],
             [
                 'email' => 'spam@keboola.com',
-                'role' => self::ROLE_GUEST,
+                'role' => $role,
             ]
         );
 
@@ -142,20 +186,30 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertCount(1, $this->normalUserWithMfaClient->listProjectInvitations($this->project['id']));
     }
 
-    public function testGuestAdministratorCanListProjectUsers()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCanListProjectUsers(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         $members = $this->guestRoleMemberClient->listProjectUsers($this->project['id']);
         $this->assertCount(2, $members);
     }
 
-    public function testGuestAdministratorCannotAddAdministrator()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotAddAdministrator(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         try {
             $this->guestRoleMemberClient->addUserToProject(
                 $this->project['id'],
                 [
                     'email' => 'spam@keboola.com',
-                    'role' => self::ROLE_GUEST,
+                    'role' => $role,
                 ]
             );
             $this->fail('Action should not be allowed to guest users');
@@ -167,8 +221,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertNull($membership);
     }
 
-    public function testGuestAdministratorCannotRemoveAdministrator()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotRemoveAdministrator(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         try {
             $this->guestRoleMemberClient->removeUserFromProject(
                 $this->project['id'],
@@ -183,8 +242,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertNotNull($membership);
     }
 
-    public function testGuestAdministratorCanLeaveProject()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCanLeaveProject(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         $this->guestRoleMemberClient->removeUserFromProject(
             $this->project['id'],
             $this->guestUser['id']
@@ -194,8 +258,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertNull($membership);
     }
 
-    public function testGuestAdministratorCanListAndGetProjectJoinRequests()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCanListAndGetProjectJoinRequests(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         $this->assertCount(0, $this->guestRoleMemberClient->listProjectJoinRequests($this->project['id']));
 
         $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['allowAutoJoin' => false]);
@@ -209,8 +278,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($joinRequest, $this->guestRoleMemberClient->getProjectJoinRequest($this->project['id'], $joinRequest['id']));
     }
 
-    public function testGuestAdministratorCannotApproveOrDeclineJoinRequest()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotApproveOrDeclineJoinRequest(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['allowAutoJoin' => false]);
 
         $this->client->requestAccessToProject($this->project['id']);
@@ -241,8 +315,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertCount(1, $joinRequests);
     }
 
-    public function testGuestAdministratorCannotCreateStorageToken()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotCreateStorageToken(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         try {
             $this->guestRoleMemberClient->createProjectStorageToken(
                 $this->project['id'],
@@ -255,13 +334,18 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         }
     }
 
-    public function testGuestAdministratorCannotChangeMembershipRole()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotChangeMembershipRole(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         try {
             $this->guestRoleMemberClient->updateUserProjectMembership(
                 $this->project['id'],
                 $this->normalUserWithMfa['id'],
-                ['role' => self::ROLE_GUEST]
+                ['role' => ProjectRole::GUEST]
             );
             $this->fail('Action should not be allowed to guest users');
         } catch (ClientException $e) {
@@ -272,8 +356,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals('admin', $membership['role']);
     }
 
-    public function testGuestAdministratorCannotChangeOrganization()
+    /**
+     * @dataProvider limitedRolesData
+     */
+    public function testAdministratorWithLimitedRoleCannotChangeOrganization(string $role): void
     {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
         $organization = $this->normalUserWithMfaClient->createOrganization($this->testMaintainerId, [
             'name' => 'My destination org',
         ]);
