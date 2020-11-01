@@ -8,6 +8,8 @@ use Keboola\ManageApi\ProjectRole;
 
 class ProjectMembershipRolesTest extends ClientMfaTestCase
 {
+    private const SHARE_ROLE_EXPECTED_ERROR = 'Only member of the project\'s organization can grant "share" role to other users.';
+
     /** @var array */
     private $organization;
 
@@ -44,6 +46,18 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             ],
             [
                 ProjectRole::READ_ONLY,
+            ],
+        ];
+    }
+
+    public function adminRolesData(): array
+    {
+        return [
+            [
+                ProjectRole::SHARE,
+            ],
+            [
+                ProjectRole::ADMIN,
             ],
         ];
     }
@@ -160,6 +174,31 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     }
 
     /**
+     * @dataProvider adminRolesData
+     */
+    public function testNonOrganizationAdministratorCannotInviteAdministratorWithShareRole(string $role): void
+    {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
+        try {
+            $this->normalUserClient->inviteUserToProject(
+                $this->project['id'],
+                [
+                    'email' => 'spam@keboola.com',
+                    'role' => ProjectRole::SHARE,
+                ]
+            );
+            $this->fail('Only org. admins should be able to set share role for users');
+        } catch (ClientException $e) {
+            $expectedMessage = 'Only member of the project\'s organization can grant "share" role to other users.';
+            $this->assertSame(400, $e->getCode());
+            $this->assertSame(self::SHARE_ROLE_EXPECTED_ERROR, $e->getMessage());
+        }
+
+        $this->assertCount(0, $this->normalUserWithMfaClient->listProjectInvitations($this->project['id']));
+    }
+
+    /**
      * @dataProvider limitedRolesData
      */
     public function testAdministratorWithLimitedRoleCannotCancelAdministratorInvitation(string $role): void
@@ -220,6 +259,55 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $membership = $this->findProjectUser($this->project['id'], 'spam@keboola.com');
         $this->assertNull($membership);
     }
+
+    /**
+     * @dataProvider adminRolesData
+     */
+    public function testNonOrganizationAdministratorCannotAddAdministratorWithShareRole(string $role): void
+    {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
+        try {
+            $this->normalUserClient->addUserToProject(
+                $this->project['id'],
+                [
+                    'email' => 'spam@keboola.com',
+                    'role' => ProjectRole::SHARE,
+                ]
+            );
+            $this->fail('Only org. admins should be able to set share role for users');
+        } catch (ClientException $e) {
+            $this->assertSame(400, $e->getCode());
+            $this->assertSame(self::SHARE_ROLE_EXPECTED_ERROR, $e->getMessage());
+        }
+
+        $membership = $this->findProjectUser($this->project['id'], 'spam@keboola.com');
+        $this->assertNull($membership);
+    }
+
+    /**
+     * @dataProvider adminRolesData
+     */
+    public function testNonOrganizationAdministratorCannotChangeMembershipToShareRole(string $role): void
+    {
+        $this->addNormalUserToProjectAsAdministratorWithLimitedRole($role);
+
+        try {
+            $this->normalUserClient->updateUserProjectMembership(
+                $this->project['id'],
+                $this->normalUserWithMfa['id'],
+                ['role' => ProjectRole::SHARE]
+            );
+            $this->fail('Only org. admins should be able to set share role for users');
+        } catch (ClientException $e) {
+            $this->assertSame(400, $e->getCode());
+            $this->assertSame(self::SHARE_ROLE_EXPECTED_ERROR, $e->getMessage());
+        }
+
+        $membership = $this->findProjectUser($this->project['id'], $this->normalUserWithMfa['email']);
+        $this->assertEquals('admin', $membership['role']);
+    }
+
 
     /**
      * @dataProvider limitedRolesData
