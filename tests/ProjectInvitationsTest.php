@@ -67,6 +67,9 @@ class ProjectInvitationsTest extends ClientTestCase
             [
                 ProjectRole::READ_ONLY,
             ],
+            [
+                ProjectRole::SHARE,
+            ],
         ];
     }
 
