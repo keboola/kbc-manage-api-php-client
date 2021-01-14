@@ -91,10 +91,11 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
         $tokenParts = explode('-', $options['token']);
         $tokenAgentString = '';
         if (count($tokenParts) === 3) {
+            // token comes in from of <projectId>-<tokenId>-<hash>
             $tokenAgentString = sprintf(
                 'Project: %s, Token: %s, ',
-                $tokenParts[1],
-                $tokenParts[0]
+                $tokenParts[0],
+                $tokenParts[1]
             );
         }
         $options['userAgent'] = sprintf(
