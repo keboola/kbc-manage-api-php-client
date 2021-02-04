@@ -56,6 +56,8 @@ class MaintainersTest extends ClientTestCase
     public function testUpdateMaintainer()
     {
         $backends = $this->client->listStorageBackend();
+        $mysqlBackend = $redshiftBackend = $snowflakeBackend = null;
+
         foreach ($backends as $backend) {
             switch ($backend['backend']) {
                 case 'mysql':
