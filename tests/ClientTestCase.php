@@ -227,4 +227,22 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
         }
         return $testSuiteName;
     }
+
+    protected function createProjectWithNormalAdminMember(int $organizationId, ?string $name = 'My test'): int
+    {
+        $project = $this->normalUserClient->createProject($organizationId, [
+            'name' => $name,
+        ]);
+
+        return $project['id'];
+    }
+
+    protected function createProjectWithSuperAdminMember(int $organizationId, ?string $name = 'My test'): int
+    {
+        $project = $this->client->createProject($organizationId, [
+            'name' => $name,
+        ]);
+
+        return $project['id'];
+    }
 }
