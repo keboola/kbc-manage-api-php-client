@@ -464,6 +464,17 @@ class Client
         $this->apiDelete("/manage/projects/{$projectId}/limits/{$limitName}");
     }
 
+    public function setProjectMetadata(int $projectId, string $provider, array $metadata)
+    {
+        if (!is_array($metadata) || count($metadata) === 0) {
+            throw new ClientException('Third argument must be a non-empty array of metadata objects');
+        }
+        return $this->apiPost("/manage/projects/{$projectId}/metadata", [
+            'provider' => $provider,
+            'metadata' => $metadata,
+        ]);
+    }
+
     public function createFeature($name, $type, $description)
     {
         return $this->apiPost('/manage/features', [
