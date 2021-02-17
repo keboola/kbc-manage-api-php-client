@@ -81,7 +81,7 @@ class ProjectInvitationsTest extends ClientTestCase
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => $allowAutoJoin,
@@ -115,7 +115,7 @@ class ProjectInvitationsTest extends ClientTestCase
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->client->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => $allowAutoJoin,
@@ -151,7 +151,7 @@ class ProjectInvitationsTest extends ClientTestCase
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->client->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => $allowAutoJoin,
@@ -191,7 +191,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testOrganizationAdminCanInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -245,7 +245,7 @@ class ProjectInvitationsTest extends ClientTestCase
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => $allowAutoJoin,
@@ -292,7 +292,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testAdminAcceptsInvitation(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
         $project = $this->client->getProject($projectId);
 
         $invitations = $this->client->listProjectInvitations($projectId);
@@ -339,7 +339,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testAdminDeclinesInvitation(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
         $project = $this->client->getProject($projectId);
 
         $invitations = $this->client->listProjectInvitations($projectId);
@@ -374,7 +374,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testCannotInviteAlreadyInvitedUser(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->inviteUserToProject($projectId, ['email' => $this->superAdmin['email']]);
 
@@ -399,7 +399,7 @@ class ProjectInvitationsTest extends ClientTestCase
     {
         $inviteeEmail = 'spam@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->addUserToProject($projectId, ['email' => $inviteeEmail]);
 
@@ -419,7 +419,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testCannotInviteYourself(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->addUserToProject($projectId, ['email' => $this->superAdmin['email']]);
         $this->normalUserClient->removeUserFromProject($projectId, $this->normalUser['id']);
@@ -439,7 +439,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testCannotInviteUserHavingJoinRequest(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->addUserToProject($projectId, ['email' => $this->superAdmin['email']]);
         $this->normalUserClient->removeUserFromProject($projectId, $this->normalUser['id']);
@@ -468,7 +468,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testRandomAdminCannotManageInvitationsInProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $invitations = $this->client->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
@@ -498,7 +498,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testSuperAdminCannotManageInvitationInProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $invitations = $this->client->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
@@ -528,7 +528,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testMaintainerAdminCannotManageInvitationInProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $invitations = $this->client->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
@@ -563,7 +563,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testInvitationAttributesPropagationToProjectMembership(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -598,7 +598,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testDeletingProjectRemovesInvitations(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->inviteUserToProject($projectId, ['email' => $this->superAdmin['email']]);
 
@@ -619,7 +619,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testInvitationExpiration(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->inviteUserToProject($projectId, [
             'email' => $this->superAdmin['email'],
@@ -642,7 +642,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testInviteUserToProjectWithRole(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $invitation = $this->client->inviteUserToProject($projectId, [
             'email' => $this->normalUser['email'],
@@ -660,7 +660,7 @@ class ProjectInvitationsTest extends ClientTestCase
     public function testInviteUserToProjectWithInvalidRole(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         try {
             $this->client->inviteUserToProject($projectId, [
