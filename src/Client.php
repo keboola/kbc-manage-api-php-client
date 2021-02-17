@@ -464,12 +464,17 @@ class Client
         $this->apiDelete("/manage/projects/{$projectId}/limits/{$limitName}");
     }
 
-    public function setProjectMetadata(int $projectId, string $provider, array $metadata)
+    public function setProjectMetadata(int $projectId, string $provider, array $metadata): array
     {
         return $this->apiPost("/manage/projects/{$projectId}/metadata", [
             'provider' => $provider,
             'metadata' => $metadata,
         ]);
+    }
+
+    public function listProjectMetadata(int $projectId): array
+    {
+        return $this->apiGet("/manage/projects/{$projectId}/metadata");
     }
 
     public function createFeature($name, $type, $description)
