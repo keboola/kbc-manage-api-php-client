@@ -1149,6 +1149,47 @@ Remove project limit is allowed only for a super admin.
 
 + Response 204
 
+## Project Metadata [/manage/projects/{project_id}/metadata]
+Metadata allows you to assign custom information to your projects.
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### Set project metadata [POST]
+Sets multiple metadata with one call. If the given key and provider combination already exist
+for the project, the data will be updated with the new value and timestamp.
+Only members of the maintener, organization and project with role Admin and Share can create a metadata.
+Also is allowed for a super admin.
++ Attributes
+    + provider (required) - Only value "user" is allowed
+    + metadata (required) - Array of metadata objects
+        + Metadata (object)
+            + key (required)
+            + value (required)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+        ```js
+        {
+            "provider": "user",
+            "metadata": [
+                {
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                }
+            ]
+        }
+        ```
+
++ Response 201
+
+
 ## Project Invitations [/manage/projects/{project_id}/invitations]
 
 + Parameters
