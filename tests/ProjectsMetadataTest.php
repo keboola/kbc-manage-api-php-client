@@ -49,13 +49,20 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testNormalUserCannotAddMetadata(): void
+    public function testNormalUserCannotAddAndListMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         try {
             $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->listProjectMetadata($projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -82,6 +89,23 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('test_metadata_key1', $metadata[1]['key']);
         $this->assertSame('testval', $metadata[1]['value']);
         $this->assertSame('user', $metadata[1]['provider']);
+
+        $metadataArray = $this->client->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('test.metadata.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('user', $metadataArray[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('user', $metadataArray[1]['provider']);
     }
 
     public function testSuperAdminCanAddMetadata()
@@ -100,6 +124,23 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('test_metadata_key1', $metadata[1]['key']);
         $this->assertSame('testval', $metadata[1]['value']);
         $this->assertSame('user', $metadata[1]['provider']);
+
+        $metadataArray = $this->client->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('test.metadata.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('user', $metadataArray[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('user', $metadataArray[1]['provider']);
     }
 
     public function testMaintainerAdminCanAddMetadata(): void
@@ -126,6 +167,23 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('test_metadata_key1', $metadata[1]['key']);
         $this->assertSame('testval', $metadata[1]['value']);
         $this->assertSame('user', $metadata[1]['provider']);
+
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('test.metadata.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('user', $metadataArray[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('user', $metadataArray[1]['provider']);
     }
 
     public function testOrgAdminCanAddMetadata(): void
@@ -152,6 +210,23 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('test_metadata_key1', $metadata[1]['key']);
         $this->assertSame('testval', $metadata[1]['value']);
         $this->assertSame('user', $metadata[1]['provider']);
+
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('test.metadata.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('user', $metadataArray[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('user', $metadataArray[1]['provider']);
     }
 
 
@@ -194,6 +269,23 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('test_metadata_key1', $metadata[1]['key']);
         $this->assertSame('testval', $metadata[1]['value']);
         $this->assertSame('user', $metadata[1]['provider']);
+
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('test.metadata.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('user', $metadataArray[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('user', $metadataArray[1]['provider']);
     }
 
     public function notAllowedAddMetadataRoles(): array
@@ -230,6 +322,13 @@ class ProjectsMetadataTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
+
+        try {
+            $this->normalUserClient->listProjectMetadata($projectId);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
     }
 
     public function testSuperAdminWithoutMfaCannotAddMetadata()
@@ -245,6 +344,14 @@ class ProjectsMetadataTest extends ClientTestCase
 
         try {
             $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+
+        try {
+            $this->client->listProjectMetadata($projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -351,6 +458,14 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('updatedtestval', $metadataAfterUpdate[1]['value']);
         $this->assertNotSame($metadata[1]['timestamp'], $metadataAfterUpdate[1]['timestamp']);
 
+        $listMetadata = $this->client->listProjectMetadata($projectId);
+        $this->assertCount(2, $listMetadata);
+
+        $this->assertSame($metadata[1]['id'], $listMetadata[1]['id']);
+        $this->assertSame('test_metadata_key1', $listMetadata[1]['key']);
+        $this->assertSame('updatedtestval', $listMetadata[1]['value']);
+        $this->assertNotSame($metadata[1], $listMetadata[1]['timestamp']);
+
         // add new metadata
         $newMetadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, $md2);
         $this->assertCount(3, $newMetadata);
@@ -359,5 +474,14 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertNotSame($metadata[1]['id'], $newMetadata[2]['id']);
         $this->assertSame('test_metadata_key2', $newMetadata[2]['key']);
         $this->assertSame('testval', $newMetadata[2]['value']);
+
+        $listMetadata = $this->client->listProjectMetadata($projectId);
+        $this->assertCount(3, $listMetadata);
+
+        $this->assertSame('test_metadata_key1', $listMetadata[1]['key']);
+        $this->assertSame('updatedtestval', $listMetadata[1]['value']);
+
+        $this->assertSame('test_metadata_key2', $listMetadata[2]['key']);
+        $this->assertSame('testval', $listMetadata[2]['value']);
     }
 }
