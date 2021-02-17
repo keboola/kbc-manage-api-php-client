@@ -765,22 +765,4 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $joinRequests = $this->client->listProjectJoinRequests($projectId);
         $this->assertCount(0, $joinRequests);
     }
-
-    private function createProjectWithNormalAdminMember(): int
-    {
-        $project = $this->normalUserClient->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
-    }
-
-    private function createProjectWithSuperAdminMember(): int
-    {
-        $project = $this->client->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
-    }
 }

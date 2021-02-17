@@ -677,22 +677,4 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitations = $this->client->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
     }
-
-    private function createProjectWithNormalAdminMember(): int
-    {
-        $project = $this->normalUserClient->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
-    }
-
-    private function createProjectWithSuperAdminMember(): int
-    {
-        $project = $this->client->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
-    }
 }

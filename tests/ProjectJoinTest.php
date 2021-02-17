@@ -537,22 +537,4 @@ class ProjectJoinTest extends ClientTestCase
         $projectUser = $this->findProjectUser($testProject['id'], $this->superAdmin['email']);
         $this->assertNull($projectUser);
     }
-
-    private function createProjectWithNormalAdminMember(): int
-    {
-        $project = $this->normalUserClient->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
-    }
-
-    private function createProjectWithSuperAdminMember(): int
-    {
-        $project = $this->client->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
-    }
 }
