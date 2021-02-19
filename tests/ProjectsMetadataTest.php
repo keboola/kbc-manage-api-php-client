@@ -15,6 +15,10 @@ class ProjectsMetadataTest extends ClientTestCase
             'key' => 'test_metadata_key1',
             'value' => 'testval',
         ],
+        [
+            'key' => 'test.metadata.key1',
+            'value' => 'testval',
+        ],
     ];
 
     public const PROVIDER_USER = 'user';
