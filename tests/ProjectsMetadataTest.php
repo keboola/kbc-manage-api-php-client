@@ -114,10 +114,10 @@ class ProjectsMetadataTest extends ClientTestCase
     public function allowedAddMetadataRoles(): array
     {
         return [
-            [
+            'admin' => [
                 ProjectRole::ADMIN,
             ],
-            [
+            'share' => [
                 ProjectRole::SHARE,
             ],
         ];
@@ -145,10 +145,10 @@ class ProjectsMetadataTest extends ClientTestCase
     public function notAllowedAddMetadataRoles(): array
     {
         return [
-            [
+            'guest' => [
                 ProjectRole::GUEST,
             ],
-            [
+            'read only' => [
                 ProjectRole::READ_ONLY,
             ],
         ];
