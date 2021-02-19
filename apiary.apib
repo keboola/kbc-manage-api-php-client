@@ -1159,14 +1159,12 @@ Metadata allows you to assign custom information to your projects.
 ### Set project metadata [POST]
 Sets multiple metadata with one call. If the given key and provider combination already exist
 for the project, the data will be updated with the new value and timestamp.
-Only members of the maintener, organization and project with role Admin and Share can create a metadata.
-Also is allowed for a super admin.
+Only project members with Admin or Share roles, members of the maintainer, members of organization and super admins can change metadata.
 + Attributes
-    + provider (required) - Only value "user" is allowed
-    + metadata (required) - Array of metadata objects
-        + Metadata (object)
-            + key (required)
-            + value (required)
+    + provider (required, enum[string]) - Only value "user" is allowed
+    + metadata (required, array[object]) - Array of metadata objects
+        + key (required)
+        + value (required)
 
 + Request (application/json)
     + Headers
@@ -1181,6 +1179,10 @@ Also is allowed for a super admin.
             "metadata": [
                 {
                     "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "key": "someMetadataKey",
                     "value": "Some value"
                 }
             ]
