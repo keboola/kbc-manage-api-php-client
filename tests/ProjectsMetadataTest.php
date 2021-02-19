@@ -86,6 +86,12 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => false,
+        ]);
+
+        $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
     }
 
     public function testOrgAdminCanAddMetadata(): void
@@ -94,6 +100,12 @@ class ProjectsMetadataTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => false,
+        ]);
 
         $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
     }
