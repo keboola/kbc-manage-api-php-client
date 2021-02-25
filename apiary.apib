@@ -1162,6 +1162,8 @@ for the project, the data will be updated with the new value and timestamp.
 Only project members with Admin or Share roles, members of the maintainer, members of organization and super admins can change metadata.
 + Attributes
     + provider (required, enum[string]) - Only value "user" is allowed
+        + Members
+            + user
     + metadata (required, array[object]) - Array of metadata objects
         + key (required)
         + value (required)
@@ -1194,14 +1196,14 @@ Only project members with Admin or Share roles, members of the maintainer, membe
 
             [
                 {
-                    "id": "123"
+                    "id": 123,
                     "provider": "user",
                     "timestamp": "2021-02-17T15:05:21+0100",
                     "key": "KBC.SomeEnity.metadataKey",
                     "value": "Some value"
                 },
                 {
-                    "id": "124"
+                    "id": 124,
                     "provider": "user",
                     "timestamp": "2021-02-17T15:05:21+0100",
                     "key": "someMetadataKey",
