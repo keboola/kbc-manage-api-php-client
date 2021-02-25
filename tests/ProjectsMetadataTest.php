@@ -71,7 +71,17 @@ class ProjectsMetadataTest extends ClientTestCase
             'allowAutoJoin' => false,
         ]);
 
-        $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+
+        $this->assertCount(2, $metadata);
+
+        $this->assertSame('test.metadata.key1', $metadata[0]['key']);
+        $this->assertSame('testval', $metadata[0]['value']);
+        $this->assertSame('user', $metadata[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadata[1]['key']);
+        $this->assertSame('testval', $metadata[1]['value']);
+        $this->assertSame('user', $metadata[1]['provider']);
     }
 
     public function testSuperAdminCanAddMetadata()
@@ -79,7 +89,17 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
-        $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+
+        $this->assertCount(2, $metadata);
+
+        $this->assertSame('test.metadata.key1', $metadata[0]['key']);
+        $this->assertSame('testval', $metadata[0]['value']);
+        $this->assertSame('user', $metadata[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadata[1]['key']);
+        $this->assertSame('testval', $metadata[1]['value']);
+        $this->assertSame('user', $metadata[1]['provider']);
     }
 
     public function testMaintainerAdminCanAddMetadata(): void
@@ -95,7 +115,17 @@ class ProjectsMetadataTest extends ClientTestCase
             'allowAutoJoin' => false,
         ]);
 
-        $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+
+        $this->assertCount(2, $metadata);
+
+        $this->assertSame('test.metadata.key1', $metadata[0]['key']);
+        $this->assertSame('testval', $metadata[0]['value']);
+        $this->assertSame('user', $metadata[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadata[1]['key']);
+        $this->assertSame('testval', $metadata[1]['value']);
+        $this->assertSame('user', $metadata[1]['provider']);
     }
 
     public function testOrgAdminCanAddMetadata(): void
@@ -111,7 +141,17 @@ class ProjectsMetadataTest extends ClientTestCase
             'allowAutoJoin' => false,
         ]);
 
-        $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+
+        $this->assertCount(2, $metadata);
+
+        $this->assertSame('test.metadata.key1', $metadata[0]['key']);
+        $this->assertSame('testval', $metadata[0]['value']);
+        $this->assertSame('user', $metadata[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadata[1]['key']);
+        $this->assertSame('testval', $metadata[1]['value']);
+        $this->assertSame('user', $metadata[1]['provider']);
     }
 
 
@@ -143,7 +183,17 @@ class ProjectsMetadataTest extends ClientTestCase
             ]
         );
 
-        $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+
+        $this->assertCount(2, $metadata);
+
+        $this->assertSame('test.metadata.key1', $metadata[0]['key']);
+        $this->assertSame('testval', $metadata[0]['value']);
+        $this->assertSame('user', $metadata[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadata[1]['key']);
+        $this->assertSame('testval', $metadata[1]['value']);
+        $this->assertSame('user', $metadata[1]['provider']);
     }
 
     public function notAllowedAddMetadataRoles(): array
