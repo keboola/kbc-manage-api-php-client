@@ -251,4 +251,49 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
     }
+
+    public function testUpdateProjectMetadata()
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
+
+        $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+
+        $this->assertCount(2, $metadata);
+
+        $md1 = [
+            [
+                'key' => 'test_metadata_key1',
+                'value' => 'updatedtestval',
+            ],
+        ];
+
+        $md2 = [
+            [
+                'key' => 'test_metadata_key2',
+                'value' => 'testval',
+            ],
+        ];
+
+        sleep(1);
+
+        // update existing metadata
+        $metadataAfterUpdate = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, $md1);
+
+        $this->assertCount(2, $metadataAfterUpdate);
+
+        $this->assertSame($metadata[1]['id'], $metadataAfterUpdate[1]['id']);
+        $this->assertSame('test_metadata_key1', $metadataAfterUpdate[1]['key']);
+        $this->assertSame('updatedtestval', $metadataAfterUpdate[1]['value']);
+        $this->assertNotSame($metadata[1]['timestamp'], $metadataAfterUpdate[1]['timestamp']);
+
+        // add new metadata
+        $newMetadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, $md2);
+        $this->assertCount(3, $newMetadata);
+
+        $this->assertNotSame($metadata[0]['id'], $newMetadata[2]['id']);
+        $this->assertNotSame($metadata[1]['id'], $newMetadata[2]['id']);
+        $this->assertSame('test_metadata_key2', $newMetadata[2]['key']);
+        $this->assertSame('testval', $newMetadata[2]['value']);
+    }
 }
