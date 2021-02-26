@@ -28,11 +28,17 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
      */
     protected $normalUserClient;
 
+    /** @var Client */
+    protected $normalUserWithMfaClient;
+
     protected $testMaintainerId;
 
     protected $normalUser;
 
     protected $superAdmin;
+
+    /** @var array */
+    protected $normalUserWithMfa;
 
     public static function setUpBeforeClass()
     {
@@ -131,10 +137,16 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 0,
         ]);
+        $this->normalUserWithMfaClient = $this->getClient([
+            'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+        ]);
+
         $this->testMaintainerId = (int) getenv('KBC_TEST_MAINTAINER_ID');
 
         $this->normalUser = $this->normalUserClient->verifyToken()['user'];
         $this->superAdmin = $this->client->verifyToken()['user'];
+        $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
 
         // cleanup maintainers created by tests
         $maintainers = $this->client->listMaintainers();
@@ -226,5 +238,32 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
             $testSuiteName = sprintf('Suite: %s, ', getenv('SUITE_NAME'));
         }
         return $testSuiteName;
+    }
+
+    protected function createProjectWithNormalAdminMember(int $organizationId, ?string $name = 'My test'): int
+    {
+        $project = $this->normalUserClient->createProject($organizationId, [
+            'name' => $name,
+        ]);
+
+        return $project['id'];
+    }
+
+    protected function createProjectWithSuperAdminMember(int $organizationId, ?string $name = 'My test'): int
+    {
+        $project = $this->client->createProject($organizationId, [
+            'name' => $name,
+        ]);
+
+        return $project['id'];
+    }
+
+    protected function createProjectWithAdminHavingMfaEnabled(int $organizationId, ?string $name = 'My test'): int
+    {
+        $project = $this->normalUserWithMfaClient->createProject($organizationId, [
+            'name' => $name,
+        ]);
+
+        return $project['id'];
     }
 }

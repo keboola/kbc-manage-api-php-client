@@ -62,7 +62,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             'allowAutoJoin' => 0,
         ]);
 
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
         $this->assertNull($projectUser);
@@ -112,7 +112,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             'allowAutoJoin' => 0,
         ]);
 
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -160,7 +160,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testOrganizationAdminCannotRequestAccessRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
@@ -193,7 +193,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testRandomAdminCannotRequestAccessRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->client->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => $allowAutoJoin,
@@ -223,7 +223,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testProjectMemberCannotRequestAccessRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 
@@ -254,7 +254,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testSuperAdminCannotRequestAccess(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
         $this->assertNull($projectUser);
@@ -276,7 +276,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testMaintainerAdminCannotRequestAccess(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
@@ -304,7 +304,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testOrganizationAdminCannotManageJoinRequestsInProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -362,7 +362,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testMaintainerAdminCannotManageJoinRequestsInProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -417,7 +417,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testSuperAdminCannotManageJoinRequestsInProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
         $this->assertNull($projectUser);
@@ -470,7 +470,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testRandomAdminCannotManageJoinRequestsInProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($projectId, $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -530,7 +530,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testProjectMemberCanApproveJoinRequest()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => 0,
@@ -585,7 +585,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
     public function testProjectMemberCanRejectJoinRequest()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
-        $projectId = $this->createProjectWithNormalAdminMember();
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => 0,
@@ -628,7 +628,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             'allowAutoJoin' => 0,
         ]);
 
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
         $this->assertCount(0, $joinRequests);
@@ -658,7 +658,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             'allowAutoJoin' => 0,
         ]);
 
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
         $this->assertCount(0, $joinRequests);
@@ -686,7 +686,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             'allowAutoJoin' => 0,
         ]);
 
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
         $project = $this->client->getProject($projectId);
 
         $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
@@ -721,7 +721,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             'allowAutoJoin' => 0,
         ]);
 
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->normalUserClient->requestAccessToProject($projectId);
 
@@ -750,7 +750,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             'allowAutoJoin' => 0,
         ]);
 
-        $projectId = $this->createProjectWithSuperAdminMember();
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->client->inviteUserToProject($projectId, ['email' => $this->normalUser['email']]);
 
@@ -764,23 +764,5 @@ class ProjectJoinRequestsTest extends ClientTestCase
 
         $joinRequests = $this->client->listProjectJoinRequests($projectId);
         $this->assertCount(0, $joinRequests);
-    }
-
-    private function createProjectWithNormalAdminMember(): int
-    {
-        $project = $this->normalUserClient->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
-    }
-
-    private function createProjectWithSuperAdminMember(): int
-    {
-        $project = $this->client->createProject($this->organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        return $project['id'];
     }
 }

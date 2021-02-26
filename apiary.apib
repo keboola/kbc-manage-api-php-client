@@ -1149,6 +1149,69 @@ Remove project limit is allowed only for a super admin.
 
 + Response 204
 
+## Project Metadata [/manage/projects/{project_id}/metadata]
+Metadata allows you to assign custom information to your projects.
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### Set project metadata [POST]
+Sets multiple metadata with one call. If the given key and provider combination already exist
+for the project, the data will be updated with the new value and timestamp.
+Only project members with Admin or Share roles, members of the maintainer, members of organization and super admins can change metadata.
++ Attributes
+    + provider (required, enum[string]) - Only value "user" is allowed
+        + Members
+            + user
+    + metadata (required, array[object]) - Array of metadata objects
+        + key (required)
+        + value (required)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+        ```js
+        {
+            "provider": "user",
+            "metadata": [
+                {
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+        }
+        ```
+
++ Response 201
+    + Body
+
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+
+
 ## Project Invitations [/manage/projects/{project_id}/invitations]
 
 + Parameters
