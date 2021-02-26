@@ -252,6 +252,70 @@ class ProjectsMetadataTest extends ClientTestCase
         }
     }
 
+    public function testMaintainerAdminWithoutMfaCannotAddMetadata()
+    {
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+        $this->normalUserWithMfaClient->updateOrganization(
+            $this->organization['id'],
+            [
+                'mfaRequired' => 1,
+            ]
+        );
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        try {
+            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
+
+    public function testOrganizationAdminWithoutMfaCannotAddMetadata()
+    {
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        try {
+            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
+
+    /**
+     * @dataProvider allowedAddMetadataRoles
+     */
+    public function testProjectMemberWithoutMfaCannotAddMetadata(string $role)
+    {
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+
+        $this->normalUserWithMfaClient->addUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUser['email'],
+                'role' => $role,
+            ]
+        );
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        try {
+            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
+
     public function testUpdateProjectMetadata()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
