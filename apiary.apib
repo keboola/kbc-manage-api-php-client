@@ -1161,9 +1161,10 @@ Sets multiple metadata with one call. If the given key and provider combination 
 for the project, the data will be updated with the new value and timestamp.
 Only project members with Admin or Share roles, members of the maintainer, members of organization and super admins can change metadata.
 + Attributes
-    + provider (required, enum[string]) - Only value "user" is allowed
+    + provider (required, enum[string])
         + Members
             + user
+            + system - only super admin can change these metadata
     + metadata (required, array[object]) - Array of metadata objects
         + key (required)
         + value (required)
