@@ -466,9 +466,6 @@ class Client
 
     public function setProjectMetadata(int $projectId, string $provider, array $metadata)
     {
-        if (!is_array($metadata) || count($metadata) === 0) {
-            throw new ClientException('Third argument must be a non-empty array of metadata objects');
-        }
         return $this->apiPost("/manage/projects/{$projectId}/metadata", [
             'provider' => $provider,
             'metadata' => $metadata,
