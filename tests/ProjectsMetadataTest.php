@@ -378,6 +378,14 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
+
+        try {
+            $this->normalUserClient->listProjectMetadata($projectId);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
     }
 
     public function testOrganizationAdminWithoutMfaCannotAddMetadata()
@@ -390,6 +398,14 @@ class ProjectsMetadataTest extends ClientTestCase
 
         try {
             $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+
+        try {
+            $this->normalUserClient->listProjectMetadata($projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -416,6 +432,14 @@ class ProjectsMetadataTest extends ClientTestCase
 
         try {
             $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+
+        try {
+            $this->normalUserClient->listProjectMetadata($projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
