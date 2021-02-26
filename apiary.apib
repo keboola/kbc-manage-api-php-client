@@ -1212,6 +1212,37 @@ Only project members with Admin or Share roles, members of the maintainer, membe
             ]
 
 
+### List project Metadata [GET]
+Only project members with Admin or Share roles, members of the maintainer, members of organization and super admins can list metadata.
+
++ Parameters
+    + project_id (required, int) - Project ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+    + Body
+
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+
 ## Project Invitations [/manage/projects/{project_id}/invitations]
 
 + Parameters
