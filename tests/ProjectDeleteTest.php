@@ -272,7 +272,7 @@ class ProjectDeleteTest extends ClientTestCase
 
         // purge all data async
         $startTime = time();
-        $maxWaitTimeSeconds = 120;
+        $maxWaitTimeSeconds = 5 * 60;
         $purgeResponse = $this->client->purgeDeletedProject($project['id']);
         $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
         $this->assertNotNull($purgeResponse['commandExecutionId']);
