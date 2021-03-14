@@ -63,7 +63,7 @@ class ProjectsMetadataTest extends ClientTestCase
         }
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -220,7 +220,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('user', $metadataArray[1]['provider']);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -270,7 +270,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('user', $metadataArray[1]['provider']);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -336,7 +336,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('user', $metadataArray[1]['provider']);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -386,7 +386,7 @@ class ProjectsMetadataTest extends ClientTestCase
         }
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -413,7 +413,7 @@ class ProjectsMetadataTest extends ClientTestCase
         }
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -583,6 +583,15 @@ class ProjectsMetadataTest extends ClientTestCase
         return $client->setProjectMetadata(
             $projectId,
             self::PROVIDER_USER,
+            self::TEST_METADATA
+        );
+    }
+
+    private function createSystemMetadata(Client $client, int $projectId): array
+    {
+        return $client->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_SYSTEM,
             self::TEST_METADATA
         );
     }
