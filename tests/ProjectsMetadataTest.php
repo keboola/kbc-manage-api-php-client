@@ -50,10 +50,12 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testNormalUserCannotAddAndListMetadata(): void
+    public function testNormalUserCannotManageMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $metadataArray = $this->createUserMetadata($this->client, $projectId);
 
         try {
             $this->createUserMetadata($this->normalUserClient, $projectId);
@@ -75,6 +77,17 @@ class ProjectsMetadataTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
+
+        $metadata = reset($metadataArray);
+
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
     public function testSuperAdminCanManageMetadataInOrgWithAllowAutoJoinFalse(): void
