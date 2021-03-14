@@ -56,7 +56,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -86,7 +86,7 @@ class ProjectsMetadataTest extends ClientTestCase
             'allowAutoJoin' => false,
         ]);
 
-        $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->client, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -134,7 +134,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
-        $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->client, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -184,13 +184,13 @@ class ProjectsMetadataTest extends ClientTestCase
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
-        $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->client->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => false,
         ]);
 
-        $metadata = $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -234,13 +234,13 @@ class ProjectsMetadataTest extends ClientTestCase
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->client->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => false,
         ]);
 
-        $metadata = $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -306,7 +306,7 @@ class ProjectsMetadataTest extends ClientTestCase
             ]
         );
 
-        $metadata = $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -372,7 +372,7 @@ class ProjectsMetadataTest extends ClientTestCase
         );
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -405,7 +405,7 @@ class ProjectsMetadataTest extends ClientTestCase
         );
 
         try {
-            $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->client, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -441,7 +441,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -466,7 +466,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -500,7 +500,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -521,7 +521,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
-        $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->client, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -576,5 +576,14 @@ class ProjectsMetadataTest extends ClientTestCase
 
         $this->assertSame('test_metadata_key2', $listMetadata[2]['key']);
         $this->assertSame('testval', $listMetadata[2]['value']);
+    }
+
+    private function createUserMetadata(Client $client, int $projectId): array
+    {
+        return $client->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_USER,
+            self::TEST_METADATA
+        );
     }
 }
