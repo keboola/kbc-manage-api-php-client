@@ -477,6 +477,11 @@ class Client
         return $this->apiGet("/manage/projects/{$projectId}/metadata");
     }
 
+    public function deleteProjectMetadata(int $projectId, int $metadataId): void
+    {
+        $this->apiDelete("/manage/projects/{$projectId}/metadata/{$metadataId}");
+    }
+
     public function createFeature($name, $type, $description)
     {
         return $this->apiPost('/manage/features', [
