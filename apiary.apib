@@ -1244,6 +1244,24 @@ Only project members with Admin or Share roles, members of the maintainer, membe
                 }
             ]
 
+## Remove Project Metadata [/manage/projects/{project_id}/metadata/{metadata_id}]
+Only project members with Admin or Share roles, members of the maintainer, members of organization and super admins can delete metadata.
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + metadata_id (required, int) - Metadata ID
+
+### Remove project metadata [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+
 ## Project Invitations [/manage/projects/{project_id}/invitations]
 
 + Parameters
