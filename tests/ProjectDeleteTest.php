@@ -26,6 +26,42 @@ class ProjectDeleteTest extends ClientTestCase
         ]);
     }
 
+    private function waitUntilProjectWillBeDeleted($project)
+    {
+        $startTime = time();
+        $maxWaitTimeSeconds = 120;
+
+        // wait until project will be deleted
+        do {
+            $isProjectDeleted = false;
+            try {
+                $this->client->getProject($project['id']);
+            } catch (ClientException $e) {
+                $isProjectDeleted = true;
+            }
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($isProjectDeleted !== true);
+
+        // reset the clock
+        $startTime = time();
+
+        // purge all data async
+        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
+        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
+        $this->assertNotNull($purgeResponse['commandExecutionId']);
+        do {
+            $deletedProject = $this->client->getDeletedProject($project['id']);
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($deletedProject['isPurged'] !== true);
+        $this->assertNotNull($deletedProject['purgedTime']);
+    }
+
     public function deleteAndPurgeProjectWithData(): \Generator
     {
         yield 'snowflake with S3 file storage' => [
@@ -73,35 +109,7 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->client->updateProject($project['id'], ['expirationDays' => -1]);
 
-        $startTime = time();
-        $maxWaitTimeSeconds = 120;
-
-        // wait until project will be deleted
-        do {
-            $isProjectDeleted = false;
-            try {
-                $this->client->getProject($project['id']);
-            } catch (ClientException $e) {
-                $isProjectDeleted = true;
-            }
-            if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
-            }
-            sleep(1);
-        } while ($isProjectDeleted !== true);
-
-        // purge all data async
-        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
-        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
-        $this->assertNotNull($purgeResponse['commandExecutionId']);
-        do {
-            $deletedProject = $this->client->getDeletedProject($project['id']);
-            if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
-            }
-            sleep(1);
-        } while ($deletedProject['isPurged'] !== true);
-        $this->assertNotNull($deletedProject['purgedTime']);
+        $this->waitUntilProjectWillBeDeleted($project);
 
         $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
         $this->assertCount(0, $joinRequests);
@@ -129,35 +137,7 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->client->updateProject($project['id'], ['expirationDays' => -1]);
 
-        $startTime = time();
-        $maxWaitTimeSeconds = 120;
-
-        // wait until project will be deleted
-        do {
-            $isProjectDeleted = false;
-            try {
-                $this->client->getProject($project['id']);
-            } catch (ClientException $e) {
-                $isProjectDeleted = true;
-            }
-            if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
-            }
-            sleep(1);
-        } while ($isProjectDeleted !== true);
-
-        // purge all data async
-        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
-        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
-        $this->assertNotNull($purgeResponse['commandExecutionId']);
-        do {
-            $deletedProject = $this->client->getDeletedProject($project['id']);
-            if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
-            }
-            sleep(1);
-        } while ($deletedProject['isPurged'] !== true);
-        $this->assertNotNull($deletedProject['purgedTime']);
+        $this->waitUntilProjectWillBeDeleted($project);
 
         $normalUserInvitations = $this->normalUserClient->listMyProjectInvitations();
         $this->assertCount(0, $normalUserInvitations);
@@ -181,35 +161,7 @@ class ProjectDeleteTest extends ClientTestCase
         );
         $this->client->updateProject($project['id'], ['expirationDays' => -1]);
 
-        $startTime = time();
-        $maxWaitTimeSeconds = 120;
-
-        // wait until project will be deleted
-        do {
-            $isProjectDeleted = false;
-            try {
-                $this->client->getProject($project['id']);
-            } catch (ClientException $e) {
-                $isProjectDeleted = true;
-            }
-            if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
-            }
-            sleep(1);
-        } while ($isProjectDeleted !== true);
-
-        // purge all data async
-        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
-        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
-        $this->assertNotNull($purgeResponse['commandExecutionId']);
-        do {
-            $deletedProject = $this->client->getDeletedProject($project['id']);
-            if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
-            }
-            sleep(1);
-        } while ($deletedProject['isPurged'] !== true);
-        $this->assertNotNull($deletedProject['purgedTime']);
+        $this->waitUntilProjectWillBeDeleted($project);
     }
 
 
