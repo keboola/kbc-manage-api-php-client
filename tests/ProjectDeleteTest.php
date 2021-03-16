@@ -163,6 +163,56 @@ class ProjectDeleteTest extends ClientTestCase
         $this->assertCount(0, $normalUserInvitations);
     }
 
+    public function testPurgeExpiredProjectRemoveMetadata()
+    {
+        /*
+          creates and purges project with project metadata. Metadata should be erased after purging. Check it manually
+          because there is no way how to test is automatically
+        */
+        $project = $this->client->createProject($this->organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => Backend::SNOWFLAKE,
+        ]);
+
+        $this->client->setProjectMetadata(
+            $project['id'],
+            ProjectsMetadataTest::PROVIDER_USER,
+            ProjectsMetadataTest::TEST_METADATA
+        );
+        $this->client->updateProject($project['id'], ['expirationDays' => -1]);
+
+        $startTime = time();
+        $maxWaitTimeSeconds = 120;
+
+        // wait until project will be deleted
+        do {
+            $isProjectDeleted = false;
+            try {
+                $this->client->getProject($project['id']);
+            } catch (ClientException $e) {
+                $isProjectDeleted = true;
+            }
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($isProjectDeleted !== true);
+
+        // purge all data async
+        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
+        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
+        $this->assertNotNull($purgeResponse['commandExecutionId']);
+        do {
+            $deletedProject = $this->client->getDeletedProject($project['id']);
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($deletedProject['isPurged'] !== true);
+        $this->assertNotNull($deletedProject['purgedTime']);
+    }
+
+
     /**
      * @dataProvider deleteAndPurgeProjectWithData
      */
