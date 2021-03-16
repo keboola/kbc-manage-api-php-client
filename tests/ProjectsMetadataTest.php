@@ -50,20 +50,22 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testNormalUserCannotAddAndListMetadata(): void
+    public function testNormalUserCannotManageMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
+        $metadataArray = $this->createUserMetadata($this->client, $projectId);
+
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -75,9 +77,20 @@ class ProjectsMetadataTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
+
+        $metadata = reset($metadataArray);
+
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
-    public function testSuperAdminCanAddMetadataInOrgWithAllowAutoJoinFalse()
+    public function testSuperAdminCanManageMetadataInOrgWithAllowAutoJoinFalse(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
@@ -86,7 +99,7 @@ class ProjectsMetadataTest extends ClientTestCase
             'allowAutoJoin' => false,
         ]);
 
-        $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->client, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -125,16 +138,23 @@ class ProjectsMetadataTest extends ClientTestCase
         $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, $md);
 
         $this->assertCount(3, $metadata);
-        $this->assertSame('system', $metadata[0]['provider']);
+
+        $systemMetdata = reset($metadata);
+
+        $this->assertSame('system', $systemMetdata['provider']);
         $this->assertSame('user', $metadata[1]['provider']);
+
+        $this->client->deleteProjectMetadata($projectId, $systemMetdata['id']);
+
+        $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
-    public function testSuperAdminCanAddMetadata()
+    public function testSuperAdminCanManageMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
-        $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->client, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -173,24 +193,31 @@ class ProjectsMetadataTest extends ClientTestCase
         $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, $md);
 
         $this->assertCount(3, $metadata);
-        $this->assertSame('system', $metadata[0]['provider']);
+
+        $systemMetadata = reset($metadata);
+
+        $this->assertSame('system', $systemMetadata['provider']);
         $this->assertSame('user', $metadata[1]['provider']);
+
+        $this->client->deleteProjectMetadata($projectId, $systemMetadata['id']);
+
+        $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
-    public function testMaintainerAdminCanAddUserMetadataCannotSystemMetadata(): void
+    public function testMaintainerAdminCanManageUserMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
-        $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->client->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => false,
         ]);
 
-        $metadata = $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -219,28 +246,76 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('testval', $metadataArray[1]['value']);
         $this->assertSame('user', $metadataArray[1]['provider']);
 
+        $metadata = reset($metadataArray);
+
+        $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+
+        $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
+    }
+
+    public function testMaintainerAdminCannotManageSystemMetadata(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => false,
+        ]);
+
+        $this->createSystemMetadata($this->client, $projectId);
+
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('test.metadata.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('system', $metadataArray[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('system', $metadataArray[1]['provider']);
+
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
+
+        $metadata = reset($metadataArray);
+
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
-    public function testOrgAdminCanAddUserMetadataCannotSystemMetadata(): void
+    public function testOrgAdminCanManageUserMedatata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->client->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => false,
         ]);
 
-        $metadata = $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -269,14 +344,61 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('testval', $metadataArray[1]['value']);
         $this->assertSame('user', $metadataArray[1]['provider']);
 
+        $metadata = reset($metadataArray);
+
+        $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+
+        $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
+    }
+
+    public function testOrgAdminCannotManageSystemMetadata(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $this->createSystemMetadata($this->client, $projectId);
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => false,
+        ]);
+
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('test.metadata.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('system', $metadataArray[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('system', $metadataArray[1]['provider']);
+
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
-    }
 
+        $metadata = reset($metadataArray);
+
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
+    }
 
     public function allowedAddMetadataRoles(): array
     {
@@ -293,7 +415,7 @@ class ProjectsMetadataTest extends ClientTestCase
     /**
      * @dataProvider allowedAddMetadataRoles
      */
-    public function testProjectMemeberCanAddUserMetadataCannotSystemMetadata(string $role)
+    public function testProjectMemeberCanManageUserMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -306,7 +428,7 @@ class ProjectsMetadataTest extends ClientTestCase
             ]
         );
 
-        $metadata = $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->normalUserClient, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -335,12 +457,64 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('testval', $metadataArray[1]['value']);
         $this->assertSame('user', $metadataArray[1]['provider']);
 
+        $metadata = reset($metadataArray);
+
+        $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+        $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
+    }
+
+    /**
+     * @dataProvider allowedAddMetadataRoles
+     */
+    public function testProjectMemeberCannotManageSystemMetadata(string $role): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $this->client->addUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUser['email'],
+                'role' => $role,
+            ]
+        );
+
+        $this->createSystemMetadata($this->client, $projectId);
+
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('test.metadata.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('system', $metadataArray[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('system', $metadataArray[1]['provider']);
+
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
+
+        $metadata = reset($metadataArray);
+
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
     public function notAllowedAddMetadataRoles(): array
@@ -358,10 +532,12 @@ class ProjectsMetadataTest extends ClientTestCase
     /**
      * @dataProvider notAllowedAddMetadataRoles
      */
-    public function testProjectMemeberCannotAddUserMetadataCannotSystemMetadata(string $role)
+    public function testProjectMemeberCannotManageUserAndSystemMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $metadataArray = $this->createUserMetadata($this->client, $projectId);
 
         $this->client->addUserToProject(
             $projectId,
@@ -372,7 +548,7 @@ class ProjectsMetadataTest extends ClientTestCase
         );
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -386,14 +562,25 @@ class ProjectsMetadataTest extends ClientTestCase
         }
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
+
+        $metadata = reset($metadataArray);
+
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
-    public function testSuperAdminWithoutMfaCannotAddUserMetadataCannotSystemMetadata()
+    public function testSuperAdminWithoutMfaCannotManageMetadata(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -404,8 +591,10 @@ class ProjectsMetadataTest extends ClientTestCase
             ]
         );
 
+        $metadata = $this->createUserMetadata($this->normalUserWithMfaClient, $projectId);
+
         try {
-            $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->client, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -413,10 +602,11 @@ class ProjectsMetadataTest extends ClientTestCase
         }
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->createSystemMetadata($this->client, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         try {
@@ -426,11 +616,26 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
+
+        $metadata = reset($metadata);
+
+        try {
+            $this->client->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+
+        $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
     }
 
-    public function testMaintainerAdminWithoutMfaCannotAddMetadata()
+    public function testMaintainerAdminWithoutMfaCannotManageMetadata(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+
+        $metadata = $this->createUserMetadata($this->normalUserWithMfaClient, $projectId);
+
         $this->normalUserWithMfaClient->updateOrganization(
             $this->organization['id'],
             [
@@ -441,7 +646,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -455,18 +660,32 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
+
+        $metadata = reset($metadata);
+
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+
+        $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
     }
 
-    public function testOrganizationAdminWithoutMfaCannotAddMetadata()
+    public function testOrgAdminWithoutMfaCannotManageMetadata()
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
+        $metadata = $this->createUserMetadata($this->normalUserWithMfaClient, $projectId);
+
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -480,14 +699,28 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
+
+        $metadata = reset($metadata);
+
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+
+        $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
     }
 
     /**
      * @dataProvider allowedAddMetadataRoles
      */
-    public function testProjectMemberWithoutMfaCannotAddMetadata(string $role)
+    public function testProjectMemberWithoutMfaCannotManageMetadata(string $role): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+
+        $metadata = $this->createUserMetadata($this->normalUserWithMfaClient, $projectId);
 
         $this->normalUserWithMfaClient->addUserToProject(
             $projectId,
@@ -500,7 +733,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
         try {
-            $this->normalUserClient->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+            $this->createUserMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -514,6 +747,18 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->assertEquals(400, $e->getCode());
             $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
+
+        $metadata = reset($metadata);
+
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+
+        $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
     }
 
     public function testUpdateProjectMetadata()
@@ -521,7 +766,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
-        $metadata = $this->client->setProjectMetadata($projectId, self::PROVIDER_USER, self::TEST_METADATA);
+        $metadata = $this->createUserMetadata($this->client, $projectId);
 
         $this->assertCount(2, $metadata);
 
@@ -576,5 +821,23 @@ class ProjectsMetadataTest extends ClientTestCase
 
         $this->assertSame('test_metadata_key2', $listMetadata[2]['key']);
         $this->assertSame('testval', $listMetadata[2]['value']);
+    }
+
+    private function createUserMetadata(Client $client, int $projectId): array
+    {
+        return $client->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_USER,
+            self::TEST_METADATA
+        );
+    }
+
+    private function createSystemMetadata(Client $client, int $projectId): array
+    {
+        return $client->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_SYSTEM,
+            self::TEST_METADATA
+        );
     }
 }
