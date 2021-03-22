@@ -555,13 +555,6 @@ class ProjectsMetadataTest extends ClientTestCase
         }
 
         try {
-            $this->normalUserClient->listProjectMetadata($projectId);
-            $this->fail('Should fail.');
-        } catch (ClientException $e) {
-            $this->assertEquals(403, $e->getCode());
-        }
-
-        try {
             $this->createSystemMetadata($this->normalUserClient, $projectId);
             $this->fail('Should fail.');
         } catch (ClientException $e) {
@@ -578,6 +571,74 @@ class ProjectsMetadataTest extends ClientTestCase
         }
 
         $this->assertCount(2, $this->client->listProjectMetadata($projectId));
+    }
+
+    public function allowedListMetadataRoles(): array
+    {
+        return [
+            'admin' => [
+                ProjectRole::ADMIN,
+            ],
+            'share' => [
+                ProjectRole::SHARE,
+            ],
+            'guest' => [
+                ProjectRole::GUEST,
+            ],
+            'read only' => [
+                ProjectRole::READ_ONLY,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider allowedListMetadataRoles
+     */
+    public function testProjectMemberCanListUserMetadata(string $role): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $metadataArray = $this->createUserMetadata($this->client, $projectId);
+
+        $this->client->addUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUser['email'],
+                'role' => $role,
+            ]
+        );
+
+        $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
+    }
+
+    /**
+     * @dataProvider allowedListMetadataRoles
+     */
+    public function testProjectMemberWithoutMfaCannotListUserMetadata(string $role)
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $metadataArray = $this->createUserMetadata($this->client, $projectId);
+
+        $this->client->addUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUser['email'],
+                'role' => $role,
+            ]
+        );
+
+        $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
+
+        try {
+            $this->normalUserClient->listProjectMetadata($projectId);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
     }
 
     public function testSuperAdminWithoutMfaCannotManageMetadata(): void
