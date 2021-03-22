@@ -637,7 +637,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertSame('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
     }
 
