@@ -99,7 +99,7 @@ Creates a new maintainer. The user associated with the token will become an admi
 
 + Response 200 (application/json)
 
-    ```
+    ```js
     [
         {
             "id": 123,
@@ -331,6 +331,7 @@ Only members of the maintainer and superadmins can invite other users.
             "email": "martin@keboola.com"
         }
     }
+    ```
 
 ### Cancel a invitation [DELETE]
 
@@ -655,6 +656,7 @@ Only members of the organization can invite other users.
             "email": "martin@keboola.com"
         }
     }
+    ```
 
 ### Cancel a invitation [DELETE]
 
@@ -747,7 +749,7 @@ List of all users who are members of at least one project in the organization. O
         }
     ]
     ```
-    
+
 ## Join Organization [/manage/organizations/{organization_id}/join-organization]
 
 + Parameters
@@ -988,7 +990,7 @@ A project will not be physically deleted. It'll only be inaccessible and hidden.
 
 + Response 204
 
-## Add a Project [/manage/organizations/{organization_id}/projects]
+## Organization Projects [/manage/organizations/{organization_id}/projects]
 
 A project will be created from a default template which defines its limits. Only members of the organization can create a project.
 
@@ -1013,6 +1015,47 @@ A project will be created from a default template which defines its limits. Only
 + Response 201
 
      [Project][]
+
+### List projects for an organization [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    {
+            "id": 101,
+            "name": "test project",
+            "description": "My new project"
+            "type": "production",
+            "region": "eu-west-1",
+            "created": "2017-02-15T14:25:15+0100",
+            "expires": null,
+            "features": ["featureName"],
+            "dataSizeBytes": 49152,
+            "rowsCount": 200,
+            "hasMysql": false,
+            "hasRedshift": false,
+            "hasSnowflake": true,
+            "defaultBackend": "snowflake",
+            "hasTryModeOn": "0",
+            "limits": {
+                "limitName": {
+                    "name": "limitName",
+                    "value": 10
+                }
+            },
+            "metrics": {},
+            "isDisabled": false,
+            "billedMonthlyPrice": null,
+            "dataRetentionTimeInDays": 1,
+            "fileStorageProvider": "aws"
+    }
+    ```
+
 
 ## Move Project to Another Organization [/manage/projects/{project_id}/organizations]
 
@@ -1324,9 +1367,9 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
     + email: martin@keboola.com (string, required) - Email of an invited user
     + role: admin (enum[string]) - User role in the project. Roles `admin`, `guest`, `readOnly` and `share` are allowed (default `admin`).
-    
+
         + Default: `admin`
-        
+
         + Members
             + `guest`
             + `readOnly`
@@ -1397,7 +1440,7 @@ An optional expiration (seconds) and reason for joining can be added to the requ
             "email": "martin@keboola.com"
         }
     }
-
+    ```
 ### Cancel a invitation [DELETE]
 
 Only members of the project or its organization are allowed to cancel project invitation.
