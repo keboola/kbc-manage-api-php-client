@@ -804,6 +804,106 @@ Only members of the organization with MFA enabled can perform this action.
     }
     ```
 
+## Organization metadata [/manage/organizations/{organization_id}/metadata]
+
+Metadata allows you to assign custom information to your projects.
+
+### Set organization metadata [POST]
+
+Sets multiple metadata with one call. If the given key and provider combination already exist
+for the organization, the data will be updated with the new value and timestamp.
+Only organization members, members of the maintainer and super admins can change metadata.
++ Attributes
+    + provider (required, enum[string])
+        + Members
+            + user
+            + system - only super admin can change these metadata
+    + metadata (required, array[object]) - Array of metadata objects
+        + key (required)
+        + value (required)
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+            ```js
+            {
+                "provider": "user",
+                "metadata": [
+                    {
+                        "key": "KBC.SomeEnity.metadataKey",
+                        "value": "Some value"
+                    },
+                    {
+                        "key": "someMetadataKey",
+                        "value": "Some value"
+                    }
+                ]
+            }
+            ```
+
++ Response 201
+
+    + Body
+
+            ```js
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+            ```
+
+
+### List organization Metadata [GET]
+Only members of the maintainer, members of organization and super admins can list metadata.
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+    + Body
+
+            ```js
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+            ```
 
 # Group Projects
 

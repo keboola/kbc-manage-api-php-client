@@ -482,6 +482,19 @@ class Client
         $this->apiDelete("/manage/projects/{$projectId}/metadata/{$metadataId}");
     }
 
+    public function setOrganizationMetadata(int $organizationId, string $provider, array $metadata): array
+    {
+        return $this->apiPost("/manage/organizations/{$organizationId}/metadata", [
+            'provider' => $provider,
+            'metadata' => $metadata,
+        ]);
+    }
+
+    public function listOrganizationMetadata(int $organizationId): array
+    {
+        return $this->apiGet("/manage/organizations/{$organizationId}/metadata");
+    }
+
     public function createFeature($name, $type, $description)
     {
         return $this->apiPost('/manage/features', [

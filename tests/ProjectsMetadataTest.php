@@ -415,7 +415,7 @@ class ProjectsMetadataTest extends ClientTestCase
     /**
      * @dataProvider allowedAddMetadataRoles
      */
-    public function testProjectMemeberCanManageUserMetadata(string $role): void
+    public function testProjectMemberCanManageUserMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
