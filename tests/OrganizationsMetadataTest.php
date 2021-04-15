@@ -330,6 +330,14 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->assertEquals(400, $e->getCode());
             $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
         }
+
+        try {
+            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->fail('Test should not reach this line.');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
     }
 
     private function cannotManageSystemMetadata($client)
