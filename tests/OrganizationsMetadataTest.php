@@ -22,6 +22,7 @@ class OrganizationsMetadataTest extends ClientTestCase
     ];
 
     public const PROVIDER_USER = 'user';
+    public const PROVIDER_SYSTEM = 'system';
 
     private $organization;
 
@@ -71,6 +72,18 @@ class OrganizationsMetadataTest extends ClientTestCase
         ];
     }
 
+    public function providers(): array
+    {
+        return [
+            'system provider' => [
+                self::PROVIDER_SYSTEM,
+            ],
+            'user provider' => [
+                self::PROVIDER_USER,
+            ],
+        ];
+    }
+
     public function testNormalUserCanNotManageMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -78,39 +91,45 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         $this->createUserMetadata($this->client, $organizationId);
 
-        $this->cannotManageMetadata($this->normalUserClient);
+        $this->cannotManageUserMetadata($this->normalUserClient);
+        $this->cannotManageSystemMetadata($this->normalUserClient);
     }
 
-    public function testSuperAdminCanManageMetadata(): void
+    /**
+     * @dataProvider providers
+     */
+    public function testSuperAdminCanManageMetadata(string $provider): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        $this->createUserMetadata($this->client, $this->organization['id']);
+        $this->createMetadata($this->client, $this->organization['id'], $provider);
 
         // trying for allowAutoJoin=false. Metadata should be just updateded
         $this->normalUserClient->updateOrganization($this->organization['id'], [
             'allowAutoJoin' => false,
         ]);
-        $userMetadata = $this->createUserMetadata($this->client, $this->organization['id']);
+        $userMetadata = $this->createMetadata($this->client, $this->organization['id'], $provider);
 
         $this->assertCount(2, $userMetadata);
-        $this->validateMetadataEquality(self::TEST_METADATA[1], $userMetadata[0], self::PROVIDER_USER);
-        $this->validateMetadataEquality(self::TEST_METADATA[0], $userMetadata[1], self::PROVIDER_USER);
+        $this->validateMetadataEquality(self::TEST_METADATA[1], $userMetadata[0], $provider);
+        $this->validateMetadataEquality(self::TEST_METADATA[0], $userMetadata[1], $provider);
 
         $metadataArray = $this->client->listOrganizationMetadata($this->organization['id']);
 
         $this->assertCount(2, $metadataArray);
-        $this->validateMetadataEquality(self::TEST_METADATA[1], $metadataArray[0], self::PROVIDER_USER);
-        $this->validateMetadataEquality(self::TEST_METADATA[0], $metadataArray[1], self::PROVIDER_USER);
+        $this->validateMetadataEquality(self::TEST_METADATA[1], $metadataArray[0], $provider);
+        $this->validateMetadataEquality(self::TEST_METADATA[0], $metadataArray[1], $provider);
     }
 
-    public function testSuperAdminWithoutMFACannotManageUserMetadata(): void
+
+    public function testSuperAdminWithoutMFACannotManageMetadata(): void
     {
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
         $this->cannotManageMetadataBecauseOfMissingMFA($this->client);
     }
 
+    // maintainer
     public function testMaintainerAdminCanManageUserMetadata(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -135,10 +154,31 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->normalUser['id']);
 
-        $this->cannotManageMetadata($this->normalUserClient);
+        $this->cannotManageUserMetadata($this->normalUserClient);
     }
 
-    public function testMaintainerAdminWithoutMFACannotManageUserMetadata(): void
+    public function testMaintainerAdminCanSeeSystemMetadata(): void
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        //superadmin creates system metadata
+        $this->createSystemMetadata($this->client, $this->organization['id']);
+
+        $metadataArray = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->assertCount(2, $metadataArray);
+        $this->validateMetadataEquality(self::TEST_METADATA[1], $metadataArray[0], self::PROVIDER_SYSTEM);
+        $this->validateMetadataEquality(self::TEST_METADATA[0], $metadataArray[1], self::PROVIDER_SYSTEM);
+    }
+
+    public function testMaintainerAdminCannotManageSystemMetadata(): void
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        //superadmin creates system metadata
+        $this->cannotManageSystemMetadata($this->normalUserClient);
+    }
+
+    public function testMaintainerAdminWithoutMFACannotManageMetadata(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
@@ -147,6 +187,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->cannotManageMetadataBecauseOfMissingMFA($this->normalUserClient);
     }
 
+    // org admin
     public function testOrgAdminCanManageUserMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -163,10 +204,31 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 
-        $this->cannotManageMetadata($this->normalUserClient);
+        $this->cannotManageUserMetadata($this->normalUserClient);
     }
 
-    public function testOrgAdminWithoutMFACannotManageUserMetadata(): void
+    public function testOrgAdminCanSeeSystemMetadata(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        //superadmin creates system metadata
+        $this->createSystemMetadata($this->client, $this->organization['id']);
+
+        $metadataArray = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->assertCount(2, $metadataArray);
+        $this->validateMetadataEquality(self::TEST_METADATA[1], $metadataArray[0], self::PROVIDER_SYSTEM);
+        $this->validateMetadataEquality(self::TEST_METADATA[0], $metadataArray[1], self::PROVIDER_SYSTEM);
+    }
+
+    public function testOrgAdminCannotManageSystemMetadata(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        //superadmin creates system metadata
+        $this->cannotManageSystemMetadata($this->normalUserClient);
+    }
+
+    public function testOrgAdminWithoutMFACannotManageMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
@@ -175,10 +237,11 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->cannotManageMetadataBecauseOfMissingMFA($this->normalUserClient);
     }
 
+    // project admin
     /**
      * @dataProvider allProjectRoles
      */
-    public function testProjectAdminCanNotManageUserMetadata(string $role): void
+    public function testProjectAdminCanNotManageMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -191,14 +254,34 @@ class OrganizationsMetadataTest extends ClientTestCase
             ]
         );
 
-        $this->cannotManageMetadata($this->normalUserClient);
+        $this->cannotManageUserMetadata($this->normalUserClient);
+        $this->cannotManageSystemMetadata($this->normalUserClient);
     }
 
+    // helpers
     private function createUserMetadata(Client $client, int $organizationId): array
     {
         return $client->setOrganizationMetadata(
             $organizationId,
             self::PROVIDER_USER,
+            self::TEST_METADATA
+        );
+    }
+
+    private function createSystemMetadata(Client $client, int $organizationId): array
+    {
+        return $client->setOrganizationMetadata(
+            $organizationId,
+            self::PROVIDER_SYSTEM,
+            self::TEST_METADATA
+        );
+    }
+
+    private function createMetadata(Client $client, int $organizationId, $provider): array
+    {
+        return $client->setOrganizationMetadata(
+            $organizationId,
+            $provider,
             self::TEST_METADATA
         );
     }
@@ -213,7 +296,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->assertArrayHasKey('timestamp', $actual);
     }
 
-    private function cannotManageMetadata($client)
+    private function cannotManageUserMetadata($client)
     {
         try {
             $client->listOrganizationMetadata($this->organization['id']);
@@ -246,6 +329,16 @@ class OrganizationsMetadataTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
+
+    private function cannotManageSystemMetadata($client)
+    {
+        try {
+            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->fail('Test should not reach this line.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
         }
     }
 }
