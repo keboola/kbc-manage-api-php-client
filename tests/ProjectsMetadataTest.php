@@ -8,7 +8,7 @@ use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
-class ProjectsMetadataTest extends ClientTestCase
+class ProjectsMetadataTest extends ParallelClientTestCase
 {
     public const TEST_METADATA = [
         [

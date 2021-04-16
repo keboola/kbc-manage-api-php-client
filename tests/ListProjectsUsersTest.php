@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class ListProjectsUsersTest extends ClientTestCase
+class ListProjectsUsersTest extends ParallelClientTestCase
 {
     private const EXCEPTION_MESSAGE = 'Only organization members can get list of projects users';
 

@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class FeaturesTest extends ClientTestCase
+class FeaturesTest extends ParallelClientTestCase
 {
     public function testCreateListAndDeleteFeature()
     {

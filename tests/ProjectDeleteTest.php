@@ -10,7 +10,7 @@ use Keboola\StorageApi\Metadata;
 use Keboola\StorageApi\Options\Components as ComponentsOptions;
 use Keboola\StorageApi\Workspaces;
 
-class ProjectDeleteTest extends ClientTestCase
+class ProjectDeleteTest extends ParallelClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';

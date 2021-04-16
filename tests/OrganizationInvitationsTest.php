@@ -3,7 +3,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class OrganizationInvitationsTest extends ClientTestCase
+class OrganizationInvitationsTest extends ParallelClientTestCase
 {
     private $organization;
 
