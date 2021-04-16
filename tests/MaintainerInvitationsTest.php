@@ -3,7 +3,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class MaintainerInvitationsTest extends ClientTestCase
+class MaintainerInvitationsTest extends ParallelClientTestCase
 {
     private $maintainer;
 
@@ -15,7 +15,7 @@ class MaintainerInvitationsTest extends ClientTestCase
         parent::setUp();
 
         $this->maintainer = $this->client->createMaintainer([
-            'name' => self::TESTS_MAINTAINER_PREFIX . ' - MaintainerInvitationsTest',
+            'name' => $this->getTestMaintainerPrefix() . ' - MaintainerInvitationsTest',
         ]);
 
         $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'spam+spam@keboola.com']);

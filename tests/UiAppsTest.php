@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 
-class UiAppsTest extends ClientTestCase
+class UiAppsTest extends ParallelClientTestCase
 {
     public function testAppCreationAndDeletion()
     {
