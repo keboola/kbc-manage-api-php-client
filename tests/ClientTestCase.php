@@ -2,6 +2,7 @@
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\StorageApi\Client as StorageClient;
 
@@ -244,6 +245,7 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
     {
         $project = $this->normalUserClient->createProject($organizationId, [
             'name' => $name,
+            'backend' => Backend::REDSHIFT,
         ]);
 
         return $project['id'];
@@ -253,6 +255,7 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
     {
         $project = $this->client->createProject($organizationId, [
             'name' => $name,
+            'backend' => Backend::REDSHIFT,
         ]);
 
         return $project['id'];
@@ -262,6 +265,7 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
     {
         $project = $this->normalUserWithMfaClient->createProject($organizationId, [
             'name' => $name,
+            'backend' => Backend::REDSHIFT,
         ]);
 
         return $project['id'];
