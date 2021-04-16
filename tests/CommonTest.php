@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use GuzzleHttp\Exception\ClientException;
 
-class CommonTest extends ClientTestCase
+class CommonTest extends ParallelClientTestCase
 {
     public function testVerifyAdminToken()
     {

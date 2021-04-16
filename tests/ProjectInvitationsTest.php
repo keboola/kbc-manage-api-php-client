@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
-class ProjectInvitationsTest extends ClientTestCase
+class ProjectInvitationsTest extends ParallelClientTestCase
 {
     private $organization;
 

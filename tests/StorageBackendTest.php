@@ -5,7 +5,7 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 
-class StorageBackendTest extends ClientTestCase
+class StorageBackendTest extends ParallelClientTestCase
 {
     public function supportedNonDefaultBackends(): array
     {

@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class PromoCodesTest extends ClientTestCase
+class PromoCodesTest extends ParallelClientTestCase
 {
 
     private $organization;
@@ -87,7 +87,7 @@ class PromoCodesTest extends ClientTestCase
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
-        $maintainerName = self::TESTS_MAINTAINER_PREFIX . ' - test maintainer';
+        $maintainerName = $this->getTestMaintainerPrefix() . ' - test maintainer';
         $newMaintainer = $this->client->createMaintainer([
             'name' => $maintainerName,
             'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],

@@ -2,7 +2,9 @@
 
 namespace Keboola\ManageApiTest;
 
-class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
+use Keboola\ManageApi\Backend;
+
+class ProjectTemplateFeaturesAssigningTest extends ParallelClientTestCase
 {
     public const TEST_PROJECT_TEMPLATE_STRING_ID = 'demo';
 
@@ -22,6 +24,7 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test template features - organization',
+            'defaultBackend' => Backend::REDSHIFT,
         ]);
 
         $project = $this->client->createProject($organization['id'], [
