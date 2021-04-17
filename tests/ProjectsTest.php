@@ -535,9 +535,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $project = $this->createProjectWithSuperAdminMember($organization['id']);
 
         try {
             $this->client->addUserToProject($project['id'], [
@@ -568,9 +566,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $project = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $admins = $this->client->listProjectUsers($project['id']);
         $this->assertCount(1, $admins);
@@ -626,9 +622,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $project = $this->createProjectWithSuperAdminMember($organization['id']);
         $admins = $this->client->listProjectUsers($project['id']);
         $this->assertCount(1, $admins);
 
@@ -734,9 +728,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $project = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $this->client->addUserToProject($project['id'], [
             'email' => getenv('KBC_TEST_ADMIN_EMAIL'),
@@ -793,9 +785,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $project = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $newOrganization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org 2',
@@ -811,9 +801,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $project = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $limits = [
             [
@@ -840,9 +828,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $project = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $limits = [
             [
@@ -870,9 +856,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $projectAfterCreation = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $projectAfterCreation = $this->createProjectWithSuperAdminMember($organization['id']);
 
         try {
             $clientWithSuperApiToken = $this->getClient([
@@ -893,9 +877,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $project = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $featureName = 'random-feature-' . $this->getRandomFeatureSuffix();
 

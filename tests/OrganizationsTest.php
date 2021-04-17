@@ -291,9 +291,7 @@ class OrganizationsTest extends ClientTestCase
             'email' => $normalUser['email'],
         ]);
 
-        $testProject = $this->normalUserClient->createProject($organization['id'], [
-            'name' => 'Test Project',
-        ]);
+        $testProject = $this->createProjectWithNormalAdminMember($organization['id']);
 
         $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
         $this->assertNull($projectUser);
@@ -347,9 +345,7 @@ class OrganizationsTest extends ClientTestCase
         ]);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
-        $testProject = $this->normalUserClient->createProject($organization['id'], [
-            'name' => 'Test Project',
-        ]);
+        $testProject = $this->createProjectWithNormalAdminMember($organization['id']);
 
         $projectUser = $this->findProjectUser($testProject['id'], $superAdmin['email']);
         $this->assertNull($projectUser);
@@ -394,9 +390,7 @@ class OrganizationsTest extends ClientTestCase
         ]);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
-        $testProject = $this->normalUserClient->createProject($organization['id'], [
-            'name' => 'Test Project',
-        ]);
+        $testProject = $this->createProjectWithNormalAdminMember($organization['id']);
 
         $org = $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
         $this->assertEquals(false, $org['allowAutoJoin']);

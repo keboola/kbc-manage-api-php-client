@@ -150,7 +150,7 @@ class UsersTest extends ClientTestCase
     public function testRemoveUserFromDeletedStructures()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'RemoveMeOrg']);
-        $project = $this->client->createProject($organization['id'], ['name' => 'RemoveMeProj']);
+        $project = $this->createProjectWithSuperAdminMember($organization['id'], 'RemoveMeProj');
         $maintainer = $this->client->createMaintainer(['name' => 'RemoveMeMain']);
         $email = 'remove' . uniqid() . '@keboola.com';
         $this->client->addUserToProject($project['id'], ['email' => $email]);
