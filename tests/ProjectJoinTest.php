@@ -460,7 +460,7 @@ class ProjectJoinTest extends ClientTestCase
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
-        $testProject = $this->client->createProject($this->organization['id'], ['name' => 'Test Project']);
+        $testProject = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -490,7 +490,7 @@ class ProjectJoinTest extends ClientTestCase
             'allowAutoJoin' => $allowAutoJoin,
         ]);
 
-        $testProject = $this->client->createProject($this->organization['id'], ['name' => 'Test Project']);
+        $testProject = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -520,9 +520,7 @@ class ProjectJoinTest extends ClientTestCase
             'allowAutoJoin' => $allowAutoJoin,
         ]);
 
-        $testProject = $this->normalUserClient->createProject($this->organization['id'], [
-            'name' => 'Test Project',
-        ]);
+        $testProject = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $projectUser = $this->findProjectUser($testProject['id'], $this->superAdmin['email']);
         $this->assertNull($projectUser);
