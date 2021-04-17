@@ -535,12 +535,10 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
 
         try {
-            $this->client->addUserToProject($project['id'], [
+            $this->client->addUserToProject($projectId, [
                 'email' => 'invalid email',
             ]);
             $this->fail('Email address is not valid');
@@ -550,7 +548,7 @@ class ProjectsTest extends ClientTestCase
 
         // try to add user with empty email address
         try {
-            $this->client->addUserToProject($project['id'], [
+            $this->client->addUserToProject($projectId, [
                 'email' => '',
             ]);
             $this->fail('User with empty email cannot be created.');
@@ -568,22 +566,20 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
 
-        $admins = $this->client->listProjectUsers($project['id']);
+        $admins = $this->client->listProjectUsers($projectId);
         $this->assertCount(1, $admins);
         $this->assertEquals($this->superAdmin['email'], $admins[0]['email']);
 
         // test of adding / removing user with expiration/reason
-        $resp = $this->client->addUserToProject($project['id'], [
+        $resp = $this->client->addUserToProject($projectId, [
             'email' => $this->normalUser['email'],
             'reason' => 'created by test',
             'expirationSeconds' => '20',
         ]);
 
-        $admins = $this->normalUserClient->listProjectUsers($project['id']);
+        $admins = $this->normalUserClient->listProjectUsers($projectId);
         $this->assertCount(2, $admins);
 
         foreach ($admins as $projUser) {
@@ -596,27 +592,27 @@ class ProjectsTest extends ClientTestCase
         }
 
         // now delete the project
-        $this->client->deleteProject($project['id']);
+        $this->client->deleteProject($projectId);
 
         // now the next time the cron runs the user should be removed from the deleted project.
         sleep(120);
 
         // after undeleting the project, the user should be gone
-        $this->client->undeleteProject($project['id']);
+        $this->client->undeleteProject($projectId);
 
         // user should be gone
-        $admins = $this->client->listProjectUsers($project['id']);
+        $admins = $this->client->listProjectUsers($projectId);
 
         $this->assertCount(1, $admins);
         $this->assertEquals($this->superAdmin['email'], $admins[0]['email']);
 
         // let's add the expired user back to the project
-        $resp = $this->client->addUserToProject($project['id'], [
+        $resp = $this->client->addUserToProject($projectId, [
             'email' => $this->normalUser['email'],
         ]);
 
         // the project should have 2 users now
-        $admins = $this->client->listProjectUsers($project['id']);
+        $admins = $this->client->listProjectUsers($projectId);
         $this->assertCount(2, $admins);
     }
 
@@ -626,20 +622,18 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
-        $admins = $this->client->listProjectUsers($project['id']);
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
+        $admins = $this->client->listProjectUsers($projectId);
         $this->assertCount(1, $admins);
 
         // test of adding / removing user with expiration/reason
-        $resp = $this->client->addUserToProject($project['id'], [
+        $resp = $this->client->addUserToProject($projectId, [
             'email' => 'spam@keboola.com',
             'reason' => 'created by test',
             'expirationSeconds' => '20',
         ]);
 
-        $admins = $this->client->listProjectUsers($project['id']);
+        $admins = $this->client->listProjectUsers($projectId);
         $this->assertCount(2, $admins);
 
         $foundUser = null;
@@ -660,7 +654,7 @@ class ProjectsTest extends ClientTestCase
         $tries = 0;
 
         while ($tries < 10) {
-            $admins = $this->client->listProjectUsers($project['id']);
+            $admins = $this->client->listProjectUsers($projectId);
             if (count($admins) < 2) {
                 break;
             }
@@ -734,11 +728,9 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
 
-        $this->client->addUserToProject($project['id'], [
+        $this->client->addUserToProject($projectId, [
             'email' => getenv('KBC_TEST_ADMIN_EMAIL'),
         ]);
 
@@ -750,7 +742,7 @@ class ProjectsTest extends ClientTestCase
 
         // update
         $newName = 'new name';
-        $project = $client->updateProject($project['id'], [
+        $project = $client->updateProject($projectId, [
             'name' => $newName,
         ]);
         $this->assertEquals($newName, $project['name']);
@@ -793,15 +785,13 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $newOrganization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org 2',
         ]);
 
-        $changedProject = $this->client->changeProjectOrganization($project['id'], $newOrganization['id']);
+        $changedProject = $this->client->changeProjectOrganization($projectId, $newOrganization['id']);
         $this->assertEquals($newOrganization['id'], $changedProject['organization']['id']);
     }
 
@@ -811,9 +801,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $limits = [
             [
@@ -825,7 +813,7 @@ class ProjectsTest extends ClientTestCase
                 'value' => 20,
             ],
         ];
-        $project = $this->client->setProjectLimits($project['id'], $limits);
+        $project = $this->client->setProjectLimits($projectId, $limits);
         $this->assertEquals($limits[0], $project['limits']['goodData.prodTokenEnabled']);
         $this->assertEquals($limits[1], $project['limits']['goodData.usersCount']);
 
@@ -840,9 +828,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $limits = [
             [
@@ -855,10 +841,10 @@ class ProjectsTest extends ClientTestCase
             ],
         ];
 
-        $this->client->setProjectLimits($project['id'], $limits);
-        $this->client->removeProjectLimit($project['id'], 'goodData.usersCount');
+        $this->client->setProjectLimits($projectId, $limits);
+        $this->client->removeProjectLimit($projectId, 'goodData.usersCount');
 
-        $project = $this->client->getProject($project['id']);
+        $project = $this->client->getProject($projectId);
 
         $this->assertEquals($limits[0], $project['limits']['goodData.prodTokenEnabled']);
         $this->assertArrayNotHasKey('goodData.usersCount', $project['limits']);
@@ -870,9 +856,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $projectAfterCreation = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $projectAfterCreationId = $this->createProjectWithSuperAdminMember($organization['id']);
 
         try {
             $clientWithSuperApiToken = $this->getClient([
@@ -881,7 +865,7 @@ class ProjectsTest extends ClientTestCase
                 'backoffMaxTries' => 0,
             ]);
 
-            $clientWithSuperApiToken->setProjectLimits($projectAfterCreation['id'], []);
+            $clientWithSuperApiToken->setProjectLimits($projectAfterCreationId, []);
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
@@ -893,14 +877,12 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
 
         $featureName = 'random-feature-' . $this->getRandomFeatureSuffix();
 
         try {
-            $this->client->addProjectFeature($project['id'], $featureName);
+            $this->client->addProjectFeature($projectId, $featureName);
             $this->fail('Feature not found');
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());

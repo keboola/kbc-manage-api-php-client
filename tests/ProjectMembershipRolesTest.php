@@ -32,7 +32,8 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             'name' => 'My org',
         ]);
 
-        $this->project = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id'], ProjectMembershipRolesTest::class);
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id'], ProjectMembershipRolesTest::class);
+        $this->project = $this->normalUserWithMfaClient->getProject($projectId);
 
         $this->guestRoleMemberClient = $this->normalUserClient;
         $this->guestUser = $this->normalUser;

@@ -106,7 +106,8 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
 
         $this->assertSame(false, $this->organization['mfaRequired']);
 
-        $project = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+        $project = $this->normalUserWithMfaClient->getProject($projectId);
         $this->normalUserWithMfaClient->addUserToProject($project['id'], ['email' => self::DUMMY_USER_EMAIL]);
 
         try {
@@ -286,7 +287,8 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        $project = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+        $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
+        $project = $this->normalUserWithMfaClient->getProject($projectId);
         $this->normalUserWithMfaClient->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
 
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);

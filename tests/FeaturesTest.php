@@ -119,10 +119,8 @@ class FeaturesTest extends ClientTestCase
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
         ]);
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
-
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id'], 'My test');
+        $project = $this->client->getProject($projectId);
         $this->client->addProjectFeature($project['id'], $newFeature['name']);
 
         $featureProjects = $this->client->getFeatureProjects($insertedFeature['id']);

@@ -62,7 +62,8 @@ class ListProjectsUsersTest extends ClientTestCase
             'email' => $this->normalUser['email'],
         ]);
 
-        $testProject = $this->createProjectWithNormalAdminMember($this->organization['id']);
+        $testProjectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
+        $testProject = $this->normalUserClient->getProject($testProjectId);
 
         $this->normalUserClient->addUserToProject($testProject['id'], [
             'email' => 'spam+spam@keboola.com',
