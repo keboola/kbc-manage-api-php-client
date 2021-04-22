@@ -276,7 +276,6 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->cannotManageUserMetadata($this->normalUserClient);
         $this->cannotManageSystemMetadata($this->normalUserClient);
 
-
         // superadmin creates user metadata
         $this->createUserMetadata($this->client, $this->organization['id']);
         $metadataArray = $this->client->listOrganizationMetadata($this->organization['id']);
@@ -338,7 +337,7 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->assertEquals(403, $e->getCode());
         }
 
-        if($metadataId){
+        if ($metadataId) {
             $this->cannotDeleteMetadata($client, $metadataId);
         }
     }
@@ -382,7 +381,7 @@ class OrganizationsMetadataTest extends ClientTestCase
 
     private function deleteMetadata(Client $client, $metadataArray)
     {
-        foreach($metadataArray as $metadata){
+        foreach ($metadataArray as $metadata) {
             $client->deleteOrganizationMetadata($this->organization['id'], $metadata['id']);
         }
         $metadataArray = $this->client->listOrganizationMetadata($this->organization['id']);
