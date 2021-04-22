@@ -119,6 +119,8 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->assertCount(2, $metadataArray);
         $this->validateMetadataEquality(self::TEST_METADATA[1], $metadataArray[0], $provider);
         $this->validateMetadataEquality(self::TEST_METADATA[0], $metadataArray[1], $provider);
+
+        $this->deleteMetadata($this->client, $metadataArray);
     }
 
 
@@ -154,7 +156,10 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->normalUser['id']);
 
-        $this->cannotManageUserMetadata($this->normalUserClient);
+        $this->cannotManageUserMetadata($this->normalUserClient, $metadataArray[0]['id']);
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+        $this->deleteMetadata($this->normalUserClient, $metadataArray);
     }
 
     public function testMaintainerAdminCanSeeSystemMetadata(): void
@@ -174,8 +179,13 @@ class OrganizationsMetadataTest extends ClientTestCase
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
-        //superadmin creates system metadata
         $this->cannotManageSystemMetadata($this->normalUserClient);
+
+        // superadmin creates system metadata
+        $this->createSystemMetadata($this->client, $this->organization['id']);
+        $metadataArray = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        // but maintainer cannot delete it
+        $this->cannotDeleteMetadata($this->normalUserClient, $metadataArray[0]['id']);
     }
 
     public function testMaintainerAdminWithoutMFACannotManageMetadata(): void
@@ -205,6 +215,10 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 
         $this->cannotManageUserMetadata($this->normalUserClient);
+        $this->cannotDeleteMetadata($this->normalUserClient, $metadataArray[0]['id']);
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $this->deleteMetadata($this->normalUserClient, $metadataArray);
     }
 
     public function testOrgAdminCanSeeSystemMetadata(): void
@@ -224,8 +238,13 @@ class OrganizationsMetadataTest extends ClientTestCase
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        //superadmin creates system metadata
         $this->cannotManageSystemMetadata($this->normalUserClient);
+
+        // superadmin creates system metadata
+        $this->createSystemMetadata($this->client, $this->organization['id']);
+        $metadataArray = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        // but org admin cannot delete it
+        $this->cannotDeleteMetadata($this->normalUserClient, $metadataArray[0]['id']);
     }
 
     public function testOrgAdminWithoutMFACannotManageMetadata(): void
@@ -256,6 +275,13 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         $this->cannotManageUserMetadata($this->normalUserClient);
         $this->cannotManageSystemMetadata($this->normalUserClient);
+
+
+        // superadmin creates user metadata
+        $this->createUserMetadata($this->client, $this->organization['id']);
+        $metadataArray = $this->client->listOrganizationMetadata($this->organization['id']);
+        // but proj admin cannot delete it
+        $this->cannotDeleteMetadata($this->normalUserClient, $metadataArray[0]['id']);
     }
 
     // helpers
@@ -296,7 +322,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->assertArrayHasKey('timestamp', $actual);
     }
 
-    private function cannotManageUserMetadata($client)
+    private function cannotManageUserMetadata(Client $client, $metadataId = null)
     {
         try {
             $client->listOrganizationMetadata($this->organization['id']);
@@ -310,6 +336,10 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->fail('Test should not reach this line.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
+        }
+
+        if($metadataId){
+            $this->cannotDeleteMetadata($client, $metadataId);
         }
     }
 
@@ -344,6 +374,25 @@ class OrganizationsMetadataTest extends ClientTestCase
     {
         try {
             $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $this->fail('Test should not reach this line.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+    }
+
+    private function deleteMetadata(Client $client, $metadataArray)
+    {
+        foreach($metadataArray as $metadata){
+            $client->deleteOrganizationMetadata($this->organization['id'], $metadata['id']);
+        }
+        $metadataArray = $this->client->listOrganizationMetadata($this->organization['id']);
+        $this->assertCount(0, $metadataArray);
+    }
+
+    private function cannotDeleteMetadata($client, $metadataId)
+    {
+        try {
+            $client->deleteOrganizationMetadata($this->organization['id'], $metadataId);
             $this->fail('Test should not reach this line.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
