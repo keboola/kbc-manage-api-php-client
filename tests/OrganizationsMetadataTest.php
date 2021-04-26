@@ -133,6 +133,15 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
         $this->cannotManageMetadataBecauseOfMissingMFA($this->client);
+
+        $userMetadata = $this->createMetadata($this->normalUserWithMfaClient, $this->organization['id'], self::PROVIDER_USER);
+
+        try {
+            $this->client->deleteOrganizationMetadata($this->organization['id'], $userMetadata[0]['id']);
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
     }
 
     // maintainer
@@ -201,6 +210,15 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
         $this->cannotManageMetadataBecauseOfMissingMFA($this->normalUserClient);
+
+        $userMetadata = $this->createMetadata($this->normalUserWithMfaClient, $this->organization['id'], self::PROVIDER_USER);
+
+        try {
+            $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $userMetadata[0]['id']);
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
     }
 
     // org admin
@@ -261,6 +279,15 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
         $this->cannotManageMetadataBecauseOfMissingMFA($this->normalUserClient);
+
+        $userMetadata = $this->createMetadata($this->normalUserWithMfaClient, $this->organization['id'], self::PROVIDER_USER);
+
+        try {
+            $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $userMetadata[0]['id']);
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
     }
 
     // project admin
