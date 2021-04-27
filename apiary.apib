@@ -832,44 +832,44 @@ Only organization members, members of the maintainer and super admins can change
 
     + Body
 
-            ```js
-            {
-                "provider": "user",
-                "metadata": [
-                    {
-                        "key": "KBC.SomeEnity.metadataKey",
-                        "value": "Some value"
-                    },
-                    {
-                        "key": "someMetadataKey",
-                        "value": "Some value"
-                    }
-                ]
-            }
-            ```
+        ```js
+        {
+            "provider": "user",
+            "metadata": [
+                {
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+        }
+        ```
 
 + Response 201
 
     + Body
 
-            ```js
-            [
-                {
-                    "id": 123,
-                    "provider": "user",
-                    "timestamp": "2021-02-17T15:05:21+0100",
-                    "key": "KBC.SomeEnity.metadataKey",
-                    "value": "Some value"
-                },
-                {
-                    "id": 124,
-                    "provider": "user",
-                    "timestamp": "2021-02-17T15:05:21+0100",
-                    "key": "someMetadataKey",
-                    "value": "Some value"
-                }
-            ]
-            ```
+        ```js
+        [
+            {
+                "id": 123,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "KBC.SomeEnity.metadataKey",
+                "value": "Some value"
+            },
+            {
+                "id": 124,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "someMetadataKey",
+                "value": "Some value"
+            }
+        ]
+        ```
 
 
 ### List organization Metadata [GET]
@@ -886,24 +886,40 @@ Only members of the maintainer, members of organization and super admins can lis
 + Response 200
     + Body
 
-            ```js
-            [
-                {
-                    "id": 123,
-                    "provider": "user",
-                    "timestamp": "2021-02-17T15:05:21+0100",
-                    "key": "KBC.SomeEnity.metadataKey",
-                    "value": "Some value"
-                },
-                {
-                    "id": 124,
-                    "provider": "user",
-                    "timestamp": "2021-02-17T15:05:21+0100",
-                    "key": "someMetadataKey",
-                    "value": "Some value"
-                }
-            ]
-            ```
+        ```js
+        [
+            {
+                "id": 123,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "KBC.SomeEnity.metadataKey",
+                "value": "Some value"
+            },
+            {
+                "id": 124,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "someMetadataKey",
+                "value": "Some value"
+            }
+        ]
+        ```
+
+### Remove Organization Metadata [/manage/organizations/{organization_id}/metadata/{metadata_id}]
+Only organization members, members of the maintainer and super admins can delete metadata.
+
+### Remove organization metadata [DELETE]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+    + metadata_id (required, int) - Metadata ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
 
 # Group Projects
 
