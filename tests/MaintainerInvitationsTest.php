@@ -14,7 +14,7 @@ class MaintainerInvitationsTest extends ParallelClientTestCase
     {
         parent::setUp();
 
-        $this->maintainer = $this->client->createMaintainer([
+        $this->maintainer = $this->createOrReplaceMaintainer([
             'name' => $this->getTestMaintainerPrefix() . ' - MaintainerInvitationsTest',
         ]);
 

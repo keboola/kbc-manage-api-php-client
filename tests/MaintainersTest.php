@@ -2,12 +2,10 @@
 
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class MaintainersTest extends ClientTestCase
+class MaintainersTest extends ParallelClientTestCase
 {
-
     public function testCreateDeleteMaintainer()
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
@@ -21,7 +19,7 @@ class MaintainersTest extends ClientTestCase
             $this->assertEquals('A name must be set', $e->getMessage());
         }
 
-        $newMaintainer = $this->client->createMaintainer([
+        $newMaintainer = $this->createOrReplaceMaintainer([
             'name' => $maintainerName,
             'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
             'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
@@ -71,7 +69,7 @@ class MaintainersTest extends ClientTestCase
             }
         }
 
-        $newMaintainer = $this->client->createMaintainer([
+        $newMaintainer = $this->createOrReplaceMaintainer([
             'name' => self::TESTS_MAINTAINER_PREFIX . ' - test maintainer',
         ]);
 
@@ -131,9 +129,6 @@ class MaintainersTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
-        // normal user should have empty maintainer list
-        $maintainerList = $this->normalUserClient->listMaintainers();
-        $this->assertCount(0, $maintainerList);
         try {
             $this->normalUserClient->getMaintainer($this->testMaintainerId);
             $this->fail('normal user cannot fetch maintainer which he is not a member of');
@@ -156,15 +151,18 @@ class MaintainersTest extends ClientTestCase
     public function testCrossMaintainerOrganizationAccess()
     {
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . ' - secondary maintainer';
-        $secondMaintainer = $this->client->createMaintainer([
+        $secondMaintainer = $this->createOrReplaceMaintainer([
             'name' => $maintainerName,
         ]);
         $this->client->addUserToMaintainer($secondMaintainer['id'], ['id' => $this->normalUser['id']]);
         $this->client->removeUserFromMaintainer($secondMaintainer['id'], $this->superAdmin['id']);
 
         $normalMaintainers = $this->normalUserClient->listMaintainers();
-        $this->assertCount(1, $normalMaintainers);
-        $this->assertEquals($maintainerName, $normalMaintainers[0]['name']);
+        // test if user is part of current maintainer
+        $foundMaintainers = array_filter($normalMaintainers, function ($maintainer) use ($maintainerName) {
+            return $maintainer['name'] === $maintainerName;
+        });
+        $this->assertCount(1, $foundMaintainers);
 
         try {
             $this->normalUserClient->updateMaintainer($this->testMaintainerId, ['name' => 'should fail']);
@@ -215,7 +213,7 @@ class MaintainersTest extends ClientTestCase
 
     public function testAtLeastOneMemberLimit()
     {
-        $maintainer = $this->client->createMaintainer([
+        $maintainer = $this->createOrReplaceMaintainer([
             'name' => self::TESTS_MAINTAINER_PREFIX . ' - test least one member',
         ]);
 
