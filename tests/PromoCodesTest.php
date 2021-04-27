@@ -88,7 +88,7 @@ class PromoCodesTest extends ParallelClientTestCase
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
         $maintainerName = $this->getTestMaintainerPrefix() . ' - test maintainer';
-        $newMaintainer = $this->client->createMaintainer([
+        $newMaintainer = $this->createOrReplaceMaintainer([
             'name' => $maintainerName,
             'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
             'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
