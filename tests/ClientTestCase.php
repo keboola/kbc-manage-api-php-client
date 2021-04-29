@@ -270,4 +270,16 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
 
         return $project['id'];
     }
+
+    /**
+     * @param Client $client
+     * @param int $organizationId
+     * @param array<mixed> $params
+     * @return int
+     */
+    protected function createRedshiftProjectForClient($client, int $organizationId, $params = [])
+    {
+        $params['defaultBackend'] = Backend::REDSHIFT;
+        return $client->createProject($organizationId, $params);
+    }
 }
