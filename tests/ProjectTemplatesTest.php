@@ -156,7 +156,7 @@ class ProjectTemplatesTest extends ParallelClientTestCase
     public function testRandomAdminCannotViewAndListProjectTemplates()
     {
         try {
-            $this->normalUserClient->getProjectTemplates();
+            $this->normalUser2Client->getProjectTemplates();
             $this->fail('Forbidden');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());

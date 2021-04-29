@@ -205,7 +205,7 @@ class PromoCodesTest extends ParallelClientTestCase
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
         $this->expectExceptionMessage('You can\'t access project templates');
-        $this->normalUserClient->createPromoCode($this->testMaintainerId, [
+        $this->normalUser2Client->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
             'expirationDays' => rand(5, 20),
             'organizationId' => $this->organization['id'],
