@@ -18,30 +18,6 @@ class ParallelClientTestCase extends ClientTestCase
         }
     }
 
-    protected function createOrReplaceMaintainer($params)
-    {
-        $maintainers = $this->client->listMaintainers();
-        foreach ($maintainers as $maintainer) {
-            if ($maintainer['name'] === $params['name']) {
-                $this->clearAndDropMaintainer($maintainer['id']);
-            }
-        }
-        return $this->client->createMaintainer($params);
-    }
-
-    protected function clearAndDropMaintainer($maintainerId)
-    {
-        // clean up projects and organizations
-        $organizations = $this->client->listMaintainerOrganizations($maintainerId);
-        foreach ($organizations as $organization) {
-            foreach ($this->client->listOrganizationProjects($organization['id']) as $project) {
-                $this->client->deleteProject($project['id']);
-            }
-            $this->client->deleteOrganization($organization['id']);
-        }
-        $this->client->deleteMaintainer($maintainerId);
-    }
-
     protected function getTestMaintainerPrefix()
     {
         return sprintf(
