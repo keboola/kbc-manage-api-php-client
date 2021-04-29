@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class MaintainersTest extends ParallelClientTestCase
+class MaintainersTest extends ClientTestCase
 {
     public function testCreateDeleteMaintainer()
     {
