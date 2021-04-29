@@ -293,7 +293,7 @@ class MaintainersTest extends ParallelClientTestCase
         // make sure normalUser is a maintainer
         $this->addNormalMaintainer();
 
-        $testProject = $this->client->createProject($organization['id'], [
+        $testProject = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'Test Project',
         ]);
 

@@ -296,7 +296,7 @@ class OrganizationsTest extends ParallelClientTestCase
             'email' => $normalUser['email'],
         ]);
 
-        $testProject = $this->normalUserClient->createProject($organization['id'], [
+        $testProject = $this->createRedshiftProjectForClient($this->normalUserClient, $organization['id'], [
             'name' => 'Test Project',
         ]);
 
@@ -352,7 +352,7 @@ class OrganizationsTest extends ParallelClientTestCase
         ]);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
-        $testProject = $this->normalUserClient->createProject($organization['id'], [
+        $testProject = $this->createRedshiftProjectForClient($this->normalUserClient, $organization['id'], [
             'name' => 'Test Project',
         ]);
 
@@ -399,7 +399,7 @@ class OrganizationsTest extends ParallelClientTestCase
         ]);
         $this->client->removeUserFromOrganization($organization['id'], $superAdmin['id']);
 
-        $testProject = $this->normalUserClient->createProject($organization['id'], [
+        $testProject = $this->createRedshiftProjectForClient($this->normalUserClient, $organization['id'], [
             'name' => 'Test Project',
         ]);
 
