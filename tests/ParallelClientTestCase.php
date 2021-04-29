@@ -48,6 +48,11 @@ class ParallelClientTestCase extends ClientTestCase
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 0,
         ]);
+        $this->normalUser2Client = $this->getClient([
+            'token' => getenv('KBC_TEST_ADMIN2_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 0,
+        ]);
         $this->normalUserWithMfaClient = $this->getClient([
             'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
             'url' => getenv('KBC_MANAGE_API_URL'),
@@ -55,6 +60,7 @@ class ParallelClientTestCase extends ClientTestCase
 
         $this->normalUser = $this->normalUserClient->verifyToken()['user'];
         $this->superAdmin = $this->client->verifyToken()['user'];
+        $this->normalUser2 = $this->normalUser2Client->verifyToken()['user'];
         $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
 
         // cleanup maintainers created by tests
