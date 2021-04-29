@@ -71,6 +71,11 @@ class ClientTestCase extends TestCase
         }
     }
 
+    protected function getTestMaintainerPrefix()
+    {
+        return self::TESTS_MAINTAINER_PREFIX;
+    }
+
     /**
      * @return Client
      */
