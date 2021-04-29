@@ -70,10 +70,10 @@ class MaintainersTest extends ParallelClientTestCase
         }
 
         $newMaintainer = $this->createOrReplaceMaintainer([
-            'name' => self::TESTS_MAINTAINER_PREFIX . ' - test maintainer',
+            'name' => self::TESTS_MAINTAINER_PREFIX . $this->getName(),
         ]);
 
-        $updatedMaintainerName = self::TESTS_MAINTAINER_PREFIX . ' - updated name';
+        $updatedMaintainerName = self::TESTS_MAINTAINER_PREFIX . ' - updated name' . $this->getName();
         $updateArray = [
             'name' => $updatedMaintainerName,
         ];
