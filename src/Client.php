@@ -552,6 +552,7 @@ class Client
 
     public function getUser($emailOrId)
     {
+        $emailOrId = urlencode($emailOrId);
         return $this->apiGet("/manage/users/{$emailOrId}");
     }
 
