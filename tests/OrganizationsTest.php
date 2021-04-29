@@ -8,6 +8,11 @@ class OrganizationsTest extends ClientTestCase
 {
     public function testListOrganizations()
     {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+
         $organizations = $this->client->listOrganizations();
 
         $this->assertGreaterThan(0, count($organizations));
