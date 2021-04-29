@@ -3,7 +3,6 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
-use Keboola\StorageApi\Client;
 
 class CommandsTest extends ParallelClientTestCase
 {

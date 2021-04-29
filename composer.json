@@ -26,7 +26,13 @@
             "@phpcs"
         ],
         "phpcs": "phpcs -s -n -p --extensions=php . src tests",
-        "tests": "phpunit"
+        "paratests": "paratest -p 4 -f -v=1 --testsuite=paratests",
+        "synctests": "phpunit --testsuite tests",
+        "tests": "phpunit",
+        "tests-all": [
+            "@synctests",
+            "@paratests"
+        ]
     },
     "authors": [
         {
