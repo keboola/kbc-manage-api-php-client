@@ -96,10 +96,23 @@ TEST_S3_SECRET=
 
 ```
 
-Source newly created file and run tests:
+### Source newly created file and run tests:
 
+Run all tests in phpunit
 ```bash
 docker-compose run --rm dev composer tests
+```
+Run not parallelized tests
+```bash
+docker-compose run --rm dev composer synctests
+```
+Run parallelized tests
+```bash
+docker-compose run --rm dev composer paratests
+```
+Run first not parallelized tests and than parallelized
+```bash
+docker-compose run --rm dev composer tests-all
 ```
 
 ### Required variables
