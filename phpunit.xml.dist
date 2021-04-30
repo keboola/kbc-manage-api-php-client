@@ -7,7 +7,6 @@
             <exclude>tests/FileStorageAbsTest.php</exclude>
             <exclude>tests/FileStorageS3Test.php</exclude>
             <!--Paratests exclude-->
-            <exclude>tests/UsersTest.php</exclude>
             <exclude>tests/StorageBackendTest.php</exclude>
             <exclude>tests/UiAppsTest.php</exclude>
             <exclude>tests/ProjectTemplatesTest.php</exclude>
@@ -23,7 +22,6 @@
             <exclude>tests/CommandsTest.php</exclude>
         </testsuite>
         <testsuite name="paratests">
-            <file>tests/UsersTest.php</file>
             <file>tests/StorageBackendTest.php</file>
             <file>tests/UiAppsTest.php</file>
             <file>tests/ProjectTemplatesTest.php</file>

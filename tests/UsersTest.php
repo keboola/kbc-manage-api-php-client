@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class UsersTest extends ParallelClientTestCase
+class UsersTest extends ClientTestCase
 {
 
     public function testGetUser()
