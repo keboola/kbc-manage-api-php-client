@@ -5,8 +5,9 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\StorageApi\Client as StorageClient;
+use PHPUnit\Framework\TestCase;
 
-class ClientTestCase extends \PHPUnit_Framework_TestCase
+class ClientTestCase extends TestCase
 {
 
     public const PRODUCTION_HOSTS = [
