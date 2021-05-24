@@ -398,7 +398,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
             'type' => 'demo',
         ]);
@@ -448,7 +448,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
             'description' => 'My test project',
         ]);
@@ -480,7 +480,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -535,7 +535,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -568,7 +568,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -626,7 +626,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
         $admins = $this->client->listProjectUsers($project['id']);
@@ -793,7 +793,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -811,7 +811,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -840,7 +840,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -870,7 +870,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $projectAfterCreation = $this->client->createProject($organization['id'], [
+        $projectAfterCreation = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -893,7 +893,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -912,7 +912,7 @@ class ProjectsTest extends ClientTestCase
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
         ]);
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -946,7 +946,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -978,7 +978,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1009,7 +1009,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1091,7 +1091,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1128,7 +1128,7 @@ class ProjectsTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
         $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->superAdmin['id']);
 
-        $project = $this->normalUserClient->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->normalUserClient, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1550,7 +1550,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1587,7 +1587,7 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1622,7 +1622,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1659,7 +1659,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1755,7 +1755,7 @@ class ProjectsTest extends ClientTestCase
             'name' => __CLASS__,
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => __METHOD__,
         ]);
 
@@ -1798,7 +1798,7 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
 
-        $project = $this->normalUserClient->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->normalUserClient, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1821,7 +1821,7 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
 
-        $project = $this->normalUserClient->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->normalUserClient, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1863,7 +1863,7 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
 
-        $project = $this->normalUserClient->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->normalUserClient, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1904,7 +1904,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1937,7 +1937,7 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -1968,7 +1968,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
@@ -2001,7 +2001,7 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
