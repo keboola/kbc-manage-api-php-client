@@ -460,7 +460,7 @@ class ProjectJoinTest extends ClientTestCase
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
-        $testProject = $this->client->createProject($this->organization['id'], ['name' => 'Test Project']);
+        $testProject = $this->createRedshiftProjectForClient($this->client, $this->organization['id'], ['name' => 'Test Project']);
 
         $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
         $this->assertNull($projectUser);
@@ -490,7 +490,7 @@ class ProjectJoinTest extends ClientTestCase
             'allowAutoJoin' => $allowAutoJoin,
         ]);
 
-        $testProject = $this->client->createProject($this->organization['id'], ['name' => 'Test Project']);
+        $testProject = $this->createRedshiftProjectForClient($this->client, $this->organization['id'], ['name' => 'Test Project']);
 
         $projectUser = $this->findProjectUser($testProject['id'], $this->normalUser['email']);
         $this->assertNull($projectUser);

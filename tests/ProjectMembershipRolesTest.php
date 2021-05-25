@@ -32,7 +32,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             'name' => 'My org',
         ]);
 
-        $this->project = $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => ProjectMembershipRolesTest::class]);
+        $this->project = $this->createRedshiftProjectForClient($this->normalUserWithMfaClient, $this->organization['id'], ['name' => ProjectMembershipRolesTest::class]);
 
         $this->guestRoleMemberClient = $this->normalUserClient;
         $this->guestUser = $this->normalUser;

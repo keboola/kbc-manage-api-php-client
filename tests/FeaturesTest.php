@@ -119,7 +119,7 @@ class FeaturesTest extends ClientTestCase
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
         ]);
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 

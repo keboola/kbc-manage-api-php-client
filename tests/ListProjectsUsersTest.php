@@ -62,7 +62,7 @@ class ListProjectsUsersTest extends ClientTestCase
             'email' => $this->normalUser['email'],
         ]);
 
-        $testProject = $this->normalUserClient->createProject($this->organization['id'], [
+        $testProject = $this->createRedshiftProjectForClient($this->normalUserClient, $this->organization['id'], [
             'name' => 'Test Project',
         ]);
 
@@ -92,7 +92,7 @@ class ListProjectsUsersTest extends ClientTestCase
             'email' => $this->normalUser['email'],
         ]);
 
-        $this->normalUserClient->createProject($this->organization['id'], [
+        $this->createRedshiftProjectForClient($this->normalUserClient, $this->organization['id'], [
             'name' => 'Test Project',
         ]);
 

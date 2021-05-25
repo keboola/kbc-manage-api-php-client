@@ -74,7 +74,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
 
         $this->assertSame(false, $this->organization['mfaRequired']);
 
-        $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => 'Test']);
+        $this->createRedshiftProjectForClient($this->normalUserWithMfaClient, $this->organization['id'], ['name' => 'Test']);
 
         $organization = $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
         $this->assertSame(true, $organization['mfaRequired']);
@@ -106,7 +106,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
 
         $this->assertSame(false, $this->organization['mfaRequired']);
 
-        $project = $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => 'Test']);
+        $project = $this->createRedshiftProjectForClient($this->normalUserWithMfaClient, $this->organization['id'], ['name' => 'Test']);
         $this->normalUserWithMfaClient->addUserToProject($project['id'], ['email' => self::DUMMY_USER_EMAIL]);
 
         try {
@@ -275,7 +275,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
 
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
 
-        $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => 'Test']);
+        $this->createRedshiftProjectForClient($this->normalUserWithMfaClient, $this->organization['id'], ['name' => 'Test']);
 
         $projects = $this->client->listOrganizationProjects($this->organization['id']);
         $this->assertEquals(1, count($projects));
@@ -286,7 +286,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        $project = $this->normalUserWithMfaClient->createProject($this->organization['id'], ['name' => 'Test']);
+        $project = $this->createRedshiftProjectForClient($this->normalUserWithMfaClient, $this->organization['id'], ['name' => 'Test']);
         $this->normalUserWithMfaClient->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
 
         $this->normalUserWithMfaClient->enableOrganizationMfa($this->organization['id']);
