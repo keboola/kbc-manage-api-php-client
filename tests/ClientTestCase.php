@@ -5,8 +5,9 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\StorageApi\Client as StorageClient;
+use PHPUnit\Framework\TestCase;
 
-class ClientTestCase extends \PHPUnit_Framework_TestCase
+class ClientTestCase extends TestCase
 {
 
     public const PRODUCTION_HOSTS = [
@@ -269,5 +270,17 @@ class ClientTestCase extends \PHPUnit_Framework_TestCase
         ]);
 
         return $project['id'];
+    }
+
+    /**
+     * @param Client $client
+     * @param int $organizationId
+     * @param array<mixed> $params
+     * @return int
+     */
+    protected function createRedshiftProjectForClient($client, int $organizationId, $params = [])
+    {
+        $params['defaultBackend'] = Backend::REDSHIFT;
+        return $client->createProject($organizationId, $params);
     }
 }

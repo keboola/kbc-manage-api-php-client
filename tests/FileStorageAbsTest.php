@@ -135,7 +135,7 @@ Errors:
             'name' => $name,
         ]);
 
-        $project = $this->client->createProject($organization['id'], [
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
             'name' => 'My test',
         ]);
 
