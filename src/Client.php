@@ -530,52 +530,51 @@ class Client
 
     public function getFeatureProjects($id)
     {
-        return $this->apiGet("/manage/features/{$id}/projects");
+        return $this->apiGet($this->encode('/manage/features/%s/projects', $id));
     }
 
     public function getFeatureAdmins($id)
     {
-        return $this->apiGet("/manage/features/{$id}/admins");
+        return $this->apiGet($this->encode('/manage/features/%s/admins', $id));
     }
 
     public function addProjectFeature($projectId, $feature)
     {
-        return $this->apiPost("/manage/projects/{$projectId}/features", [
+        return $this->apiPost($this->encode('/manage/projects/%s/features', $projectId), [
            'feature' => (string) $feature,
         ]);
     }
 
     public function removeProjectFeature($projectId, $feature)
     {
-        $this->apiDelete("/manage/projects/{$projectId}/features/{$feature}");
+        $this->apiDelete($this->encode('/manage/projects/%s/features/%s', $projectId, $feature));
     }
 
     public function getUser($emailOrId)
     {
-        $emailOrId = urlencode($emailOrId);
-        return $this->apiGet("/manage/users/{$emailOrId}");
+        return $this->apiGet($this->encode('/manage/users/%s', $emailOrId));
     }
 
     public function updateUser($emailOrId, $params)
     {
-        return $this->apiPut("/manage/users/{$emailOrId}", $params);
+        return $this->apiPut($this->encode('/manage/users/%s', $emailOrId), $params);
     }
 
     public function addUserFeature($emailOrId, $feature)
     {
-        return $this->apiPost("/manage/users/{$emailOrId}/features", [
+        return $this->apiPost($this->encode('/manage/users/%s/features', $emailOrId), [
             'feature' => $feature,
         ]);
     }
 
     public function removeUserFeature($emailOrId, $feature)
     {
-        $this->apiDelete("/manage/users/{$emailOrId}/features/{$feature}");
+        $this->apiDelete($this->encode('/manage/users/%s/features/%s', $emailOrId, $feature));
     }
 
     public function getProjectTemplate($templateStringId)
     {
-        return $this->apiGet("/manage/project-templates/{$templateStringId}");
+        return $this->apiGet($this->encode('/manage/project-templates/%s', $templateStringId));
     }
 
     public function getProjectTemplates()
@@ -585,12 +584,12 @@ class Client
 
     public function getProjectTemplateFeatures($templateStringId)
     {
-        return $this->apiGet("/manage/project-templates/{$templateStringId}/features");
+        return $this->apiGet($this->encode('/manage/project-templates/%s/features', $templateStringId));
     }
 
     public function addProjectTemplateFeature($templateStringId, $featureName)
     {
-        return $this->apiPost("/manage/project-templates/{$templateStringId}/features", [
+        return $this->apiPost($this->encode('/manage/project-templates/%s/features', $templateStringId), [
             'feature' => $featureName,
         ]);
     }
@@ -746,6 +745,14 @@ class Client
     public function createPromoCode($maintainerId, $params = [])
     {
         return $this->apiPost("/manage/maintainers/{$maintainerId}/promo-codes/", $params);
+    }
+
+    private function encode(string $url, ...$params): string
+    {
+        foreach ($params as &$param) {
+            $param = urlencode($param);
+        }
+        return vsprintf($url, $params);
     }
 
     private function apiGet($url)
