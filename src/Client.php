@@ -113,57 +113,57 @@ class Client
 
     public function updateMaintainer($maintainerId, $params = [])
     {
-        return $this->apiPatch("/manage/maintainers/{$maintainerId}", $params);
+        return $this->apiPatch($this->encode('/manage/maintainers/%s', $maintainerId), $params);
     }
 
     public function deleteMaintainer($maintainerId)
     {
-        $this->apiDelete("/manage/maintainers/{$maintainerId}");
+        $this->apiDelete($this->encode('/manage/maintainers/%s', $maintainerId));
     }
 
     public function getMaintainer($maintainerId)
     {
-        return $this->apiGet("/manage/maintainers/{$maintainerId}");
+        return $this->apiGet($this->encode('/manage/maintainers/%s', $maintainerId));
     }
 
     public function listMaintainerMembers($maintainerId)
     {
-        return $this->apiGet("/manage/maintainers/{$maintainerId}/users");
+        return $this->apiGet($this->encode('/manage/maintainers/%s/users', $maintainerId));
     }
 
     public function addUserToMaintainer($maintainerId, $params = [])
     {
-        return $this->apiPost("/manage/maintainers/{$maintainerId}/users", $params);
+        return $this->apiPost($this->encode('/manage/maintainers/%s/users', $maintainerId), $params);
     }
 
     public function removeUserFromMaintainer($maintainerId, $userId)
     {
-        $this->apiDelete("/manage/maintainers/{$maintainerId}/users/{$userId}");
+        $this->apiDelete($this->encode('/manage/maintainers/%s/users/%s', $maintainerId, $userId));
     }
 
     public function removeUser($userId)
     {
-        $this->apiDelete("/manage/users/{$userId}");
+        $this->apiDelete($this->encode('/manage/users/%s', $userId));
     }
 
     public function inviteUserToMaintainer($maintainerId, $params = [])
     {
-        return $this->apiPost("manage/maintainers/{$maintainerId}/invitations", $params);
+        return $this->apiPost($this->encode('manage/maintainers/%s/invitations', $maintainerId), $params);
     }
 
     public function listMaintainerInvitations($id)
     {
-        return $this->apiGet("/manage/maintainers/{$id}/invitations");
+        return $this->apiGet($this->encode('/manage/maintainers/%s/invitations', $id));
     }
 
     public function getMaintainerInvitation($maintainerId, $invitationId)
     {
-        return $this->apiGet("/manage/maintainers/{$maintainerId}/invitations/{$invitationId}");
+        return $this->apiGet($this->encode('/manage/maintainers/%s/invitations/%s', $maintainerId, $invitationId));
     }
 
     public function cancelMaintainerInvitation($maintainerId, $invitationId)
     {
-        $this->apiDelete("/manage/maintainers/{$maintainerId}/invitations/{$invitationId}");
+        $this->apiDelete($this->encode('/manage/maintainers/%s/invitations/%s', $maintainerId, $invitationId));
     }
 
     public function listMyMaintainerInvitations()
@@ -173,27 +173,27 @@ class Client
 
     public function acceptMyMaintainerInvitation($id)
     {
-        $this->apiPut("/manage/current-user/maintainers-invitations/{$id}", []);
+        $this->apiPut($this->encode('/manage/current-user/maintainers-invitations/%s', $id), []);
     }
 
     public function getMyMaintainerInvitation($id)
     {
-        return $this->apiGet("/manage/current-user/maintainers-invitations/{$id}");
+        return $this->apiGet($this->encode('/manage/current-user/maintainers-invitations/%s', $id));
     }
 
     public function declineMyMaintainerInvitation($id)
     {
-        $this->apiDelete("/manage/current-user/maintainers-invitations/{$id}");
+        $this->apiDelete($this->encode('/manage/current-user/maintainers-invitations/%s', $id));
     }
 
     public function joinMaintainer($maintainerId)
     {
-        $this->apiPost("/manage/maintainers/{$maintainerId}/join-maintainer");
+        $this->apiPost($this->encode('/manage/maintainers/%s/join-maintainer', $maintainerId));
     }
 
     public function listMaintainerOrganizations($maintainerId)
     {
-        return $this->apiGet("/manage/maintainers/{$maintainerId}/organizations");
+        return $this->apiGet($this->encode('/manage/maintainers/%s/organizations', $maintainerId));
     }
 
     public function listOrganizations()
@@ -203,72 +203,72 @@ class Client
 
     public function listOrganizationProjects($organizationId)
     {
-        return $this->apiGet("/manage/organizations/{$organizationId}/projects");
+        return $this->apiGet($this->encode('/manage/organizations/%s/projects', $organizationId));
     }
 
     public function createOrganization($maintainerId, $params)
     {
-        return $this->apiPost("/manage/maintainers/{$maintainerId}/organizations", $params);
+        return $this->apiPost($this->encode('/manage/maintainers/%s/organizations', $maintainerId), $params);
     }
 
     public function getOrganization($organizationId)
     {
-        return $this->apiGet("/manage/organizations/{$organizationId}");
+        return $this->apiGet($this->encode('/manage/organizations/%s', $organizationId));
     }
 
     public function updateOrganization($organizationId, $params)
     {
-        return $this->apiPatch("/manage/organizations/{$organizationId}", $params);
+        return $this->apiPatch($this->encode('/manage/organizations/%s', $organizationId), $params);
     }
 
     public function enableOrganizationMfa($organizationId)
     {
-        return $this->apiPatch("/manage/organizations/{$organizationId}/force-mfa", []);
+        return $this->apiPatch($this->encode('/manage/organizations/%s/force-mfa', $organizationId), []);
     }
 
     public function listOrganizationUsers($organizationId)
     {
-        return $this->apiGet("manage/organizations/{$organizationId}/users");
+        return $this->apiGet($this->encode('manage/organizations/%s/users', $organizationId));
     }
 
     public function listOrganizationProjectsUsers($organizationId)
     {
-        return $this->apiGet("manage/organizations/{$organizationId}/projects-users");
+        return $this->apiGet($this->encode('manage/organizations/%s/projects-users', $organizationId));
     }
 
     public function addUserToOrganization($organizationId, $params = [])
     {
-        return $this->apiPost("manage/organizations/{$organizationId}/users", $params);
+        return $this->apiPost($this->encode('manage/organizations/%s/users', $organizationId), $params);
     }
 
     public function removeUserFromOrganization($organizationId, $userId)
     {
-        $this->apiDelete("manage/organizations/{$organizationId}/users/{$userId}");
+        $this->apiDelete($this->encode('manage/organizations/%s/users/%s', $organizationId, $userId));
     }
 
     public function deleteOrganization($id)
     {
-        $this->apiDelete("/manage/organizations/{$id}");
+        $this->apiDelete($this->encode('/manage/organizations/%s', $id));
     }
 
     public function inviteUserToOrganization($organizationId, $params = [])
     {
-        return $this->apiPost("manage/organizations/{$organizationId}/invitations", $params);
+        return $this->apiPost($this->encode('manage/organizations/%s/invitations', $organizationId), $params);
     }
 
     public function listOrganizationInvitations($id)
     {
-        return $this->apiGet("/manage/organizations/{$id}/invitations");
+        return $this->apiGet($this->encode('/manage/organizations/%s/invitations', $id));
     }
 
     public function getOrganizationInvitation($organizationId, $invitationId)
     {
-        return $this->apiGet("/manage/organizations/{$organizationId}/invitations/{$invitationId}");
+        return $this->apiGet($this->encode('/manage/organizations/%s/invitations/%s', $organizationId, $invitationId));
     }
 
     public function cancelOrganizationInvitation($organizationId, $invitationId)
     {
-        $this->apiDelete("/manage/organizations/{$organizationId}/invitations/{$invitationId}");
+        $this->apiDelete($this->encode('/manage/organizations/%s/invitations/%s', $organizationId, $invitationId));
     }
 
     public function listMyOrganizationInvitations()
@@ -278,47 +278,47 @@ class Client
 
     public function acceptMyOrganizationInvitation($id)
     {
-        $this->apiPut("/manage/current-user/organizations-invitations/{$id}", []);
+        $this->apiPut($this->encode('/manage/current-user/organizations-invitations/%s', $id), []);
     }
 
     public function getMyOrganizationInvitation($id)
     {
-        return $this->apiGet("/manage/current-user/organizations-invitations/{$id}");
+        return $this->apiGet($this->encode('/manage/current-user/organizations-invitations/%s', $id));
     }
 
     public function declineMyOrganizationInvitation($id)
     {
-        $this->apiDelete("/manage/current-user/organizations-invitations/{$id}");
+        $this->apiDelete($this->encode('/manage/current-user/organizations-invitations/%s', $id));
     }
 
     public function joinOrganization($organizationId)
     {
-        $this->apiPost("/manage/organizations/{$organizationId}/join-organization");
+        $this->apiPost($this->encode('/manage/organizations/%s/join-organization', $organizationId));
     }
 
     public function createProject($organizationId, $params)
     {
-        return $this->apiPost("/manage/organizations/{$organizationId}/projects", $params);
+        return $this->apiPost($this->encode('/manage/organizations/%s/projects', $organizationId), $params);
     }
 
     public function updateProject($id, $params)
     {
-        return $this->apiPut("/manage/projects/{$id}", $params);
+        return $this->apiPut($this->encode('/manage/projects/%s', $id), $params);
     }
 
     public function getProject($id)
     {
-        return $this->apiGet("/manage/projects/{$id}");
+        return $this->apiGet($this->encode('/manage/projects/%s', $id));
     }
 
     public function deleteProject($id)
     {
-        $this->apiDelete("/manage/projects/{$id}");
+        $this->apiDelete($this->encode('/manage/projects/%s', $id));
     }
 
     public function undeleteProject($id, $params = array())
     {
-        $this->apiDelete("/manage/deleted-projects/{$id}?" . http_build_query($params));
+        $this->apiDelete($this->encode('/manage/deleted-projects/%s?', $id) . http_build_query($params));
     }
 
     public function listDeletedProjects($params = array())
@@ -334,22 +334,22 @@ class Client
 
     public function getDeletedProject($id)
     {
-        return $this->apiGet("/manage/deleted-projects/{$id}");
+        return $this->apiGet($this->encode('/manage/deleted-projects/%s', $id));
     }
 
     public function purgeDeletedProject($id, array $params = [])
     {
-        return $this->apiPost("/manage/deleted-projects/{$id}/purge", $params);
+        return $this->apiPost($this->encode('/manage/deleted-projects/%s/purge', $id), $params);
     }
 
     public function listProjectUsers($id)
     {
-        return $this->apiGet("/manage/projects/{$id}/users");
+        return $this->apiGet($this->encode('/manage/projects/%s/users', $id));
     }
 
     public function listProjectInvitations($id)
     {
-        return $this->apiGet("/manage/projects/{$id}/invitations");
+        return $this->apiGet($this->encode('/manage/projects/%s/invitations', $id));
     }
 
     public function listMyProjectInvitations()
@@ -359,114 +359,114 @@ class Client
 
     public function acceptMyProjectInvitation($id)
     {
-        $this->apiPut("/manage/current-user/projects-invitations/{$id}", []);
+        $this->apiPut($this->encode('/manage/current-user/projects-invitations/%s', $id), []);
     }
 
     public function getMyProjectInvitation($id)
     {
-        return $this->apiGet("/manage/current-user/projects-invitations/{$id}");
+        return $this->apiGet($this->encode('/manage/current-user/projects-invitations/%s', $id));
     }
 
     public function declineMyProjectInvitation($id)
     {
-        $this->apiDelete("/manage/current-user/projects-invitations/{$id}");
+        $this->apiDelete($this->encode('/manage/current-user/projects-invitations/%s', $id));
     }
 
     public function addUserToProject($projectId, $params = [])
     {
-        return $this->apiPost("/manage/projects/{$projectId}/users", $params);
+        return $this->apiPost($this->encode('/manage/projects/%s/users', $projectId), $params);
     }
 
     public function inviteUserToProject($projectId, $params = [])
     {
-        return $this->apiPost("/manage/projects/{$projectId}/invitations", $params);
+        return $this->apiPost($this->encode('/manage/projects/%s/invitations', $projectId), $params);
     }
 
     public function removeUserFromProject($projectId, $userId)
     {
-        $this->apiDelete("/manage/projects/{$projectId}/users/{$userId}");
+        $this->apiDelete($this->encode('/manage/projects/%s/users/%s', $projectId, $userId));
     }
 
     public function updateUserProjectMembership($projectId, $userId, $params)
     {
-        return $this->apiPatch("/manage/projects/{$projectId}/users/{$userId}", $params);
+        return $this->apiPatch($this->encode('/manage/projects/%s/users/%s', $projectId, $userId), $params);
     }
 
     public function getProjectInvitation($projectId, $invitationId)
     {
-        return $this->apiGet("/manage/projects/{$projectId}/invitations/{$invitationId}");
+        return $this->apiGet($this->encode('/manage/projects/%s/invitations/%s', $projectId, $invitationId));
     }
 
     public function cancelProjectInvitation($projectId, $invitationId)
     {
-        $this->apiDelete("/manage/projects/{$projectId}/invitations/{$invitationId}");
+        $this->apiDelete($this->encode('/manage/projects/%s/invitations/%s', $projectId, $invitationId));
     }
 
     public function enableProject($projectId)
     {
-        $this->apiPost("/manage/projects/{$projectId}/disabled", [
+        $this->apiPost($this->encode('/manage/projects/%s/disabled', $projectId), [
            'isDisabled' => false,
         ]);
     }
 
     public function disableProject($projectId, $params = [])
     {
-        $this->apiPost("/manage/projects/{$projectId}/disabled", array_merge($params, [
+        $this->apiPost($this->encode('/manage/projects/%s/disabled', $projectId), array_merge($params, [
             'isDisabled' => true,
         ]));
     }
 
     public function createProjectStorageToken($projectId, array $params)
     {
-        return $this->apiPost("/manage/projects/{$projectId}/tokens", $params);
+        return $this->apiPost($this->encode('/manage/projects/%s/tokens', $projectId), $params);
     }
 
     public function giveProjectCredits($projectId, $params = [])
     {
-        return $this->apiPost("/manage/projects/{$projectId}/credits", $params);
+        return $this->apiPost($this->encode('/manage/projects/%s/credits', $projectId), $params);
     }
 
     public function assignProjectStorageBackend($projectId, $backendId)
     {
-        return $this->apiPost("/manage/projects/{$projectId}/storage-backend", [
+        return $this->apiPost($this->encode('/manage/projects/%s/storage-backend', $projectId), [
             'storageBackendId' => (int) $backendId,
         ]);
     }
 
     public function removeProjectStorageBackend($projectId, $backendId)
     {
-        $this->apiDelete("/manage/projects/{$projectId}/storage-backend/{$backendId}");
+        $this->apiDelete($this->encode('/manage/projects/%s/storage-backend/%s', $projectId, $backendId));
     }
 
     public function assignFileStorage($projectId, $storageId)
     {
-        return $this->apiPost("/manage/projects/{$projectId}/file-storage", [
+        return $this->apiPost($this->encode('/manage/projects/%s/file-storage', $projectId), [
            'fileStorageId' => (int) $storageId,
         ]);
     }
 
     public function changeProjectOrganization($projectId, $newOrganizationId)
     {
-        return $this->apiPost("/manage/projects/{$projectId}/organizations", [
+        return $this->apiPost($this->encode('/manage/projects/%s/organizations', $projectId), [
             'organizationId' => $newOrganizationId,
         ]);
     }
 
     public function setProjectLimits($projectId, array $limits)
     {
-        return $this->apiPost("/manage/projects/{$projectId}/limits", [
+        return $this->apiPost($this->encode('/manage/projects/%s/limits', $projectId), [
            'limits' => $limits,
         ]);
     }
 
     public function removeProjectLimit($projectId, $limitName)
     {
-        $this->apiDelete("/manage/projects/{$projectId}/limits/{$limitName}");
+        $this->apiDelete($this->encode('/manage/projects/%s/limits/%s', $projectId, $limitName));
     }
 
     public function setProjectMetadata(int $projectId, string $provider, array $metadata): array
     {
-        return $this->apiPost("/manage/projects/{$projectId}/metadata", [
+        return $this->apiPost($this->encode('/manage/projects/%s/metadata', $projectId), [
             'provider' => $provider,
             'metadata' => $metadata,
         ]);
@@ -474,17 +474,17 @@ class Client
 
     public function listProjectMetadata(int $projectId): array
     {
-        return $this->apiGet("/manage/projects/{$projectId}/metadata");
+        return $this->apiGet($this->encode('/manage/projects/%s/metadata', $projectId));
     }
 
     public function deleteProjectMetadata(int $projectId, int $metadataId): void
     {
-        $this->apiDelete("/manage/projects/{$projectId}/metadata/{$metadataId}");
+        $this->apiDelete($this->encode('/manage/projects/%s/metadata/%s', $projectId, $metadataId));
     }
 
     public function setOrganizationMetadata(int $organizationId, string $provider, array $metadata): array
     {
-        return $this->apiPost("/manage/organizations/{$organizationId}/metadata", [
+        return $this->apiPost($this->encode('/manage/organizations/%s/metadata', $organizationId), [
             'provider' => $provider,
             'metadata' => $metadata,
         ]);
@@ -492,12 +492,12 @@ class Client
 
     public function listOrganizationMetadata(int $organizationId): array
     {
-        return $this->apiGet("/manage/organizations/{$organizationId}/metadata");
+        return $this->apiGet($this->encode('/manage/organizations/%s/metadata', $organizationId));
     }
 
     public function deleteOrganizationMetadata(int $organizationId, int $metadataId): void
     {
-        $this->apiDelete("/manage/organizations/{$organizationId}/metadata/{$metadataId}");
+        $this->apiDelete($this->encode('/manage/organizations/%s/metadata/%s', $organizationId, $metadataId));
     }
 
     public function createFeature($name, $type, $description)
@@ -511,7 +511,7 @@ class Client
 
     public function removeFeature($id)
     {
-        $this->apiDelete("/manage/features/{$id}");
+        $this->apiDelete($this->encode('/manage/features/%s', $id));
     }
 
     public function listFeatures(array $params = [])
@@ -525,57 +525,56 @@ class Client
 
     public function getFeature($id)
     {
-        return $this->apiGet("/manage/features/{$id}");
+        return $this->apiGet($this->encode('/manage/features/%s', $id));
     }
 
     public function getFeatureProjects($id)
     {
-        return $this->apiGet("/manage/features/{$id}/projects");
+        return $this->apiGet($this->encode('/manage/features/%s/projects', $id));
     }
 
     public function getFeatureAdmins($id)
     {
-        return $this->apiGet("/manage/features/{$id}/admins");
+        return $this->apiGet($this->encode('/manage/features/%s/admins', $id));
     }
 
     public function addProjectFeature($projectId, $feature)
     {
-        return $this->apiPost("/manage/projects/{$projectId}/features", [
+        return $this->apiPost($this->encode('/manage/projects/%s/features', $projectId), [
            'feature' => (string) $feature,
         ]);
     }
 
     public function removeProjectFeature($projectId, $feature)
     {
-        $this->apiDelete("/manage/projects/{$projectId}/features/{$feature}");
+        $this->apiDelete($this->encode('/manage/projects/%s/features/%s', $projectId, $feature));
     }
 
     public function getUser($emailOrId)
     {
-        $emailOrId = urlencode($emailOrId);
-        return $this->apiGet("/manage/users/{$emailOrId}");
+        return $this->apiGet($this->encode('/manage/users/%s', $emailOrId));
     }
 
     public function updateUser($emailOrId, $params)
     {
-        return $this->apiPut("/manage/users/{$emailOrId}", $params);
+        return $this->apiPut($this->encode('/manage/users/%s', $emailOrId), $params);
     }
 
     public function addUserFeature($emailOrId, $feature)
     {
-        return $this->apiPost("/manage/users/{$emailOrId}/features", [
+        return $this->apiPost($this->encode('/manage/users/%s/features', $emailOrId), [
             'feature' => $feature,
         ]);
     }
 
     public function removeUserFeature($emailOrId, $feature)
     {
-        $this->apiDelete("/manage/users/{$emailOrId}/features/{$feature}");
+        $this->apiDelete($this->encode('/manage/users/%s/features/%s', $emailOrId, $feature));
     }
 
     public function getProjectTemplate($templateStringId)
     {
-        return $this->apiGet("/manage/project-templates/{$templateStringId}");
+        return $this->apiGet($this->encode('/manage/project-templates/%s', $templateStringId));
     }
 
     public function getProjectTemplates()
@@ -585,12 +584,12 @@ class Client
 
     public function getProjectTemplateFeatures($templateStringId)
     {
-        return $this->apiGet("/manage/project-templates/{$templateStringId}/features");
+        return $this->apiGet($this->encode('/manage/project-templates/%s/features', $templateStringId));
     }
 
     public function addProjectTemplateFeature($templateStringId, $featureName)
     {
-        return $this->apiPost("/manage/project-templates/{$templateStringId}/features", [
+        return $this->apiPost($this->encode('/manage/project-templates/%s/features', $templateStringId), [
             'feature' => $featureName,
         ]);
     }
@@ -609,12 +608,12 @@ class Client
 
     public function removeProjectTemplateFeature($templateStringId, $featureName)
     {
-        $this->apiDelete("/manage/project-templates/{$templateStringId}/features/{$featureName}");
+        $this->apiDelete($this->encode('/manage/project-templates/%s/features/%s', $templateStringId, $featureName));
     }
 
     public function disableUserMFA($emailOrId)
     {
-        $this->apiDelete("/manage/users/{$emailOrId}/mfa");
+        $this->apiDelete($this->encode('/manage/users/%s/mfa', $emailOrId));
     }
 
     public function createS3FileStorage(array $options)
@@ -624,7 +623,7 @@ class Client
 
     public function setS3FileStorageAsDefault($fileStorageId)
     {
-        return $this->apiPost("/manage/file-storage-s3/{$fileStorageId}/default");
+        return $this->apiPost($this->encode('/manage/file-storage-s3/%s/default', $fileStorageId));
     }
 
     public function listS3FileStorage()
@@ -634,7 +633,7 @@ class Client
 
     public function rotateS3FileStorageCredentials(int $fileStorageId, array $options)
     {
-        return $this->apiPost('manage/file-storage-s3/' . $fileStorageId . '/credentials', $options);
+        return $this->apiPost($this->encode('manage/file-storage-s3/%s/credentials', $fileStorageId), $options);
     }
 
     public function createAbsFileStorage(array $options)
@@ -644,7 +643,7 @@ class Client
 
     public function setAbsFileStorageAsDefault($fileStorageId)
     {
-        return $this->apiPost("/manage/file-storage-abs/{$fileStorageId}/default");
+        return $this->apiPost($this->encode('/manage/file-storage-abs/%s/default', $fileStorageId));
     }
 
     public function listAbsFileStorage()
@@ -655,7 +654,7 @@ class Client
 
     public function rotateAbsFileStorageCredentials(int $fileStorageId, array $options)
     {
-        return $this->apiPost('manage/file-storage-abs/' . $fileStorageId . '/credentials', $options);
+        return $this->apiPost($this->encode('manage/file-storage-abs/%s/credentials', $fileStorageId), $options);
     }
 
     public function createStorageBackend(array $options)
@@ -680,7 +679,7 @@ class Client
 
     public function deleteUiApp($name)
     {
-        $this->apiDelete("manage/ui-apps/{$name}");
+        $this->apiDelete($this->encode('manage/ui-apps/%s', $name));
     }
 
     public function runCommand(array $options)
@@ -695,57 +694,68 @@ class Client
 
     public function getMyProjectJoinRequest($id)
     {
-        return $this->apiGet("/manage/current-user/projects-join-requests/{$id}");
+        return $this->apiGet($this->encode('/manage/current-user/projects-join-requests/%s', $id));
     }
 
     public function requestAccessToProject($projectId, $params = [])
     {
-        return $this->apiPost("/manage/projects/{$projectId}/request-access", $params);
+        return $this->apiPost($this->encode('/manage/projects/%s/request-access', $projectId), $params);
     }
 
     public function joinProject($projectId)
     {
-        $this->apiPost("/manage/projects/{$projectId}/join-project");
+        $this->apiPost($this->encode('/manage/projects/%s/join-project', $projectId));
     }
 
     public function deleteMyProjectJoinRequest($id)
     {
-        $this->apiDelete("/manage/current-user/projects-join-requests/{$id}");
+        $this->apiDelete($this->encode('/manage/current-user/projects-join-requests/%s', $id));
     }
 
     public function approveMyProjectJoinRequest($id)
     {
-        $this->apiPut("/manage/current-user/projects-join-requests/{$id}", []);
+        $this->apiPut($this->encode('/manage/current-user/projects-join-requests/%s', $id), []);
     }
 
     public function listProjectJoinRequests($id)
     {
-        return $this->apiGet("/manage/projects/{$id}/join-requests");
+        return $this->apiGet($this->encode('/manage/projects/%s/join-requests', $id));
     }
 
     public function getProjectJoinRequest($projectId, $joinRequestId)
     {
-        return $this->apiGet("/manage/projects/{$projectId}/join-requests/{$joinRequestId}");
+        return $this->apiGet($this->encode('/manage/projects/%s/join-requests/%s', $projectId, $joinRequestId));
     }
 
     public function approveProjectJoinRequest($projectId, $joinRequestId)
     {
-        $this->apiPut("/manage/projects/{$projectId}/join-requests/{$joinRequestId}", []);
+        $this->apiPut($this->encode('/manage/projects/%s/join-requests/%s', $projectId, $joinRequestId), []);
     }
 
     public function rejectProjectJoinRequest($projectId, $joinRequestId)
     {
-        $this->apiDelete("/manage/projects/{$projectId}/join-requests/{$joinRequestId}");
+        $this->apiDelete($this->encode('/manage/projects/%s/join-requests/%s', $projectId, $joinRequestId));
     }
 
     public function listPromoCodes($maintainerId)
     {
-        return $this->apiGet("/manage/maintainers/{$maintainerId}/promo-codes");
+        return $this->apiGet($this->encode('/manage/maintainers/%s/promo-codes', $maintainerId));
     }
 
     public function createPromoCode($maintainerId, $params = [])
     {
-        return $this->apiPost("/manage/maintainers/{$maintainerId}/promo-codes/", $params);
+        return $this->apiPost($this->encode('/manage/maintainers/%s/promo-codes/', $maintainerId), $params);
+    }
+
+    /**
+     * Encode url parameters with `urlencode`. Use `printf` syntax for variables in url (%s, %d, ...).
+     */
+    private function encode(string $url, ...$params): string
+    {
+        foreach ($params as &$param) {
+            $param = rawurlencode($param);
+        }
+        return vsprintf($url, $params);
     }
 
     private function apiGet($url)
