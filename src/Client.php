@@ -753,7 +753,7 @@ class Client
     private function encode(string $url, ...$params): string
     {
         foreach ($params as &$param) {
-            $param = urlencode($param);
+            $param = rawurlencode($param);
         }
         return vsprintf($url, $params);
     }
