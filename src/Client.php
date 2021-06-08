@@ -196,6 +196,24 @@ class Client
         return $this->apiGet($this->encode('/manage/maintainers/%s/organizations', $maintainerId));
     }
 
+    public function setMaintainerMetadata(int $maintainerId, string $provider, array $metadata): array
+    {
+        return $this->apiPost($this->encode('/manage/maintainers/%s/metadata', $maintainerId), [
+            'provider' => $provider,
+            'metadata' => $metadata,
+        ]);
+    }
+
+    public function listMaintainerMetadata(int $maintainerId): array
+    {
+        return $this->apiGet($this->encode('/manage/maintainers/%s/metadata', $maintainerId));
+    }
+
+    public function deleteMaintainerMetadata(int $maintainerId, int $metadataId): void
+    {
+        $this->apiDelete($this->encode('/manage/maintainers/%s/metadata/%s', $maintainerId, $metadataId));
+    }
+
     public function listOrganizations()
     {
         return $this->apiGet('/manage/organizations');

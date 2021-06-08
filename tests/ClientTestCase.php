@@ -21,7 +21,7 @@ class ClientTestCase extends TestCase
     public const TESTS_MAINTAINER_PREFIX = 'KBC_MANAGE_TESTS';
 
     /**
-     * @var Client
+     * @var Client super-admin
      */
     protected $client;
 
