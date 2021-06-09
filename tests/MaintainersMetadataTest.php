@@ -36,7 +36,7 @@ class MaintainersMetadataTest extends ClientTestCase
          */
         parent::setUp();
 
-        $maintainerPrefix = sprintf('%s - MaintainerMetadata', self::TESTS_MAINTAINER_PREFIX);
+        $maintainerPrefix = sprintf('%s - MaintainerMetadataTest', self::TESTS_MAINTAINER_PREFIX);
 
         // cleanup maintainers created by tests
         foreach ($this->client->listMaintainers() as $maintainer) {
