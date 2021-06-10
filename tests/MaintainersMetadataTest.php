@@ -73,10 +73,9 @@ class MaintainersMetadataTest extends ClientTestCase
             'guest' => [
                 ProjectRole::GUEST,
             ],
-            // TODO role read-only is not supported for standard projects
-            //'read only' => [
-            //    ProjectRole::READ_ONLY,
-            //],
+            'read only' => [
+                ProjectRole::READ_ONLY,
+            ],
         ];
     }
 
