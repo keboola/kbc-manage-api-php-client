@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApi\ProjectRole;
 
 class MaintainersMetadataTest extends ClientTestCase
 {
@@ -36,19 +38,15 @@ class MaintainersMetadataTest extends ClientTestCase
          */
         parent::setUp();
 
-        $maintainerPrefix = sprintf('%s - MaintainerMetadataTest', self::TESTS_MAINTAINER_PREFIX);
-
-        // cleanup maintainers created by tests
-        foreach ($this->client->listMaintainers() as $maintainer) {
-            if (strpos($maintainer['name'], $maintainerPrefix) === 0) {
-                $this->client->deleteMaintainer($maintainer['id']);
-            }
-        }
-
-        // create default maintainer
+        // create maintainer group + add super-admin as maintainer
         $this->maintainer = $this->client->createMaintainer([
-            'name' => sprintf('%s - %s.%s', $maintainerPrefix, date('Ymd.His'), rand(1000, 9999)),
+            'name' => sprintf('%s - MaintainerMetadataTest', self::TESTS_MAINTAINER_PREFIX),
         ]);
+
+        // add dummy user as maintainer admin
+        $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'spam+spam@keboola.com']);
+        // delete super-admin from maintainers
+        $this->client->removeUserFromMaintainer($this->maintainer['id'], $this->superAdmin['id']);
     }
 
     public function providers(): array
@@ -60,6 +58,25 @@ class MaintainersMetadataTest extends ClientTestCase
             'user provider' => [
                 self::PROVIDER_USER,
             ],
+        ];
+    }
+
+    public function allProjectRoles(): array
+    {
+        return [
+            'admin' => [
+                ProjectRole::ADMIN,
+            ],
+            'share' => [
+                ProjectRole::SHARE,
+            ],
+            'guest' => [
+                ProjectRole::GUEST,
+            ],
+            // TODO role read-only is not supported for standard projects
+            //'read only' => [
+            //    ProjectRole::READ_ONLY,
+            //],
         ];
     }
 
@@ -105,17 +122,21 @@ class MaintainersMetadataTest extends ClientTestCase
     }
 
     // maintainer
-    public function testMaintainerAdminCanSeeSystemMetadata(): void
+    /**
+     * @dataProvider providers
+     */
+    public function testMaintainerAdminCanManageMetadata(string $provider): void
     {
+        // add normal user as maintainer admin
         $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => $this->normalUser['email']]);
 
-        //superadmin creates system metadata
-        $this->createSystemMetadata($this->client, $this->maintainer['id']);
+        //super-admin creates metadata
+        $this->createMetadata($this->client, $this->maintainer['id'], $provider);
 
         $metadataArray = $this->normalUserClient->listMaintainerMetadata($this->maintainer['id']);
         $this->assertCount(2, $metadataArray);
-        $this->validateMetadataEquality(self::TEST_METADATA[1], $metadataArray[0], self::PROVIDER_SYSTEM);
-        $this->validateMetadataEquality(self::TEST_METADATA[0], $metadataArray[1], self::PROVIDER_SYSTEM);
+        $this->validateMetadataEquality(self::TEST_METADATA[1], $metadataArray[0], $provider);
+        $this->validateMetadataEquality(self::TEST_METADATA[0], $metadataArray[1], $provider);
     }
 
     public function testMaintainerAdminCannotManageSystemMetadata(): void
@@ -128,6 +149,57 @@ class MaintainersMetadataTest extends ClientTestCase
         $metadataArray = $this->createSystemMetadata($this->client, $this->maintainer['id']);
         // but maintainer cannot delete it
         $this->cannotDeleteMetadata($this->normalUserClient, $metadataArray[0]['id']);
+    }
+
+    // organization
+    public function testOrganizationAdminCannotManageUserMetadata(): void
+    {
+        // create ogranization + add super-admin as admin
+        $organization = $this->client->createOrganization($this->maintainer['id'], [
+            'name' => 'My org',
+        ]);
+        // add normal user as organization admin
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->normalUser['email']]);
+        // delete super-admin from organization
+        $this->client->removeUserFromOrganization($organization['id'], $this->superAdmin['id']);
+
+        // super-admin creates user metadata
+        $metadata = $this->createUserMetadata($this->client, $this->maintainer['id']);
+        // organization admin try to manage metadata
+        $this->cannotManageUserMetadata($this->normalUserClient, $metadata[0]['id']);
+    }
+
+    // project
+    /**
+     * @dataProvider allProjectRoles
+     */
+    public function testProjectAdminCannotManageUserMetadata(string $role): void
+    {
+        // create ogranization + add super-admin as admin
+        $organization = $this->client->createOrganization($this->maintainer['id'], [
+            'name' => 'My org',
+        ]);
+
+        // create project + add super-admin as admin
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My project',
+            'defaultBackend' => Backend::REDSHIFT,
+        ]);
+        // add normal user to project with defined role
+        $this->client->addUserToProject(
+            $project['id'],
+            [
+                'email' => $this->normalUser['email'],
+                'role' => $role,
+            ]
+        );
+        // delete super-admin from project
+        $this->client->removeUserFromProject($project['id'], $this->superAdmin['id']);
+
+        // super-admin creates user metadata
+        $metadata = $this->createUserMetadata($this->client, $this->maintainer['id']);
+        // organization admin try to manage metadata
+        $this->cannotManageUserMetadata($this->normalUserClient, $metadata[0]['id']);
     }
 
     // helpers

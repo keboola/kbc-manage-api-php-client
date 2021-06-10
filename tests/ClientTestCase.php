@@ -155,6 +155,7 @@ class ClientTestCase extends TestCase
 
         foreach ($maintainers as $maintainer) {
             if ($maintainer['id'] === $this->testMaintainerId) {
+                // ensure the maintainer member exists
                 if (!$this->findMaintainerMember($this->testMaintainerId, $this->superAdmin['email'])) {
                     $this->client->addUserToMaintainer(
                         $this->testMaintainerId,
@@ -162,6 +163,7 @@ class ClientTestCase extends TestCase
                     );
                 }
 
+                // ensure there are no other maintainer group members
                 $members = $this->client->listMaintainerMembers($maintainer['id']);
                 foreach ($members as $member) {
                     if ($member['id'] !== $this->superAdmin['id']) {
@@ -169,6 +171,17 @@ class ClientTestCase extends TestCase
                     }
                 }
             } elseif (strpos($maintainer['name'], self::TESTS_MAINTAINER_PREFIX) === 0) {
+                // cleanup orgranizations and projects to delete maintainer at the end
+                // get organizations for maintainer
+                $organizations = $this->client->listMaintainerOrganizations($maintainer['id']);
+                foreach ($organizations as $organization) {
+                    // get projects for organization
+                    $projects = $this->client->listOrganizationProjects($organization['id']);
+                    foreach ($projects as $project) {
+                        $this->client->deleteProject($project['id']);
+                    }
+                    $this->client->deleteOrganization($organization['id']);
+                }
                 $this->client->deleteMaintainer($maintainer['id']);
             }
         }
