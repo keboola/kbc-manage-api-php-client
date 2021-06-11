@@ -151,7 +151,7 @@ class UsersTest extends ClientTestCase
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'RemoveMeOrg']);
         $project = $this->client->createProject($organization['id'], ['name' => 'RemoveMeProj']);
-        $maintainer = $this->client->createMaintainer(['name' => 'RemoveMeMain']);
+        $maintainer = $this->createOrReplaceMaintainer(['name' => 'RemoveMeMain']);
         $email = 'remove' . uniqid() . '@keboola.com';
         $this->client->addUserToProject($project['id'], ['email' => $email]);
         $user = $this->client->getUser($email);

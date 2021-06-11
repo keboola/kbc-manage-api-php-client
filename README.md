@@ -77,6 +77,7 @@ KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE=super_token_with_ui_manage_scope
 KBC_TEST_MAINTAINER_ID=2
 KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled
 KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled
+KBC_TEST_ADMIN2_TOKEN=token_of_another_admin_having_mfa_disabled
 KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled
 KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled
 
@@ -95,10 +96,23 @@ TEST_S3_SECRET=
 
 ```
 
-Source newly created file and run tests:
+### Source newly created file and run tests:
 
+Run all tests in phpunit
 ```bash
 docker-compose run --rm dev composer tests
+```
+Run not parallelized tests
+```bash
+docker-compose run --rm dev composer synctests
+```
+Run parallelized tests
+```bash
+docker-compose run --rm dev composer paratests
+```
+Run first not parallelized tests and than parallelized
+```bash
+docker-compose run --rm dev composer tests-all
 ```
 
 ### Required variables
@@ -110,6 +124,7 @@ docker-compose run --rm dev composer tests
 - `KBC_TEST_MAINTAINER_ID` - `id` of maintainer. Please create a new maintainer dedicated to test suite. All maintainer's organizations and projects all purged before tests!
 - `KBC_TEST_ADMIN_EMAIL` - email address of another user without any organizations
 - `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have Multi-Factor Authentication disabled.
+- `KBC_TEST_ADMIN2_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` and `KBC_TEST_ADMIN_TOKEN`. User must have Multi-Factor Authentication disabled.
 - `KBC_TEST_ADMIN_WITH_MFA_EMAIL` - email address of another user without any organizations and having Multi-Factor Authentication enabled
 - `KBC_TEST_ADMIN_WITH_MFA_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` or `KBC_TEST_ADMIN_TOKEN`
 

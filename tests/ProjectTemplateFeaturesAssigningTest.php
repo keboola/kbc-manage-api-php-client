@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Backend;
 
-class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
+class ProjectTemplateFeaturesAssigningTest extends ParallelClientTestCase
 {
     public const TEST_PROJECT_TEMPLATE_STRING_ID = 'demo';
 

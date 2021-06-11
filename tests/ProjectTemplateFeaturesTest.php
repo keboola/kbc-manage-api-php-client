@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class ProjectTemplateFeaturesTest extends ClientTestCase
+class ProjectTemplateFeaturesTest extends ParallelClientTestCase
 {
     public const TEST_PROJECT_TEMPLATE_STRING_ID = 'productionRedshift';
 

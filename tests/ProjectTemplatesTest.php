@@ -4,7 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class ProjectTemplatesTest extends ClientTestCase
+class ProjectTemplatesTest extends ParallelClientTestCase
 {
     public const TEST_PROJECT_TEMPLATE_STRING_ID = 'production';
     public const TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID = 'poc15DaysGuideMode';
@@ -156,7 +156,7 @@ class ProjectTemplatesTest extends ClientTestCase
     public function testRandomAdminCannotViewAndListProjectTemplates()
     {
         try {
-            $this->normalUserClient->getProjectTemplates();
+            $this->normalUser2Client->getProjectTemplates();
             $this->fail('Forbidden');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
