@@ -3510,6 +3510,24 @@ CREATE MASTER KEY
 
     + Attributes (array[StorageBackendListRedshift,StorageBackendListSnowflake,StorageBackendListSynapse])
 
+### Update backend [PATCH /manage/storage-backend/{backend_id}]
+
+A partial update of a storage backend, one of the attributes are required.
+
++ Attributes
+    + username: keboola(optional)
+    + password: 1234 (optional)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+    + Attributes(StorageBackend)
+
+
 ### Delete backend [DELETE /manage/storage-backend/{backend_id}]
 All projects using this backend must be deleted and purged before deleting backend
 + Parameters
