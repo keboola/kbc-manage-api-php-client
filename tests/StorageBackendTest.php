@@ -115,6 +115,31 @@ class StorageBackendTest extends ClientTestCase
         ];
     }
 
+    /**
+     * @dataProvider storageBackendOptionsProvider
+     */
+    public function testUpdateStorageBackend(array $options)
+    {
+        $backend = $this->client->createStorageBackend($options);
+
+        $wrongOptions = [
+            'password' => 'invalid',
+        ];
+
+        try {
+            $this->client->updateStorageBackend($backend['id'], $wrongOptions);
+            $this->fail('Should fail!');
+        } catch (ClientException $e) {
+            $this->assertSame('Failed to connect using the supplied credentials', $e->getMessage());
+        }
+
+        $options = [
+            'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
+        ];
+
+        $this->client->updateStorageBackend($backend['id'], $options);
+    }
+
     public function testStorageBackendList()
     {
         $backends = $this->client->listStorageBackend();
