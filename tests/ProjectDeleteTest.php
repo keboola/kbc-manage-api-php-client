@@ -26,42 +26,6 @@ class ProjectDeleteTest extends ClientTestCase
         ]);
     }
 
-    private function waitUntilProjectWillBeDeleted($project)
-    {
-        $startTime = time();
-        $maxWaitTimeSeconds = 120;
-
-        // wait until project will be deleted
-        do {
-            $isProjectDeleted = false;
-            try {
-                $this->client->getProject($project['id']);
-            } catch (ClientException $e) {
-                $isProjectDeleted = true;
-            }
-            if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
-            }
-            sleep(1);
-        } while ($isProjectDeleted !== true);
-
-        // reset the clock
-        $startTime = time();
-
-        // purge all data async
-        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
-        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
-        $this->assertNotNull($purgeResponse['commandExecutionId']);
-        do {
-            $deletedProject = $this->client->getDeletedProject($project['id']);
-            if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
-            }
-            sleep(1);
-        } while ($deletedProject['isPurged'] !== true);
-        $this->assertNotNull($deletedProject['purgedTime']);
-    }
-
     public function deleteAndPurgeProjectWithData(): \Generator
     {
         yield 'snowflake with S3 file storage' => [
