@@ -2,75 +2,35 @@
 
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
+use Keboola\StorageApi\Workspaces;
 
 class StorageBackendTest extends ClientTestCase
 {
-    public function supportedNonDefaultBackends(): array
-    {
-        return [
-            [Backend::REDSHIFT],
-            [Backend::SYNAPSE],
-        ];
-    }
-
     /**
-     * @dataProvider supportedNonDefaultBackends
-     * @param string $backendName
+     * @dataProvider storageBackendOptionsProvider
      */
-    public function testStorageAssignBackend(string $backendName): void
+    public function testCreateStorageBackend(array $options)
     {
-        // get redshift and synapse backend
-        $backends = $this->client->listStorageBackend();
-        $backendToAssign = null;
-        foreach ($backends as $item) {
-            if ($item['backend'] === $backendName) {
-                $backendToAssign = $item;
-            }
-        }
-        if (!$backendToAssign) {
-            $this->fail(sprintf('%s backend not found', ucfirst($backendName)));
-        }
+        $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
+
+        $newBackend = $this->client->createStorageBackend($options);
+
+        $this->assertBackendExist($newBackend['id']);
+
+        $newMaintainer = $this->client->createMaintainer([
+            'name' => $maintainerName,
+            'defaultConnectionSnowflakeId' => $newBackend['id'],
+        ]);
 
         $name = 'My org';
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
+        $organization = $this->client->createOrganization($newMaintainer['id'], [
             'name' => $name,
         ]);
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
         ]);
-
-        $this->assertArrayHasKey('backends', $project);
-        $this->assertEquals('snowflake', $project['defaultBackend']);
-
-        if ($backendName === Backend::SYNAPSE) {
-            $absFileStorages = $this->client->listAbsFileStorage();
-            foreach ($absFileStorages as $storage) {
-                if ($storage['provider'] === 'azure') {
-                    $this->client->assignFileStorage($project['id'], $storage['id']);
-                    break;
-                }
-            }
-        }
-
-        $backends = $project['backends'];
-
-        $this->assertArrayHasKey('snowflake', $backends);
-        $this->assertArrayNotHasKey($backendName, $backends);
-
-        $this->client->assignProjectStorageBackend($project['id'], $backendToAssign['id']);
-
-        $project = $this->client->getProject($project['id']);
-        $backends = $project['backends'];
-
-        $this->assertArrayHasKey($backendName, $backends);
-        $this->assertEquals($backendName, $project['defaultBackend']);
-
-        $this->assertEquals($backendToAssign['id'], $backends[$backendName]['id']);
-
-        // let's try to create a bucket in project now
 
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
@@ -82,16 +42,48 @@ class StorageBackendTest extends ClientTestCase
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
-        $bucketId = $sapiClient->createBucket('test', 'in');
-        $bucket = $sapiClient->getBucket($bucketId);
-        $this->assertEquals($backendName, $bucket['backend']);
 
-        $sapiClient->dropBucket($bucketId);
+        $workspace = new Workspaces($sapiClient);
+        $workspace = $workspace->createWorkspace();
 
-        $this->client->removeProjectStorageBackend($project['id'], $backendToAssign['id']);
+        try {
+            $this->client->removeStorageBackend($newBackend['id']);
+            $this->fail('should fail because backend is used in project and workspace');
+        } catch (ClientException $e) {
+            $this->assertSame(
+                sprintf(
+                    'Storage backend is still used: in project(s) with id(s) "%d" in workspace(s) with id(s) "%d". Please delete and purge these projects.',
+                    $project['id'],
+                    $workspace['id']
+                ),
+                $e->getMessage()
+            );
+        }
 
         $this->client->deleteProject($project['id']);
-        $this->client->purgeDeletedProject($project['id']);
+        $this->waitUntilProjectWillBeDeleted($project);
+
+        $this->client->removeStorageBackend($newBackend['id']);
+
+        $this->assertBackendNotExist($newBackend['id']);
+
+        $maintainer = $this->client->getMaintainer($newMaintainer['id']);
+        $this->assertNull($maintainer['defaultConnectionSnowflakeId']);
+    }
+
+    public function storageBackendOptionsProvider(): \Generator
+    {
+        yield 'snowflake' => [
+            [
+                'backend' => 'snowflake',
+                'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
+                'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
+                'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
+                'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
+                'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
+                'owner' => 'keboola',
+            ],
+        ];
     }
 
     public function testStorageBackendList()
@@ -123,56 +115,29 @@ class StorageBackendTest extends ClientTestCase
         $this->assertArrayHasKey('region', $backend);
     }
 
-    public function testStorageBackendRemove()
+    private function assertBackendExist(int $backendId): void
     {
-        $name = 'My org';
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => $name,
-        ]);
+        $backends = $this->client->listStorageBackend();
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        $this->assertArrayHasKey('backends', $project);
-        $this->assertEquals('snowflake', $project['defaultBackend']);
-        $this->assertCount(1, $project['backends']);
-
-        $this->client->removeProjectStorageBackend($project['id'], reset($project['backends'])['id']);
-
-        $project = $this->client->getProject($project['id']);
-        $this->assertEmpty($project['backends']);
+        $hasBackend = false;
+        foreach ($backends as $backend) {
+            if ($backend['id'] === $backendId) {
+                $hasBackend = true;
+            }
+        }
+        $this->assertTrue($hasBackend);
     }
 
-    public function testStorageBackendShouldNotBeRemovedIfThereAreBuckets()
+    private function assertBackendNotExist(int $backendId): void
     {
-        $name = 'My org';
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => $name,
-        ]);
+        $backends = $this->client->listStorageBackend();
 
-        $project = $this->client->createProject($organization['id'], [
-            'name' => 'My test',
-        ]);
-
-        $token = $this->client->createProjectStorageToken($project['id'], [
-            'description' => 'test',
-            'expiresIn' => 60,
-            'canManageBuckets' => true,
-        ]);
-
-        $sapiClient = new \Keboola\StorageApi\Client([
-            'url' => getenv('KBC_MANAGE_API_URL'),
-            'token' => $token['token'],
-        ]);
-        $sapiClient->createBucket('test', 'in');
-
-        try {
-            $this->client->removeProjectStorageBackend($project['id'], reset($project['backends'])['id']);
-            $this->fail('Backend should not be removed');
-        } catch (ClientException $e) {
-            $this->assertEquals(400, $e->getCode());
-            $this->assertEquals('bucketsExists', $e->getStringCode());
+        $hasBackend = false;
+        foreach ($backends as $backend) {
+            if ($backend['id'] === $backendId) {
+                $hasBackend = true;
+            }
         }
+        $this->assertFalse($hasBackend);
     }
 }
