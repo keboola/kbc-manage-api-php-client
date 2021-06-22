@@ -874,7 +874,7 @@ class Client
         // Curl does not support Brotli compression - use Brotli extension
         if (extension_loaded('brotli') && $response->getHeaderLine('Content-Encoding') === 'br') {
             $body = \Brotli\uncompress($rawBody);
-            if ($body === FALSE) {
+            if ($body === false) {
                 throw new ClientException('Unable to uncompress brotli.');
             }
             // return decoded content by extension
