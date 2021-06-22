@@ -5,15 +5,16 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update \
   && apt-get install unzip git -y
 
-RUN git clone --recursive --depth=1 https://github.com/kjdev/php-ext-brotli.git \
-    && cd php-ext-brotli \
-    && phpize \
-    && ./configure \
-    && make \
-    && make install \
-    && cd - \
-    && echo "extension=brotli.so" > /usr/local/etc/php/conf.d/90-brotli.ini
-
+# install Brotli extension
+RUN git clone --recursive --depth=1 https://github.com/kjdev/php-ext-brotli.git ~/php-ext-brotli \
+  && cd ~/php-ext-brotli \
+  && phpize \
+  && ./configure \
+  && make \
+  && make install \
+  && cd - \
+  && rm -rf ~/php-ext-brotli \
+  && echo "extension=brotli.so" > /usr/local/etc/php/conf.d/90-brotli.ini
 
 RUN echo "memory_limit = -1" >> /usr/local/etc/php/php.ini
 
