@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
+use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client as StorageClient;
 use PHPUnit\Framework\TestCase;
 
@@ -295,5 +296,41 @@ class ClientTestCase extends TestCase
     {
         $params['defaultBackend'] = Backend::REDSHIFT;
         return $client->createProject($organizationId, $params);
+    }
+
+    protected function waitUntilProjectWillBeDeleted($project)
+    {
+        $startTime = time();
+        $maxWaitTimeSeconds = 120;
+
+        // wait until project will be deleted
+        do {
+            $isProjectDeleted = false;
+            try {
+                $this->client->getProject($project['id']);
+            } catch (ClientException $e) {
+                $isProjectDeleted = true;
+            }
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($isProjectDeleted !== true);
+
+        // reset the clock
+        $startTime = time();
+
+        // purge all data async
+        $purgeResponse = $this->client->purgeDeletedProject($project['id']);
+        $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
+        $this->assertNotNull($purgeResponse['commandExecutionId']);
+        do {
+            $deletedProject = $this->client->getDeletedProject($project['id']);
+            if (time() - $startTime > $maxWaitTimeSeconds) {
+                throw new \Exception('Project purge timeout.');
+            }
+            sleep(1);
+        } while ($deletedProject['isPurged'] !== true);
+        $this->assertNotNull($deletedProject['purgedTime']);
     }
 }
