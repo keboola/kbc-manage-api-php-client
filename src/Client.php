@@ -816,6 +816,11 @@ class Client
                 'User-Agent' => $this->userAgent,
             ],
         ]);
+        if (extension_loaded('brotli')) {
+            // Curl does not support Brotli compression - use Brotli extension
+            $requestOptions['headers']['Accept-Encoding'] = 'br';
+            $requestOptions['decode_content'] = false;
+        }
 
         try {
             /**
@@ -824,7 +829,7 @@ class Client
             $response = $this->client->request($method, $url, $requestOptions);
         } catch (RequestException $e) {
             $response = $e->getResponse();
-            $body = $response ? json_decode((string) $response->getBody(), true) : [];
+            $body = $response ? json_decode((string) $this->getBody($response), true) : [];
 
             if ($response && $response->getStatusCode() == 503) {
                 throw new MaintenanceException(isset($body['reason']) ? $body['reason'] : 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
@@ -840,10 +845,10 @@ class Client
         }
 
         if ($response->hasHeader('Content-Type') && $response->getHeader('Content-Type')[0] == 'application/json') {
-            return json_decode((string) $response->getBody(), true);
+            return json_decode((string) $this->getBody($response), true);
         }
 
-        return (string) $response->getBody();
+        return (string) $this->getBody($response);
     }
 
     private function composeErrorMessage(RequestException $requestException, ?array $body = null)
@@ -860,5 +865,23 @@ class Client
         } else {
             return $requestException->getMessage();
         }
+    }
+
+    private function getBody(ResponseInterface $response): string
+    {
+        $rawBody = $response->getBody()->getContents();
+
+        // Curl does not support Brotli compression - use Brotli extension
+        if (extension_loaded('brotli') && $response->getHeaderLine('Content-Encoding') === 'br') {
+            $body = \Brotli\uncompress($rawBody);
+            if ($body === false) {
+                throw new ClientException('Unable to uncompress brotli.');
+            }
+            // return decoded content by extension
+            return $body;
+        }
+
+        // return decoded contents by Curl
+        return $rawBody;
     }
 }
