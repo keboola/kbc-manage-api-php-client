@@ -303,7 +303,7 @@ class ClientTestCase extends TestCase
         $startTime = time();
         $maxWaitTimeSeconds = 120;
 
-        // wait until project will be deleted
+        // wait until project is deleted
         do {
             $isProjectDeleted = false;
             try {
@@ -312,7 +312,7 @@ class ClientTestCase extends TestCase
                 $isProjectDeleted = true;
             }
             if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
+                throw new \Exception('Project delete timed out.');
             }
             sleep(1);
         } while ($isProjectDeleted !== true);
@@ -327,7 +327,7 @@ class ClientTestCase extends TestCase
         do {
             $deletedProject = $this->client->getDeletedProject($project['id']);
             if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
+                throw new \Exception('Project purge timed out.');
             }
             sleep(1);
         } while ($deletedProject['isPurged'] !== true);
