@@ -93,6 +93,14 @@ TEST_S3_KEY=
 TEST_S3_REGION=
 TEST_S3_SECRET=
 
+# OPTIONAL - required only for running testCreateStorageBackend, you have to have new snowflake backend and fill credentials into following environment variables
+
+KBC_TEST_SNOWFLAKE_BACKEND_NAME=
+KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD=
+KBC_TEST_SNOWFLAKE_HOST=
+KBC_TEST_SNOWFLAKE_WAREHOUSE=
+KBC_TEST_SNOWFLAKE_BACKEND_REGION=
+
 ```
 
 Source newly created file and run tests:
