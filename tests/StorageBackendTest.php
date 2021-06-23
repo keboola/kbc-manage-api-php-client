@@ -16,6 +16,7 @@ class StorageBackendTest extends ClientTestCase
 
         $newBackend = $this->client->createStorageBackend($options);
 
+        $this->assertSame($newBackend['backend'], 'snowflake');
         $this->assertBackendExist($newBackend['id']);
 
         $newMaintainer = $this->client->createMaintainer([
@@ -32,6 +33,19 @@ class StorageBackendTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
+        try {
+            $this->client->removeStorageBackend($newBackend['id']);
+            $this->fail('Should fail because backend is used in project');
+        } catch (ClientException $e) {
+            $this->assertSame(
+                sprintf(
+                    'Storage backend is still used: in project(s) with id(s) "%d". Please delete and purge these projects.',
+                    $project['id']
+                ),
+                $e->getMessage()
+            );
+        }
+
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
             'expiresIn' => 60,
@@ -42,6 +56,21 @@ class StorageBackendTest extends ClientTestCase
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
+
+        $sapiClient->createBucket('test', 'in');
+
+        try {
+            $this->client->removeStorageBackend($newBackend['id']);
+            $this->fail('should fail because backend is used in project with bucket');
+        } catch (ClientException $e) {
+            $this->assertSame(
+                sprintf(
+                    'Storage backend is still used: in project(s) with id(s) "%d". Please delete and purge these projects.',
+                    $project['id']
+                ),
+                $e->getMessage()
+            );
+        }
 
         $workspace = new Workspaces($sapiClient);
         $workspace = $workspace->createWorkspace();
