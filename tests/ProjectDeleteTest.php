@@ -73,7 +73,7 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->client->updateProject($project['id'], ['expirationDays' => -1]);
 
-        $this->waitUntilProjectWillBeDeleted($project);
+        $this->waitForProjectPurge($project['id']);
 
         $joinRequests = $this->normalUserClient->listMyProjectJoinRequests();
         $this->assertCount(0, $joinRequests);
@@ -101,7 +101,7 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->client->updateProject($project['id'], ['expirationDays' => -1]);
 
-        $this->waitUntilProjectWillBeDeleted($project);
+        $this->waitForProjectPurge($project['id']);
 
         $normalUserInvitations = $this->normalUserClient->listMyProjectInvitations();
         $this->assertCount(0, $normalUserInvitations);
@@ -125,7 +125,7 @@ class ProjectDeleteTest extends ClientTestCase
         );
         $this->client->updateProject($project['id'], ['expirationDays' => -1]);
 
-        $this->waitUntilProjectWillBeDeleted($project);
+        $this->waitForProjectPurge($project['id']);
     }
 
 
