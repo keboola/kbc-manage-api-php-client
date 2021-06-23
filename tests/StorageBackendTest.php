@@ -61,7 +61,7 @@ class StorageBackendTest extends ClientTestCase
         }
 
         $this->client->deleteProject($project['id']);
-        $this->waitUntilProjectWillBeDeleted($project);
+        $this->waitForProjectPurge($project['id']);
 
         $this->client->removeStorageBackend($newBackend['id']);
 
