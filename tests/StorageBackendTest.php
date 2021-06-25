@@ -162,24 +162,8 @@ class StorageBackendTest extends ClientTestCase
         $backend = reset($backends);
         $this->assertInternalType('int', $backend['id']);
         $this->assertArrayHasKey('host', $backend);
+        $this->assertArrayHasKey('username', $backend);
         $this->assertArrayHasKey('backend', $backend);
-        $this->assertArrayNotHasKey('login', $backend);
-    }
-
-    public function testStorageBackendListWithLogins()
-    {
-        $backends = $this->client->listStorageBackend([
-            'logins' => true,
-        ]);
-
-        $this->assertNotEmpty($backends);
-
-        $backend = reset($backends);
-        $this->assertInternalType('int', $backend['id']);
-        $this->assertArrayHasKey('host', $backend);
-        $this->assertArrayHasKey('backend', $backend);
-        $this->assertArrayHasKey('login', $backend);
-        $this->assertArrayHasKey('region', $backend);
     }
 
     private function assertBackendExist(int $backendId): void
