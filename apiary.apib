@@ -3510,6 +3510,17 @@ CREATE MASTER KEY
 
     + Attributes (array[StorageBackendListRedshift,StorageBackendListSnowflake,StorageBackendListSynapse])
 
+### Delete backend [DELETE /manage/storage-backend/{backend_id}]
+All projects using the backend must be deleted and purged before it can be deleted
++ Parameters
+    + backend_id (required) - Id of storage backend
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204 (application/json)
 
 ## Data Structures
 
