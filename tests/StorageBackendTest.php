@@ -162,6 +162,7 @@ class StorageBackendTest extends ClientTestCase
         $backend = reset($backends);
         $this->assertInternalType('int', $backend['id']);
         $this->assertArrayHasKey('host', $backend);
+        $this->assertArrayHasKey('username', $backend);
         $this->assertArrayHasKey('backend', $backend);
     }
 
