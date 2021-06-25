@@ -680,6 +680,11 @@ class Client
         return $this->apiPost('/manage/storage-backend', $options);
     }
 
+    public function removeStorageBackend(int $storageBackendId)
+    {
+        $this->apiDelete($this->encode('/manage/storage-backend/%s', $storageBackendId));
+    }
+
     public function listStorageBackend($options = [])
     {
         return $this->apiGet('manage/storage-backend?' . http_build_query($options));
