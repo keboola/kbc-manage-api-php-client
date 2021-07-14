@@ -21,8 +21,33 @@ class OrganizationsMetadataTest extends ClientTestCase
         ],
     ];
 
+    public const SAML_CORRECT_METADATA = [
+        [
+            'key' => 'KBC.saml.key1',
+            'value' => 'testval',
+        ],
+        [
+            'key' => 'KBC.saml.key2',
+            'value' => 'testval2',
+        ],
+    ];
+
+    public const SAML_BAD_METADATA = [
+        [
+            'key' => 'KBC.saml.key1',
+            'value' => 'testval',
+        ],
+        [
+            'key' => 'KBC.other.key2',
+            'value' => 'testval2',
+        ],
+    ];
+
+
     public const PROVIDER_USER = 'user';
     public const PROVIDER_SYSTEM = 'system';
+
+    public const FEATURE_SAML_METADATA_ACCESS = 'saml-metadata-access';
 
     private $organization;
 
@@ -52,6 +77,9 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+
+        // delete user feature if exists
+        $this->client->removeUserFeature($this->normalUser['id'], self::FEATURE_SAML_METADATA_ACCESS);
     }
 
     public function allProjectRoles(): array
@@ -221,6 +249,27 @@ class OrganizationsMetadataTest extends ClientTestCase
         }
     }
 
+    public function testMaintainerAdminWithSamlFeatureCanManageSamlSystemMetadata(): void
+    {
+        $this->client->addUserFeature($this->normalUser['email'], self::FEATURE_SAML_METADATA_ACCESS);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        // create
+        $metadataArray = $this->createSystemMetadata($this->normalUserClient, $this->organization['id'], self::SAML_CORRECT_METADATA);
+        $this->assertCount(2, $metadataArray);
+        $this->validateMetadataEquality(self::SAML_CORRECT_METADATA[0], $metadataArray[0], self::PROVIDER_SYSTEM);
+        $this->validateMetadataEquality(self::SAML_CORRECT_METADATA[1], $metadataArray[1], self::PROVIDER_SYSTEM);
+
+        // list
+        $metadataArray = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->assertCount(2, $metadataArray);
+        $this->validateMetadataEquality(self::SAML_CORRECT_METADATA[0], $metadataArray[0], self::PROVIDER_SYSTEM);
+        $this->validateMetadataEquality(self::SAML_CORRECT_METADATA[1], $metadataArray[1], self::PROVIDER_SYSTEM);
+
+        // delete
+        $this->deleteAndCheckMetadata($this->normalUserClient, $metadataArray[0]['id']);
+    }
+
     // org admin
     public function testUserMetadataScenarioForOrgAdmin(): void
     {
@@ -290,6 +339,42 @@ class OrganizationsMetadataTest extends ClientTestCase
         }
     }
 
+    public function testOrgAdminWithSamlFeatureCanManageSamlSystemMetadata(): void
+    {
+        $this->client->addUserFeature($this->normalUser['email'], self::FEATURE_SAML_METADATA_ACCESS);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        // create
+        $metadataArray = $this->createSystemMetadata($this->normalUserClient, $this->organization['id'], self::SAML_CORRECT_METADATA);
+        $this->assertCount(2, $metadataArray);
+        $this->validateMetadataEquality(self::SAML_CORRECT_METADATA[0], $metadataArray[0], self::PROVIDER_SYSTEM);
+        $this->validateMetadataEquality(self::SAML_CORRECT_METADATA[1], $metadataArray[1], self::PROVIDER_SYSTEM);
+
+        // list
+        $metadataArray = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->assertCount(2, $metadataArray);
+        $this->validateMetadataEquality(self::SAML_CORRECT_METADATA[0], $metadataArray[0], self::PROVIDER_SYSTEM);
+        $this->validateMetadataEquality(self::SAML_CORRECT_METADATA[1], $metadataArray[1], self::PROVIDER_SYSTEM);
+
+        // delete
+        $this->deleteAndCheckMetadata($this->normalUserClient, $metadataArray[0]['id']);
+    }
+
+    public function testOrgAdminWithSamlFeatureCannotManageOtherSystemMetadata(): void
+    {
+        $this->client->addUserFeature($this->normalUser['email'], self::FEATURE_SAML_METADATA_ACCESS);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        // org admin cannot set system metadata
+        $this->cannotSetSystemMetadata($this->normalUserClient, self::SAML_BAD_METADATA);
+
+        // superadmin creates system metadata
+        $metadataArray = $this->createSystemMetadata($this->client, $this->organization['id'], self::SAML_BAD_METADATA);
+
+        // but org admin cannot delete it
+        $this->cannotDeleteMetadata($this->normalUserClient, $metadataArray[0]['id']);
+    }
+
     // project admin
     /**
      * @dataProvider allProjectRoles
@@ -317,6 +402,32 @@ class OrganizationsMetadataTest extends ClientTestCase
         $userMetadata = $this->createUserMetadata($this->client, $this->organization['id']);
         // but proj admin cannot manage it
         $this->cannotManageUserMetadata($this->normalUserClient, $userMetadata[0]['id']);
+    }
+
+    /**
+     * @dataProvider allProjectRoles
+     */
+    public function testProjectAdminWithSamlFeatureCanNotManageSamlSystemMetadata(string $role): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $this->client->addUserFeature($this->normalUser['email'], self::FEATURE_SAML_METADATA_ACCESS);
+        $this->client->addUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUser['email'],
+                'role' => $role,
+            ]
+        );
+
+        // user cannot set
+        $this->cannotSetSystemMetadata($this->normalUserClient, self::SAML_CORRECT_METADATA);
+
+        // superadmin create
+        $systemMetadata = $this->createSystemMetadata($this->client, $this->organization['id'], self::SAML_CORRECT_METADATA);
+        // user cannot delete
+        $this->cannotDeleteMetadata($this->normalUserClient, $systemMetadata[0]['id']);
     }
 
     // helpers
