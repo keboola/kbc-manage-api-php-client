@@ -21,8 +21,33 @@ class ProjectsMetadataTest extends ClientTestCase
         ],
     ];
 
+    public const SAML_CORRECT_METADATA = [
+        [
+            'key' => 'KBC.saml.key1',
+            'value' => 'testval',
+        ],
+        [
+            'key' => 'KBC.saml.key2',
+            'value' => 'testval',
+        ],
+    ];
+
+    public const SAML_BAD_METADATA = [
+        [
+            'key' => 'KBC.saml.key1',
+            'value' => 'testval',
+        ],
+        [
+            'key' => 'KBC.other.key2',
+            'value' => 'testval',
+        ],
+    ];
+
+
     public const PROVIDER_USER = 'user';
     public const PROVIDER_SYSTEM = 'system';
+
+    public const FEATURE_SAML_METADATA_ACCESS = 'saml-metadata-access';
 
     private $organization;
 
@@ -48,6 +73,9 @@ class ProjectsMetadataTest extends ClientTestCase
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+
+        // delete user feature if exists
+        $this->client->removeUserFeature($this->normalUser['id'], self::FEATURE_SAML_METADATA_ACCESS);
     }
 
     public function testNormalUserCannotManageMetadata(): void
@@ -204,6 +232,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
+    // maintainer admin
     public function testMaintainerAdminCanManageUserMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -248,6 +277,68 @@ class ProjectsMetadataTest extends ClientTestCase
 
         $metadata = reset($metadataArray);
 
+        $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+
+        $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
+    }
+
+    public function testMaintainerAdminWithSamlFeatureCanManageSamlSystemMetadata(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $this->client->addUserFeature($this->normalUser['email'], self::FEATURE_SAML_METADATA_ACCESS);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        // create
+        $this->normalUserClient->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_SYSTEM,
+            self::SAML_CORRECT_METADATA
+        );
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => false,
+        ]);
+
+        // update
+        $metadata = $this->normalUserClient->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_SYSTEM,
+            self::SAML_CORRECT_METADATA
+        );
+
+        $this->assertCount(2, $metadata);
+
+        $this->assertSame('KBC.saml.key1', $metadata[0]['key']);
+        $this->assertSame('testval', $metadata[0]['value']);
+        $this->assertSame('system', $metadata[0]['provider']);
+
+        $this->assertSame('KBC.saml.key2', $metadata[1]['key']);
+        $this->assertSame('testval', $metadata[1]['value']);
+        $this->assertSame('system', $metadata[1]['provider']);
+
+        // list
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('KBC.saml.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('system', $metadataArray[0]['provider']);
+
+        $this->assertSame('KBC.saml.key2', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('system', $metadataArray[1]['provider']);
+
+        $metadata = reset($metadataArray);
+
+        // delete
         $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
 
         $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
@@ -302,6 +393,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
+    // org admin
     public function testOrgAdminCanManageUserMedatata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -346,6 +438,68 @@ class ProjectsMetadataTest extends ClientTestCase
 
         $metadata = reset($metadataArray);
 
+        $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+
+        $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
+    }
+
+    public function testOrgAdminWithSamlFeatureCanManageSamlSystemMedatata(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $this->client->addUserFeature($this->normalUser['email'], self::FEATURE_SAML_METADATA_ACCESS);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        // create
+        $this->normalUserClient->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_SYSTEM,
+            self::SAML_CORRECT_METADATA
+        );
+
+        $this->client->updateOrganization($this->organization['id'], [
+            'allowAutoJoin' => false,
+        ]);
+
+        // update
+        $metadata = $this->normalUserClient->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_SYSTEM,
+            self::SAML_CORRECT_METADATA
+        );
+
+        $this->assertCount(2, $metadata);
+
+        $this->assertSame('KBC.saml.key1', $metadata[0]['key']);
+        $this->assertSame('testval', $metadata[0]['value']);
+        $this->assertSame('system', $metadata[0]['provider']);
+
+        $this->assertSame('KBC.saml.key2', $metadata[1]['key']);
+        $this->assertSame('testval', $metadata[1]['value']);
+        $this->assertSame('system', $metadata[1]['provider']);
+
+        // list
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('KBC.saml.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('system', $metadataArray[0]['provider']);
+
+        $this->assertSame('KBC.saml.key2', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('system', $metadataArray[1]['provider']);
+
+        $metadata = reset($metadataArray);
+
+        // delete
         $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
 
         $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
@@ -400,6 +554,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
+    // project member
     public function allowedAddMetadataRoles(): array
     {
         return [
@@ -507,6 +662,118 @@ class ProjectsMetadataTest extends ClientTestCase
 
         $metadata = reset($metadataArray);
 
+        try {
+            $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
+    }
+
+    /**
+     * @dataProvider allowedAddMetadataRoles
+     */
+    public function testProjectMemberWithSamlFeatureCanManageSamlSystemMetadata(string $role): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $this->client->addUserFeature($this->normalUser['email'], self::FEATURE_SAML_METADATA_ACCESS);
+        $this->client->addUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUser['email'],
+                'role' => $role,
+            ]
+        );
+
+        // create
+        $metadata = $this->normalUserClient->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_SYSTEM,
+            self::SAML_CORRECT_METADATA
+        );
+
+        $this->assertCount(2, $metadata);
+
+        $this->assertSame('KBC.saml.key1', $metadata[0]['key']);
+        $this->assertSame('testval', $metadata[0]['value']);
+        $this->assertSame('system', $metadata[0]['provider']);
+
+        $this->assertSame('KBC.saml.key2', $metadata[1]['key']);
+        $this->assertSame('testval', $metadata[1]['value']);
+        $this->assertSame('system', $metadata[1]['provider']);
+
+        // list
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $this->assertArrayHasKey('id', $metadataArray[0]);
+        $this->assertArrayHasKey('key', $metadataArray[0]);
+        $this->assertArrayHasKey('value', $metadataArray[0]);
+        $this->assertArrayHasKey('provider', $metadataArray[0]);
+        $this->assertArrayHasKey('timestamp', $metadataArray[0]);
+
+        $this->assertSame('KBC.saml.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('system', $metadataArray[0]['provider']);
+
+        $this->assertSame('KBC.saml.key2', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('system', $metadataArray[1]['provider']);
+
+        $metadata = reset($metadataArray);
+
+        // delete
+        $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
+        $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
+    }
+
+    /**
+     * @dataProvider allowedAddMetadataRoles
+     */
+    public function testProjectMemeberWithSamlFeatureCannotManageSamlSystemMetadata(string $role): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        $this->client->addUserFeature($this->normalUser['email'], self::FEATURE_SAML_METADATA_ACCESS);
+        $this->client->addUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUser['email'],
+                'role' => $role,
+            ]
+        );
+
+        // cannot create
+        try {
+            $this->normalUserClient->setProjectMetadata(
+                $projectId,
+                self::PROVIDER_SYSTEM,
+                self::SAML_BAD_METADATA
+            );
+            $this->fail('Should fail.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        // create as super admin
+        $this->client->setProjectMetadata(
+            $projectId,
+            self::PROVIDER_SYSTEM,
+            self::SAML_BAD_METADATA
+        );
+
+        // can list
+        $metadataArray = $this->normalUserClient->listProjectMetadata($projectId);
+        $this->assertCount(2, $metadataArray);
+
+        $metadata = reset($metadataArray);
+
+        // cannot delete
         try {
             $this->normalUserClient->deleteProjectMetadata($projectId, $metadata['id']);
             $this->fail('Should fail.');
@@ -884,6 +1151,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertSame('testval', $listMetadata[2]['value']);
     }
 
+    // helpers
     private function createUserMetadata(Client $client, int $projectId): array
     {
         return $client->setProjectMetadata(
