@@ -24,6 +24,8 @@ class OrganizationsMetadataTest extends ClientTestCase
     public const PROVIDER_USER = 'user';
     public const PROVIDER_SYSTEM = 'system';
 
+    public const FEATURE_SAML_METADATA_ACCESS = 'saml-metadata-access';
+
     private $organization;
 
     public function setUp()
@@ -52,6 +54,9 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
+
+        // delete user feature if exists
+        $this->client->removeUserFeature($this->normalUser['id'], self::FEATURE_SAML_METADATA_ACCESS);
     }
 
     public function allProjectRoles(): array
@@ -287,6 +292,80 @@ class OrganizationsMetadataTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
+        }
+    }
+
+    public function testOrgAdminWithSamlFeatureCanManageSamlSystemMetadata(): void
+    {
+        $this->client->addUserFeature($this->normalUser['email'], self::FEATURE_SAML_METADATA_ACCESS);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $samlMetadata = [
+            [
+                'key' => 'KBC.saml.key1',
+                'value' => 'testval',
+            ],
+            [
+                'key' => 'KBC.saml.key2',
+                'value' => 'testval2',
+            ],
+        ];
+
+        // create
+        $metadataArray = $this->normalUserClient->setOrganizationMetadata(
+            $this->organization['id'],
+            self::PROVIDER_SYSTEM,
+            $samlMetadata
+        );
+        $this->assertCount(2, $metadataArray);
+        $this->validateMetadataEquality($samlMetadata[0], $metadataArray[0], self::PROVIDER_SYSTEM);
+        $this->validateMetadataEquality($samlMetadata[1], $metadataArray[1], self::PROVIDER_SYSTEM);
+
+        // list
+        $metadataArray = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->assertCount(2, $metadataArray);
+        $this->validateMetadataEquality($samlMetadata[0], $metadataArray[0], self::PROVIDER_SYSTEM);
+        $this->validateMetadataEquality($samlMetadata[1], $metadataArray[1], self::PROVIDER_SYSTEM);
+
+        // delete
+        $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $metadataArray[0]['id']);
+        $metadataArray = $this->client->listOrganizationMetadata($this->organization['id']);
+        $this->assertCount(1, $metadataArray);
+    }
+
+    public function testOrgAdminWithSamlFeatureCannotManageOtherSystemMetadata(): void
+    {
+        $this->client->addUserFeature($this->normalUser['email'], '' . self::FEATURE_SAML_METADATA_ACCESS . '');
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        $badMetadata = [
+            [
+                'key' => 'KBC.saml.key1',
+                'value' => 'testval',
+            ],
+            [
+                'key' => 'KBC.other.key2',
+                'value' => 'testval2',
+            ],
+        ];
+
+        // org admin cannot set system metadata
+        try {
+            $this->normalUserClient->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, $badMetadata);
+            $this->fail('Test should not reach this line.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        // superadmin creates system metadata
+        $metadataArray = $this->client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, $badMetadata);
+
+        // but org admin cannot delete it
+        try {
+            $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $metadataArray[0]['id']);
+            $this->fail('Test should not reach this line.');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
         }
     }
 
