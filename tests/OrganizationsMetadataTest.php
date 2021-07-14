@@ -320,30 +320,30 @@ class OrganizationsMetadataTest extends ClientTestCase
     }
 
     // helpers
-    private function createUserMetadata(Client $client, int $organizationId): array
+    private function createUserMetadata(Client $client, int $organizationId, array $metadata = self::TEST_METADATA): array
     {
         return $client->setOrganizationMetadata(
             $organizationId,
             self::PROVIDER_USER,
-            self::TEST_METADATA
+            $metadata
         );
     }
 
-    private function createSystemMetadata(Client $client, int $organizationId): array
+    private function createSystemMetadata(Client $client, int $organizationId, array $metadata = self::TEST_METADATA): array
     {
         return $client->setOrganizationMetadata(
             $organizationId,
             self::PROVIDER_SYSTEM,
-            self::TEST_METADATA
+            $metadata
         );
     }
 
-    private function createMetadata(Client $client, int $organizationId, $provider): array
+    private function createMetadata(Client $client, int $organizationId, $provider, array $metadata = self::TEST_METADATA): array
     {
         return $client->setOrganizationMetadata(
             $organizationId,
             $provider,
-            self::TEST_METADATA
+            $metadata
         );
     }
 
@@ -357,7 +357,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->assertArrayHasKey('timestamp', $actual);
     }
 
-    private function cannotManageUserMetadata(Client $client, $metadataId)
+    private function cannotManageUserMetadata(Client $client, $metadataId, array $metadata = self::TEST_METADATA)
     {
         // note there is no cannotManageSYSTEMMetadata because LIST operation is the same and SET/DELETE operations are tested explicitly
         try {
@@ -368,7 +368,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         }
 
         try {
-            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_USER, self::TEST_METADATA);
+            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_USER, $metadata);
             $this->fail('Test should not reach this line.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -377,7 +377,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->cannotDeleteMetadata($client, $metadataId);
     }
 
-    private function cannotManageMetadataBecauseOfMissingMFA($client)
+    private function cannotManageMetadataBecauseOfMissingMFA($client, array $metadata = self::TEST_METADATA)
     {
         try {
             $client->listOrganizationMetadata($this->organization['id']);
@@ -388,7 +388,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         }
 
         try {
-            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_USER, self::TEST_METADATA);
+            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_USER, $metadata);
             $this->fail('Test should not reach this line.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -396,7 +396,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         }
 
         try {
-            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, $metadata);
             $this->fail('Test should not reach this line.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
@@ -404,10 +404,10 @@ class OrganizationsMetadataTest extends ClientTestCase
         }
     }
 
-    private function cannotSetSystemMetadata($client)
+    private function cannotSetSystemMetadata($client, array $metadata = self::TEST_METADATA)
     {
         try {
-            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, self::TEST_METADATA);
+            $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, $metadata);
             $this->fail('Test should not reach this line.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
