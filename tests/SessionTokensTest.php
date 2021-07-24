@@ -48,7 +48,7 @@ class SessionTokensTest extends ClientTestCase
         $this->assertGreaterThanOrEqual(1, count($maintainersAfterAdding));
 
         // get maintainer organizations
-        $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+        $organizations = $this->sessionTokenClient->listMaintainerOrganizations($this->testMaintainerId);
         $this->assertGreaterThanOrEqual(0, count($organizations));
 
         $organization = $this->normalUserClient->createOrganization($this->testMaintainerId, [
