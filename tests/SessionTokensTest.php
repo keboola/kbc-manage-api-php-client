@@ -35,6 +35,40 @@ class SessionTokensTest extends ClientTestCase
         $this->assertTrue(strtotime($this->sessionToken['expires']) <= strtotime($this->sessionToken['created']) + 3600);
     }
 
+    public function testMaintainersManipulation()
+    {
+        // get maintainers
+        $maintainers = $this->sessionTokenClient->listMaintainers();
+        $this->assertGreaterThanOrEqual(0, count($maintainers));
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        // get maintainers (after adding)
+        $maintainersAfterAdding = $this->sessionTokenClient->listMaintainers();
+        $this->assertGreaterThanOrEqual(1, count($maintainersAfterAdding));
+
+        // get maintainer organizations
+        $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
+        $this->assertGreaterThanOrEqual(0, count($organizations));
+
+        $organization = $this->normalUserClient->createOrganization($this->testMaintainerId, [
+            'name' => 'Session Tokens - maintainer',
+        ]);
+        $this->assertEquals('Session Tokens - maintainer', $organization['name']);
+
+        // get maintainer organizations (after adding)
+        $organizationsAfterAdding = $this->sessionTokenClient->listMaintainerOrganizations($this->testMaintainerId);
+        $this->assertGreaterThanOrEqual(1, count($organizationsAfterAdding));
+
+        // create maintainer
+        try {
+            $this->sessionTokenClient->createMaintainer(['name' => 'maintainer create fail']);
+            $this->fail('User authorized with session token should not be able to create maintainer');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+    }
+
     public function testOrganizationsManipulation()
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
