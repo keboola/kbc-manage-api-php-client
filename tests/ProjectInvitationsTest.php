@@ -677,4 +677,23 @@ class ProjectInvitationsTest extends ClientTestCase
         $invitations = $this->client->listProjectInvitations($projectId);
         $this->assertCount(0, $invitations);
     }
+
+    public function testInviteUserToProjectWithInvalidEmail(): void
+    {
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
+        $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
+
+        try {
+            $this->client->inviteUserToProject($projectId, [
+                'email' => 'not email address at all ! ',
+            ]);
+            $this->fail('Create project membership with invalid email should produce error');
+        } catch (ClientException $e) {
+            $this->assertEquals('Email address is not valid.', $e->getMessage());
+            $this->assertEquals(422, $e->getCode());
+        }
+
+        $invitations = $this->client->listProjectInvitations($projectId);
+        $this->assertCount(0, $invitations);
+    }
 }
