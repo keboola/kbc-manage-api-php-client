@@ -101,6 +101,11 @@ class Client
         return $this->apiGet('/manage/tokens/verify');
     }
 
+    public function createSessionToken()
+    {
+        return $this->apiPost('/manage/current-user/session-token');
+    }
+
     public function listMaintainers()
     {
         return $this->apiGet('/manage/maintainers');
