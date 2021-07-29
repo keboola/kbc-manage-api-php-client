@@ -23,6 +23,9 @@ class ProjectStorageBackendTest extends ClientTestCase
      */
     public function testProjectStorageAssignBackend(string $backendName): void
     {
+        if ($backendName === Backend::EXASOL) {
+            $this->markTestSkipped('Skip until create bucket works in Exasol.');
+        }
         // get redshift and synapse backend
         $backends = $this->client->listStorageBackend();
         $backendToAssign = null;
