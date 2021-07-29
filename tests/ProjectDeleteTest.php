@@ -144,6 +144,9 @@ class ProjectDeleteTest extends ClientTestCase
      */
     public function testDeleteAndPurgeProjectWithData(string $backend, string $fileStorageProvider): void
     {
+        if ($backend === Backend::EXASOL) {
+            $this->markTestSkipped('Skip until create table works in Exasol.');
+        }
         $connectionParamName = sprintf('defaultConnection%sId', ucfirst($backend));
         $maintainer =  $this->client->getMaintainer($this->testMaintainerId);
 
