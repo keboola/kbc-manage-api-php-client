@@ -46,6 +46,14 @@ class ProjectDeleteTest extends ClientTestCase
             'backend' => Backend::SYNAPSE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
         ];
+        yield 'exasol with ABS file storage' => [
+            'backend' => Backend::EXASOL,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
+        ];
+        yield 'exasol with S3 file storage' => [
+            'backend' => Backend::EXASOL,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
+        ];
     }
 
     public function testPurgeExpiredProjectRemoveJoinRequest()
@@ -152,7 +160,10 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->client->assignFileStorage($project['id'], $this->loadFileStorageId($fileStorageProvider));
 
-        if ($backend === Backend::REDSHIFT || $backend === Backend::SYNAPSE) {
+        if ($backend === Backend::REDSHIFT
+            || $backend === Backend::SYNAPSE
+            || $backend === Backend::EXASOL
+        ) {
             $this->client->assignProjectStorageBackend($project['id'], $maintainer[$connectionParamName]);
         }
 

@@ -21,6 +21,7 @@ class ProjectsTest extends ClientTestCase
             [Backend::SNOWFLAKE],
             [Backend::REDSHIFT],
             [Backend::SYNAPSE],
+            [Backend::EXASOL],
         ];
     }
 
