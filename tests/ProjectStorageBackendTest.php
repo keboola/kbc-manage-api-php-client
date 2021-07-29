@@ -13,6 +13,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         return [
             [Backend::REDSHIFT],
             [Backend::SYNAPSE],
+            [Backend::EXASOL],
         ];
     }
 
