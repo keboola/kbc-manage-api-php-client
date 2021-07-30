@@ -108,6 +108,8 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionMysqlId": 234,
             "defaultConnectionRedshiftId": 232,
             "defaultConnectionSnowflakeId": 242,
+            "defaultConnectionSynapseId": 235,
+            "defaultConnectionExasolId": 236,
             "organizations": [
                 {
                     "id": 234,
@@ -128,6 +130,8 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionMysqlId": 234,
             "defaultConnectionRedshiftId": 232,
             "defaultConnectionSnowflakeId": 242,
+            "defaultConnectionSynapseId": 235,
+            "defaultConnectionExasolId": 236,
             "organizations": [
                 {
                     "id": 234,
@@ -165,6 +169,8 @@ A maintainer object has the following attributes:
         "defaultConnectionMysqlId": 234,
         "defaultConnectionRedshiftId": 232,
         "defaultConnectionSnowflakeId": 242,
+        "defaultConnectionSynapseId": 235,
+        "defaultConnectionExasolId": 236,
         "zendeskUrl": "https://some.url.com",
         "organizations": [
             {
@@ -197,6 +203,8 @@ A partial update of a maintainer
     + name:Example - Maintainer name
     + defaultConnectionRedshiftId:234 (optional) - Default Redshift Connection ID
     + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection ID
+    + defaultConnectionSynapseId:324 (optional) - Default Synapse Connection ID
+    + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
     + zendeskUrl:https://keboola.zendesk.com (optional)
 
 + Request (application/json)
@@ -2253,6 +2261,8 @@ Projects can be filtered by various filters:
             "hasMysql": false,
             "hasRedshift": false,
             "hasSnowflake": true,
+            "hasSynapse": false,
+            "hasExasol": false,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
             "limits": {},
@@ -2285,6 +2295,8 @@ Projects can be filtered by various filters:
             "hasMysql": false,
             "hasRedshift": false,
             "hasSnowflake": true,
+            "hasSynapse": false,
+            "hasExasol": false,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
             "limits": {},
