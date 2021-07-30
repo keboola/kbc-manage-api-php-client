@@ -27,6 +27,8 @@ class MaintainersTest extends ClientTestCase
             'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
             'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
             'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
+            'defaultConnectionSynapseId' => $testMaintainer['defaultConnectionSynapseId'],
+            'defaultConnectionExasolId' => $testMaintainer['defaultConnectionExasolId'],
         ]);
 
         $this->assertEquals($maintainerName, $newMaintainer['name']);
@@ -34,6 +36,8 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals($testMaintainer['defaultConnectionMysqlId'], $newMaintainer['defaultConnectionMysqlId']);
         $this->assertEquals($testMaintainer['defaultConnectionRedshiftId'], $newMaintainer['defaultConnectionRedshiftId']);
         $this->assertEquals($testMaintainer['defaultConnectionSnowflakeId'], $newMaintainer['defaultConnectionSnowflakeId']);
+        $this->assertEquals($testMaintainer['defaultConnectionSynapseId'], $newMaintainer['defaultConnectionSynapseId']);
+        $this->assertEquals($testMaintainer['defaultConnectionExasolId'], $newMaintainer['defaultConnectionExasolId']);
         $this->assertArrayHasKey('zendeskUrl', $newMaintainer);
         $this->assertNull($newMaintainer['zendeskUrl']);
 
@@ -57,7 +61,7 @@ class MaintainersTest extends ClientTestCase
     public function testUpdateMaintainer()
     {
         $backends = $this->client->listStorageBackend();
-        $mysqlBackend = $redshiftBackend = $snowflakeBackend = null;
+        $exasolBackend = $synapseBackend = $mysqlBackend = $redshiftBackend = $snowflakeBackend = null;
 
         foreach ($backends as $backend) {
             switch ($backend['backend']) {
@@ -66,6 +70,12 @@ class MaintainersTest extends ClientTestCase
                     break;
                 case 'redshift':
                     $redshiftBackend = $backend;
+                    break;
+                case 'synapse':
+                    $synapseBackend = $backend;
+                    break;
+                case 'exasol':
+                    $exasolBackend = $backend;
                     break;
                 case 'snowflake':
                     $snowflakeBackend = $backend;
@@ -89,6 +99,12 @@ class MaintainersTest extends ClientTestCase
         if (!is_null($snowflakeBackend)) {
             $updateArray['defaultConnectionSnowflakeId'] = $snowflakeBackend['id'];
         }
+        if (!is_null($synapseBackend)) {
+            $updateArray['defaultConnectionSynapseId'] = $synapseBackend['id'];
+        }
+        if (!is_null($exasolBackend)) {
+            $updateArray['defaultConnectionExasolId'] = $exasolBackend['id'];
+        }
 
         $updateArray['zendeskUrl'] = 'https://fake.url.com';
 
@@ -105,16 +121,26 @@ class MaintainersTest extends ClientTestCase
         if (array_key_exists('defaultConnectionSnowflakeId', $updateArray)) {
             $this->assertEquals($snowflakeBackend['id'], $updatedMaintainer['defaultConnectionSnowflakeId']);
         }
+        if (array_key_exists('defaultConnectionSynapseId', $updateArray)) {
+            $this->assertEquals($synapseBackend['id'], $updatedMaintainer['defaultConnectionSynapseId']);
+        }
+        if (array_key_exists('defaultConnectionExasolId', $updateArray)) {
+            $this->assertEquals($exasolBackend['id'], $updatedMaintainer['defaultConnectionExasolId']);
+        }
 
         // test nulling out connection ids
         $upd = $this->client->updateMaintainer($newMaintainer['id'], [
             'defaultConnectionMysqlId' => null,
             'defaultConnectionRedshiftId' => null,
             'defaultConnectionSnowflakeId' => null,
+            'defaultConnectionExasolId' => null,
+            'defaultConnectionSynapseId' => null,
         ]);
         $this->assertNull($upd['defaultConnectionMysqlId']);
         $this->assertNull($upd['defaultConnectionRedshiftId']);
         $this->assertNull($upd['defaultConnectionSnowflakeId']);
+        $this->assertNull($upd['defaultConnectionSynapseId']);
+        $this->assertNull($upd['defaultConnectionExasolId']);
     }
 
 
@@ -127,6 +153,8 @@ class MaintainersTest extends ClientTestCase
                 'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
                 'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
                 'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
+                'defaultConnectionSynapseId' => $testMaintainer['defaultConnectionSynapseId'],
+                'defaultConnectionExasolId' => $testMaintainer['defaultConnectionExasolId'],
             ]);
             $this->fail('normal user should not be able to create maintainrer');
         } catch (ClientException $e) {
@@ -210,6 +238,8 @@ class MaintainersTest extends ClientTestCase
         $this->assertArrayHasKey('defaultConnectionMysqlId', $maintainer);
         $this->assertArrayHasKey('defaultConnectionRedshiftId', $maintainer);
         $this->assertArrayHasKey('defaultConnectionSnowflakeId', $maintainer);
+        $this->assertArrayHasKey('defaultConnectionSynapseId', $maintainer);
+        $this->assertArrayHasKey('defaultConnectionExasolId', $maintainer);
         $this->assertArrayHasKey('zendeskUrl', $maintainer);
         $this->assertNull($maintainer['zendeskUrl']);
     }
