@@ -2,6 +2,7 @@
 
 namespace Keboola\ManageApiTest;
 
+use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 
 class CommonTest extends ClientTestCase
@@ -48,7 +49,7 @@ class CommonTest extends ClientTestCase
 
     public function testInvalidRequestBody()
     {
-        $client = new \GuzzleHttp\Client([
+        $client = new Client([
             'base_uri' => getenv('KBC_MANAGE_API_URL'),
         ]);
 

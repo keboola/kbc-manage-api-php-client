@@ -2,9 +2,11 @@
 
 namespace Keboola\ManageApiTest;
 
+use Exception;
 use Keboola\Csv\CsvFile;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
+use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Metadata;
 use Keboola\StorageApi\Options\Components as ComponentsOptions;
@@ -26,7 +28,7 @@ class ProjectDeleteTest extends ClientTestCase
         ]);
     }
 
-    public function deleteAndPurgeProjectWithData(): \Generator
+    public function deleteAndPurgeProjectWithData(): iterable
     {
         yield 'snowflake with S3 file storage' => [
             'backend' => Backend::SNOWFLAKE,
@@ -164,7 +166,7 @@ class ProjectDeleteTest extends ClientTestCase
             'canManageBuckets' => true,
         ]);
 
-        $sapiClient = new \Keboola\StorageApi\Client([
+        $sapiClient = new Client([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
@@ -197,14 +199,14 @@ class ProjectDeleteTest extends ClientTestCase
             ->setConfigurationId('main-1')
             ->setName('Main')
             ->setDescription('some desc')
-            ->setConfiguration(array(
-                'queries' => array(
-                    array(
+            ->setConfiguration([
+                'queries' => [
+                    [
                         'id' => 1,
                         'query' => 'SELECT * from some_table',
-                    ),
-                ),
-            ));
+                    ],
+                ],
+            ]);
 
         $components = new Components($sapiClient);
         $components->addConfiguration($configuration);
@@ -246,7 +248,7 @@ class ProjectDeleteTest extends ClientTestCase
         do {
             $deletedProject = $this->client->getDeletedProject($project['id']);
             if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timeout.');
+                throw new Exception('Project purge timeout.');
             }
             sleep(1);
         } while ($deletedProject['isPurged'] !== true);
