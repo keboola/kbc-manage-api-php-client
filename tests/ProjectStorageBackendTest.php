@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
+use Keboola\StorageApi\Client;
 
 class ProjectStorageBackendTest extends ClientTestCase
 {
@@ -78,7 +79,7 @@ class ProjectStorageBackendTest extends ClientTestCase
             'canManageBuckets' => true,
         ]);
 
-        $sapiClient = new \Keboola\StorageApi\Client([
+        $sapiClient = new Client([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
@@ -132,7 +133,7 @@ class ProjectStorageBackendTest extends ClientTestCase
             'canManageBuckets' => true,
         ]);
 
-        $sapiClient = new \Keboola\StorageApi\Client([
+        $sapiClient = new Client([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);

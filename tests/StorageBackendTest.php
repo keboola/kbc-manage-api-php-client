@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Workspaces;
 
 class StorageBackendTest extends ClientTestCase
@@ -52,7 +53,7 @@ class StorageBackendTest extends ClientTestCase
             'canManageBuckets' => true,
         ]);
 
-        $sapiClient = new \Keboola\StorageApi\Client([
+        $sapiClient = new Client([
             'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $token['token'],
         ]);
@@ -100,7 +101,7 @@ class StorageBackendTest extends ClientTestCase
         $this->assertNull($maintainer['defaultConnectionSnowflakeId']);
     }
 
-    public function storageBackendOptionsProvider(): \Generator
+    public function storageBackendOptionsProvider(): iterable
     {
         yield 'snowflake' => [
             [

@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use Throwable;
 
 class MaintainersTest extends ClientTestCase
 {
@@ -17,7 +18,7 @@ class MaintainersTest extends ClientTestCase
 
         try {
             $this->client->createMaintainer([]);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->assertEquals('A name must be set', $e->getMessage());
         }
 

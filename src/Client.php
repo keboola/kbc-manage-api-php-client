@@ -2,9 +2,11 @@
 
 namespace Keboola\ManageApi;
 
+use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use InvalidArgumentException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -19,7 +21,7 @@ class Client
     private $userAgent = 'Keboola Manage API PHP Client';
 
     /**
-     * @var \GuzzleHttp\Client
+     * @var GuzzleClient
      */
     private $client;
 
@@ -36,7 +38,7 @@ class Client
     public function __construct(array $config)
     {
         if (!isset($config['token'])) {
-            throw new \InvalidArgumentException('token must be set');
+            throw new InvalidArgumentException('token must be set');
         }
         $this->tokenString = $config['token'];
 
@@ -45,7 +47,7 @@ class Client
         }
 
         if (!isset($config['url'])) {
-            throw new \InvalidArgumentException('url must be set');
+            throw new InvalidArgumentException('url must be set');
         }
         $this->apiUrl = $config['url'];
 
@@ -63,7 +65,7 @@ class Client
             self::createExponentialDelay()
         ));
 
-        $this->client = new \GuzzleHttp\Client([
+        $this->client = new GuzzleClient([
             'base_uri' => $this->apiUrl,
             'handler' => $handlerStack,
         ]);
@@ -339,17 +341,17 @@ class Client
         $this->apiDelete($this->encode('/manage/projects/%s', $id));
     }
 
-    public function undeleteProject($id, $params = array())
+    public function undeleteProject($id, $params = [])
     {
         $this->apiDelete($this->encode('/manage/deleted-projects/%s?', $id) . http_build_query($params));
     }
 
-    public function listDeletedProjects($params = array())
+    public function listDeletedProjects($params = [])
     {
-        $defaultParams = array(
+        $defaultParams = [
             'limit' => 100,
             'offset' => 0,
-        );
+        ];
 
         $queryParams = array_merge($defaultParams, $params);
         return $this->apiGet('/manage/deleted-projects?' . http_build_query($queryParams));
@@ -841,7 +843,7 @@ class Client
             $response = $e->getResponse();
             $body = $response ? json_decode((string) $response->getBody(), true) : [];
 
-            if ($response && $response->getStatusCode() == 503) {
+            if ($response && $response->getStatusCode() === 503) {
                 throw new MaintenanceException(isset($body['reason']) ? $body['reason'] : 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
             }
 
@@ -854,7 +856,7 @@ class Client
             );
         }
 
-        if ($response->hasHeader('Content-Type') && $response->getHeader('Content-Type')[0] == 'application/json') {
+        if ($response->hasHeader('Content-Type') && $response->getHeader('Content-Type')[0] === 'application/json') {
             return json_decode((string) $response->getBody(), true);
         }
 

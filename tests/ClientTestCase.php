@@ -2,6 +2,7 @@
 
 namespace Keboola\ManageApiTest;
 
+use Exception;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
@@ -48,7 +49,7 @@ class ClientTestCase extends TestCase
         $manageApiUrl = getenv('KBC_MANAGE_API_URL');
 
         if (in_array(parse_url($manageApiUrl, PHP_URL_HOST), self::PRODUCTION_HOSTS)) {
-            throw new \Exception('Tests cannot be executed against production host - ' . $manageApiUrl);
+            throw new Exception('Tests cannot be executed against production host - ' . $manageApiUrl);
         }
 
         // cleanup organizations and projects created in testing maintainer
@@ -312,7 +313,7 @@ class ClientTestCase extends TestCase
                 $isProjectDeleted = true;
             }
             if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project delete timed out.');
+                throw new Exception('Project delete timed out.');
             }
             sleep(1);
         } while ($isProjectDeleted !== true);
@@ -327,7 +328,7 @@ class ClientTestCase extends TestCase
         do {
             $deletedProject = $this->client->getDeletedProject($projectId);
             if (time() - $startTime > $maxWaitTimeSeconds) {
-                throw new \Exception('Project purge timed out.');
+                throw new Exception('Project purge timed out.');
             }
             sleep(1);
         } while ($deletedProject['isPurged'] !== true);

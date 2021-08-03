@@ -205,7 +205,7 @@ class OrganizationsTest extends ClientTestCase
             $this->assertArrayHasKey('invitor', $user);
             $this->assertNull($user['invitor']);
 
-            if ($user['email'] == 'devel-tests@keboola.com') {
+            if ($user['email'] === 'devel-tests@keboola.com') {
                 $foundUser = $user;
                 break;
             }

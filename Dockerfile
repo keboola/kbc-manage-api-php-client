@@ -1,4 +1,8 @@
-FROM php:7.1
+ARG PHP_VERSION=7.1
+FROM php:${PHP_VERSION} as dev
+
+ARG XDEBUG_VERSION=2.9.8
+
 MAINTAINER Martin Halamicek <martin@keboola.com>
 ENV DEBIAN_FRONTEND noninteractive
 
