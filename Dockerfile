@@ -1,5 +1,5 @@
 ARG PHP_VERSION=7.1
-FROM php:${PHP_VERSION} as dev
+FROM php:${PHP_VERSION:-7.1} as dev
 
 ARG XDEBUG_VERSION=2.9.8
 
