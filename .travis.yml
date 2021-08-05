@@ -8,6 +8,7 @@ env:
   - PHP_VERSION=8.0
 
 script:
+   - echo $PHP_VERSION
  - docker-compose build --build-arg PHP_VERSION=$PHP_VERSION release$PHP_VERSION
  - docker network create connection_api-tests
  - docker-compose run --rm release composer ci
