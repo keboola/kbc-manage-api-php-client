@@ -18,7 +18,7 @@ class MaintainerInvitationsTest extends ClientTestCase
             'name' => self::TESTS_MAINTAINER_PREFIX . ' - MaintainerInvitationsTest',
         ]);
 
-        $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'devel-tests+spam@keboola.com']);
         $this->client->removeUserFromMaintainer($this->maintainer['id'], $this->superAdmin['id']);
 
         foreach ($this->normalUserClient->listMyMaintainerInvitations() as $invitation) {
@@ -290,7 +290,7 @@ class MaintainerInvitationsTest extends ClientTestCase
     public function testAddingAdminToMaintainerDeletesCorrespondingInvitation(): void
     {
         $inviteeEmail = $this->normalUser['email'];
-        $secondInviteeEmail = 'spam@keboola.com';
+        $secondInviteeEmail = 'devel-tests@keboola.com';
         $maintainerId = $this->maintainer['id'];
 
         $this->client->joinMaintainer($maintainerId);

@@ -503,7 +503,7 @@ class ProjectsTest extends ClientTestCase
 
         // begin test of adding / removing user without expiration/reason
         $resp = $this->client->addUserToProject($project['id'], [
-           'email' => 'spam@keboola.com',
+           'email' => 'devel-tests@keboola.com',
         ]);
 
         $admins = $this->client->listProjectUsers($project['id']);
@@ -511,7 +511,7 @@ class ProjectsTest extends ClientTestCase
 
         $foundUser = null;
         foreach ($admins as $user) {
-            if ($user['email'] == 'spam@keboola.com') {
+            if ($user['email'] == 'devel-tests@keboola.com') {
                 $foundUser = $user;
                 break;
             }
@@ -634,7 +634,7 @@ class ProjectsTest extends ClientTestCase
 
         // test of adding / removing user with expiration/reason
         $resp = $this->client->addUserToProject($project['id'], [
-            'email' => 'spam@keboola.com',
+            'email' => 'devel-tests@keboola.com',
             'reason' => 'created by test',
             'expirationSeconds' => '20',
         ]);
@@ -644,7 +644,7 @@ class ProjectsTest extends ClientTestCase
 
         $foundUser = null;
         foreach ($admins as $user) {
-            if ($user['email'] == 'spam@keboola.com') {
+            if ($user['email'] == 'devel-tests@keboola.com') {
                 $foundUser = $user;
                 break;
             }

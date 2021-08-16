@@ -13,7 +13,7 @@ class PromoCodesTest extends ClientTestCase
     {
         parent::setUp();
 
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'devel-tests+spam@keboola.com']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
@@ -37,7 +37,7 @@ class PromoCodesTest extends ClientTestCase
             'name' => 'My org for promo codes',
         ]);
 
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'devel-tests@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
