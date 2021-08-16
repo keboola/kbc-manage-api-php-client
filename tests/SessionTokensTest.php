@@ -147,7 +147,7 @@ class SessionTokensTest extends ClientTestCase
 
         // add user to project
         try {
-            $email = 'remove' . uniqid() . '@keboola.com';
+            $email = 'devel-tests+remove' . uniqid() . '@keboola.com';
             $this->sessionTokenClient->addUserToProject($project['id'], ['email' => $email]);
             $this->fail('User authorized with session token should not have permissions to add user to project');
         } catch (ClientException $e) {
@@ -164,7 +164,7 @@ class SessionTokensTest extends ClientTestCase
         $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
 
         // invite user to project via session token
-        $inviteEmail = 'remove' . uniqid() . '@keboola.com';
+        $inviteEmail = 'devel-tests+remove' . uniqid() . '@keboola.com';
         $this->sessionTokenClient->inviteUserToProject($project['id'], ['email' => $inviteEmail]);
 
         // list invitations via session token
