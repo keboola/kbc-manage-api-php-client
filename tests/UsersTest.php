@@ -152,7 +152,7 @@ class UsersTest extends ClientTestCase
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'RemoveMeOrg']);
         $project = $this->client->createProject($organization['id'], ['name' => 'RemoveMeProj']);
         $maintainer = $this->client->createMaintainer(['name' => 'RemoveMeMain']);
-        $email = 'remove' . uniqid() . '@keboola.com';
+        $email = 'devel-tests+remove' . uniqid() . '@keboola.com';
         $this->client->addUserToProject($project['id'], ['email' => $email]);
         $user = $this->client->getUser($email);
         $this->client->addUserToMaintainer($maintainer['id'], ['email' => $email]);
@@ -172,7 +172,7 @@ class UsersTest extends ClientTestCase
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
         $inviteOrganization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-2']);
         $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-1']);
-        $email = 'remove' . uniqid() . '@keboola.com';
+        $email = 'devel-tests+remove' . uniqid() . '@keboola.com';
         //PROJECT, ORGANIZATION & MAINTAINER
         $this->client->addUserToProject($project['id'], ['email' => $email]);
         $user = $this->client->getUser($email);
@@ -231,7 +231,7 @@ class UsersTest extends ClientTestCase
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
         $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-1']);
-        $email = 'remove' . uniqid() . '@keboola.com';
+        $email = 'devel-tests+remove' . uniqid() . '@keboola.com';
         //PROJECT, ORGANIZATION & MAINTAINER
         $this->client->addUserToProject($project['id'], ['email' => $email]);
         $this->client->addUserToOrganization($organization['id'], ['email' => $email]);
