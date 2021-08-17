@@ -137,7 +137,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $invitation = $this->normalUserWithMfaClient->inviteUserToProject(
             $this->project['id'],
             [
-                'email' => 'spam@keboola.com',
+                'email' => 'devel-tests@keboola.com',
                 'role' => $role,
             ]
         );
@@ -161,7 +161,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->guestRoleMemberClient->inviteUserToProject(
                 $this->project['id'],
                 [
-                    'email' => 'spam@keboola.com',
+                    'email' => 'devel-tests@keboola.com',
                     'role' => $role,
                 ]
             );
@@ -184,7 +184,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->normalUserClient->inviteUserToProject(
                 $this->project['id'],
                 [
-                    'email' => 'spam@keboola.com',
+                    'email' => 'devel-tests@keboola.com',
                     'role' => ProjectRole::SHARE,
                 ]
             );
@@ -210,7 +210,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $invitation = $this->normalUserWithMfaClient->inviteUserToProject(
             $this->project['id'],
             [
-                'email' => 'spam@keboola.com',
+                'email' => 'devel-tests@keboola.com',
                 'role' => $role,
             ]
         );
@@ -247,7 +247,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->guestRoleMemberClient->addUserToProject(
                 $this->project['id'],
                 [
-                    'email' => 'spam@keboola.com',
+                    'email' => 'devel-tests@keboola.com',
                     'role' => $role,
                 ]
             );
@@ -256,7 +256,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->restrictedActionTest($e);
         }
 
-        $membership = $this->findProjectUser($this->project['id'], 'spam@keboola.com');
+        $membership = $this->findProjectUser($this->project['id'], 'devel-tests@keboola.com');
         $this->assertNull($membership);
     }
 
@@ -271,7 +271,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->normalUserClient->addUserToProject(
                 $this->project['id'],
                 [
-                    'email' => 'spam@keboola.com',
+                    'email' => 'devel-tests@keboola.com',
                     'role' => ProjectRole::SHARE,
                 ]
             );
@@ -281,7 +281,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
             $this->assertSame(self::SHARE_ROLE_EXPECTED_ERROR, $e->getMessage());
         }
 
-        $membership = $this->findProjectUser($this->project['id'], 'spam@keboola.com');
+        $membership = $this->findProjectUser($this->project['id'], 'devel-tests@keboola.com');
         $this->assertNull($membership);
     }
 

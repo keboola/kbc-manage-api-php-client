@@ -14,7 +14,7 @@ class ListProjectsUsersTest extends ClientTestCase
     {
         parent::setUp();
 
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'devel-tests+spam@keboola.com']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
@@ -30,7 +30,7 @@ class ListProjectsUsersTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'devel-tests+spam@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
@@ -67,7 +67,7 @@ class ListProjectsUsersTest extends ClientTestCase
         ]);
 
         $this->normalUserClient->addUserToProject($testProject['id'], [
-            'email' => 'spam+spam@keboola.com',
+            'email' => 'devel-tests+spam@keboola.com',
         ]);
 
         $this->normalUserClient->addUserToProject($testProject['id'], [

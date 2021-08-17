@@ -59,7 +59,7 @@ class OrganizationsMetadataTest extends ClientTestCase
          */
         parent::setUp();
 
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'devel-tests+spam@keboola.com']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
