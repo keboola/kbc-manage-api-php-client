@@ -5,7 +5,7 @@ use Keboola\ManageApi\Client;
 
 abstract class ClientMfaTestCase extends ClientTestCase
 {
-    public const DUMMY_USER_EMAIL = 'spam+spam@keboola.com';
+    public const DUMMY_USER_EMAIL = 'devel-tests+spam@keboola.com';
 
     protected function findProjectUser(int $projectId, string $userEmail): ?array
     {

@@ -14,7 +14,7 @@ class OrganizationInvitationsTest extends ClientTestCase
     {
         parent::setUp();
 
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'devel-tests+spam@keboola.com']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
@@ -30,7 +30,7 @@ class OrganizationInvitationsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'devel-tests+spam@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->normalUserClient->listMyOrganizationInvitations() as $invitation) {
@@ -60,7 +60,7 @@ class OrganizationInvitationsTest extends ClientTestCase
      */
     public function testSuperAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $organizationId = $this->organization['id'];
 
         $this->client->addUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
@@ -95,7 +95,7 @@ class OrganizationInvitationsTest extends ClientTestCase
      */
     public function testMaintainerCannotInviteRegardlessOfAllowAutoJoin($allowAutoJoin): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $organizationId = $this->organization['id'];
 
         $this->client->addUserToOrganization($organizationId, ['email' => $this->superAdmin['email']]);
@@ -132,7 +132,7 @@ class OrganizationInvitationsTest extends ClientTestCase
      */
     public function testRandomAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $organizationId = $this->organization['id'];
 
         $this->client->addUserToOrganization($organizationId, ['email' => $this->superAdmin['email']]);
@@ -174,7 +174,7 @@ class OrganizationInvitationsTest extends ClientTestCase
      */
     public function testOrganizationAdminCanInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $organizationId = $this->organization['id'];
 
         $this->client->addUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
@@ -318,7 +318,7 @@ class OrganizationInvitationsTest extends ClientTestCase
 
     public function testCannotInviteExistingMember(): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $organizationId = $this->organization['id'];
 
         $this->client->addUserToOrganization($organizationId, ['email' => $this->normalUser['email']]);
@@ -387,7 +387,7 @@ class OrganizationInvitationsTest extends ClientTestCase
     public function testAddingAdminToOrganizationDeletesCorrespondingInvitation(): void
     {
         $inviteeEmail = $this->normalUser['email'];
-        $secondInviteeEmail = 'spam@keboola.com';
+        $secondInviteeEmail = 'devel-tests@keboola.com';
         $organizationId = $this->organization['id'];
 
         $this->client->joinOrganization($organizationId);

@@ -18,7 +18,7 @@ class MaintainerJoinTest extends ClientTestCase
             'name' => self::TESTS_MAINTAINER_PREFIX . ' - MaintainerJoinTest',
         ]);
 
-        $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'devel-tests+spam@keboola.com']);
         $this->client->removeUserFromMaintainer($this->maintainer['id'], $this->superAdmin['id']);
     }
 
@@ -41,7 +41,7 @@ class MaintainerJoinTest extends ClientTestCase
     public function testSuperAdminAdminJoiningMaintainerDeletesCorrespondingInvitation(): void
     {
         $maintainerId = $this->maintainer['id'];
-        $secondInviteeEmail = 'spam@keboola.com';
+        $secondInviteeEmail = 'devel-tests@keboola.com';
 
         $this->client->addUserToMaintainer($maintainerId, ['email' => $this->normalUser['email']]);
 

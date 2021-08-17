@@ -48,7 +48,7 @@ class MaintainersMetadataTest extends ClientTestCase
         ]);
 
         // add dummy user as maintainer admin
-        $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToMaintainer($this->maintainer['id'], ['email' => 'devel-tests+spam@keboola.com']);
         // delete super-admin from maintainers
         $this->client->removeUserFromMaintainer($this->maintainer['id'], $this->superAdmin['id']);
     }

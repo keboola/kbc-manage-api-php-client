@@ -15,7 +15,7 @@ class ProjectInvitationsTest extends ClientTestCase
     {
         parent::setUp();
 
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'spam+spam@keboola.com']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'devel-tests+spam@keboola.com']);
 
         foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
             if ($member['id'] === $this->normalUser['id']) {
@@ -31,7 +31,7 @@ class ProjectInvitationsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'spam@keboola.com']);
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => 'devel-tests@keboola.com']);
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
 
         foreach ($this->normalUserClient->listMyProjectInvitations() as $invitation) {
@@ -79,7 +79,7 @@ class ProjectInvitationsTest extends ClientTestCase
      */
     public function testSuperAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
@@ -113,7 +113,7 @@ class ProjectInvitationsTest extends ClientTestCase
      */
     public function testMaintainerAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
@@ -149,7 +149,7 @@ class ProjectInvitationsTest extends ClientTestCase
      */
     public function testRandomAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
@@ -193,7 +193,7 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $this->normalUserClient->updateOrganization($this->organization['id'], [
@@ -243,7 +243,7 @@ class ProjectInvitationsTest extends ClientTestCase
      */
     public function testProjectMemberCanInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
@@ -397,7 +397,7 @@ class ProjectInvitationsTest extends ClientTestCase
 
     public function testCannotInviteExistingMember(): void
     {
-        $inviteeEmail = 'spam@keboola.com';
+        $inviteeEmail = 'devel-tests@keboola.com';
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
@@ -480,7 +480,7 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $this->assertEquals($invitation, reset($invitations));
 
-        $this->normalUserClient->addUserToProject($projectId, ['email' => 'spam@keboola.com']);
+        $this->normalUserClient->addUserToProject($projectId, ['email' => 'devel-tests@keboola.com']);
         $this->normalUserClient->removeUserFromProject($projectId, $this->normalUser['id']);
         $this->normalUserClient->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 
@@ -510,7 +510,7 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $this->assertEquals($invitation, reset($invitations));
 
-        $this->normalUserClient->addUserToProject($projectId, ['email' => 'spam@keboola.com']);
+        $this->normalUserClient->addUserToProject($projectId, ['email' => 'devel-tests@keboola.com']);
         $this->normalUserClient->removeUserFromProject($projectId, $this->normalUser['id']);
         $this->normalUserClient->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 
@@ -540,7 +540,7 @@ class ProjectInvitationsTest extends ClientTestCase
 
         $this->assertEquals($invitation, reset($invitations));
 
-        $this->normalUserClient->addUserToProject($projectId, ['email' => 'spam@keboola.com']);
+        $this->normalUserClient->addUserToProject($projectId, ['email' => 'devel-tests@keboola.com']);
         $this->normalUserClient->removeUserFromProject($projectId, $this->normalUser['id']);
         $this->normalUserClient->removeUserFromOrganization($this->organization['id'], $this->normalUser['id']);
 

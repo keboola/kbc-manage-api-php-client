@@ -190,7 +190,7 @@ class OrganizationsTest extends ClientTestCase
         $admins = $this->client->listOrganizationUsers($organization['id']);
         $this->assertCount(1, $admins);
 
-        $this->client->addUserToOrganization($organization['id'], ['email' => 'spam@keboola.com']);
+        $this->client->addUserToOrganization($organization['id'], ['email' => 'devel-tests@keboola.com']);
 
         $admins = $this->client->listOrganizationUsers($organization['id']);
         $this->assertCount(2, $admins);
@@ -205,7 +205,7 @@ class OrganizationsTest extends ClientTestCase
             $this->assertArrayHasKey('invitor', $user);
             $this->assertNull($user['invitor']);
 
-            if ($user['email'] == 'spam@keboola.com') {
+            if ($user['email'] == 'devel-tests@keboola.com') {
                 $foundUser = $user;
                 break;
             }
@@ -221,7 +221,7 @@ class OrganizationsTest extends ClientTestCase
 
         // permissions of another user
         try {
-            $this->normalUserClient->addUserToOrganization($organization['id'], ['email' => 'spam2@keboola.com']);
+            $this->normalUserClient->addUserToOrganization($organization['id'], ['email' => 'devel-tests+spam2@keboola.com']);
             $this->fail('User should not have permissions to add users to organization');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -245,14 +245,14 @@ class OrganizationsTest extends ClientTestCase
         $this->assertCount(1, $orgUsers);
 
         // make sure superAdmin can add someone to the organization, allowAutoJoin is true
-        $org = $this->client->addUserToOrganization($organization['id'], ['email' => 'spammer@keboola.com']);
+        $org = $this->client->addUserToOrganization($organization['id'], ['email' => 'devel-tests+spammer@keboola.com']);
         $orgUsers = $this->client->listOrganizationUsers($organization['id']);
         $this->assertCount(2, $orgUsers);
 
         // now set allowAutoJoin to false and super should no longer be able to add user to org
         $this->normalUserClient->updateOrganization($organization['id'], ['allowAutoJoin' => false]);
         try {
-            $this->client->addUserToOrganization($organization['id'], ['email' => 'spammer@keboola.com']);
+            $this->client->addUserToOrganization($organization['id'], ['email' => 'devel-tests+spammer@keboola.com']);
             $this->fail('Should not be able to add the user');
         } catch (ClientException $e) {
             $this->assertEquals('manage.joinOrganizationPermissionDenied', $e->getStringCode());
