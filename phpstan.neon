@@ -1,0 +1,16 @@
+parameters:
+    bootstrapFiles:
+        - tests/bootstrap.php
+    tmpDir: cache/.phpstan
+    parallel:
+        processTimeout: 300.0
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
+    ignoreErrors:
+        # other
+        - '#Method .* has no return typehint specified#'
+        - '#Property .* has no typehint specified#'
+        - '#Method (.*) has parameter (.*) with no typehint specified.#'
+includes:
+    - phpstan-baseline.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
