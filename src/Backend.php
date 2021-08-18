@@ -10,7 +10,7 @@ final class Backend
     public const SNOWFLAKE = 'snowflake';
     public const SYNAPSE = 'synapse';
 
-    public static function getDefaultBackend(): string
+    public static function getDefaultBackend(Client|ClientException $e): string
     {
         return self::SNOWFLAKE;
     }
