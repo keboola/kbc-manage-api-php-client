@@ -10,7 +10,7 @@ class MaintainerInvitationsTest extends ClientTestCase
     /**
      * Create empty maintainer without admins and decline all maintainer invitations for test users
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

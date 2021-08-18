@@ -51,7 +51,7 @@ class OrganizationsMetadataTest extends ClientTestCase
 
     private $organization;
 
-    public function setUp()
+    public function setUp(): void
     {
         /*
          * client = superadmin

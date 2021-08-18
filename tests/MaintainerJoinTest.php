@@ -10,7 +10,7 @@ class MaintainerJoinTest extends ClientTestCase
     /**
      * Create empty maintainer without admins, remove admins from test maintainer
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

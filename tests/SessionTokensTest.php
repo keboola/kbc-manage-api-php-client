@@ -12,7 +12,7 @@ class SessionTokensTest extends ClientTestCase
     /** @var \Keboola\ManageApi\Client */
     private $sessionTokenClient;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

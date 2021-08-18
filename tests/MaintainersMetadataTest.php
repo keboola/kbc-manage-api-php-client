@@ -30,7 +30,7 @@ class MaintainersMetadataTest extends ClientTestCase
      */
     private $maintainer;
 
-    public function setUp()
+    public function setUp(): void
     {
         /*
          * $this->client = super-admin
