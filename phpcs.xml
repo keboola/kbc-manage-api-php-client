@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="Project">
+    <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility" />
     <config name="php_version" value="7.1.0"/>
     <rule ref="vendor/keboola/coding-standard/src/ruleset.xml">
         <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
