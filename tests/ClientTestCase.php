@@ -44,7 +44,7 @@ class ClientTestCase extends TestCase
     /** @var array */
     protected $normalUserWithMfa;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $manageApiUrl = getenv('KBC_MANAGE_API_URL');
 
@@ -129,7 +129,7 @@ class ClientTestCase extends TestCase
     }
 
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = $this->getClient([
             'token' => getenv('KBC_MANAGE_API_TOKEN'),

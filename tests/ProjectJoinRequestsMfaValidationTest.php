@@ -14,7 +14,7 @@ class ProjectJoinRequestsMfaValidationTest extends ClientMfaTestCase
      * - Add user having MFA enabled to organization. Remove all other members
      * - Delete all project join requests of super admin and normal user
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

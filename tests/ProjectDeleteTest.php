@@ -19,7 +19,7 @@ class ProjectDeleteTest extends ClientTestCase
 
     private $organization;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
