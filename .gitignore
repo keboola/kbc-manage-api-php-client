@@ -11,3 +11,4 @@ docs/*.pyc
 .env
 .DS_STORE
 set-env.sh
+cache/*
