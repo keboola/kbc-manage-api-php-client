@@ -8,6 +8,7 @@
     "require-dev": {
         "keboola/coding-standard": "^13.0",
         "keboola/storage-api-client": "^7.0",
+        "phpcompatibility/php-compatibility": "^9.3",
         "phpunit/phpunit": "^7.0|^8.0"
     },
     "autoload": {
@@ -22,8 +23,10 @@
     },
     "scripts": {
         "ci": [
+            "@phpcs-compatibility",
             "@phpcs"
         ],
+        "phpcs-compatibility": "phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility && phpcs --ignore=*vendor/* -n . --standard=PHPCompatibility --runtime-set testVersion 7.1-8.0",
         "phpcs": "phpcs -s -n -p --extensions=php . src tests",
         "tests": "phpunit"
     },
