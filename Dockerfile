@@ -1,4 +1,5 @@
 ARG PHP_VERSION=7.1
+# the default env bellow is used when build pipeline sends "PHP_VERSION=" - the above default value is ignored in that case
 FROM php:${PHP_VERSION:-7.1} as dev
 
 ARG XDEBUG_VERSION=2.9.8
