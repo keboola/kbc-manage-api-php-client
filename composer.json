@@ -26,7 +26,7 @@
             "@phpcs-compatibility",
             "@phpcs"
         ],
-        "phpcs-compatibility": "phpcs --config-set installed_paths vendor/phpcompatibility/php-compatibility && phpcs --ignore=*vendor/* -n . --standard=PHPCompatibility --runtime-set testVersion 7.1-8.0",
+        "phpcs-compatibility": "phpcs --ignore=*vendor/* -s -n -p . src tests --standard=PHPCompatibility --runtime-set testVersion 7.1-8.0",
         "phpcs": "phpcs -s -n -p --extensions=php . src tests",
         "tests": "phpunit"
     },
