@@ -24,9 +24,10 @@ deploy:
     script: ./deploy.sh
     on:
       branch: master
+      condition: $PHP_VERSION =~ ^$
   - provider: script
     skip_cleanup: true
     script: ./deploy-tag.sh
     on:
       tags: true
-      condition: $TRAVIS_TAG =~ ^test-
+      condition: $TRAVIS_TAG =~ ^test- AND $PHP_VERSION =~ ^$
