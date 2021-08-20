@@ -8,7 +8,6 @@
     "require-dev": {
         "keboola/coding-standard": "^13.0",
         "keboola/storage-api-client": "^7.0",
-        "phpcompatibility/php-compatibility": "^9.3",
         "phpstan/phpstan": "^0.12.94",
         "phpstan/phpstan-phpunit": "^0.12.22",
         "phpunit/phpunit": "^7.0|^8.0"
@@ -28,8 +27,7 @@
             "@phpcs",
             "@phpstan"
         ],
-        "phpcs-compatibility": "phpcs --ignore=*vendor/* -s -n -p . src tests --standard=PHPCompatibility --runtime-set testVersion 7.1-8.0",
-        "phpcs": "phpcs -s -n -p --extensions=php . src tests",
+        "phpcs": "phpcs -s -n -p --extensions=php src tests",
         "phpstan": "phpstan analyse ./src ./tests --level=max -c phpstan.neon",
         "tests": "phpunit"
     },
