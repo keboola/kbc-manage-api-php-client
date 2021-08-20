@@ -22,7 +22,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     /** @var array */
     private $guestUser;
 
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

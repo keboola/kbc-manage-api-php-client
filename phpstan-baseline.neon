@@ -1,0 +1,162 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 1
+			path: src/Client.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$stringCode\\)\\: Unexpected token \"\\$stringCode\", expected type at offset 18$#"
+			count: 1
+			path: src/Exception.php
+
+		-
+			message: "#^Parameter \\#1 \\$message of method Exception\\:\\:__construct\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: src/Exception.php
+
+		-
+			message: "#^PHPDoc tag @param references unknown parameter\\: \\$token$#"
+			count: 1
+			path: tests/ClientTestCase.php
+
+		-
+			message: "#^Parameter \\#1 \\$url of function parse_url expects string, string\\|false given\\.$#"
+			count: 1
+			path: tests/ClientTestCase.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$parameters\\)\\: Unexpected token \"\\$parameters\", expected type at offset 56$#"
+			count: 1
+			path: tests/CommandsTest.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$parameters\\)\\: Unexpected token \"\\$parameters\", expected type at offset 58$#"
+			count: 1
+			path: tests/CommandsTest.php
+
+		-
+			message: "#^Cannot call method getBody\\(\\) on Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null\\.$#"
+			count: 1
+			path: tests/CommonTest.php
+
+		-
+			message: "#^Cannot access offset 'id' on int\\.$#"
+			count: 2
+			path: tests/FeaturesTest.php
+
+		-
+			message: "#^Cannot access offset 'name' on int\\.$#"
+			count: 2
+			path: tests/FeaturesTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: tests/FileStorageAbsTest.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: tests/FileStorageS3Test.php
+
+		-
+			message: "#^Cannot access offset 'id' on int\\.$#"
+			count: 3
+			path: tests/ListProjectsUsersTest.php
+
+		-
+			message: "#^Cannot access offset 'id' on int\\.$#"
+			count: 2
+			path: tests/MaintainersTest.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 2
+			path: tests/OrganizationJoinMfaValidationTest.php
+
+		-
+			message: "#^Cannot access offset 'id' on int\\.$#"
+			count: 2
+			path: tests/OrganizationMfaValidationTest.php
+
+		-
+			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
+			count: 3
+			path: tests/OrganizationMfaValidationTest.php
+
+		-
+			message: "#^Cannot access offset 'id' on int\\.$#"
+			count: 14
+			path: tests/OrganizationsTest.php
+
+		-
+			message: "#^Cannot access offset 'id' on int\\.$#"
+			count: 6
+			path: tests/ProjectJoinTest.php
+
+		-
+			message: "#^Offset 'role' does not exist on array\\|null\\.$#"
+			count: 2
+			path: tests/ProjectMembershipRolesTest.php
+
+		-
+			message: "#^Property Keboola\\\\ManageApiTest\\\\ProjectMembershipRolesTest\\:\\:\\$project \\(array\\) does not accept int\\.$#"
+			count: 1
+			path: tests/ProjectMembershipRolesTest.php
+
+		-
+			message: "#^Cannot access offset 'description' on int\\.$#"
+			count: 1
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Cannot access offset 'features' on int\\.$#"
+			count: 1
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Cannot access offset 'id' on int\\.$#"
+			count: 63
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Cannot access offset 'isDisabled' on int\\.$#"
+			count: 1
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Offset 'role' does not exist on array\\|null\\.$#"
+			count: 4
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^PHPDoc tag @param has invalid value \\(\\$organizationId\\)\\: Unexpected token \"\\$organizationId\", expected type at offset 18$#"
+			count: 1
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Variable \\$organization might not be defined\\.$#"
+			count: 4
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Variable \\$project might not be defined\\.$#"
+			count: 3
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Variable \\$storage might not be defined\\.$#"
+			count: 1
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Variable \\$supportedFileStorage might not be defined\\.$#"
+			count: 1
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Variable \\$unsupportedFileStorage might not be defined\\.$#"
+			count: 1
+			path: tests/ProjectsTest.php
+

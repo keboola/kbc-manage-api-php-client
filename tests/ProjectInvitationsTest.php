@@ -11,7 +11,7 @@ class ProjectInvitationsTest extends ClientTestCase
     /**
      * Create empty organization without admins, remove admins from test maintainer and delete all their join requests
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

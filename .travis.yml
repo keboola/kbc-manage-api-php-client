@@ -1,14 +1,22 @@
 sudo: required
 
-language: bash
-
 services:
   - docker
 
+env:
+  -
+  - PHP_VERSION=7.2
+  - PHP_VERSION=7.3
+  - PHP_VERSION=7.4
+  - PHP_VERSION=8.0
+
 script:
- - docker-compose build release
+ - echo $PHP_VERSION
+ - docker-compose build --build-arg PHP_VERSION=$PHP_VERSION release
+ - docker tag keboola/manage-api-tests:latest keboola/manage-api-tests:release$PHP_VERSION
  - docker network create connection_api-tests
  - docker-compose run --rm release composer ci
+ - docker images
 
 deploy:
   - provider: script

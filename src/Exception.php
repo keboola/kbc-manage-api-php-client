@@ -1,7 +1,9 @@
 <?php
 namespace Keboola\ManageApi;
 
-class Exception extends \Exception
+use Exception as GenericException;
+
+class Exception extends GenericException
 {
     protected $stringCode;
 
@@ -12,7 +14,7 @@ class Exception extends \Exception
      *
      * @param string|null $message
      * @param int|null $code
-     * @param \Exception|null $previous
+     * @param GenericException|null $previous
      * @param string|null $stringCode
      * @param mixed $params
      */
