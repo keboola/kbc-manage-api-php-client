@@ -28,3 +28,4 @@ jobs:
          on:
           tags: true
           condition: $TRAVIS_TAG =~ ^test-
+      if: $TRAVIS_TAG =~ ^test-
