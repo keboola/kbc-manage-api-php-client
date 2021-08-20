@@ -25,7 +25,4 @@ jobs:
        - provider: script
          skip_cleanup: true
          script: ./deploy-tag.sh
-         on:
-          tags: true
-          condition: $TRAVIS_TAG =~ ^test-
-      if: $TRAVIS_TAG =~ ^test-
+      if: env(TRAVIS_TAG) =~ ^test-
