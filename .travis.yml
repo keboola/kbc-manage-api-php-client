@@ -12,7 +12,7 @@ script:
  - docker images
 
 env:
-  -
+  - PHP_VERSION= # default php 7.1 version from dockerfile
   - PHP_VERSION=7.2
   - PHP_VERSION=7.3
   - PHP_VERSION=7.4
@@ -20,4 +20,11 @@ env:
 
 jobs:
   include:
-    - stage: build and tests
+    - stage: deploy
+      deploy:
+       - provider: script
+         skip_cleanup: true
+         script: ./deploy-tag.sh
+         on:
+          tags: true
+          condition: $TRAVIS_TAG =~ ^test-
