@@ -13,7 +13,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
      * - Create empty organization
      * - Add dummy user to organization and maintainer. Remove all other members
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

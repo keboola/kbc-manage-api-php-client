@@ -15,7 +15,7 @@ class ProjectTemplatesTest extends ClientTestCase
     /**
      * Delete organizations and remove admins from test maintainer, create empty organization without admin
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

@@ -6,6 +6,7 @@ use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\StorageApi\Client;
+use Throwable;
 
 class ProjectsTest extends ClientTestCase
 {
@@ -84,7 +85,7 @@ class ProjectsTest extends ClientTestCase
                 $backendToAssign['id']
             );
             $this->fail('Exception should be thrown.');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->assertSame(
                 $expectedMessage,
                 $e->getMessage()
@@ -152,7 +153,7 @@ class ProjectsTest extends ClientTestCase
                 $unsupportedFileStorage['id']
             );
             $this->fail('Exception should be thrown.');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->assertSame(
                 $expectedMessage,
                 $e->getMessage()
@@ -511,7 +512,7 @@ class ProjectsTest extends ClientTestCase
 
         $foundUser = null;
         foreach ($admins as $user) {
-            if ($user['email'] == 'devel-tests@keboola.com') {
+            if ($user['email'] === 'devel-tests@keboola.com') {
                 $foundUser = $user;
                 break;
             }
@@ -644,7 +645,7 @@ class ProjectsTest extends ClientTestCase
 
         $foundUser = null;
         foreach ($admins as $user) {
-            if ($user['email'] == 'devel-tests@keboola.com') {
+            if ($user['email'] === 'devel-tests@keboola.com') {
                 $foundUser = $user;
                 break;
             }
@@ -1159,7 +1160,7 @@ class ProjectsTest extends ClientTestCase
         try {
             $client->verifyToken();
             $this->fail('Token should be disabled');
-        } catch (\Keboola\StorageApi\ClientException $e) {
+        } catch (ClientException $e) {
             $this->assertEquals($e->getStringCode(), 'MAINTENANCE');
             $this->assertEquals($e->getMessage(), $disableReason);
         }
@@ -1175,7 +1176,7 @@ class ProjectsTest extends ClientTestCase
 
     public function testListDeletedProjects()
     {
-        $organizations = array();
+        $organizations = [];
 
         for ($i=0; $i<2; $i++) {
             $organization = $this->initTestOrganization();
@@ -1201,34 +1202,34 @@ class ProjectsTest extends ClientTestCase
         $this->assertGreaterThan($i + 1, $projects);
 
         // organization deleted projects
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(1, $projects);
 
         // name filter test
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
             'name' => $project['name'],
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertGreaterThan(0, count($projects));
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
             'name' => $project['name'],
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertGreaterThan(0, count($projects));
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
             'name' => sha1($project['name']),
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(0, $projects);
@@ -1260,36 +1261,36 @@ class ProjectsTest extends ClientTestCase
         $this->assertEmpty($projects);
 
         // try paging
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(3, $projects);
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
             'offset' => 0,
             'limit' => 2,
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(2, $projects);
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
             'offset' => 2,
             'limit' => 2,
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(1, $projects);
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
             'offset' => 4,
             'limit' => 2,
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(0, $projects);
@@ -1307,7 +1308,7 @@ class ProjectsTest extends ClientTestCase
 
         // deleted organization
         try {
-            $this->client->listDeletedProjects(array('organizationId' => $organization['id']));
+            $this->client->listDeletedProjects(['organizationId' => $organization['id']]);
 
             $this->fail('List deleted projects of deleted organization should produce error');
         } catch (ClientException $e) {
@@ -1345,9 +1346,9 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteProject($project['id']);
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(1, $projects);
@@ -1376,9 +1377,9 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteProject($project['id']);
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
-        );
+        ];
 
         $deletedProject = $this->client->getDeletedProject($project['id']);
         $this->assertTrue($deletedProject['isDeleted']);
@@ -1392,9 +1393,9 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->initTestProject($organization['id']);
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
-        );
+        ];
 
         try {
             $this->client->undeleteProject($project['id']);
@@ -1447,9 +1448,9 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteProject($project['id']);
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(1, $projects);
@@ -1483,14 +1484,14 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteProject($project['id']);
 
-        $params = array(
+        $params = [
             'organizationId' => $organization['id'],
-        );
+        ];
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(1, $projects);
 
-        $this->client->undeleteProject($project['id'], array('expirationDays' => 7));
+        $this->client->undeleteProject($project['id'], ['expirationDays' => 7]);
 
         $projects = $this->client->listDeletedProjects($params);
         $this->assertCount(0, $projects);

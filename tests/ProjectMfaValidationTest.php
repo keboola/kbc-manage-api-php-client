@@ -14,7 +14,7 @@ class ProjectMfaValidationTest extends ClientMfaTestCase
      * - Add dummy user to maintainer. Remove all other members
      * - Add user having MFA enabled to organization. Remove all other members
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
