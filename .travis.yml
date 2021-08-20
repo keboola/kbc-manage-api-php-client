@@ -11,16 +11,13 @@ script:
  - docker-compose run --rm release composer ci
  - docker images
 
+env:
+  -
+  - PHP_VERSION=7.2
+  - PHP_VERSION=7.3
+  - PHP_VERSION=7.4
+  - PHP_VERSION=8.0
+
 jobs:
   include:
     - stage: build and tests
-      name: PHP7.1
-      env: PHP_VERSION=
-    - name: PHP7.2
-      env: PHP_VERSION=7.2
-    - name: PHP7.3
-      env: PHP_VERSION=7.3
-    - name: PHP7.4
-      env: PHP_VERSION=7.4
-    - name: PHP8.0
-      env: PHP_VERSION=8.0
