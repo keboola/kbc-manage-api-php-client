@@ -14,15 +14,13 @@ script:
 env:
   - PHP_VERSION= # default php 7.1 version from dockerfile
   - PHP_VERSION=7.2
-  - PHP_VERSION=7.3
-  - PHP_VERSION=7.4
-  - PHP_VERSION=8.0
 
 jobs:
   include:
     - stage: deploy
+      script: skip
       deploy:
        - provider: script
          skip_cleanup: true
          script: ./deploy-tag.sh
-      if: env(TRAVIS_TAG) =~ ^test-
+      if: (tag IS present)
