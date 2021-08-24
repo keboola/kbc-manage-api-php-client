@@ -5,7 +5,7 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
-use Keboola\StorageApi\Client;
+use Keboola\StorageApi\ClientException as StorageApiClientException;
 use Throwable;
 
 class ProjectsTest extends ClientTestCase
@@ -1160,7 +1160,7 @@ class ProjectsTest extends ClientTestCase
         try {
             $client->verifyToken();
             $this->fail('Token should be disabled');
-        } catch (ClientException $e) {
+        } catch (StorageApiClientException $e) {
             $this->assertEquals($e->getStringCode(), 'MAINTENANCE');
             $this->assertEquals($e->getMessage(), $disableReason);
         }
