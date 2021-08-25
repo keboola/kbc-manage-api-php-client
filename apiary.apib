@@ -108,6 +108,8 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionMysqlId": 234,
             "defaultConnectionRedshiftId": 232,
             "defaultConnectionSnowflakeId": 242,
+            "defaultConnectionSynapseId": 235,
+            "defaultConnectionExasolId": 236,
             "organizations": [
                 {
                     "id": 234,
@@ -128,6 +130,8 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionMysqlId": 234,
             "defaultConnectionRedshiftId": 232,
             "defaultConnectionSnowflakeId": 242,
+            "defaultConnectionSynapseId": 235,
+            "defaultConnectionExasolId": 236,
             "organizations": [
                 {
                     "id": 234,
@@ -165,6 +169,8 @@ A maintainer object has the following attributes:
         "defaultConnectionMysqlId": 234,
         "defaultConnectionRedshiftId": 232,
         "defaultConnectionSnowflakeId": 242,
+        "defaultConnectionSynapseId": 235,
+        "defaultConnectionExasolId": 236,
         "zendeskUrl": "https://some.url.com",
         "organizations": [
             {
@@ -197,6 +203,8 @@ A partial update of a maintainer
     + name:Example - Maintainer name
     + defaultConnectionRedshiftId:234 (optional) - Default Redshift Connection ID
     + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection ID
+    + defaultConnectionSynapseId:324 (optional) - Default Synapse Connection ID
+    + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
     + zendeskUrl:https://keboola.zendesk.com (optional)
 
 + Request (application/json)
@@ -1062,6 +1070,8 @@ Only organization members, members of the maintainer and super admins can delete
       "hasMysql": false,
       "hasRedshift": false,
       "hasSnowflake": true,
+      "hasSynapse": false,
+      "hasExasol": false,
       "defaultBackend": "snowflake",
       "hasTryModeOn": "0",
       "limits": {
@@ -1275,6 +1285,8 @@ A project will be created from a default template which defines its limits. Only
             "rowsCount": 200,
             "hasMysql": false,
             "hasRedshift": false,
+            "hasSynapse": false,
+            "hasExasol": false,
             "hasSnowflake": true,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
@@ -1316,7 +1328,7 @@ A project will be created from a default template which defines its limits. Only
 ## Assign Project Storage Backend [/manage/projects/{project_id}/storage-backend]
 This action can be performed only by a super admin.
 
-One backend connection of each type (Snowflake, Redshift) can be assigned to a project.
+One backend connection of each type (Snowflake, Redshift, Synapse, Exasol) can be assigned to a project.
 Connection type is automatically detected from the passed connection identifier.
 
 + Parameters
@@ -2174,6 +2186,8 @@ Operations on deleted projects are allowed only for a super admin.
             "rowsCount": 200,
             "hasMysql": false,
             "hasRedshift": false,
+            "hasSynapse": false,
+            "hasExasol": false,
             "hasSnowflake": true,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
@@ -2253,6 +2267,8 @@ Projects can be filtered by various filters:
             "hasMysql": false,
             "hasRedshift": false,
             "hasSnowflake": true,
+            "hasSynapse": false,
+            "hasExasol": false,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
             "limits": {},
@@ -2285,6 +2301,8 @@ Projects can be filtered by various filters:
             "hasMysql": false,
             "hasRedshift": false,
             "hasSnowflake": true,
+            "hasSynapse": false,
+            "hasExasol": false,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
             "limits": {},
@@ -2790,6 +2808,8 @@ Create a new project from given promo code
         "hasMysql": false,
         "hasRedshift": false,
         "hasSnowflake": true,
+        "hasExasol": false,
+        "hasSynapse": false,
         "defaultBackend": "snowflake",
         "hasTryModeOn": "0",
         "limits": {
@@ -3446,6 +3466,7 @@ Currently supported backends are:
 - Redshift
 - Snowflake
 - Synapse
+- Exasol
 
 ## Storage Backend Collection [/manage/storage-backend]
 
@@ -3508,7 +3529,7 @@ CREATE MASTER KEY
 
 + Response 200 (application/json)
 
-    + Attributes (array[StorageBackendListRedshift,StorageBackendListSnowflake,StorageBackendListSynapse])
+    + Attributes (array[StorageBackendListRedshift,StorageBackendListSnowflake,StorageBackendListSynapse,StorageBackendListExasol])
 
 ### Update backend [PATCH /manage/storage-backend/{backend_id}]
 
@@ -3589,6 +3610,10 @@ All projects using the backend must be deleted and purged before it can be delet
 + backend: synapse (required)
 + database: keboola
 + useSynapseManagedIdentity: false
+
+## StorageBackendListSynapse (StorageBackendListBase)
++ host: database.exasol.com (required)
++ backend: exasol (required)
 
 # Group SUPER - Commands
 

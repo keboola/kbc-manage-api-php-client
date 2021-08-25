@@ -46,6 +46,14 @@ class ProjectDeleteTest extends ClientTestCase
             'backend' => Backend::SYNAPSE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
         ];
+        yield 'exasol with ABS file storage' => [
+            'backend' => Backend::EXASOL,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
+        ];
+        yield 'exasol with S3 file storage' => [
+            'backend' => Backend::EXASOL,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
+        ];
     }
 
     public function testPurgeExpiredProjectRemoveJoinRequest()
@@ -136,6 +144,9 @@ class ProjectDeleteTest extends ClientTestCase
      */
     public function testDeleteAndPurgeProjectWithData(string $backend, string $fileStorageProvider): void
     {
+        if ($backend === Backend::EXASOL) {
+            $this->markTestSkipped('Skip until create table works in Exasol.');
+        }
         $connectionParamName = sprintf('defaultConnection%sId', ucfirst($backend));
         $maintainer =  $this->client->getMaintainer($this->testMaintainerId);
 
@@ -152,7 +163,10 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->client->assignFileStorage($project['id'], $this->loadFileStorageId($fileStorageProvider));
 
-        if ($backend === Backend::REDSHIFT || $backend === Backend::SYNAPSE) {
+        if ($backend === Backend::REDSHIFT
+            || $backend === Backend::SYNAPSE
+            || $backend === Backend::EXASOL
+        ) {
             $this->client->assignProjectStorageBackend($project['id'], $maintainer[$connectionParamName]);
         }
 
