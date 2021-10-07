@@ -1,6 +1,6 @@
 # Keboola Manage API PHP client 
 
-[![Build Status](https://travis-ci.org/keboola/kbc-manage-api-php-client.svg?branch=master)](https://travis-ci.org/keboola/kbc-manage-api-php-client)
+[![Build on master](https://github.com/keboola/kbc-manage-api-php-client/actions/workflows/master.yml/badge.svg?branch=master)](https://github.com/keboola/kbc-manage-api-php-client/actions/workflows/master.yml)
 
 Simple PHP wrapper library for [Keboola Management REST API](http://docs.keboolamanagementapi.apiary.io/#)
 
