@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php_version:
+          - ''
+          - '7.2'
+          - '7.3'
+          - '7.4'
+          - '8.0'
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          echo "PHP version: ${{ matrix.php_version }}"
+          docker-compose build --build-arg PHP_VERSION=${{ matrix.php_version }} release
+          docker tag keboola/manage-api-tests:latest keboola/manage-api-tests:release${{ matrix.php_version }}
+          docker network create connection_api-tests
+          docker-compose run --rm release composer ci
+      - run: docker images
