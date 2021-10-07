@@ -27,5 +27,6 @@ jobs:
       - name: Tag and push to quay.io
         run: |
           TAG="${GITHUB_REF##*/}"
+          echo $TAG
           docker tag keboola/manage-api-tests:latest keboola/manage-api-tests:$TAG
           docker push quay.io/keboola/manage-api-tests:$TAG
