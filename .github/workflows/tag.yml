@@ -4,7 +4,6 @@ on:
   push:
     tags:
       - test-*
-      - build-* # TODO: Remove
 
 jobs:
   build:
