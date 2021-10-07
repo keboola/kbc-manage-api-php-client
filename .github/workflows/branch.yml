@@ -21,8 +21,8 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           docker-compose build --build-arg PHP_VERSION=${{ matrix.php_version }} release
+          docker network create connection_api-tests
           docker-compose run --rm release php -v
           docker tag keboola/manage-api-tests:latest keboola/manage-api-tests:release${{ matrix.php_version }}
-          docker network create connection_api-tests
           docker-compose run --rm release composer ci
       - run: docker images
