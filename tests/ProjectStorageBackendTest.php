@@ -42,6 +42,7 @@ class ProjectStorageBackendTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->assertArrayHasKey('backends', $project);
@@ -105,6 +106,7 @@ class ProjectStorageBackendTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->assertArrayHasKey('backends', $project);
@@ -126,6 +128,7 @@ class ProjectStorageBackendTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $token = $this->client->createProjectStorageToken($project['id'], [

@@ -30,6 +30,7 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
         $project = $this->client->createProject($organization['id'], [
             'name' => 'Test template features - project',
             'type' => self::TEST_PROJECT_TEMPLATE_STRING_ID,
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         return $project;

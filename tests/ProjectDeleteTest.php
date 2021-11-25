@@ -73,6 +73,7 @@ class ProjectDeleteTest extends ClientTestCase
         $project = $this->client->createProject($this->organization['id'], [
             'name' => 'My test',
             'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->normalUserClient->requestAccessToProject($project['id']);
@@ -100,6 +101,7 @@ class ProjectDeleteTest extends ClientTestCase
         $project = $this->client->createProject($this->organization['id'], [
             'name' => 'My test',
             'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->client->inviteUserToProject($project['id'], ['email' => $this->normalUser['email']]);
@@ -126,6 +128,7 @@ class ProjectDeleteTest extends ClientTestCase
         $project = $this->client->createProject($this->organization['id'], [
             'name' => 'My test',
             'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->client->setProjectMetadata(
@@ -157,6 +160,7 @@ class ProjectDeleteTest extends ClientTestCase
         $project = $this->client->createProject($this->organization['id'], [
             'name' => 'My test',
             'defaultBackend' => $backend,
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->assertEquals($backend, $project['defaultBackend']);

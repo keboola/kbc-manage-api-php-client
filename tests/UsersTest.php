@@ -150,7 +150,10 @@ class UsersTest extends ClientTestCase
     public function testRemoveUserFromDeletedStructures()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'RemoveMeOrg']);
-        $project = $this->client->createProject($organization['id'], ['name' => 'RemoveMeProj']);
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'RemoveMeProj',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         $maintainer = $this->client->createMaintainer(['name' => 'RemoveMeMain']);
         $email = 'devel-tests+remove' . uniqid() . '@keboola.com';
         $this->client->addUserToProject($project['id'], ['email' => $email]);
@@ -171,7 +174,10 @@ class UsersTest extends ClientTestCase
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
         $inviteOrganization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-2']);
-        $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-1']);
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'ToRemoveProj-1',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         $email = 'devel-tests+remove' . uniqid() . '@keboola.com';
         //PROJECT, ORGANIZATION & MAINTAINER
         $this->client->addUserToProject($project['id'], ['email' => $email]);
@@ -180,7 +186,10 @@ class UsersTest extends ClientTestCase
         $this->client->inviteUserToOrganization($inviteOrganization['id'], ['email' => $user['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $user['email']]);
         //INVITATION
-        $inviteProject = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-2']);
+        $inviteProject = $this->client->createProject($organization['id'], [
+            'name' => 'ToRemoveProj-2',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         $this->client->inviteUserToProject($inviteProject['id'], ['email' => $email]);
 
         $this->client->removeUser($email);
@@ -230,14 +239,20 @@ class UsersTest extends ClientTestCase
     public function testRemoveUserFromEverywhereFailsWhenLastUserInOrg()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
-        $project = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-1']);
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'ToRemoveProj-1',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         $email = 'devel-tests+remove' . uniqid() . '@keboola.com';
         //PROJECT, ORGANIZATION & MAINTAINER
         $this->client->addUserToProject($project['id'], ['email' => $email]);
         $this->client->addUserToOrganization($organization['id'], ['email' => $email]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $email]);
         //INVITATION
-        $inviteProject = $this->client->createProject($organization['id'], ['name' => 'ToRemoveProj-2']);
+        $inviteProject = $this->client->createProject($organization['id'], [
+            'name' => 'ToRemoveProj-2',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         $this->client->inviteUserToProject($inviteProject['id'], ['email' => $email]);
 
         // Ensure superadmin is not in org
