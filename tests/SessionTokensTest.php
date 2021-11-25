@@ -99,7 +99,10 @@ class SessionTokensTest extends ClientTestCase
         $organization2 = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - project manipulation 2',
         ]);
-        $project = $this->client->createProject($organization1['id'], ['name' => 'Test project']);
+        $project = $this->client->createProject($organization1['id'], [
+            'name' => 'Test project',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
         $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
 
@@ -133,7 +136,10 @@ class SessionTokensTest extends ClientTestCase
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - users manipulation',
         ]);
-        $project = $this->client->createProject($organization['id'], ['name' => 'Test project']);
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'Test project',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
 
         // list project users
@@ -160,7 +166,10 @@ class SessionTokensTest extends ClientTestCase
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - invitations manipulation',
         ]);
-        $project = $this->client->createProject($organization['id'], ['name' => 'Test project']);
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'Test project',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
 
         // invite user to project via session token
@@ -186,7 +195,10 @@ class SessionTokensTest extends ClientTestCase
             'allowAutoJoin' => 0,
         ]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUserWithMfa['email']]);
-        $project = $this->client->createProject($organization['id'], ['name' => 'Test project']);
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'Test project',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email']]);
 
         $this->normalUserWithMfaClient->requestAccessToProject($project['id']);

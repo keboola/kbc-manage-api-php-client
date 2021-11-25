@@ -522,6 +522,7 @@ class ProjectJoinTest extends ClientTestCase
 
         $testProject = $this->normalUserClient->createProject($this->organization['id'], [
             'name' => 'Test Project',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $projectUser = $this->findProjectUser($testProject['id'], $this->superAdmin['email']);
