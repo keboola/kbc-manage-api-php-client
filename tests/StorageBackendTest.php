@@ -32,6 +32,7 @@ class StorageBackendTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         try {
