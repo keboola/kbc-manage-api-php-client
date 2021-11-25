@@ -1532,14 +1532,14 @@ class ProjectsTest extends ClientTestCase
 
         // verify that normal users can't update data retention time
         try {
-            $this->normalUserClient->updateProject($project['id'], ['dataRetentionTimeInDays' => 30]);
+            $this->normalUserClient->updateProject($project['id'], ['dataRetentionTimeInDays' => 0]);
             $this->fail('Must be a super admin to update data retention period');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
 
-        $project = $this->client->updateProject($project['id'], ['dataRetentionTimeInDays' => 30]);
-        $this->assertEquals(30, (int) $project['dataRetentionTimeInDays']);
+        $project = $this->client->updateProject($project['id'], ['dataRetentionTimeInDays' => 0]);
+        $this->assertEquals(0, (int) $project['dataRetentionTimeInDays']);
     }
 
     public function testLastMemberCanLeaveProject()
