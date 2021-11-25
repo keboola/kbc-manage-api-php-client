@@ -57,6 +57,7 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
             'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
         ]);
         switch ($unsupportedFileStorageProvider) {
             case self::FILE_STORAGE_PROVIDER_S3:
@@ -113,6 +114,7 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
             'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $s3Storage = $this->client->listS3FileStorage()[0];
@@ -191,6 +193,7 @@ class ProjectsTest extends ClientTestCase
     {
         $project = $this->client->createProject($organizationId, [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
         $this->assertArrayHasKey('id', $project);
         $this->assertEquals('My test', $project['name']);
@@ -276,6 +279,7 @@ class ProjectsTest extends ClientTestCase
         try {
             $this->client->createProject($organizationId, [
                 'name' => 'My test',
+                'dataRetentionTimeInDays' => 1,
             ]);
 
             $this->fail('SuperAdmin should be not allowed to create project');
@@ -309,6 +313,7 @@ class ProjectsTest extends ClientTestCase
         try {
             $this->normalUserClient->createProject($organizationId, [
                 'name' => 'My test',
+                'dataRetentionTimeInDays' => 1,
             ]);
 
             $this->fail('MaintainerAdmin should be not allowed to create project');
@@ -339,6 +344,7 @@ class ProjectsTest extends ClientTestCase
         try {
             $this->normalUserClient->createProject($organizationId, [
                 'name' => 'My test',
+                'dataRetentionTimeInDays' => 1,
             ]);
 
             $this->fail('RandomAdmin should be not allowed to create project');
@@ -387,6 +393,7 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
             'type' => 'production',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $project = $this->client->getProject($project['id']);
@@ -423,6 +430,7 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
             'defaultBackend' => $backend,
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->assertEquals($backend, $project['defaultBackend']);
@@ -439,6 +447,7 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
             'type' => 'productionRedshift',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->assertEquals('redshift', $project['defaultBackend']);
@@ -468,6 +477,7 @@ class ProjectsTest extends ClientTestCase
             $this->client->createProject($organization['id'], [
                 'name' => 'My test',
                 'defaultBackend' => 'file',
+                'dataRetentionTimeInDays' => 1,
             ]);
             $this->fail('Project should not be created');
         } catch (ClientException $e) {
@@ -679,6 +689,7 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         // update
@@ -738,6 +749,7 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->client->addUserToProject($project['id'], [
@@ -1047,6 +1059,7 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $tokenWithManageBucketsPermission = $this->client->createProjectStorageToken($project['id'], [
@@ -1440,6 +1453,7 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
             'type' => 'demo',
+            'dataRetentionTimeInDays' => 1,
         ]);
         $projectId = $project['id'];
 
