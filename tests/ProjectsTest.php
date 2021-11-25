@@ -447,7 +447,6 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
             'type' => 'productionRedshift',
-            'dataRetentionTimeInDays' => 1,
         ]);
 
         $this->assertEquals('redshift', $project['defaultBackend']);
@@ -477,7 +476,6 @@ class ProjectsTest extends ClientTestCase
             $this->client->createProject($organization['id'], [
                 'name' => 'My test',
                 'defaultBackend' => 'file',
-                'dataRetentionTimeInDays' => 1,
             ]);
             $this->fail('Project should not be created');
         } catch (ClientException $e) {
