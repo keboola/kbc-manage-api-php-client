@@ -34,6 +34,11 @@ class ProjectDeleteTest extends ClientTestCase
             'backend' => Backend::SNOWFLAKE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
         ];
+        yield 'snowflake with S3 file storage with DevBranchFeature' => [
+            'backend' => Backend::SNOWFLAKE,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
+            'useDevBranchFeature' => true,
+        ];
         yield 'snowflake with ABS file storage test' => [
             'backend' => Backend::SNOWFLAKE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
@@ -145,13 +150,16 @@ class ProjectDeleteTest extends ClientTestCase
     /**
      * @dataProvider deleteAndPurgeProjectWithData
      */
-    public function testDeleteAndPurgeProjectWithData(string $backend, string $fileStorageProvider): void
-    {
+    public function testDeleteAndPurgeProjectWithData(
+        string $backend,
+        string $fileStorageProvider,
+        bool $useDevBranchFeature = false
+    ): void {
         if ($backend === Backend::EXASOL) {
             $this->markTestSkipped('Skip until create table works in Exasol.');
         }
         $connectionParamName = sprintf('defaultConnection%sId', ucfirst($backend));
-        $maintainer =  $this->client->getMaintainer($this->testMaintainerId);
+        $maintainer = $this->client->getMaintainer($this->testMaintainerId);
 
         if ($maintainer[$connectionParamName] === null) {
             $this->markTestSkipped(sprintf('Test maintainer does not have set default connection for %s backend', $backend));
@@ -176,6 +184,10 @@ class ProjectDeleteTest extends ClientTestCase
 
         $project = $this->client->getProject($project['id']);
         $this->assertTrue($project['has' . ucfirst($backend)]);
+
+        if ($useDevBranchFeature) {
+            $this->client->addProjectFeature($project['id'], 'configurations-use-dev-branch-services-only');
+        }
 
         // Create tables, bucket, configuration and workspaces
         $token = $this->client->createProjectStorageToken($project['id'], [
