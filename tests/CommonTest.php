@@ -11,7 +11,7 @@ class CommonTest extends ClientTestCase
     {
         $token = $this->client->verifyToken();
 
-        $this->assertInternalType('int', $token['id']);
+        $this->assertIsInt($token['id']);
         $this->assertNotEmpty($token['description']);
         $this->assertNotEmpty($token['created']);
         $this->assertFalse($token['isDisabled']);
@@ -37,7 +37,7 @@ class CommonTest extends ClientTestCase
         ]);
         $token = $client->verifyToken();
 
-        $this->assertInternalType('int', $token['id']);
+        $this->assertIsInt($token['id']);
         $this->assertNotEmpty($token['description']);
         $this->assertNotEmpty($token['created']);
         $this->assertFalse($token['isDisabled']);
