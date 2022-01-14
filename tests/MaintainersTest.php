@@ -232,7 +232,7 @@ class MaintainersTest extends ClientTestCase
 
         $maintainer = $maintainers[0];
 
-        $this->assertInternalType('int', $maintainer['id']);
+        $this->assertIsInt($maintainer['id']);
         $this->assertNotEmpty($maintainer['name']);
         $this->assertNotEmpty($maintainer['created']);
         $this->assertArrayHasKey('defaultConnectionMysqlId', $maintainer);
