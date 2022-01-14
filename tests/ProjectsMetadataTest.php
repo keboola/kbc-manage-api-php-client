@@ -926,7 +926,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         try {
@@ -934,7 +934,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         try {
@@ -942,7 +942,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $metadata = reset($metadata);
@@ -952,7 +952,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
@@ -978,7 +978,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         try {
@@ -986,7 +986,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $metadata = reset($metadata);
@@ -996,7 +996,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
@@ -1017,7 +1017,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         try {
@@ -1025,7 +1025,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $metadata = reset($metadata);
@@ -1035,7 +1035,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
@@ -1065,7 +1065,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         try {
@@ -1073,7 +1073,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $metadata = reset($metadata);
@@ -1083,7 +1083,7 @@ class ProjectsMetadataTest extends ClientTestCase
             $this->fail('Should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));

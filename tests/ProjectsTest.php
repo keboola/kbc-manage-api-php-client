@@ -350,7 +350,7 @@ class ProjectsTest extends ClientTestCase
             $this->fail('RandomAdmin should be not allowed to create project');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
-            $this->assertContains('You don\'t have access to the organization', $e->getMessage());
+            $this->assertStringContainsString('You don\'t have access to the organization', $e->getMessage());
         }
 
         $projects = $this->client->listOrganizationProjects($organizationId);
@@ -1733,7 +1733,7 @@ class ProjectsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertRegExp('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
-            $this->assertContains('invalid-role', $e->getMessage());
+            $this->assertStringContainsString('invalid-role', $e->getMessage());
         }
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);

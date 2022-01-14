@@ -42,7 +42,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->fail('Change of multi-factor authentication attribute should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Only organization members can change the \'mfaRequired\' parameter', $e->getMessage());
+            $this->assertStringContainsString('Only organization members can change the \'mfaRequired\' parameter', $e->getMessage());
         }
 
         $this->assertSame(false, $this->organization['mfaRequired']);
@@ -59,7 +59,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->fail('Change of multi-factor authentication attribute should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Only organization members can change the \'mfaRequired\' parameter', $e->getMessage());
+            $this->assertStringContainsString('Only organization members can change the \'mfaRequired\' parameter', $e->getMessage());
         }
 
         $this->assertSame(false, $this->organization['mfaRequired']);
@@ -91,7 +91,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->fail('Change of multi-factor authentication attribute should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Not all organization and project members have Multi-factor Authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('Not all organization and project members have Multi-factor Authentication enabled', $e->getMessage());
         }
 
         $this->assertSame(false, $this->organization['mfaRequired']);
@@ -114,7 +114,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->fail('Change of multi-factor authentication attribute should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Not all organization and project members have Multi-factor Authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('Not all organization and project members have Multi-factor Authentication enabled', $e->getMessage());
         }
 
         $this->assertSame(false, $this->organization['mfaRequired']);
@@ -134,7 +134,7 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->fail('Adding admins without MFA to organization should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
         }
     }
 

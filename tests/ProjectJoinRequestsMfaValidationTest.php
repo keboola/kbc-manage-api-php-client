@@ -62,7 +62,7 @@ class ProjectJoinRequestsMfaValidationTest extends ClientMfaTestCase
             $this->fail('Requesting access to a project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $joinRequests = $this->normalUserWithMfaClient->listProjectJoinRequests($projectId);
@@ -102,7 +102,7 @@ class ProjectJoinRequestsMfaValidationTest extends ClientMfaTestCase
             $this->fail('Approving a join request should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $joinRequests = $this->client->listMyProjectJoinRequests();

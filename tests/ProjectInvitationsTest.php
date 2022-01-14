@@ -387,8 +387,8 @@ class ProjectInvitationsTest extends ClientTestCase
             $this->fail('Invite user to project twice should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('already', $e->getMessage());
-            $this->assertContains('invited', $e->getMessage());
+            $this->assertStringContainsString('already', $e->getMessage());
+            $this->assertStringContainsString('invited', $e->getMessage());
         }
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
@@ -408,8 +408,8 @@ class ProjectInvitationsTest extends ClientTestCase
             $this->fail('Invite existing member to project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('already', $e->getMessage());
-            $this->assertContains('member', $e->getMessage());
+            $this->assertStringContainsString('already', $e->getMessage());
+            $this->assertStringContainsString('member', $e->getMessage());
         }
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
@@ -429,7 +429,7 @@ class ProjectInvitationsTest extends ClientTestCase
             $this->fail('Invite yourself to project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('You cannot invite yourself', $e->getMessage());
+            $this->assertStringContainsString('You cannot invite yourself', $e->getMessage());
         }
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
@@ -458,7 +458,7 @@ class ProjectInvitationsTest extends ClientTestCase
             $this->fail('Invite user having join request should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This user has already requested access', $e->getMessage());
+            $this->assertStringContainsString('This user has already requested access', $e->getMessage());
         }
 
         $invitations = $this->normalUserClient->listProjectInvitations($projectId);
@@ -671,7 +671,7 @@ class ProjectInvitationsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertRegExp('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
-            $this->assertContains('invalid-role', $e->getMessage());
+            $this->assertStringContainsString('invalid-role', $e->getMessage());
         }
 
         $invitations = $this->client->listProjectInvitations($projectId);
