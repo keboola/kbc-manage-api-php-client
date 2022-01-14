@@ -128,7 +128,7 @@ class FeaturesTest extends ClientTestCase
         $featureProjects = $this->client->getFeatureProjects($insertedFeature['id']);
 
         $this->assertNotEmpty($featureProjects);
-        $this->assertInternalType('array', $featureProjects);
+        $this->assertIsArray($featureProjects);
 
         $projectFound = null;
 
@@ -168,7 +168,7 @@ class FeaturesTest extends ClientTestCase
         $featureAdmins = $this->client->getFeatureAdmins($insertedFeature['id']);
 
         $this->assertNotEmpty($featureAdmins);
-        $this->assertInternalType('array', $featureAdmins);
+        $this->assertIsArray($featureAdmins);
 
         $adminFound = null;
 
