@@ -71,7 +71,7 @@ class CommonTest extends ClientTestCase
             );
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Request body not valid', (string) $e->getResponse()->getBody());
+            $this->assertStringContainsString('Request body not valid', (string) $e->getResponse()->getBody());
         }
     }
 }

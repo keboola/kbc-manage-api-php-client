@@ -173,7 +173,7 @@ class ProjectJoinTest extends ClientTestCase
             $this->fail('Project token create should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
-            $this->assertContains('You don\'t have access to project', $e->getMessage());
+            $this->assertStringContainsString('You don\'t have access to project', $e->getMessage());
         }
     }
 
@@ -225,7 +225,7 @@ class ProjectJoinTest extends ClientTestCase
             $this->fail('Project token create should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
-            $this->assertContains('You don\'t have access to project', $e->getMessage());
+            $this->assertStringContainsString('You don\'t have access to project', $e->getMessage());
         }
     }
 
@@ -394,7 +394,7 @@ class ProjectJoinTest extends ClientTestCase
             $this->fail('Project token create should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
-            $this->assertContains('You don\'t have access to project', $e->getMessage());
+            $this->assertStringContainsString('You don\'t have access to project', $e->getMessage());
         }
     }
 

@@ -50,7 +50,7 @@ class ProjectMfaValidationTest extends ClientMfaTestCase
             $this->fail('Adding admins without MFA to project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $member = $this->findProjectUser($projectId, $this->normalUser['email']);

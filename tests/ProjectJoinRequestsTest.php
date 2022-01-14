@@ -178,7 +178,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $this->normalUserClient->requestAccessToProject($projectId);
             $this->fail('Request access should produce error');
         } catch (ClientException $e) {
-            $this->assertContains('use join-project method', $e->getMessage());
+            $this->assertStringContainsString('use join-project method', $e->getMessage());
             $this->assertEquals(400, $e->getCode());
         }
 
@@ -243,8 +243,8 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $this->fail('Request access should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('already', $e->getMessage());
-            $this->assertContains('member', $e->getMessage());
+            $this->assertStringContainsString('already', $e->getMessage());
+            $this->assertStringContainsString('member', $e->getMessage());
         }
 
         $joinRequests = $this->normalUserClient->listProjectJoinRequests($projectId);
@@ -733,8 +733,8 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $this->fail('Request access to project twice should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('already', $e->getMessage());
-            $this->assertContains('sent', $e->getMessage());
+            $this->assertStringContainsString('already', $e->getMessage());
+            $this->assertStringContainsString('sent', $e->getMessage());
         }
 
         $joinRequests = $this->client->listProjectJoinRequests($projectId);
@@ -759,7 +759,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
             $this->fail('Request access of invited user should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('You have been already invited', $e->getMessage());
+            $this->assertStringContainsString('You have been already invited', $e->getMessage());
         }
 
         $joinRequests = $this->client->listProjectJoinRequests($projectId);

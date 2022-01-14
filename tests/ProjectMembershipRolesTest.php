@@ -472,6 +472,6 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     private function restrictedActionTest(ClientException $e)
     {
         $this->assertEquals(403, $e->getCode());
-        $this->assertContains('Action is restricted for your role', $e->getMessage());
+        $this->assertStringContainsString('Action is restricted for your role', $e->getMessage());
     }
 }

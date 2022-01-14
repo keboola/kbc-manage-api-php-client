@@ -212,8 +212,8 @@ class MaintainerInvitationsTest extends ClientTestCase
             $this->fail('Invite user to maintainer twice should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('already', $e->getMessage());
-            $this->assertContains('invited', $e->getMessage());
+            $this->assertStringContainsString('already', $e->getMessage());
+            $this->assertStringContainsString('invited', $e->getMessage());
         }
 
         $invitations = $this->normalUserClient->listMaintainerInvitations($maintainerId);
@@ -233,8 +233,8 @@ class MaintainerInvitationsTest extends ClientTestCase
             $this->fail('Invite existing member to maintainer should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('already', $e->getMessage());
-            $this->assertContains('member', $e->getMessage());
+            $this->assertStringContainsString('already', $e->getMessage());
+            $this->assertStringContainsString('member', $e->getMessage());
         }
 
         $invitations = $this->normalUserClient->listMaintainerInvitations($maintainerId);
