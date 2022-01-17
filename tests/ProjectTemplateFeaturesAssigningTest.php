@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Backend;
+use Throwable;
 
 class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
 {
@@ -48,5 +49,26 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
     private function createFeature($feature)
     {
         $this->client->createFeature($feature['name'], $feature['type'], $feature['description']);
+    }
+
+    public function testCreateProjectWithROIMFeatureFromTemplate()
+    {
+        $roimFeatureName = 'input-mapping-read-only-storage';
+
+        try {
+            $this->client->createFeature($roimFeatureName, 'project', '');
+        } catch (Throwable $e) {
+            self::assertEquals($e->getMessage(), 'Feature already exists');
+        }
+
+        $this->client->addProjectTemplateFeature(self::TEST_PROJECT_TEMPLATE_STRING_ID, $roimFeatureName);
+
+        $project = $this->createProject();
+
+        self::assertContains($roimFeatureName, $project['features']);
+        $this->client->deleteProject($project['id']);
+        $this->client->purgeDeletedProject($project['id']);
+
+        $this->client->removeProjectTemplateFeature(self::TEST_PROJECT_TEMPLATE_STRING_ID, $roimFeatureName);
     }
 }
