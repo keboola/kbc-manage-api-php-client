@@ -18,7 +18,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertGreaterThan(0, count($organizations));
 
         $organization = $organizations[0];
-        $this->assertInternalType('int', $organization['id']);
+        $this->assertIsInt($organization['id']);
         $this->assertNotEmpty($organization['name']);
         $this->assertArrayHasKey('maintainer', $organization);
     }
@@ -46,7 +46,7 @@ class OrganizationsTest extends ClientTestCase
             $this->fail('The last member could not be removed from the organization');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('least 1 member', $e->getMessage());
+            $this->assertStringContainsString('least 1 member', $e->getMessage());
         }
 
         $members = $this->client->listOrganizationUsers($organizationId);

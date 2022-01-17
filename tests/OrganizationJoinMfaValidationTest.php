@@ -46,7 +46,7 @@ class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
             $this->fail('Organization join should be restricted for admins without MFA');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $member = $this->findOrganizationMember($this->organization['id'], $this->superAdmin['email']);
@@ -69,7 +69,7 @@ class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
             $this->fail('Organization join should be restricted for admins without MFA');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $member = $this->findOrganizationMember($this->organization['id'], $this->normalUser['email']);
