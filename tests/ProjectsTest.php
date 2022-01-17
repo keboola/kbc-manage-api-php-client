@@ -216,12 +216,12 @@ class ProjectsTest extends ClientTestCase
         $limitKeys = array_keys($foundProject['limits']);
         $this->assertArrayHasKey('name', $firstLimit);
         $this->assertArrayHasKey('value', $firstLimit);
-        $this->assertInternalType('int', $firstLimit['value']);
+        $this->assertIsInt($firstLimit['value']);
         $this->assertEquals($firstLimit['name'], $limitKeys[0]);
 
         $this->assertArrayHasKey('fileStorage', $project);
         $fileStorage = $project['fileStorage'];
-        $this->assertInternalType('int', $fileStorage['id']);
+        $this->assertIsInt($fileStorage['id']);
         $this->assertArrayHasKey('awsKey', $fileStorage);
         $this->assertArrayHasKey('region', $fileStorage);
         $this->assertArrayHasKey('filesBucket', $fileStorage);
@@ -232,7 +232,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('snowflake', $backends);
 
         $snowflake = $backends['snowflake'];
-        $this->assertInternalType('int', $snowflake['id']);
+        $this->assertIsInt($snowflake['id']);
         $this->assertArrayHasKey('host', $snowflake);
 
         return $foundProject;
@@ -350,7 +350,7 @@ class ProjectsTest extends ClientTestCase
             $this->fail('RandomAdmin should be not allowed to create project');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
-            $this->assertContains('You don\'t have access to the organization', $e->getMessage());
+            $this->assertStringContainsString('You don\'t have access to the organization', $e->getMessage());
         }
 
         $projects = $this->client->listOrganizationProjects($organizationId);
@@ -1733,7 +1733,7 @@ class ProjectsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertRegExp('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
-            $this->assertContains('invalid-role', $e->getMessage());
+            $this->assertStringContainsString('invalid-role', $e->getMessage());
         }
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
@@ -1791,7 +1791,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('payAsYouGo', $project);
 
         $payAsYouGo = $project['payAsYouGo'];
-        $this->assertInternalType('integer', $payAsYouGo['purchasedCredits']);
+        $this->assertIsInt($payAsYouGo['purchasedCredits']);
 
         $projects = $this->client->listOrganizationProjects($organization['id']);
         $this->assertCount(1, $projects);
@@ -1801,7 +1801,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('payAsYouGo', $project);
 
         $payAsYouGo = $project['payAsYouGo'];
-        $this->assertInternalType('integer', $payAsYouGo['purchasedCredits']);
+        $this->assertIsInt($payAsYouGo['purchasedCredits']);
     }
 
     public function testCreditsCannotBeGivenToNonPaygoProject(): void
@@ -1850,7 +1850,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $this->assertArrayHasKey('id', $response);
-        $this->assertInternalType('int', $response['id']);
+        $this->assertIsInt($response['id']);
         $this->assertArrayHasKey('creditsAmount', $response);
         $this->assertSame(100, $response['creditsAmount']);
         $this->assertArrayHasKey('moneyAmount', $response);
@@ -1892,7 +1892,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $this->assertArrayHasKey('id', $response);
-        $this->assertInternalType('int', $response['id']);
+        $this->assertIsInt($response['id']);
         $this->assertArrayHasKey('creditsAmount', $response);
         $this->assertSame(100, $response['creditsAmount']);
         $this->assertArrayHasKey('moneyAmount', $response);

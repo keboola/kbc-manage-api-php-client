@@ -49,7 +49,7 @@ class ProjectJoinMfaValidationTest extends ClientMfaTestCase
             $this->fail('Joining a project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);

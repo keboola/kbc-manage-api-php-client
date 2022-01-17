@@ -11,12 +11,12 @@ class CommonTest extends ClientTestCase
     {
         $token = $this->client->verifyToken();
 
-        $this->assertInternalType('int', $token['id']);
+        $this->assertIsInt($token['id']);
         $this->assertNotEmpty($token['description']);
         $this->assertNotEmpty($token['created']);
         $this->assertFalse($token['isDisabled']);
         $this->assertFalse($token['isExpired']);
-        $this->assertInternalType('array', $token['scopes']);
+        $this->assertIsArray($token['scopes']);
         $this->assertEquals($token['type'], 'admin');
         $this->assertNotEmpty($token['lastUsed']);
         $this->assertFalse($token['isSessionToken']);
@@ -37,12 +37,12 @@ class CommonTest extends ClientTestCase
         ]);
         $token = $client->verifyToken();
 
-        $this->assertInternalType('int', $token['id']);
+        $this->assertIsInt($token['id']);
         $this->assertNotEmpty($token['description']);
         $this->assertNotEmpty($token['created']);
         $this->assertFalse($token['isDisabled']);
         $this->assertFalse($token['isExpired']);
-        $this->assertInternalType('array', $token['scopes']);
+        $this->assertIsArray($token['scopes']);
         $this->assertEquals($token['type'], 'super');
         $this->assertFalse($token['isSessionToken']);
     }
@@ -71,7 +71,7 @@ class CommonTest extends ClientTestCase
             );
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('Request body not valid', (string) $e->getResponse()->getBody());
+            $this->assertStringContainsString('Request body not valid', (string) $e->getResponse()->getBody());
         }
     }
 }

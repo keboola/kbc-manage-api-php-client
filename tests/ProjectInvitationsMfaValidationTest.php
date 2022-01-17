@@ -65,7 +65,7 @@ class ProjectInvitationsMfaValidationTest extends ClientMfaTestCase
             $this->fail('Accept invitation to project should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('This project requires users to have multi-factor authentication enabled', $e->getMessage());
+            $this->assertStringContainsString('This project requires users to have multi-factor authentication enabled', $e->getMessage());
         }
 
         $invitations = $this->normalUserWithMfaClient->listProjectInvitations($projectId);

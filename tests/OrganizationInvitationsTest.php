@@ -308,8 +308,8 @@ class OrganizationInvitationsTest extends ClientTestCase
             $this->fail('Invite user to organization twice should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('already', $e->getMessage());
-            $this->assertContains('invited', $e->getMessage());
+            $this->assertStringContainsString('already', $e->getMessage());
+            $this->assertStringContainsString('invited', $e->getMessage());
         }
 
         $invitations = $this->normalUserClient->listOrganizationInvitations($organizationId);
@@ -330,8 +330,8 @@ class OrganizationInvitationsTest extends ClientTestCase
             $this->fail('Invite existing member to organization should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('already', $e->getMessage());
-            $this->assertContains('member', $e->getMessage());
+            $this->assertStringContainsString('already', $e->getMessage());
+            $this->assertStringContainsString('member', $e->getMessage());
         }
 
         $invitations = $this->normalUserClient->listOrganizationInvitations($organizationId);

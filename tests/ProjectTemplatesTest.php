@@ -112,9 +112,9 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertArrayHasKey('hasTryModeOn', $template);
 
         $this->assertEquals(15, $template['expirationDays']);
-        $this->assertInternalType('int', $template['expirationDays']);
+        $this->assertIsInt($template['expirationDays']);
         $this->assertEquals(true, $template['hasTryModeOn']);
-        $this->assertInternalType('boolean', $template['hasTryModeOn']);
+        $this->assertIsBool($template['hasTryModeOn']);
     }
 
     public function testOrganizationAdminCannotViewHiddenProjectTemplate()

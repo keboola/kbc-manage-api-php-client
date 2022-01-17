@@ -232,7 +232,7 @@ class MaintainersTest extends ClientTestCase
 
         $maintainer = $maintainers[0];
 
-        $this->assertInternalType('int', $maintainer['id']);
+        $this->assertIsInt($maintainer['id']);
         $this->assertNotEmpty($maintainer['name']);
         $this->assertNotEmpty($maintainer['created']);
         $this->assertArrayHasKey('defaultConnectionMysqlId', $maintainer);
@@ -267,7 +267,7 @@ class MaintainersTest extends ClientTestCase
             $this->fail('The last member could not be removed from the maintainer');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertContains('least 1 member', $e->getMessage());
+            $this->assertStringContainsString('least 1 member', $e->getMessage());
         }
 
         $members = $this->client->listMaintainerMembers($maintainerId);
