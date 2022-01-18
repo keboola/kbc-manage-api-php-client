@@ -34,11 +34,6 @@ class ProjectDeleteTest extends ClientTestCase
             'backend' => Backend::SNOWFLAKE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
         ];
-        yield 'snowflake with S3 file storage with DevBranchFeature' => [
-            'backend' => Backend::SNOWFLAKE,
-            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
-            'useDevBranchFeature' => true,
-        ];
         yield 'snowflake with ABS file storage test' => [
             'backend' => Backend::SNOWFLAKE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
@@ -152,8 +147,7 @@ class ProjectDeleteTest extends ClientTestCase
      */
     public function testDeleteAndPurgeProjectWithData(
         string $backend,
-        string $fileStorageProvider,
-        bool $useDevBranchFeature = false
+        string $fileStorageProvider
     ): void {
         if ($backend === Backend::EXASOL) {
             $this->markTestSkipped('Skip until create table works in Exasol.');
@@ -184,11 +178,6 @@ class ProjectDeleteTest extends ClientTestCase
 
         $project = $this->client->getProject($project['id']);
         $this->assertTrue($project['has' . ucfirst($backend)]);
-
-        if ($useDevBranchFeature) {
-            $this->client->addProjectFeature($project['id'], 'configurations-use-dev-branch-services-only');
-        }
-
         // Create tables, bucket, configuration and workspaces
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
