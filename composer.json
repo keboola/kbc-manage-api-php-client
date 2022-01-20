@@ -28,6 +28,7 @@
             "@phpstan"
         ],
         "phpcs": "phpcs -s -n -p --extensions=php src tests",
+        "phpcbf": "phpcbf -s -n -p --extensions=php src tests",
         "phpstan": "phpstan analyse ./src ./tests --level=max -c phpstan.neon",
         "tests": "phpunit"
     },
