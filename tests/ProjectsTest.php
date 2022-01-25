@@ -2,6 +2,7 @@
 
 namespace Keboola\ManageApiTest;
 
+use Generator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
@@ -1791,7 +1792,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('payAsYouGo', $project);
 
         $payAsYouGo = $project['payAsYouGo'];
-        $this->assertIsInt($payAsYouGo['purchasedCredits']);
+        $this->assertIsFloat($payAsYouGo['purchasedCredits']);
 
         $projects = $this->client->listOrganizationProjects($organization['id']);
         $this->assertCount(1, $projects);
@@ -1801,7 +1802,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('payAsYouGo', $project);
 
         $payAsYouGo = $project['payAsYouGo'];
-        $this->assertIsInt($payAsYouGo['purchasedCredits']);
+        $this->assertIsFloat($payAsYouGo['purchasedCredits']);
     }
 
     public function testCreditsCannotBeGivenToNonPaygoProject(): void
@@ -1825,7 +1826,11 @@ class ProjectsTest extends ClientTestCase
         ]);
     }
 
-    public function testSuperAdminCanGiveProjectCredits(): void
+    /**
+     * @dataProvider provideProjectCredits
+     * @param int|float $givenCredits
+     */
+    public function testSuperAdminCanGiveProjectCredits($givenCredits): void
     {
         $this->client->removeUserFeature($this->superAdmin['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
 
@@ -1845,14 +1850,14 @@ class ProjectsTest extends ClientTestCase
         $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
 
         $response = $this->client->giveProjectCredits($project['id'], [
-            'amount' => 100,
+            'amount' => $givenCredits,
             'description' => 'Promo',
         ]);
 
         $this->assertArrayHasKey('id', $response);
         $this->assertIsInt($response['id']);
         $this->assertArrayHasKey('creditsAmount', $response);
-        $this->assertSame(100, $response['creditsAmount']);
+        $this->assertSame($givenCredits, $response['creditsAmount']);
         $this->assertArrayHasKey('moneyAmount', $response);
         $this->assertNull($response['moneyAmount']);
         $this->assertArrayHasKey('idStripeInvoice', $response);
@@ -1863,10 +1868,14 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotNull($response['created']);
 
         $project = $this->client->getProject($project['id']);
-        $this->assertSame($purchasedCredits + 100, $project['payAsYouGo']['purchasedCredits']);
+        $this->assertSame($purchasedCredits + $givenCredits, $project['payAsYouGo']['purchasedCredits']);
     }
 
-    public function testAdminWithFeatureCanGiveProjectCredits(): void
+    /**
+     * @dataProvider provideProjectCredits
+     * @param int|float $givenCredits
+     */
+    public function testAdminWithFeatureCanGiveProjectCredits($givenCredits): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
         $this->client->addUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
@@ -1887,14 +1896,14 @@ class ProjectsTest extends ClientTestCase
         $purchasedCredits = $project['payAsYouGo']['purchasedCredits'];
 
         $response = $this->client->giveProjectCredits($project['id'], [
-            'amount' => 100,
+            'amount' => $givenCredits,
             'description' => 'Promo',
         ]);
 
         $this->assertArrayHasKey('id', $response);
         $this->assertIsInt($response['id']);
         $this->assertArrayHasKey('creditsAmount', $response);
-        $this->assertSame(100, $response['creditsAmount']);
+        $this->assertSame($givenCredits, $response['creditsAmount']);
         $this->assertArrayHasKey('moneyAmount', $response);
         $this->assertNull($response['moneyAmount']);
         $this->assertArrayHasKey('idStripeInvoice', $response);
@@ -1905,7 +1914,20 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotNull($response['created']);
 
         $project = $this->client->getProject($project['id']);
-        $this->assertSame($purchasedCredits + 100, $project['payAsYouGo']['purchasedCredits']);
+        $this->assertSame($purchasedCredits + $givenCredits, $project['payAsYouGo']['purchasedCredits']);
+    }
+
+    public function provideProjectCredits(): Generator
+    {
+        yield 'integer' => [
+            100,
+        ];
+        yield 'decimal' => [
+            100.234,
+        ];
+        yield 'decimal <1' => [
+            0.0123456,
+        ];
     }
 
     public function testMaintainerAdminCannotGiveProjectCredits(): void
