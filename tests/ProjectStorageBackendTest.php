@@ -2,6 +2,7 @@
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\Csv\CsvFile;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
@@ -150,5 +151,125 @@ class ProjectStorageBackendTest extends ClientTestCase
             $this->assertEquals(400, $e->getCode());
             $this->assertEquals('bucketsExists', $e->getStringCode());
         }
+    }
+
+    public function testROToggleWithoutBuckets()
+    {
+        $name = 'My orgXXX';
+        $organization = $this->client->createOrganization(2, [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $token1 = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+        ]);
+
+
+        $out = $this->client->runCommand([
+            'command' => 'storage:tmp:toggle-read-only-role',
+            'parameters' => [
+                (string) $project['id'],
+                '--force',
+            ],
+        ]);
+        sleep(10);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertContains('input-mapping-read-only-storage', $project['features']);
+    }
+
+    public function testROToggleWithBuckets()
+    {
+        $name = 'My orgXXX';
+        $organization = $this->client->createOrganization(2, [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $token1 = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+        ]);
+
+        $sapiClient = new Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token1['token'],
+        ]);
+        $bucketId = $sapiClient->createBucket('test', 'in');
+        $importFile = __DIR__ . '/_data/users.csv';
+
+        $sapiClient->createTable($bucketId, 'tabulka',
+            new CsvFile($importFile)
+        );
+
+        $out = $this->client->runCommand([
+            'command' => 'storage:tmp:toggle-read-only-role',
+            'parameters' => [
+                (string) $project['id'],
+                '--force',
+            ],
+        ]);
+        sleep(10);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertNotContains('input-mapping-read-only-storage', $project['features']);
+    }
+
+
+    public function testEnableROWithBuckets()
+    {
+        $name = 'My orgXXX';
+        $organization = $this->client->createOrganization(2, [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $token1 = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+        ]);
+
+        $sapiClient = new Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token1['token'],
+        ]);
+        $bucketId = $sapiClient->createBucket('test', 'in');
+        $importFile = __DIR__ . '/_data/users.csv';
+
+        $sapiClient->createTable($bucketId, 'tabulka',
+            new CsvFile($importFile)
+        );
+
+        $this->client->runCommand([
+            'command' => 'storage:tmp:enable-read-only-role',
+            'parameters' => [
+                (string) $project['id'],
+                '--force',
+            ],
+        ]);
+        sleep(10);
+
+        $project = $this->client->getProject($project['id']);
+        $this->assertContains('input-mapping-read-only-storage', $project['features']);
     }
 }
