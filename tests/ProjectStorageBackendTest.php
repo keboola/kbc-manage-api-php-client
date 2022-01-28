@@ -365,7 +365,7 @@ class ProjectStorageBackendTest extends ClientTestCase
                 '--lock',
             ],
         ]);
-        sleep(10);
+        sleep(20);
 
         // tom shares bucket, sara links
         $tomClient->shareBucket($tomBucket);
@@ -401,7 +401,7 @@ class ProjectStorageBackendTest extends ClientTestCase
                 '--lock',
             ],
         ]);
-        sleep(10);
+        sleep(20);
 
         $saraProject1 = $this->client->getProject($saraProject1['id']);
         $tomProject2 = $this->client->getProject($tomProject2['id']);
