@@ -6,6 +6,7 @@ use Keboola\Csv\CsvFile;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
+use Keboola\StorageApi\Workspaces;
 
 class ProjectStorageBackendTest extends ClientTestCase
 {
@@ -271,5 +272,159 @@ class ProjectStorageBackendTest extends ClientTestCase
 
         $project = $this->client->getProject($project['id']);
         $this->assertContains('input-mapping-read-only-storage', $project['features']);
+    }
+
+    public function testEnableROWithBucketsAndShare()
+    {
+        $importFile = __DIR__ . '/_data/users.csv';
+
+        $name = 'My orgXXX';
+        $organization = $this->client->createOrganization(2, [
+            'name' => $name,
+        ]);
+
+        $saraProject1 = $this->client->createProject($organization['id'], [
+            'name' => 'Sara - Source project (sharing)',
+            'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $token1 = $this->client->createProjectStorageToken($saraProject1['id'], [
+            'description' => 'token Sara',
+            'expiresIn' => 600,
+            'canManageBuckets' => true,
+        ]);
+
+        $tomProject2 = $this->client->createProject($organization['id'], [
+            'name' => 'Tom - Target project (linking)',
+            'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $token2 = $this->client->createProjectStorageToken($tomProject2['id'], [
+            'description' => 'token Tom',
+            'expiresIn' => 600,
+            'canManageBuckets' => true,
+        ]);
+
+        $noeProject3 = $this->client->createProject($organization['id'], [
+            'name' => 'Noe - project without RO (wanna share, but no RO)',
+            'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $token3 = $this->client->createProjectStorageToken($noeProject3['id'], [
+            'description' => 'token Noe',
+            'expiresIn' => 600,
+            'canManageBuckets' => true,
+        ]);
+
+        $saraClient = new Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token1['token'],
+        ]);
+        $tomClient = new Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token2['token'],
+        ]);
+        $noeClient = new Client([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token3['token'],
+        ]);
+
+        $saraBucket = $saraClient->createBucket('sara-bucket', 'in');
+        $saraClient->createTable($saraBucket, 'sara-table',
+            new CsvFile($importFile)
+        );
+
+        $noeBucket = $noeClient->createBucket('noe-bucket', 'in');
+        $noeClient->createTable($noeBucket, 'noe-table',
+            new CsvFile($importFile)
+        );
+
+        $tomBucket = $tomClient->createBucket('tom-bucket', 'in');
+        $tomClient->createTable($tomBucket, 'tom-table',
+            new CsvFile($importFile)
+        );
+
+        // sara shares bucket, tom links
+        $saraClient->shareBucket($saraBucket);
+        $tomClient->linkBucket('linkedBucketFromSara', 'in', $saraProject1['id'], $saraBucket);
+
+        // noe shares bucket, tom links
+        $noeClient->shareBucket($noeBucket);
+        $tomClient->linkBucket('linkedBucketFromNoe', 'in', $noeProject3['id'], $noeBucket);
+
+        // Sara enables RO. Future grants on $saraBucket
+        // scenario 1 - share my bucket
+        $this->client->runCommand([
+            'command' => 'storage:tmp:enable-read-only-role',
+            'parameters' => [
+                (string) $saraProject1['id'],
+                '--force',
+                '--lock',
+            ],
+        ]);
+        sleep(10);
+
+        // tom shares bucket, sara links
+        $tomClient->shareBucket($tomBucket);
+        $saraClient->linkBucket('linkedBucketFromTom', 'in', $tomProject2['id'], $tomBucket);
+
+        // noe links Tom's bucket
+        $noeClient->linkBucket('linkedBucketFromTomToNoe', 'in', $tomProject2['id'], $tomBucket);
+
+        $tomBucketToUnshare = $tomClient->createBucket('tom-bucket-to-unshare', 'in');
+        $tomClient->createTable($tomBucketToUnshare, 'tom-table-to-unshare',
+            new CsvFile($importFile)
+        );
+        $tomClient->shareBucket($tomBucketToUnshare);
+        $saraClient->linkBucket('linkedBucketFromTomToUnshare', 'in', $tomProject2['id'], $tomBucketToUnshare);
+
+        $tomBucketToUnlink = $tomClient->createBucket('tom-bucket-to-unlink', 'in');
+        $tomClient->createTable($tomBucketToUnlink, 'tom-table-to-unlink',
+            new CsvFile($importFile)
+        );
+        $tomClient->shareBucket($tomBucketToUnlink);
+        $saraBucketToUnlink = $saraClient->linkBucket('linkedBucketFromTomToUnlink', 'in', $tomProject2['id'], $tomBucketToUnlink);
+
+        // Tom enables RO.
+        // scenario 1 - share my bucket
+        // scenario 2 - link my bucket to others who have RO (Sara has RO and she has linked Toms bucket)
+        // scenario 3 - link others linked buckets whose owners have RO (Tom has linked Sara's bucket)
+        // Grant SaraShareRole to TomReadOnlyRole
+        $this->client->runCommand([
+            'command' => 'storage:tmp:enable-read-only-role',
+            'parameters' => [
+                (string) $tomProject2['id'],
+                '--force',
+                '--lock',
+            ],
+        ]);
+        sleep(10);
+
+        $saraProject1 = $this->client->getProject($saraProject1['id']);
+        $tomProject2 = $this->client->getProject($tomProject2['id']);
+        $noeProject3 = $this->client->getProject($noeProject3['id']);
+        $this->assertContains('input-mapping-read-only-storage', $saraProject1['features']);
+        $this->assertContains('input-mapping-read-only-storage', $tomProject2['features']);
+        $this->assertNotContains('input-mapping-read-only-storage', $noeProject3['features']);
+
+        // Tom unshares the bucket, so Sara shouldn't see it
+        $tomClient->unshareBucket($tomBucketToUnshare);
+        $saraClient->dropBucket($saraBucketToUnlink, ['async' => true]);
+
+        $saraWS = (new Workspaces($saraClient))->createWorkspace([]);
+        $tomWS = (new Workspaces($tomClient))->createWorkspace([]);
+        $noeWS = (new Workspaces($noeClient))->createWorkspace([]);
+
+        print_r([
+            'sara' => $saraWS['connection'],
+            'tom' => $tomWS['connection'],
+            'noe' => $noeWS['connection'],
+        ]);
+        // as Sara I should see tom-bucket > tom-table
+        // as Tom I should see sara-bucket > sara-table
+        // as Noe I should see nothing
     }
 }
