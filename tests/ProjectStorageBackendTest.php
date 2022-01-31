@@ -233,6 +233,11 @@ class ProjectStorageBackendTest extends ClientTestCase
 
     public function testEnableROWithBuckets()
     {
+        // naming:
+        // Sara = Sharing project (shares to others)
+        // Tom: Target project
+        // Noe: No feature enabled -> will be shared, but RO should have no effect
+
         $name = 'My orgXXX';
         $organization = $this->client->createOrganization(2, [
             'name' => $name,
@@ -365,7 +370,8 @@ class ProjectStorageBackendTest extends ClientTestCase
                 '--lock',
             ],
         ]);
-        sleep(20);
+        // it has to wait a while because the whole command has to finish before next step
+        sleep(40);
 
         // tom shares bucket, sara links
         $tomClient->shareBucket($tomBucket);
@@ -401,7 +407,8 @@ class ProjectStorageBackendTest extends ClientTestCase
                 '--lock',
             ],
         ]);
-        sleep(20);
+        // it has to wait a while because the whole command has to finish before next step
+        sleep(40);
 
         $saraProject1 = $this->client->getProject($saraProject1['id']);
         $tomProject2 = $this->client->getProject($tomProject2['id']);
