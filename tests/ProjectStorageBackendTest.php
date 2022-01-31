@@ -423,8 +423,8 @@ class ProjectStorageBackendTest extends ClientTestCase
             'tom' => $tomWS['connection'],
             'noe' => $noeWS['connection'],
         ]);
-        // as Sara I should see tom-bucket > tom-table
-        // as Tom I should see sara-bucket > sara-table
+        // as Sara I should see 1. tom-bucket > tom-table (because of sharing); 2. sara-bucket > sara-table (because her)
+        // as Tom I should see 1. sara-bucket > sara-table (because of sharing); 2. tom-bucket > tom-table (because his)
         // as Noe I should see nothing
     }
 }
