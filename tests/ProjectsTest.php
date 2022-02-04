@@ -1792,7 +1792,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('payAsYouGo', $project);
 
         $payAsYouGo = $project['payAsYouGo'];
-        $this->assertIsFloat($payAsYouGo['purchasedCredits']);
+        $this->assertIsNumeric($payAsYouGo['purchasedCredits']);
 
         $projects = $this->client->listOrganizationProjects($organization['id']);
         $this->assertCount(1, $projects);
@@ -1802,7 +1802,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('payAsYouGo', $project);
 
         $payAsYouGo = $project['payAsYouGo'];
-        $this->assertIsFloat($payAsYouGo['purchasedCredits']);
+        $this->assertIsNumeric($payAsYouGo['purchasedCredits']);
     }
 
     public function testCreditsCannotBeGivenToNonPaygoProject(): void
