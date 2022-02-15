@@ -159,12 +159,24 @@ class StorageBackendTest extends ClientTestCase
             'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
         ];
 
+        $willTestDynamicBackends = $backend['backend'] === 'snowflake';
+        if ($willTestDynamicBackends) {
+            // flip the current value
+            $options['useDynamicBackends'] = ! (bool) ($backend['useDynamicBackends'] ?? false);
+        }
+
         $updatedBackend = $this->client->updateStorageBackend($backend['id'], $options);
 
         $this->assertIsInt($updatedBackend['id']);
         $this->assertArrayHasKey('host', $updatedBackend);
         $this->assertArrayHasKey('backend', $updatedBackend);
         $this->assertArrayHasKey('region', $updatedBackend);
+        $this->assertArrayHasKey('useDynamicBackends', $updatedBackend);
+        if ($willTestDynamicBackends) {
+            $this->assertNotSame($backend['useDynamicBackends'], $updatedBackend['useDynamicBackends']);
+        }
+
+        $this->client->removeStorageBackend($backend['id']);
     }
 
     public function testStorageBackendList()
