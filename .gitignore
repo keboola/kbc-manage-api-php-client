@@ -12,3 +12,4 @@ docs/*.pyc
 .DS_STORE
 set-env.sh
 cache/*
+/.phpunit.result.cache
