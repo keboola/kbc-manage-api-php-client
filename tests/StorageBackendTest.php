@@ -35,6 +35,13 @@ class StorageBackendTest extends ClientTestCase
             'dataRetentionTimeInDays' => 1,
         ]);
 
+        $projectDetail = $this->client->getProject($project['id']);
+        if ($options['useDynamicBackends'] ?? false) {
+            $this->assertContains('workspace-snowflake-dynamic-backend-size', $projectDetail['features']);
+        } else {
+            $this->assertNotContains('workspace-snowflake-dynamic-backend-size', $projectDetail['features']);
+        }
+
         try {
             $this->client->removeStorageBackend($newBackend['id']);
             $this->fail('Should fail because backend is used in project');
