@@ -20,6 +20,11 @@ class StorageBackendTest extends ClientTestCase
         $this->assertSame($newBackend['backend'], 'snowflake');
         $this->assertBackendExist($newBackend['id']);
 
+        // test if can create project after update password
+        $newBackend = $this->client->updateStorageBackend($newBackend['id'], [
+            'password' => $options['password'],
+        ]);
+
         $newMaintainer = $this->client->createMaintainer([
             'name' => $maintainerName,
             'defaultConnectionSnowflakeId' => $newBackend['id'],
