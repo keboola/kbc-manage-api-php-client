@@ -3535,9 +3535,7 @@ CREATE MASTER KEY
 
 A partial update of a storage backend, one of the attributes are required.
 
-+ Attributes
-    + username: keboola(optional)
-    + password: 1234 (optional)
++ Attributes (StorageBackendUpdate)
 
 + Request (application/json)
     + Headers
@@ -3574,6 +3572,14 @@ All projects using the backend must be deleted and purged before it can be delet
 + owner: keboola (required) - associated AWS account owner
 + database: MyDataWarehouse - required only for Synapse
 + useSynapseManagedIdentity: true - optional for Synapse
++ useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
+
+
+### StorageBackendUpdate
+
++ username: keboola (string)
++ password: 1234 (string)
++ useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
 
 ## StorageBackend
 + id: 123 (number, required)
