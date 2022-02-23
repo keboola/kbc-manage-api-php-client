@@ -20,11 +20,6 @@ class StorageBackendTest extends ClientTestCase
         $this->assertSame($newBackend['backend'], 'snowflake');
         $this->assertBackendExist($newBackend['id']);
 
-        // test if can create project after update password
-        $newBackend = $this->client->updateStorageBackend($newBackend['id'], [
-            'password' => $options['password'],
-        ]);
-
         $newMaintainer = $this->client->createMaintainer([
             'name' => $maintainerName,
             'defaultConnectionSnowflakeId' => $newBackend['id'],
@@ -184,6 +179,7 @@ class StorageBackendTest extends ClientTestCase
      */
     public function testUpdateStorageBackend(array $options, array $updateOptions)
     {
+        $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
         $backend = $this->client->createStorageBackend($options);
 
         $updatedBackend = $this->client->updateStorageBackend($backend['id'], $updateOptions);
@@ -196,6 +192,27 @@ class StorageBackendTest extends ClientTestCase
         if (array_key_exists('useDynamicBackends', $updateOptions)) {
             $this->assertNotSame($backend['useDynamicBackends'], $updatedBackend['useDynamicBackends']);
         }
+
+        $newMaintainer = $this->client->createMaintainer([
+            'name' => $maintainerName,
+            'defaultConnectionSnowflakeId' => $backend['id'],
+        ]);
+
+        $name = 'My org';
+        $organization = $this->client->createOrganization($newMaintainer['id'], [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $this->client->deleteProject($project['id']);
+        $this->waitForProjectPurge($project['id']);
+
+        $this->client->deleteOrganization($organization['id']);
+        $this->client->deleteMaintainer($newMaintainer['id']);
 
         $this->client->removeStorageBackend($backend['id']);
     }
