@@ -2,6 +2,7 @@
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\Csv\CsvFile;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Workspaces;
@@ -153,6 +154,72 @@ class StorageBackendTest extends ClientTestCase
                 'useDynamicBackends' => 0,
             ],
         ];
+    }
+
+    public function testKBC2381fix()
+    {
+        $options = $this->getBackendCreateOptionsWithDynamicBackends();
+        $backend = $this->client->createStorageBackend($options);
+        $newMaintainer = $this->client->createMaintainer([
+            'name' => 'KBC2381fix',
+            'defaultConnectionSnowflakeId' => $backend['id'],
+        ]);
+
+        $name = 'KBC2381fix';
+        $organization = $this->client->createOrganization($newMaintainer['id'], [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'KBC2381fix',
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $params = [
+            'canManageBuckets' => true,
+            'canReadAllFileUploads' => true,
+            'canManageTokens' => true,
+            'canPurgeTrash' => true,
+            'description' => $name,
+        ];
+        $token = $this->client->createProjectStorageToken($project['id'], $params);
+
+        $sapiClient = new Client(['token' => $token['token'], 'url' => getenv('KBC_MANAGE_API_URL')]);
+
+        $workspaces = new Workspaces($sapiClient);
+        $workspace = $workspaces->createWorkspace();
+
+        $bucketId = $sapiClient->createBucket('bucketname', 'in');
+        $tableId = $sapiClient->createTable(
+            $bucketId,
+            'dates',
+            new CsvFile(__DIR__ . '/test.csv')
+        );
+
+        $options = [
+            'input' => [
+                [
+                    'source' => $tableId,
+                    'destination' => 'testtable',
+                ],
+            ],
+        ];
+
+        $workspaces->loadWorkspaceData($workspace['id'], $options);
+
+        $sapiClient->createTableAsyncDirect($bucketId, [
+            'name' => 'testUnaloaded',
+            'dataWorkspaceId' => $workspace['id'],
+            'dataObject' => 'testtable',
+        ]);
+
+        $this->client->deleteProject($project['id']);
+        $this->waitForProjectPurge($project['id']);
+
+        $this->client->deleteOrganization($organization['id']);
+        $this->client->deleteMaintainer($newMaintainer['id']);
+
+        $this->client->removeStorageBackend($backend['id']);
     }
 
     /**
