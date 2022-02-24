@@ -112,26 +112,45 @@ class StorageBackendTest extends ClientTestCase
     public function storageBackendOptionsProvider(): iterable
     {
         yield 'snowflake' => [
-            [
-                'backend' => 'snowflake',
-                'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
-                'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
-                'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
-                'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
-                'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
-                'owner' => 'keboola',
-            ],
+            $this->getBackendCreateOptions(),
         ];
         yield 'snowflake with dynamic backends' => [
+            $this->getBackendCreateOptionsWithDynamicBackends(),
+        ];
+    }
+
+    public function storageBackendOptionsProviderForUpdate(): iterable
+    {
+        $create = $this->getBackendCreateOptions();
+        yield 'snowflake update password' => [
+            $create,
             [
-                'backend' => 'snowflake',
-                'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
-                'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
-                'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
                 'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
-                'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
-                'owner' => 'keboola',
-                'useDynamicBackends' => '1',
+            ],
+        ];
+        yield 'snowflake update username' => [
+            $create,
+            [
+                'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
+            ],
+        ];
+        yield 'snowflake update enable dynamic backends' => [
+            $create,
+            [
+                'useDynamicBackends' => 1,
+            ],
+        ];
+        $createOptionsWithDynamicBackends = $this->getBackendCreateOptionsWithDynamicBackends();
+        yield 'snowflake with dynamic backends update password' => [
+            $createOptionsWithDynamicBackends,
+            [
+                'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
+            ],
+        ];
+        yield 'snowflake disable dynamic backends' => [
+            $createOptionsWithDynamicBackends,
+            [
+                'useDynamicBackends' => 0,
             ],
         ];
     }
@@ -156,32 +175,44 @@ class StorageBackendTest extends ClientTestCase
     }
 
     /**
-     * @dataProvider storageBackendOptionsProvider
+     * @dataProvider storageBackendOptionsProviderForUpdate
      */
-    public function testUpdateStorageBackend(array $options)
+    public function testUpdateStorageBackend(array $options, array $updateOptions)
     {
+        $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
         $backend = $this->client->createStorageBackend($options);
 
-        $options = [
-            'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
-        ];
-
-        $willTestDynamicBackends = $backend['backend'] === 'snowflake';
-        if ($willTestDynamicBackends) {
-            // flip the current value
-            $options['useDynamicBackends'] = ! (bool) ($backend['useDynamicBackends'] ?? false);
-        }
-
-        $updatedBackend = $this->client->updateStorageBackend($backend['id'], $options);
+        $updatedBackend = $this->client->updateStorageBackend($backend['id'], $updateOptions);
 
         $this->assertIsInt($updatedBackend['id']);
         $this->assertArrayHasKey('host', $updatedBackend);
         $this->assertArrayHasKey('backend', $updatedBackend);
         $this->assertArrayHasKey('region', $updatedBackend);
         $this->assertArrayHasKey('useDynamicBackends', $updatedBackend);
-        if ($willTestDynamicBackends) {
+        if (array_key_exists('useDynamicBackends', $updateOptions)) {
             $this->assertNotSame($backend['useDynamicBackends'], $updatedBackend['useDynamicBackends']);
         }
+
+        $newMaintainer = $this->client->createMaintainer([
+            'name' => $maintainerName,
+            'defaultConnectionSnowflakeId' => $backend['id'],
+        ]);
+
+        $name = 'My org';
+        $organization = $this->client->createOrganization($newMaintainer['id'], [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $this->client->deleteProject($project['id']);
+        $this->waitForProjectPurge($project['id']);
+
+        $this->client->deleteOrganization($organization['id']);
+        $this->client->deleteMaintainer($newMaintainer['id']);
 
         $this->client->removeStorageBackend($backend['id']);
     }
@@ -223,5 +254,32 @@ class StorageBackendTest extends ClientTestCase
             }
         }
         $this->assertFalse($hasBackend);
+    }
+
+    public function getBackendCreateOptions(): array
+    {
+        return [
+            'backend' => 'snowflake',
+            'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
+            'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
+            'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
+            'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
+            'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
+            'owner' => 'keboola',
+        ];
+    }
+
+    public function getBackendCreateOptionsWithDynamicBackends(): array
+    {
+        return [
+            'backend' => 'snowflake',
+            'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
+            'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
+            'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
+            'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
+            'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
+            'owner' => 'keboola',
+            'useDynamicBackends' => '1',
+        ];
     }
 }
