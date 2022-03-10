@@ -64,6 +64,8 @@ You can run these tests only against non-production environments.
 
 Tests requires valid Keboola Management API tokens and an endpoint URL of the API test environment.
 
+*Note: For automated tests, the tests are run again three times by default if they fail. For local development this would be quite annoying, 
+so you can disable this by creating new file `phpunit-retry.xml` from `phpunit-retry.xml.dist`*
 *Note: The test environment should be running a cronjob for `token-expirator` otherwise the `testTemporaryAccess` test will fail.*
 
 Create file `.env` with environment variables`:
