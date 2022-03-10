@@ -1,6 +1,12 @@
 {
     "name": "keboola/kbc-manage-api-php-client",
     "description": "Keboola Management API Client",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/keboola/phpunit-retry-annotations"
+        }
+    ],
     "require": {
         "php" : "^7.1|^8.0",
         "guzzlehttp/guzzle": "^6.1"
@@ -10,7 +16,8 @@
         "keboola/storage-api-client": "^7.0",
         "phpstan/phpstan": "^0.12.94",
         "phpstan/phpstan-phpunit": "^0.12.22",
-        "phpunit/phpunit": "^7.0|^8.0"
+        "phpunit/phpunit": "^7.0|^8.0",
+        "bshaffer/phpunit-retry-annotations": "dev-master"
     },
     "autoload": {
         "psr-4": {

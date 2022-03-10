@@ -13,3 +13,4 @@ docs/*.pyc
 set-env.sh
 cache/*
 /.phpunit.result.cache
+phpunit-retry.xml
