@@ -8,9 +8,11 @@ use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client as StorageClient;
 use PHPUnit\Framework\TestCase;
+use PHPUnitRetry\RetryTrait;
 
 class ClientTestCase extends TestCase
 {
+    use RetryTrait;
 
     public const PRODUCTION_HOSTS = [
         'connection.keboola.com',
