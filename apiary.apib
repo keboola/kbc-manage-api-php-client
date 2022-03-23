@@ -110,6 +110,7 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionSnowflakeId": 242,
             "defaultConnectionSynapseId": 235,
             "defaultConnectionExasolId": 236,
+            "defaultConnectionTeradataId": 236,
             "organizations": [
                 {
                     "id": 234,
@@ -132,6 +133,7 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionSnowflakeId": 242,
             "defaultConnectionSynapseId": 235,
             "defaultConnectionExasolId": 236,
+            "defaultConnectionTeradataId": 236,
             "organizations": [
                 {
                     "id": 234,
@@ -171,6 +173,7 @@ A maintainer object has the following attributes:
         "defaultConnectionSnowflakeId": 242,
         "defaultConnectionSynapseId": 235,
         "defaultConnectionExasolId": 236,
+        "defaultConnectionTeradataId": 236,
         "zendeskUrl": "https://some.url.com",
         "organizations": [
             {
@@ -205,6 +208,7 @@ A partial update of a maintainer
     + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection ID
     + defaultConnectionSynapseId:324 (optional) - Default Synapse Connection ID
     + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
+    + defaultConnectionTeradataId:324 (optional) - Default Teradata Connection ID
     + zendeskUrl:https://keboola.zendesk.com (optional)
 
 + Request (application/json)
@@ -1072,6 +1076,7 @@ Only organization members, members of the maintainer and super admins can delete
       "hasSnowflake": true,
       "hasSynapse": false,
       "hasExasol": false,
+      "hasTeradata": false,
       "defaultBackend": "snowflake",
       "hasTryModeOn": "0",
       "limits": {
@@ -1287,6 +1292,7 @@ A project will be created from a default template which defines its limits. Only
             "hasRedshift": false,
             "hasSynapse": false,
             "hasExasol": false,
+            "hasTeradata": false,
             "hasSnowflake": true,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
@@ -1328,7 +1334,7 @@ A project will be created from a default template which defines its limits. Only
 ## Assign Project Storage Backend [/manage/projects/{project_id}/storage-backend]
 This action can be performed only by a super admin.
 
-One backend connection of each type (Snowflake, Redshift, Synapse, Exasol) can be assigned to a project.
+One backend connection of each type (Snowflake, Redshift, Synapse, Exasol, Teradata) can be assigned to a project.
 Connection type is automatically detected from the passed connection identifier.
 
 + Parameters
@@ -2188,6 +2194,7 @@ Operations on deleted projects are allowed only for a super admin.
             "hasRedshift": false,
             "hasSynapse": false,
             "hasExasol": false,
+            "hasTeradata": false,
             "hasSnowflake": true,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
@@ -2268,6 +2275,7 @@ Projects can be filtered by various filters:
             "hasRedshift": false,
             "hasSnowflake": true,
             "hasSynapse": false,
+            "hasTeradata": false,
             "hasExasol": false,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
@@ -2302,6 +2310,7 @@ Projects can be filtered by various filters:
             "hasRedshift": false,
             "hasSnowflake": true,
             "hasSynapse": false,
+            "hasTeradata": false,
             "hasExasol": false,
             "defaultBackend": "snowflake",
             "hasTryModeOn": "0",
@@ -2810,6 +2819,7 @@ Create a new project from given promo code
         "hasSnowflake": true,
         "hasExasol": false,
         "hasSynapse": false,
+        "hasTeradata": false,
         "defaultBackend": "snowflake",
         "hasTryModeOn": "0",
         "limits": {
@@ -3467,6 +3477,7 @@ Currently supported backends are:
 - Snowflake
 - Synapse
 - Exasol
+- Teradata
 
 ## Storage Backend Collection [/manage/storage-backend]
 
@@ -3529,7 +3540,7 @@ CREATE MASTER KEY
 
 + Response 200 (application/json)
 
-    + Attributes (array[StorageBackendListRedshift,StorageBackendListSnowflake,StorageBackendListSynapse,StorageBackendListExasol])
+    + Attributes (array[StorageBackendListRedshift,StorageBackendListSnowflake,StorageBackendListSynapse,StorageBackendListExasol,StorageBackendListTeradata])
 
 ### Update backend [PATCH /manage/storage-backend/{backend_id}]
 
@@ -3563,14 +3574,14 @@ All projects using the backend must be deleted and purged before it can be delet
 
 ### StorageBackendCreate
 
-+ backend: snowflake (required) - can be redshift, snowflake or synapse
++ backend: snowflake (required) - can be redshift, snowflake ,synapse, exasol, teradata
 + host: `sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com` (required)
 + warehouse: `production` - required only for Snowflake
 + username: keboola (required)
 + password: 1234 (required)
 + region: `us-east-1` (required)
 + owner: keboola (required) - associated AWS account owner
-+ database: MyDataWarehouse - required only for Synapse
++ database: MyDataWarehouse - required for Synapse and Teradata
 + useSynapseManagedIdentity: true - optional for Synapse
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
 
@@ -3620,6 +3631,11 @@ All projects using the backend must be deleted and purged before it can be delet
 ## StorageBackendListExasol (StorageBackendListBase)
 + host: database.exasol.com (required)
 + backend: exasol (required)
+
+## StorageBackendListTeradata (StorageBackendListBase)
++ host: database.teradata.com (required)
++ backend: teradata (required)
++ database: keboola
 
 # Group SUPER - Commands
 
