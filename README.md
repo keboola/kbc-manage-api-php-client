@@ -76,6 +76,8 @@ Create file `.env` with environment variables`:
 KBC_MANAGE_API_URL=https://connection.keboola.com  
 KBC_MANAGE_API_TOKEN=your_token
 KBC_SUPER_API_TOKEN=your_token
+KBC_MANAGE_API_SUPER_TOKEN_WITH_PROJECTS_READ_SCOPE=super_token_with_projects_read_scope
+KBC_MANAGE_API_SUPER_TOKEN_WITHOUT_SCOPES=super_token_without_scopes
 KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE=super_token_with_ui_manage_scope
 KBC_TEST_MAINTAINER_ID=2
 KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled
