@@ -13,7 +13,7 @@
     },
     "require-dev": {
         "keboola/coding-standard": "^13.0",
-        "keboola/storage-api-client": "^7.0",
+        "keboola/storage-api-client": "^12.0",
         "phpstan/phpstan": "^0.12.94",
         "phpstan/phpstan-phpunit": "^0.12.22",
         "phpunit/phpunit": "^7.0|^8.0",
