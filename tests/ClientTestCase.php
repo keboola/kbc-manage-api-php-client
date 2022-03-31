@@ -336,4 +336,16 @@ class ClientTestCase extends TestCase
         } while ($deletedProject['isPurged'] !== true);
         $this->assertNotNull($deletedProject['purgedTime']);
     }
+
+    protected function generateDescriptionForTestObject(): string
+    {
+        $testSuiteName = '';
+
+        /** @phpstan-ignore-next-line */
+        if (SUITE_NAME) {
+            $testSuiteName = sprintf('%s::', SUITE_NAME);
+        }
+
+        return $testSuiteName . get_class($this) . '\\' . $this->getName();
+    }
 }

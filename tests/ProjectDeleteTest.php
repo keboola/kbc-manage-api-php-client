@@ -139,7 +139,7 @@ class ProjectDeleteTest extends ClientTestCase
             'canReadAllFileUploads' => true,
             'canManageTokens' => true,
             'canPurgeTrash' => true,
-            'description' => 'TestToken',
+            'description' => $this->generateDescriptionForTestObject(),
         ];
         $token = $this->client->createProjectStorageToken($project['id'], $params);
 
