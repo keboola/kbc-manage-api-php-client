@@ -6,10 +6,13 @@ use Exception;
 use Keboola\Csv\CsvFile;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
+use Keboola\StorageApi\BranchAwareClient;
 use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Components;
 use Keboola\StorageApi\Metadata;
 use Keboola\StorageApi\Options\Components as ComponentsOptions;
+use Keboola\StorageApi\Options\Components\Configuration;
+use Keboola\StorageApi\Options\Components\ConfigurationMetadata;
 use Keboola\StorageApi\Workspaces;
 
 class ProjectDeleteTest extends ClientTestCase
@@ -131,6 +134,38 @@ class ProjectDeleteTest extends ClientTestCase
             'dataRetentionTimeInDays' => 1,
         ]);
 
+        $params = [
+            'canManageBuckets' => true,
+            'canReadAllFileUploads' => true,
+            'canManageTokens' => true,
+            'canPurgeTrash' => true,
+            'description' => 'TestToken',
+        ];
+        $token = $this->client->createProjectStorageToken($project['id'], $params);
+
+        // create sapi client
+        $config = [
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token['token'],
+        ];
+
+        // create branch aware client for default branch
+        $branchAwareDefaultClient = new BranchAwareClient('default', $config);
+
+        // add configuration metadata
+        $configurationOptions = (new Configuration())
+            ->setComponentId('transformation')
+            ->setConfigurationId('main-1')
+            ->setName('Config 1');
+
+        $components = new Components($branchAwareDefaultClient);
+        $components->addConfiguration($configurationOptions);
+
+        $configurationMetadataOptions = (new ConfigurationMetadata($configurationOptions))
+            ->setMetadata(ProjectsMetadataTest::TEST_METADATA);
+        $components->addConfigurationMetadata($configurationMetadataOptions);
+
+        // set project metadata
         $this->client->setProjectMetadata(
             $project['id'],
             ProjectsMetadataTest::PROVIDER_USER,
