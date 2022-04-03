@@ -14,5 +14,6 @@ define('TEST_S3_FILES_BUCKET', getenv('TEST_S3_FILES_BUCKET'));
 define('TEST_S3_KEY', getenv('TEST_S3_KEY'));
 define('TEST_S3_REGION', getenv('TEST_S3_REGION'));
 define('TEST_S3_SECRET', getenv('TEST_S3_SECRET'));
+define('SUITE_NAME', getenv('SUITE_NAME'));
 
 $loader = require __DIR__ . '/../vendor/autoload.php';
