@@ -1418,6 +1418,19 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($deletedProject['isDeleted']);
         $this->assertFalse($deletedProject['isPurged']);
         $this->assertNull($deletedProject['purgedTime']);
+
+        $clientWithScope = $this->createSuperManageTokenWithDeletedProjectsReadScopeClient();
+        $deletedProjectFromClientWithScope = $clientWithScope->getDeletedProject($project['id']);
+        $this->assertSame(
+            $deletedProject,
+            $deletedProjectFromClientWithScope,
+            'Response for both clients should be the same'
+        );
+
+        $clientWithIncorrectScope = $this->createSuperManageTokenWithProjectsReadScopeClient();
+        $this->expectExceptionMessage('You don\'t have access to the resource.');
+        $this->expectException(ClientException::class);
+        $clientWithIncorrectScope->getDeletedProject($project['id']);
     }
 
     public function testActiveProjectUnDelete()
@@ -2106,6 +2119,21 @@ class ProjectsTest extends ClientTestCase
             [],
             $token['scopes'],
             'The provided token should not have any scopes'
+        );
+        return $client;
+    }
+
+    private function createSuperManageTokenWithDeletedProjectsReadScopeClient(): Client
+    {
+        $client = $this->getClient([
+            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_DELETED_PROJECTS_READ_SCOPE'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+        ]);
+        $token = $client->verifyToken();
+        $this->assertContains(
+            'deleted-projects:read',
+            $token['scopes'],
+            'The provided token does not have required "deleted-projects:read" scope'
         );
         return $client;
     }
