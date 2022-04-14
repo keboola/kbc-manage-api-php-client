@@ -36,11 +36,6 @@ parameters:
 			path: tests/CommandsTest.php
 
 		-
-			message: "#^Cannot call method getBody\\(\\) on Psr\\\\Http\\\\Message\\\\ResponseInterface\\|null\\.$#"
-			count: 1
-			path: tests/CommonTest.php
-
-		-
 			message: "#^Cannot access offset 'id' on int\\.$#"
 			count: 2
 			path: tests/FeaturesTest.php
