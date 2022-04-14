@@ -69,10 +69,7 @@ class ClientTestCase extends TestCase
         }
     }
 
-    /**
-     * @return Client
-     */
-    protected function getClient(array $options)
+    protected function getClient(array $options): Client
     {
         $tokenParts = explode('-', $options['token']);
         $tokenAgentString = '';

@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Psr\Http\Message\ResponseInterface;
 
 class CommonTest extends ClientTestCase
 {
@@ -71,7 +72,9 @@ class CommonTest extends ClientTestCase
             );
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertStringContainsString('Request body not valid', (string) $e->getResponse()->getBody());
+            /** @var ResponseInterface $response */
+            $response = $e->getResponse();
+            $this->assertStringContainsString('Request body not valid', (string) $response->getBody());
         }
     }
 }

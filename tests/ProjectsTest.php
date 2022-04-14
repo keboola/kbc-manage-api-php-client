@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use Generator;
 use Keboola\ManageApi\Backend;
+use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
@@ -255,6 +256,25 @@ class ProjectsTest extends ClientTestCase
                 ProjectRole::SHARE,
             ],
         ];
+    }
+
+    public function testSuperManageTokenWithScopeCanSeeProjectDetail()
+    {
+        $organization = $this->initTestOrganization();
+        $organizationId = $organization['id'];
+        $project = $this->initTestProject($organizationId);
+
+        $client = $this->createSuperManageTokenWithProjectsReadScopeClient();
+
+        $actual = $client->getProject($project['id']);
+        $expected = $this->client->getProject($project['id']);
+
+        $this->assertSame($expected, $actual, 'Client with scope should see the same response');
+
+        $this->expectExceptionMessage('You don\'t have access to the resource.');
+        $this->expectException(ClientException::class);
+        $clientWithoutScopes = $this->createSuperManageTokenWithoutScopesClient();
+        $clientWithoutScopes->getProject($project['id']);
     }
 
     public function testSuperAdminCannotCreateProject()
@@ -2058,5 +2078,35 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->client->getProject($project['id']);
         $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
+    }
+
+    private function createSuperManageTokenWithProjectsReadScopeClient(): Client
+    {
+        $client = $this->getClient([
+            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_PROJECTS_READ_SCOPE'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+        ]);
+        $token = $client->verifyToken();
+        $this->assertContains(
+            'projects:read',
+            $token['scopes'],
+            'The provided token does not have required "projects:read" scope'
+        );
+        return $client;
+    }
+
+    private function createSuperManageTokenWithoutScopesClient(): Client
+    {
+        $client = $this->getClient([
+            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITHOUT_SCOPES'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+        ]);
+        $token = $client->verifyToken();
+        $this->assertEquals(
+            [],
+            $token['scopes'],
+            'The provided token should not have any scopes'
+        );
+        return $client;
     }
 }
