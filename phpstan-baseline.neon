@@ -101,11 +101,6 @@ parameters:
 			path: tests/ProjectMembershipRolesTest.php
 
 		-
-			message: "#^Cannot access offset 'description' on int\\.$#"
-			count: 1
-			path: tests/ProjectsTest.php
-
-		-
 			message: "#^Cannot access offset 'features' on int\\.$#"
 			count: 1
 			path: tests/ProjectsTest.php
