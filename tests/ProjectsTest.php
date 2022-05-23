@@ -473,20 +473,6 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals('redshift', $project['defaultBackend']);
     }
 
-    public function testCreateProjectWithDescription()
-    {
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'My org',
-        ]);
-
-        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
-            'name' => 'My test',
-            'description' => 'My test project',
-        ]);
-
-        $this->assertEquals('My test project', $project['description']);
-    }
-
     public function testCreateProjectWithInvalidBackendShouldFail()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -717,20 +703,6 @@ class ProjectsTest extends ClientTestCase
             'name' => $newName,
         ]);
         $this->assertEquals($newName, $project['name']);
-        $this->assertEquals(null, $project['description']);
-
-        // set description
-        $newDescription = 'description of my project';
-        $project = $this->client->updateProject($project['id'], [
-            'description' => $newDescription,
-        ]);
-        $this->assertEquals($newDescription, $project['description']);
-
-        // unset description
-        $project = $this->client->updateProject($project['id'], [
-            'description' => '',
-        ]);
-        $this->assertEmpty($project['description']);
 
         // fetch again
         $project = $this->client->getProject($project['id']);
