@@ -143,3 +143,7 @@ These variables are used for testing file storage. You have to copy these values
  - `TEST_S3_SECRET` - First AWS secret
  
  Variable prefixed with _ROTATE_ are used for rotating credentials and they MUST be working credentials.
+
+## License
+
+MIT licensed, see [LICENSE](./LICENSE) file.
