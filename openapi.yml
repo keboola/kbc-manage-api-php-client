@@ -1,0 +1,6260 @@
+openapi: 3.0.3
+info:
+  title: Manage API
+  version: 1.0.0
+  description: >-
+    The Keboola Connection Management API covers all tasks required for managing
+    projects, as well as some super admin features
+
+    for controlling and monitoring Keboola Connection.
+
+
+    ## Projects Management
+
+
+    * Create, modify and delete maintainers, organizations and projects
+
+
+    * Move projects between organizations
+
+
+    * Define project limits
+
+
+    * Provision Redshift and other Storage backends
+
+
+    * Access project management activity log
+
+
+    ## Projects Monitoring
+
+
+    * Monitoring of projects over organizations and maintainers
+
+
+    ## Super User Control and Monitoring
+
+
+    * UI release and deployment
+
+
+    * Components management
+
+
+    * Storage and Syrup jobs monitoring (will be provided by Syrup utilizing new
+    tokens for authorization)
+
+
+    * Final project delete
+
+
+    * Workers start/shutdown, etc.
+
+
+    ## Authentication
+
+
+    The API supports authentication by a personal access token, which can be
+    retrieved in [Account
+    Settings](https://connection.keboola.com/admin/account/change-password) in
+    Keboola Connection.
+
+    An access token is tied to an administrator and its permissions are derived
+    from their permissions. When the administrator is disabled or deleted, all
+    their tokens become invalid too.
+
+
+    `$ curl -H "X-KBC-ManageApiToken: USER_TOKEN"
+    https://connection.keboola.com/management/tokens/verify`
+
+
+    ## Token Types
+
+
+    There are the following types of tokens:
+
+
+    | Name | Tied to User | Token string is available only on create |
+    Description  |
+
+    | ------------- | ------------- | ------------------- | ----- |
+
+    | user | Yes | Yes |Full access to maintainers, organizations and projects.
+    Access is limited only to resources which are available for the token user.|
+
+    | super | No | Yes | KBC management. Limited scopes can be specified
+    `super_ui_deploy`, `super_monitoring`, ...  |
+servers:
+  - url: https://connection.keboola.com/
+  - url: https://connection.eu-central-1.keboola.com/
+  - url: https://connection.north-europe.azure.keboola.com/
+paths:
+  /manage/tokens/verify:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 13702
+                description: Example token
+                created: 2021-06-28T22:27:28+0200
+                lastUsed: 2022-06-13T22:29:03+0200
+                expires: 2031-06-26T22:27:28+0200
+                isSessionToken: false
+                isExpired: false
+                isDisabled: false
+                scopes: []
+                type: admin
+                creator:
+                  id: 7919
+                  name: John Doe
+                user:
+                  id: 7919
+                  name: John Doe
+                  email: john.doe@keboola.com
+                  mfaEnabled: true
+                  features: []
+                  canAccessLogs: true
+                  isSuperAdmin: true
+      summary: Token Verification
+      operationId: Token Verification
+      description: ''
+      tags:
+        - Token Verification
+      parameters: []
+  /manage/maintainers:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintainerModel'
+              example:
+                id: 123
+                created: '2014-11-11T08:40:51.620Z'
+                url: /questions/1
+                defaultConnectionMysqlId: 234
+                defaultConnectionRedshiftId: 232
+                defaultConnectionSnowflakeId: 242
+                defaultConnectionSynapseId: 235
+                defaultConnectionExasolId: 236
+                defaultConnectionTeradataId: 236
+                zendeskUrl: https://some.url.com
+      summary: Create a maintainer
+      operationId: Create a maintainer
+      description: >-
+        Creates a new maintainer. The user associated with the token will become
+        an admin of the maintainer.
+      tags:
+        - Maintainers
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: Example
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: Example
+                  description: Maintainer name
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 123
+                  name: Keboola CZ
+                  created: '2014-11-11T08:40:51.620Z'
+                  defaultConnectionMysqlId: 234
+                  defaultConnectionRedshiftId: 232
+                  defaultConnectionSnowflakeId: 242
+                  defaultConnectionSynapseId: 235
+                  defaultConnectionExasolId: 236
+                  defaultConnectionTeradataId: 236
+                - id: 124
+                  name: abc
+                  crated: '2014-11-11T08:40:51.620Z'
+                  defaultConnectionMysqlId: 234
+                  defaultConnectionRedshiftId: 232
+                  defaultConnectionSnowflakeId: 242
+                  defaultConnectionSynapseId: 235
+                  defaultConnectionExasolId: 236
+                  defaultConnectionTeradataId: 236
+      summary: List maintainers
+      operationId: List maintainers
+      description: ''
+      tags:
+        - Maintainers
+      parameters: []
+  /manage/maintainers/{maintainer_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintainerModel'
+              example:
+                id: 123
+                created: '2014-11-11T08:40:51.620Z'
+                url: /questions/1
+                defaultConnectionMysqlId: 234
+                defaultConnectionRedshiftId: 232
+                defaultConnectionSnowflakeId: 242
+                defaultConnectionSynapseId: 235
+                defaultConnectionExasolId: 236
+                defaultConnectionTeradataId: 236
+                zendeskUrl: https://some.url.com
+      summary: Retrieve a maintainer
+      operationId: Retrieve a maintainer
+      description: ''
+      tags:
+        - Maintainers
+      parameters:
+        - &ref_0
+          name: maintainer_id
+          in: path
+          description: ''
+          required: true
+          example: '1'
+          schema:
+            type: integer
+    patch:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MaintainerModel'
+              example:
+                id: 123
+                created: '2014-11-11T08:40:51.620Z'
+                url: /questions/1
+                defaultConnectionMysqlId: 234
+                defaultConnectionRedshiftId: 232
+                defaultConnectionSnowflakeId: 242
+                defaultConnectionSynapseId: 235
+                defaultConnectionExasolId: 236
+                defaultConnectionTeradataId: 236
+                zendeskUrl: https://some.url.com
+      summary: Update a maintainer
+      operationId: Update a maintainer
+      description: A partial update of a maintainer
+      tags:
+        - Maintainers
+      parameters:
+        - *ref_0
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: Example
+              defaultConnectionRedshiftId: '234'
+              defaultConnectionSnowflakeId: '324'
+              defaultConnectionSynapseId: '324'
+              defaultConnectionExasolId: '324'
+              defaultConnectionTeradataId: '324'
+              zendeskUrl: https://keboola.zendesk.com
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Example
+                  description: Maintainer name
+                defaultConnectionRedshiftId:
+                  type: string
+                  example: '234'
+                  description: Default Redshift Connection ID
+                defaultConnectionSnowflakeId:
+                  type: string
+                  example: '324'
+                  description: Default Snowflake Connection ID
+                defaultConnectionSynapseId:
+                  type: string
+                  example: '324'
+                  description: Default Synapse Connection ID
+                defaultConnectionExasolId:
+                  type: string
+                  example: '324'
+                  description: Default Exasol Connection ID
+                defaultConnectionTeradataId:
+                  type: string
+                  example: '324'
+                  description: Default Teradata Connection ID
+                zendeskUrl:
+                  type: string
+                  example: https://keboola.zendesk.com
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Delete a maintainer
+      operationId: Delete a maintainer
+      description: ''
+      tags:
+        - Maintainers
+      parameters:
+        - *ref_0
+  /manage/maintainers/{maintainer_id}/invitations:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 112
+                  created: 2018-07-10T10:45:11+0200
+                  user:
+                    id: 124
+                    name: test user 2
+                    email: spam@keboola.com
+                  creator:
+                    id: 123
+                    name: test user
+                    email: martin@keboola.com
+                - id: 113
+                  created: 2018-07-10T10:50:00+0200
+                  user:
+                    id: 125
+                    name: test user 3
+                    email: spam@keboola.com
+                  creator:
+                    id: 123
+                    name: test user
+                    email: martin@keboola.com
+      summary: List maintainers invitations
+      operationId: List maintainers invitations
+      description: ''
+      tags:
+        - Maintainers
+      parameters:
+        - &ref_1
+          name: maintainer_id
+          in: path
+          description: Maintainer ID
+          required: true
+          schema:
+            type: string
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 113
+                created: 2018-07-10T10:50:00+0200
+                user:
+                  id: 125
+                  name: test user 3
+                  email: spam@keboola.com
+                creator:
+                  id: 123
+                  name: test user
+                  email: martin@keboola.com
+      summary: Invite a user to a maintainer
+      operationId: Invite a user to a maintainer
+      description: Only members of the maintainer and superadmins can invite other users.
+      tags:
+        - Maintainers
+      parameters:
+        - *ref_1
+      requestBody:
+        content:
+          application/json:
+            example:
+              email: martin@keboola.com
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  example: martin@keboola.com
+                  description: Email of an invited user
+  /manage/maintainers/{maintainer_id}/invitations/{invitation_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 113
+                created: 2018-07-10T10:50:00+0200
+                user:
+                  id: 125
+                  name: test user 3
+                  email: spam@keboola.com
+                creator:
+                  id: 123
+                  name: test user
+                  email: martin@keboola.com
+      summary: Maintainer invitation detail
+      operationId: Maintainer invitation detail
+      description: ''
+      tags:
+        - Maintainers
+      parameters:
+        - &ref_2
+          name: maintainer_id
+          in: path
+          description: Maintainer ID
+          required: true
+          schema:
+            type: string
+        - &ref_3
+          name: invitation_id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Cancel maintainer invitation
+      operationId: Cancel maintainer invitation
+      description: ''
+      tags:
+        - Maintainers
+      parameters:
+        - *ref_2
+        - *ref_3
+  /manage/maintainers/{maintainer_id}/users:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 23423
+                  name: Martin Halamicek
+                  email: martin@keboola.com
+      summary: List maintainer users
+      operationId: List maintainer users
+      description: ''
+      tags:
+        - Maintainers
+      parameters:
+        - &ref_4
+          name: maintainer_id
+          in: path
+          description: ID of the maintainer
+          required: true
+          example: '1'
+          schema:
+            type: number
+    post:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Add a User to maintainer
+      operationId: Add a User to maintainer
+      description: >-
+        Either `id` or `email` of a user must be set. If the email is not
+        associated with a user, a new account is created and an invitation is
+        sent.
+      tags:
+        - Maintainers
+      parameters:
+        - *ref_4
+      requestBody:
+        content:
+          application/json:
+            example:
+              id: '7234'
+              email: martin@keboola.com
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: '7234'
+                  description: User ID
+                email:
+                  type: string
+                  example: martin@keboola.com
+                  description: User email
+  /manage/maintainers/{maintainer_id}/users/{user_id}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove a user from maintainer
+      operationId: Remove a user from maintainer
+      description: ''
+      tags:
+        - Maintainers
+      parameters:
+        - name: maintainer_id
+          in: path
+          description: ID of the maintainer
+          required: true
+          example: '1'
+          schema:
+            type: number
+        - name: user_id
+          in: path
+          description: User ID
+          required: true
+          example: '1'
+          schema:
+            type: string
+  /manage/maintainers/{maintainer_id}/metadata:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content: {}
+      summary: Set maintainer metadata
+      operationId: Set maintainer metadata
+      description: >-
+        Sets multiple metadata with one call. If the given key and provider
+        combination already exist
+
+        for the maintainer, the data will be updated with the new value and
+        timestamp.
+
+        Only maintainer members and super admins can change metadata.
+      tags:
+        - Maintainers
+      parameters:
+        - name: maintainer_id
+          in: path
+          description: Maintainer ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              provider: user
+              metadata:
+                - key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - key: someMetadataKey
+                  value: Some value
+            schema:
+              type: object
+              required:
+                - provider
+                - metadata
+              properties:
+                provider:
+                  type: string
+                  enum:
+                    - user
+                    - system
+                metadata:
+                  type: array
+                  items: {}
+                  description: Array of metadata objects
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content: {}
+      summary: List maintainer metadata
+      operationId: List maintainer metadata
+      description: Only members of the maintainer and super admins can list metadata.
+      tags:
+        - Maintainers
+      parameters:
+        - name: maintainer_id
+          in: path
+          description: Maintainer ID
+          required: true
+          schema:
+            type: string
+  /manage/maintainers/{maintainer_id}/metadata/{metadata_id}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove maintainer metadata
+      operationId: Remove maintainer metadata
+      description: ''
+      tags:
+        - Maintainers
+      parameters:
+        - name: maintainer_id
+          in: path
+          description: Maintainer ID
+          required: true
+          schema:
+            type: string
+        - name: metadata_id
+          in: path
+          description: Metadata ID
+          required: true
+          schema:
+            type: string
+  /manage/organizations/{organization_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 123
+                name: sample org
+                created: 2015-10-02T11:03:44+0200
+                allowAutoJoin: true
+                crmId: '6232456'
+                mfaRequired: false
+                projects:
+                  - id: 123
+                    name: Demo
+                    created: '2014-11-11T08:40:51.620Z'
+      summary: Retrieve an organization
+      operationId: Retrieve an organization
+      description: ''
+      tags:
+        - Organizations
+      parameters:
+        - &ref_5
+          name: organization_id
+          in: path
+          description: ID of the organization in form of an integer
+          required: true
+          example: '1'
+          schema:
+            type: number
+    patch:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 123
+                name: POC
+                created: 2015-10-02T11:03:44+0200
+                allowAutoJoin: true
+                crmId: '123456'
+                mfaRequired: false
+                projects:
+                  - id: 123
+                    name: Demo
+                    created: '2014-11-11T08:40:51.620Z'
+      summary: Update an organization
+      operationId: Update an organization
+      description: Partial update of an organization
+      tags:
+        - Organizations
+      parameters:
+        - *ref_5
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: POC
+              maintainerId: ''
+              allowAutoJoin: ''
+              crmId: '123456'
+              mfaRequired: ''
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: POC
+                  description: Organization name
+                maintainerId:
+                  type: string
+                  description: Assign the organization to another maintainer.
+                allowAutoJoin:
+                  type: string
+                  description: >-
+                    Set whether superAdmins need approval to join the
+                    organization's projects (default `true`).
+                crmId:
+                  type: string
+                  example: '123456'
+                  description: >-
+                    Set CRM ID. Only maintainer members and superadmins can
+                    change this.
+                mfaRequired:
+                  type: string
+                  description: >-
+                    Toggle whether all members of or organization and its
+                    projects must have enabled multi-factor authentication
+                    (default `false`).
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Delete an organization
+      operationId: Delete an organization
+      description: ''
+      tags:
+        - Organizations
+      parameters:
+        - *ref_5
+  /manage/maintainers/{maintainer_id}/organizations:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationModel'
+              example:
+                id: 123
+                name: sample org
+                created: '2014-11-11T08:40:51.620Z'
+                allowAutoJoin: true
+                crmId: '6232456'
+                mfaRequired: false
+                projects:
+                  - id: 123
+                    name: Demo
+                    created: '2014-11-11T08:40:51.620Z'
+      summary: Create an organization
+      operationId: Create an organization
+      description: Creates a new organization.
+      tags:
+        - Organizations
+      parameters:
+        - &ref_6
+          name: maintainer_id
+          in: path
+          description: >-
+            ID of the parent maintainer. The created organization will be
+            assigned to this maintainer.
+          required: true
+          example: '1'
+          schema:
+            type: number
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: POC
+              crmId: '234'
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: POC
+                  description: Organization name
+                crmId:
+                  type: string
+                  example: '234'
+                  description: CRM id
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizationModel'
+              example:
+                id: 123
+                name: sample org
+                created: '2014-11-11T08:40:51.620Z'
+                allowAutoJoin: true
+                crmId: '6232456'
+                mfaRequired: false
+                projects:
+                  - id: 123
+                    name: Demo
+                    created: '2014-11-11T08:40:51.620Z'
+      summary: List maintainer's organizations
+      operationId: List maintainer's organizations
+      description: ''
+      tags:
+        - Organizations
+      parameters:
+        - *ref_6
+  /manage/organizations/{organization_id}/invitations:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 112
+                  created: 2018-07-10T10:45:11+0200
+                  user:
+                    id: 124
+                    name: test user 2
+                    email: spam@keboola.com
+                  creator:
+                    id: 123
+                    name: test user
+                    email: martin@keboola.com
+                - id: 113
+                  created: 2018-07-10T10:50:00+0200
+                  user:
+                    id: 125
+                    name: test user 3
+                    email: spam@keboola.com
+                  creator:
+                    id: 123
+                    name: test user
+                    email: martin@keboola.com
+      summary: List organization invitations
+      operationId: List organization invitations
+      description: ''
+      tags:
+        - Organizations
+      parameters:
+        - &ref_7
+          name: organization_id
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            type: string
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 113
+                created: 2018-07-10T10:50:00+0200
+                user:
+                  id: 125
+                  name: test user 3
+                  email: spam@keboola.com
+                creator:
+                  id: 123
+                  name: test user
+                  email: martin@keboola.com
+      summary: Invite a user to a organization
+      operationId: Invite a user to a organization
+      description: Only members of the organization can invite other users.
+      tags:
+        - Organizations
+      parameters:
+        - *ref_7
+      requestBody:
+        content:
+          application/json:
+            example:
+              email: martin@keboola.com
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  example: martin@keboola.com
+                  description: Email of an invited user
+  /manage/organizations/{organization_id}/invitations/{invitation_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 113
+                created: 2018-07-10T10:50:00+0200
+                user:
+                  id: 125
+                  name: test user 3
+                  email: spam@keboola.com
+                creator:
+                  id: 123
+                  name: test user
+                  email: martin@keboola.com
+      summary: Organization invitation detail
+      operationId: Organization invitation detail
+      description: ''
+      tags:
+        - Organizations
+      parameters:
+        - &ref_8
+          name: organization_id
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            type: string
+        - &ref_9
+          name: invitation_id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Cancel organization invitation
+      operationId: Cancel organization invitation
+      description: ''
+      tags:
+        - Organizations
+      parameters:
+        - *ref_8
+        - *ref_9
+  /manage/organizations/{organization_id}/users:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 23423
+                  name: Martin Halamicek
+                  email: martin@keboola.com
+      summary: List organization users
+      operationId: List organization users
+      description: ''
+      tags:
+        - Organizations
+      parameters:
+        - &ref_10
+          name: organization_id
+          in: path
+          description: ID of the organization
+          required: true
+          example: '1'
+          schema:
+            type: number
+    post:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Add a User to organization
+      operationId: Add a User to organization
+      description: >-
+        Either `id` or `email` of a user must be set. If the email is not
+        associated with a user, a new account is created and an invitation is
+        sent.
+      tags:
+        - Organizations
+      parameters:
+        - *ref_10
+      requestBody:
+        content:
+          application/json:
+            example:
+              id: '7234'
+              email: martin@keboola.com
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: '7234'
+                  description: User ID
+                email:
+                  type: string
+                  example: martin@keboola.com
+                  description: User email
+  /manage/organizations/{organization_id}/users/{user_id}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove a user from organization
+      operationId: Remove a user from organization
+      description: ''
+      tags:
+        - Organizations
+      parameters:
+        - name: organization_id
+          in: path
+          description: ID of the organization
+          required: true
+          example: '1'
+          schema:
+            type: number
+        - name: user_id
+          in: path
+          description: User ID
+          required: true
+          example: '1'
+          schema:
+            type: string
+  /manage/organizations/{organization_id}/projects-users:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 123
+                  name: test user
+                  email: martin@keboola.com
+                - id: 125
+                  name: test user 3
+                  email: spam@keboola.com
+      summary: List project users in organization
+      operationId: List project users in organization
+      description: >-
+        List of all users who are members of at least one project in the
+        organization. Only members of the organization can get this list.
+      tags:
+        - Organizations
+      parameters:
+        - name: organization_id
+          in: path
+          description: ID of the organization
+          required: true
+          example: '1'
+          schema:
+            type: number
+  /manage/organizations/{organization_id}/join-organization:
+    post:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Join a organization
+      operationId: Join a organization
+      description: >-
+        If the organization allows autojoin (`allowAutoJoin` attribute is se to
+        `true`), all members of its maintainer and superadmins are allowed to
+        join the organization.
+      tags:
+        - Organizations
+      parameters:
+        - name: organization_id
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            type: string
+  /manage/organizations/{organization_id}/force-mfa:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content: {}
+      summary: Require Multi-Factor Authentication
+      operationId: Require Multi-Factor Authentication
+      description: >-
+        With MFA as required, any user that does not have MFA enabled will lose
+        access to the project until they set it up.
+
+
+        Only members of the organization with MFA enabled can perform this
+        action.
+      tags:
+        - Organizations
+      parameters:
+        - name: organization_id
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            type: string
+  /manage/organizations/{organization_id}/metadata:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 123
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - id: 124
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: someMetadataKey
+                  value: Some value
+      summary: Set organization metadata
+      operationId: Set organization metadata
+      description: >-
+        Sets multiple metadata with one call. If the given key and provider
+        combination already exist
+
+        for the organization, the data will be updated with the new value and
+        timestamp.
+
+        Only organization members, members of the maintainer and super admins
+        can change metadata.
+      tags:
+        - Organizations
+      parameters:
+        - name: organization_id
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              provider: user
+              metadata:
+                - key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - key: someMetadataKey
+                  value: Some value
+            schema:
+              type: object
+              required:
+                - provider
+                - metadata
+              properties:
+                provider:
+                  type: string
+                  enum:
+                    - user
+                    - system
+                metadata:
+                  type: array
+                  items: {}
+                  description: Array of metadata objects
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 123
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - id: 124
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: someMetadataKey
+                  value: Some value
+      summary: List organization Metadata
+      operationId: List organization Metadata
+      description: >-
+        Only members of the maintainer, members of organization and super admins
+        can list metadata.
+      tags:
+        - Organizations
+      parameters:
+        - name: organization_id
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            type: string
+  /manage/organizations/{organization_id}/metadata/{metadata_id}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove organization metadata
+      operationId: Remove organization metadata
+      description: ''
+      tags:
+        - Organizations
+      parameters:
+        - name: organization_id
+          in: path
+          description: Organization ID
+          required: true
+          schema:
+            type: string
+        - name: metadata_id
+          in: path
+          description: Metadata ID
+          required: true
+          schema:
+            type: string
+  /manage/projects/{project_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Project detail
+      operationId: Project detail
+      description: >-
+        Returns a project with associated limits and metrics.
+
+
+        * limits  - These are limits assigned to a project (number of admins,
+        number of orchestrations, parallelization).
+
+
+        * metrics - Latest values of the monitored project metrics
+
+
+        If the project is configured with pay as you go billing, `payAsYouGo`
+        section is also included in the project details.
+
+
+        This endpoint can also be accessed using application tokens with scope
+        `projects:read`
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+    put:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Update a project
+      operationId: Update a project
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: Test
+              defaultBackend: snowflake
+              type: demo
+              expirationDays: '7'
+              billedMonthlyPrice: '2000'
+              dataRetentionTimeInDays: '20'
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Test
+                  description: Rename project
+                defaultBackend:
+                  type: string
+                  example: snowflake
+                  description: Change project default backend type
+                type:
+                  type: string
+                  example: demo
+                  description: >-
+                    Change project type (demo, production, poc, ...) - allowed
+                    only for a super admin
+                expirationDays:
+                  type: string
+                  example: '7'
+                  description: Change project expiration - allowed only for a super admin
+                billedMonthlyPrice:
+                  type: string
+                  example: '2000'
+                  description: Change project monthly fee - allowed only for a super admin
+                dataRetentionTimeInDays:
+                  type: string
+                  example: '20'
+                  description: >-
+                    (Snowflake only) Change the data retention period for this
+                    project - allowed only for a super admin
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Delete a project
+      operationId: Delete a project
+      description: >-
+        A project will not be physically deleted. It'll only be inaccessible and
+        hidden.
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+  /manage/organizations/{organization_id}/projects:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Add a project
+      operationId: Add a project
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - &ref_11
+          name: organization_id
+          in: path
+          description: Organization ID; projects have to be created in an organization.
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: My Demo
+              type: demo
+              defaultBackend: snowflake
+              dataRetentionTimeInDays: '7'
+            schema:
+              type: object
+              required:
+                - name
+                - type
+              properties:
+                name:
+                  type: string
+                  example: My Demo
+                  description: Project name
+                type:
+                  type: string
+                  example: demo
+                  description: One of `production`, `poc`, `demo`; default is `production`
+                defaultBackend:
+                  type: string
+                  example: snowflake
+                  description: >-
+                    Project default backend `snowflake` or `redshift`; default
+                    is `snowflake`
+                dataRetentionTimeInDays:
+                  type: string
+                  example: '7'
+                  description: Data retention in days for Time Travel
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 101
+                name: test project
+                type: production
+                region: eu-west-1
+                created: 2017-02-15T14:25:15+0100
+                expires: null
+                features:
+                  - featureName
+                dataSizeBytes: 49152
+                rowsCount: 200
+                hasMysql: false
+                hasRedshift: false
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                hasSnowflake: true
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  limitName:
+                    name: limitName
+                    value: 10
+                metrics: {}
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 1
+                fileStorageProvider: aws
+      summary: List projects for an organization
+      operationId: List projects for an organization
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - *ref_11
+  /manage/projects/{project_id}/organizations:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Move a project
+      operationId: Move a project
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              organizationId: '523'
+            schema:
+              type: object
+              required:
+                - organizationId
+              properties:
+                organizationId:
+                  type: string
+                  example: '523'
+                  description: ID of destination organization
+  /manage/projects/{project_id}/storage-backend:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Assign project Storage backend
+      operationId: Assign project Storage backend
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              storageBackendId: '32'
+            schema:
+              type: object
+              required:
+                - storageBackendId
+              properties:
+                storageBackendId:
+                  type: string
+                  example: '32'
+                  description: ID of Storage backend
+  /manage/projects/{project_id}/storage-backend/{storage_backend_id}:
+    delete:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Remove project Storage backend
+      operationId: Remove project Storage backend
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: storage_backend_id
+          in: path
+          description: >-
+            Storage backend ID; must be one of Storage backends assigned to the
+            project.
+          required: true
+          schema:
+            type: string
+  /manage/projects/{project_id}/file-storage:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Assign project file Storage
+      operationId: Assign project file Storage
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              fileStorageId: '32'
+            schema:
+              type: object
+              required:
+                - fileStorageId
+              properties:
+                fileStorageId:
+                  type: string
+                  example: '32'
+                  description: ID of file Storage
+  /manage/projects/{project_id}/limits:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Set project limits
+      operationId: Set project limits
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              limits:
+                - name: goodData.usersCount
+                  value: 23
+            schema:
+              type: object
+              properties:
+                limits:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                      value:
+                        type: number
+  /manage/projects/{project_id}/limits/{limit_name}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove project limit
+      operationId: Remove project limit
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: limit_name
+          in: path
+          description: Limit name
+          required: true
+          schema:
+            type: string
+  /manage/projects/{project_id}/metadata:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 123
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - id: 124
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: someMetadataKey
+                  value: Some value
+      summary: Set project metadata
+      operationId: Set project metadata
+      description: >-
+        Sets multiple metadata with one call. If the given key and provider
+        combination already exist
+
+        for the project, the data will be updated with the new value and
+        timestamp.
+
+        Only project members with Admin or Share roles, members of the
+        maintainer, members of organization and super admins can change
+        metadata.
+      tags:
+        - Projects
+      parameters:
+        - &ref_12
+          name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              provider: user
+              metadata:
+                - key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - key: someMetadataKey
+                  value: Some value
+            schema:
+              type: object
+              required:
+                - provider
+                - metadata
+              properties:
+                provider:
+                  type: string
+                  enum:
+                    - user
+                    - system
+                metadata:
+                  type: array
+                  items: {}
+                  description: Array of metadata objects
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 123
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - id: 124
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: someMetadataKey
+                  value: Some value
+      summary: List project Metadata
+      operationId: List project Metadata
+      description: >-
+        Only project members, members of the maintainer, members of organization
+        and super admins can list metadata.
+      tags:
+        - Projects
+      parameters:
+        - *ref_12
+  /manage/projects/{project_id}/metadata/{metadata_id}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove project metadata
+      operationId: Remove project metadata
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: metadata_id
+          in: path
+          description: Metadata ID
+          required: true
+          schema:
+            type: string
+  /manage/projects/{project_id}/invitations:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 112
+                  created: 2018-07-10T10:45:11+0200
+                  expires: null
+                  reason: ''
+                  user:
+                    id: 124
+                    name: test user 2
+                    email: spam@keboola.com
+                  creator:
+                    id: 123
+                    name: test user
+                    email: martin@keboola.com
+                - id: 113
+                  created: 2018-07-10T10:50:00+0200
+                  expires: 2018-07-12T10:50:00+0200
+                  reason: Help with Restbox configuration
+                  user:
+                    id: 125
+                    name: test user 3
+                    email: spam@keboola.com
+                  creator:
+                    id: 123
+                    name: test user
+                    email: martin@keboola.com
+      summary: List project invitations
+      operationId: List project invitations
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - &ref_13
+          name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 113
+                created: 2018-07-10T10:50:00+0200
+                expires: 2018-07-10T11:50:00+0200
+                reason: Help with component configuration
+                role: admin
+                user:
+                  id: 125
+                  name: test user 3
+                  email: spam@keboola.com
+                creator:
+                  id: 123
+                  name: test user
+                  email: martin@keboola.com
+      summary: Invite a user to a project
+      operationId: Invite a user to a project
+      description: >-
+        Only members of the project or its organization are allowed to invite
+        new users to the project.
+
+
+        An optional expiration (seconds) and reason for joining can be added to
+        the request.
+      tags:
+        - Projects
+      parameters:
+        - *ref_13
+      requestBody:
+        content:
+          application/json:
+            example:
+              email: martin@keboola.com
+              role: admin
+              expirationSeconds: 3600
+              reason: Help with component configuration
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  example: martin@keboola.com
+                  description: Email of an invited user
+                role:
+                  type: string
+                  enum:
+                    - guest
+                    - readOnly
+                    - share
+                  description: >-
+                    User role in the project. Roles `admin`, `guest`, `readOnly`
+                    and `share` are allowed (default `admin`).
+                expirationSeconds:
+                  type: number
+                  example: 3600
+                  description: >-
+                    After how many seconds the invitation and membership of a
+                    user will expire
+                reason:
+                  type: string
+                  example: Help with component configuration
+                  description: Reason for inviting user
+  /manage/projects/{project_id}/invitations/{invitation_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 113
+                created: 2018-07-10T10:50:00+0200
+                expires: 2018-07-10T11:50:00+0200
+                reason: Help with component configuration
+                role: admin
+                user:
+                  id: 125
+                  name: test user 3
+                  email: spam@keboola.com
+                creator:
+                  id: 123
+                  name: test user
+                  email: martin@keboola.com
+      summary: Project invitation detail
+      operationId: Project invitation detail
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - &ref_14
+          name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - &ref_15
+          name: invitation_id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Cancel project invitation
+      operationId: Cancel project invitation
+      description: >-
+        Only members of the project or its organization are allowed to cancel
+        project invitation.
+      tags:
+        - Projects
+      parameters:
+        - *ref_14
+        - *ref_15
+  /manage/projects/{project_id}/users:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 123
+                  name: test user
+                  email: martin@keboola.com
+                  features: []
+                  expires: null
+                  created: 2016-02-29T08:01:13+0200
+                  reason: ''
+                  role: admin
+                  status: active
+                  invitor:
+                    id: 124
+                    name: test user 2
+                    email: spam@keboola.com
+                  approver: null
+                - id: 124
+                  name: test user 2
+                  email: spam@keboola.com
+                  features: []
+                  expires: 2016-03-22T15:01:13+0200
+                  created: 2016-02-22T15:01:13+0200
+                  reason: temporary test
+                  role: guest
+                  status: active
+                  invitor: null
+                  approver:
+                    id: 1
+                    name: admin 1
+                    email: dev@keboola.com
+      summary: List project users
+      operationId: List project users
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - &ref_16
+          name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+    post:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Add a user to a project
+      operationId: Add a user to a project
+      description: >-
+        Only members of the project or its organization are allowed to add new
+        users to the project.
+
+
+        An optional expiration (seconds) and reason for joining can be added to
+        the request.
+      tags:
+        - Projects
+      parameters:
+        - *ref_16
+      requestBody:
+        content:
+          application/json:
+            example:
+              email: martin@keboola.com
+              role: admin
+              expirationSeconds: 3600
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  example: martin@keboola.com
+                  description: Email of an invited user
+                role:
+                  type: string
+                  enum:
+                    - guest
+                    - readOnly
+                    - share
+                  description: >-
+                    User role in the project. Roles `admin`, `guest`, `readOnly`
+                    and `share` are allowed (default `admin`).
+                expirationSeconds:
+                  type: number
+                  example: 3600
+                  description: After how many seconds the membership of a user will expire
+  /manage/project-templates/:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: poc15Days
+                  name: POC 15 days
+                  description: Proof of concept. 15 days trial.
+                  expirationDays: 15
+                  billedMonthlyPrice: null
+                  hasTryModeOn: false
+                - id: poc15DaysGuideMode
+                  name: POC Guide Mode
+                  description: Proof of concept. 15 days trial - Guide Mode.
+                  expirationDays: 15
+                  billedMonthlyPrice: null
+                  hasTryModeOn: true
+      summary: List templates
+      operationId: List templates
+      description: ''
+      tags:
+        - Projects
+      parameters: []
+  /manage/project-templates/{template_string_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: poc15Days
+                name: POC 15 days
+                description: Proof of concept. 15 days trial.
+                expirationDays: 15
+                billedMonthlyPrice: null
+                hasTryModeOn: false
+      summary: Project template detail
+      operationId: Project template detail
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: template_string_id
+          in: path
+          description: Project string ID
+          required: true
+          schema:
+            type: string
+  /manage/projects/{project_id}/users/{user_id}:
+    patch:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 123
+                name: test user
+                email: martin@keboola.com
+                features: []
+                expires: null
+                created: 2016-02-29T08:01:13+0200
+                reason: ''
+                role: admin
+                status: active
+                invitor:
+                  id: 124
+                  name: test user 2
+                  email: spam@keboola.com
+                approver: null
+      summary: Change role of a user in a project
+      operationId: Change role of a user in a project
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - &ref_17
+          name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - &ref_18
+          name: user_id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              role: admin
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum:
+                    - guest
+                    - readOnly
+                    - share
+                  description: >-
+                    User role in the project. Roles `admin`, `guest`, `readOnly`
+                    and `share` are allowed (default `admin`).
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Delete a user from a project
+      operationId: Delete a user from a project
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - *ref_17
+        - *ref_18
+  /manage/projects/{project_id}/join-project:
+    post:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Join a project
+      operationId: Join a project
+      description: >-
+        If the project's organization allows autojoin (`allowAutoJoin` attribute
+        is se to `true`), all members of the organization, its maintainers and
+        superadmins are allowed to join the project. Otherwise only members of
+        the organization can join the project.
+
+
+        An optional expiration (in seconds) and reason for joining can be added
+        to the request.
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              reason: temporary test
+              expirationSeconds: 3600
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  example: temporary test
+                  description: Reason for joining the project
+                expirationSeconds:
+                  type: number
+                  example: 3600
+                  description: The number of seconds until the user's membership expires
+  /manage/projects/{project_id}/request-access:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 124
+                created: 2016-02-22T15:01:13+0200
+                expires: 2016-03-22T15:01:13+0200
+                reason: temporary test
+                project:
+                  id: 324
+                  name: Main project
+      summary: Request access to a project
+      operationId: Request access to a project
+      description: >-
+        Create a join request to the project. All join requests have to be
+        approved by a project member.
+
+
+        An optional expiration (in seconds) and reason for joining can be added
+        to the request.
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              reason: temporary test
+              expirationSeconds: 3600
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+                  example: temporary test
+                  description: Reason for joining the project
+                expirationSeconds:
+                  type: number
+                  example: 3600
+                  description: The number of seconds until the user's membership expires
+  /manage/projects/{project_id}/join-requests:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 1234
+                  created: 2016-02-22T15:01:13+0200
+                  expires: 2016-03-22T15:01:13+0200
+                  reason: temporary test
+                  user:
+                    id: 1
+                    name: admin 1
+                    email: dev@keboola.com
+                - id: 1235
+                  created: 2016-02-30T11:50:13+0200
+                  expires: null
+                  reason: ''
+                  user:
+                    id: 124
+                    name: test user 2
+                    email: spam@keboola.com
+      summary: List join requests
+      operationId: List join requests
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+  /manage/projects/{project_id}/join-requests/{join_request_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 1235
+                created: 2016-02-30T11:50:13+0200
+                expires: null
+                reason: ''
+                user:
+                  id: 124
+                  name: test user 2
+                  email: spam@keboola.com
+      summary: Join request detail
+      operationId: Join request detail
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - &ref_19
+          name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - &ref_20
+          name: join_request_id
+          in: path
+          description: Join Request ID
+          required: true
+          schema:
+            type: string
+    put:
+      responses:
+        '202':
+          description: Accepted
+          headers: {}
+          content: {}
+      summary: Approve join request
+      operationId: Approve join request
+      description: |-
+        Only members of the project can approve join requests.
+
+        The user that submitted the join request will be added to the project.
+      tags:
+        - Projects
+      parameters:
+        - *ref_19
+        - *ref_20
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Reject join request
+      operationId: Reject join request
+      description: Only members of the project can reject join requests.
+      tags:
+        - Projects
+      parameters:
+        - *ref_19
+        - *ref_20
+  /manage/projects/{project_id}/disabled:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Change project disabled status
+      operationId: Change project disabled status
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              isDisabled: true
+              disableReason: Project maintenance
+              estimatedEndTime: +1 hour
+            schema:
+              type: object
+              properties:
+                isDisabled:
+                  type: boolean
+                  example: true
+                  description: Enable or disable project
+                disableReason:
+                  type: string
+                  example: Project maintenance
+                  description: Why the project is disabled
+                estimatedEndTime:
+                  type: string
+                  example: +1 hour
+                  description: When the project will be enabled
+  /manage/projects/{project_id}/tokens:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 3846
+                token: TOKEN_VALUE
+                created: 2013-03-28T13:31:50+0100
+                description: martin@keboola.com
+                uri: https://connection.keboola.com/v2/storage/tokens/3846
+                isMasterToken: true
+                canManageBuckets: true
+                canManageTokens: true
+                canReadAllFileUploads: true
+                canPurgeTrash: true
+                expires: null
+                isExpired: false
+                isDisabled: false
+                dailyCapacity: 0
+                bucketPermissions: {}
+      summary: Create Storage token
+      operationId: Create Storage token
+      description: ''
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              description: Test Token
+              canManageBuckets: true
+              canManageTokens: true
+              canReadAllFileUploads: true
+              canPurgeTrash: true
+              expiresIn: 60
+              bucketPermissions:
+                in.c: ''
+            schema:
+              type: object
+              required:
+                - description
+              properties:
+                description:
+                  type: string
+                  example: Test Token
+                  description: Token description
+                canManageBuckets:
+                  type: boolean
+                  example: true
+                  description: Token has full permissions on tabular storage
+                canManageTokens:
+                  type: boolean
+                  example: true
+                  description: Token has permission to create tokens in project
+                canReadAllFileUploads:
+                  type: boolean
+                  example: true
+                  description: Token has full permissions to files staging
+                canPurgeTrash:
+                  type: boolean
+                  example: true
+                  description: Allows permanently remove deleted configurations.
+                expiresIn:
+                  type: number
+                  example: 60
+                  description: Token lifetime
+                bucketPermissions:
+                  type: object
+                  properties:
+                    in.c:
+                      type: string
+                      description: 'main: read'
+  /manage/projects/{project_id}/credits:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 259
+                creditsAmount: 10
+                moneyAmount: null
+                idStripeInvoice: null
+                description: Promo credits
+                created: '2019-06-17T15:07:48+01:00'
+      summary: Give credits
+      operationId: Give credits
+      description: >-
+        Changing balance of credits for PayGo projects.
+
+
+        *Note: Only superadmin or user having assigned
+        `pay-as-you-go-credits-admin` can change project credits balance.*
+      tags:
+        - Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              amount: 10
+              description: Promo credits
+            schema:
+              type: object
+              required:
+                - amount
+                - description
+              properties:
+                amount:
+                  type: number
+                  example: 10
+                  description: Credits amount
+                description:
+                  type: string
+                  example: Promo credits
+                  description: Reason or label of given credits
+  /manage/deleted-projects/{project_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 101
+                name: test project
+                type: production
+                region: eu-west-1
+                created: 2017-02-15T14:25:15+0100
+                expires: null
+                features: []
+                dataSizeBytes: 49152
+                rowsCount: 200
+                hasMysql: false
+                hasRedshift: false
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                hasSnowflake: true
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits: {}
+                metrics: {}
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 1
+                isPurged: false
+                isDeleted: true
+                deletedTime: 2018-02-11T14:25:15+0100
+                purgedTime: null
+      summary: Deleted project detail
+      operationId: Deleted project detail
+      description: >-
+        This endpoint can also be accessed using application tokens with scope
+        `deleted-projects:read`
+      tags:
+        - Deleted Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Deleted project ID
+          required: true
+          schema:
+            type: string
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Cancel project deletion
+      operationId: Cancel project deletion
+      description: >-
+        Cancelling project deletion is allowed only for a super admin.
+
+        If the project has set expiration, the expiration is reset on the
+        project renewal.
+
+        You can also specify new expiration by `expirationDays` parameter.
+      tags:
+        - Deleted Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: expirationDays
+          in: query
+          description: Project expiration in days
+          schema:
+            type: number
+  /manage/deleted-projects/{project_id}/purge:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  commandExecutionId:
+                    type: string
+                    description: >-
+                      execution ID; this ID is appended to all logs provided by
+                      the command
+                required:
+                  - commandExecutionId
+              example:
+                commandExecutionId: 123-abcd
+      summary: Purge deleted project
+      operationId: Purge deleted project
+      description: >-
+        Enqueues the command that fully deletes a project and returns its
+        execution ID for monitoring.
+      tags:
+        - Deleted Projects
+      parameters:
+        - name: project_id
+          in: path
+          description: Deleted project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              ignoreBackendErrors: false
+            schema:
+              type: object
+              properties:
+                ignoreBackendErrors:
+                  type: boolean
+                  description: >-
+                    Ignore all errors from the backend, e.g. deleted Redshift
+                    cluster. `false` is default.
+  /manage/deleted-projects:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 101
+                  name: test project
+                  type: production
+                  region: eu-west-1
+                  created: 2017-02-15T14:25:15+0100
+                  expires: null
+                  features: []
+                  dataSizeBytes: 49152
+                  rowsCount: 200
+                  hasMysql: false
+                  hasRedshift: false
+                  hasSnowflake: true
+                  hasSynapse: false
+                  hasTeradata: false
+                  hasExasol: false
+                  defaultBackend: snowflake
+                  hasTryModeOn: '0'
+                  limits: {}
+                  metrics: {}
+                  isDisabled: false
+                  billedMonthlyPrice: null
+                  dataRetentionTimeInDays: 7
+                  isPurged: false
+                  isDeleted: true
+                  deletedTime: 2018-02-11T14:25:15+0100
+                  purgedTime: null
+                  organization:
+                    id: 1
+                    name: Keboola Tests
+                    created: ''
+                    allowAutoJoin: true
+                - id: 104
+                  name: another test project
+                  type: production
+                  region: eu-west-1
+                  created: 2017-02-15T14:25:15+0100
+                  expires: null
+                  features: []
+                  dataSizeBytes: 49152
+                  rowsCount: 200
+                  hasMysql: false
+                  hasRedshift: false
+                  hasSnowflake: true
+                  hasSynapse: false
+                  hasTeradata: false
+                  hasExasol: false
+                  defaultBackend: snowflake
+                  hasTryModeOn: '0'
+                  limits: {}
+                  metrics: {}
+                  isDisabled: false
+                  billedMonthlyPrice: null
+                  dataRetentionTimeInDays: 7
+                  isPurged: false
+                  isDeleted: true
+                  deletedTime: 2018-02-11T14:25:15+0100
+                  purgedTime: null
+                  organization:
+                    id: 1
+                    name: Keboola Tests
+                    created: ''
+                    allowAutoJoin: true
+      summary: List deleted projects
+      operationId: List deleted projects
+      description: |-
+        Listing deleted projects is allowed only for a super admin.
+
+        #### Projects filtering
+
+        Projects can be filtered by various filters:
+
+        * *organizationId* - organization ID
+
+        * *name* - name of the project
+
+        #### Projects pagination
+
+        * *limit* - number of returned projects; default value: 100
+
+        * *offset* - pagination offset
+      tags:
+        - Deleted Projects
+      parameters: []
+  /manage/users/{user_id_or_email}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 2
+                name: Martin
+                email: spelling@keboola.com
+                features:
+                  - inline-manual
+                mfaEnabled: true
+                canAccessLogs: true
+                isSuperAdmin: true
+      summary: User detail
+      operationId: User detail
+      description: ''
+      tags:
+        - Users
+      parameters:
+        - name: user_id_or_email
+          in: path
+          description: User ID or email
+          required: true
+          schema:
+            type: string
+    put:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 2
+                name: Martin
+                email: spelling@keboola.com
+                features:
+                  - inline-manual
+                mfaEnabled: true
+                canAccessLogs: true
+                isSuperAdmin: true
+      summary: Update a user
+      operationId: Update a user
+      description: ''
+      tags:
+        - Users
+      parameters:
+        - name: user_id_or_email
+          in: path
+          description: User ID or email
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: Martin
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Martin
+                  description: User name
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove User
+      operationId: Remove User
+      description: >-
+        It will completly remove user from everywhere (projects, organizations
+        and maintainers).
+
+        Removes also personal data of user (e-mail and name).
+      tags:
+        - Users
+      parameters:
+        - name: user_id_or_email
+          in: path
+          description: User ID or email
+          required: true
+          schema:
+            type: string
+  /manage/users/{user_id_or_email}/mfa:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Disable MFA for User
+      operationId: Disable MFA for User
+      description: ''
+      tags:
+        - Users
+      parameters:
+        - name: user_id_or_email
+          in: path
+          description: User ID or email
+          required: true
+          schema:
+            type: string
+  /manage/users/{user_id_or_email}/super-admin:
+    delete:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 2
+                name: Corrected Spelling
+                email: spelling@keboola.com
+                features:
+                  - inline-manual
+                mfaEnabled: true
+                canAccessLogs: false
+                isSuperAdmin: false
+      summary: Remove super admin privilege from User
+      operationId: Remove super admin privilege from User
+      description: ''
+      tags:
+        - Users
+      parameters:
+        - name: user_id_or_email
+          in: path
+          description: User ID or email
+          required: true
+          schema:
+            type: string
+  /manage/current-user/maintainers-invitations:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 113
+                  created: 2018-07-10T11:13:00+0200
+                  maintainer:
+                    id: 7
+                    name: Keboola CZ
+                  creator:
+                    id: 2
+                    name: Martin Halamicek
+                    email: martin@keboola.com
+      summary: List my maintainer invitations
+      operationId: List my maintainer invitations
+      description: ''
+      tags:
+        - My Account
+      parameters: []
+  /manage/current-user/maintainers-invitations/{invitation_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 113
+                created: 2018-07-10T11:13:00+0200
+                maintainer:
+                  id: 7
+                  name: Keboola CZ
+                creator:
+                  id: 2
+                  name: Martin Halamicek
+                  email: martin@keboola.com
+      summary: My maintainer invitation detail
+      operationId: My maintainer invitation detail
+      description: ''
+      tags:
+        - My Account
+      parameters:
+        - name: invitation_id
+          in: path
+          description: Invitation ID
+          required: true
+          schema:
+            type: number
+    put:
+      responses:
+        '202':
+          description: Accepted
+          headers: {}
+          content: {}
+      summary: Accept a maintainer invitation
+      operationId: Accept a maintainer invitation
+      description: >-
+        Invitation will be accepted and current user will become a member of the
+        maintainer.
+      tags:
+        - My Account
+      parameters:
+        - name: invitation_id
+          in: path
+          description: Invitation ID
+          required: true
+          schema:
+            type: number
+  /manage/current-user/organizations-invitations:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 113
+                  created: 2018-07-10T11:13:00+0200
+                  organization:
+                    id: 7
+                    name: Keboola CZ
+                  creator:
+                    id: 2
+                    name: Martin Halamicek
+                    email: martin@keboola.com
+      summary: List my organization invitations
+      operationId: List my organization invitations
+      description: ''
+      tags:
+        - My Account
+      parameters: []
+  /manage/current-user/organizations-invitations/{invitation_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 113
+                created: 2018-07-10T11:13:00+0200
+                organization:
+                  id: 7
+                  name: Keboola CZ
+                creator:
+                  id: 2
+                  name: Martin Halamicek
+                  email: martin@keboola.com
+      summary: My organization invitation detail
+      operationId: My organization invitation detail
+      description: ''
+      tags:
+        - My Account
+      parameters:
+        - name: invitation_id
+          in: path
+          description: Invitation ID
+          required: true
+          schema:
+            type: number
+    put:
+      responses:
+        '202':
+          description: Accepted
+          headers: {}
+          content: {}
+      summary: Accept an organization invitation
+      operationId: Accept an organization invitation
+      description: >-
+        Invitation will be accepted and current user will become a member of the
+        organization.
+      tags:
+        - My Account
+      parameters:
+        - name: invitation_id
+          in: path
+          description: Invitation ID
+          required: true
+          schema:
+            type: number
+  /manage/current-user/projects-join-requests:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 124
+                  created: 2016-02-22T15:01:13+0200
+                  expires: 2016-03-22T15:01:13+0200
+                  reason: temporary test
+                  project:
+                    id: 324
+                    name: Main project
+                - id: 127
+                  crated: '2014-11-11T08:40:51.620Z'
+                  expires: null
+                  reason: ''
+                  project:
+                    id: 423
+                    name: Development
+      summary: List my join requests
+      operationId: List my join requests
+      description: ''
+      tags:
+        - My Account
+      parameters: []
+  /manage/current-user/projects-join-requests/{join_request_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 124
+                created: 2016-02-22T15:01:13+0200
+                expires: 2016-03-22T15:01:13+0200
+                reason: temporary test
+                project:
+                  id: 324
+                  name: Main project
+      summary: My join request detail
+      operationId: My join request detail
+      description: ''
+      tags:
+        - My Account
+      parameters:
+        - &ref_21
+          name: join_request_id
+          in: path
+          description: ''
+          required: true
+          example: '1'
+          schema:
+            type: integer
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Cancel a join request
+      operationId: Cancel a join request
+      description: ''
+      tags:
+        - My Account
+      parameters:
+        - *ref_21
+  /manage/current-user/projects-invitations:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 113
+                  created: 2018-07-10T11:13:00+0200
+                  expires: null
+                  reason: ''
+                  role: admin
+                  project:
+                    id: 7
+                    name: Martinovo
+                  creator:
+                    id: 2
+                    name: Martin Halamicek
+                    email: martin@keboola.com
+      summary: List my project invitations
+      operationId: List my project invitations
+      description: ''
+      tags:
+        - My Account
+      parameters: []
+  /manage/current-user/projects-invitations/{invitation_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 113
+                created: 2018-07-10T11:13:00+0200
+                expires: null
+                reason: ''
+                role: admin
+                project:
+                  id: 7
+                  name: Martinovo
+                creator:
+                  id: 2
+                  name: Martin Halamicek
+                  email: martin@keboola.com
+      summary: My project invitation detail
+      operationId: My project invitation detail
+      description: ''
+      tags:
+        - My Account
+      parameters:
+        - name: invitation_id
+          in: path
+          description: Invitation ID
+          required: true
+          schema:
+            type: number
+    put:
+      responses:
+        '202':
+          description: Accepted
+          headers: {}
+          content: {}
+      summary: Accept a project invitation
+      operationId: Accept a project invitation
+      description: >-
+        Invitation will be accepted and current user will be added to the
+        project.
+      tags:
+        - My Account
+      parameters:
+        - name: invitation_id
+          in: path
+          description: Invitation ID
+          required: true
+          schema:
+            type: number
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Decline a invitation
+      operationId: Decline a invitation
+      description: ''
+      tags:
+        - My Account
+      parameters:
+        - name: invitation_id
+          in: path
+          description: Invitation ID
+          required: true
+          schema:
+            type: number
+  /manage/current-user/promo-codes:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 89
+                name: dev user (TEST1568723795)
+                type: poc6months
+                region: eu-central-1
+                created: 2019-09-17T15:14:24+0200
+                expires: 2020-03-18T14:14:24+0100
+                features: []
+                dataSizeBytes: 0
+                rowsCount: 0
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasExasol: false
+                hasSynapse: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 500000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 10
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 3
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 3500000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics: {}
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 1
+      summary: Create project
+      operationId: Create project
+      description: Create a new project from given promo code
+      tags:
+        - My Account
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              code: TEST1568723795
+            schema:
+              type: object
+              required:
+                - code
+              properties:
+                code:
+                  type: string
+                  example: TEST1568723795
+                  description: Promo-code name
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - code: TEST1568723795
+                  usedAt: 2019-09-17T15:14:38+0200
+                  project:
+                    id: 89
+                    name: dev user (TEST-1568723795)
+                - code: TEST1568723853
+                  usedAt: 2019-09-17T15:17:38+0200
+                  project:
+                    id: 90
+                    name: dev user (TEST-1568723853)
+      summary: List used promo codes
+      operationId: List used promo codes
+      description: ''
+      tags:
+        - My Account
+      parameters: []
+  /manage/maintainers/{maintainer_id}/promo-codes:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - code: GUIDE-MODE
+                  expires: 2029-08-06T23:59:59+0200
+                  organization:
+                    id: 1
+                    name: Keboola Internal
+                    created: 2019-09-09T14:43:29+0200
+                    allowAutoJoin: true
+                    crmId: ''
+                    mfaRequired: false
+                  projectTemplate:
+                    stringId: poc15DaysGuideMode
+                    name: POC Guide Mode
+                    description: Proof of concept. 15 days trial - Guide Mode.
+                    expirationDays: 15
+                    billedMonthlyPrice: null
+                    hasTryModeOn: true
+                - code: test
+                  expires: 2019-11-12T14:07:48+0200
+                  organization:
+                    id: 1
+                    name: Keboola Internal
+                    created: 2019-09-09T14:43:29+0200
+                    allowAutoJoin: true
+                    crmId: ''
+                    mfaRequired: false
+                  projectTemplate:
+                    stringId: poc15DaysGuideMode
+                    name: POC Guide Mode
+                    description: Proof of concept. 15 days trial - Guide Mode.
+                    expirationDays: 15
+                    billedMonthlyPrice: null
+                    hasTryModeOn: true
+      summary: Retrieve all promo codes
+      operationId: Retrieve all promo codes
+      description: ''
+      tags:
+        - Promo codes
+      parameters:
+        - &ref_22
+          name: maintainer_id
+          in: path
+          description: ''
+          required: true
+          example: '1'
+          schema:
+            type: integer
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                code: TEST
+                expires: '2019-08-23 23:59:59'
+                organization:
+                  id: 1
+                  name: Keboola Internal
+                  created: 2019-09-09T14:43:29+0200
+                  allowAutoJoin: true
+                  crmId: ''
+                  mfaRequired: false
+                projectTemplate:
+                  stringId: poc15DaysGuideMode
+                  name: POC Guide Mode
+                  description: Proof of concept. 15 days trial - Guide Mode.
+                  expirationDays: 15
+                  billedMonthlyPrice: null
+                  hasTryModeOn: true
+      summary: Create new promo codes
+      operationId: Create new promo codes
+      description: >-
+        To create a new promo-code, provide the following parameters as JSON in
+        the request body:
+      tags:
+        - Promo codes
+      parameters:
+        - *ref_22
+      requestBody:
+        content:
+          application/json:
+            example:
+              code: TEST
+              expirationDays: 10
+              organizationId: 1
+              projectTemplateStringId: poc15DaysGuideMode
+            schema:
+              type: object
+              required:
+                - code
+                - expirationDays
+                - organizationId
+                - projectTemplateStringId
+              properties:
+                code:
+                  type: string
+                  example: TEST
+                  description: Promo-code name
+                expirationDays:
+                  type: number
+                  example: 10
+                  description: Promo-code expiration days
+                organizationId:
+                  type: number
+                  example: 1
+                  description: Add to organization
+                projectTemplateStringId:
+                  type: string
+                  example: poc15DaysGuideMode
+                  description: Use project template
+  /manage/features?type={type}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 1
+                  name: show-new-design
+                  type: admin
+                  description: Users with this feature will see new UI
+                  created: '2016-04-28T15:24:51.620Z'
+      summary: Retrieve all features
+      operationId: Retrieve all features
+      description: |-
+        Gets all features. To filter only the features with a specific type,
+        add the `type` parameter to your query.
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: type
+          in: path
+          description: Type of features you want to filter
+          required: true
+          example: admin
+          schema:
+            type: string
+  /manage/features/{id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 1
+                name: show-new-design
+                type: admin
+                description: Users with this feature will see new UI
+                created: '2016-04-28T15:24:51.620Z'
+      summary: Retrieve one feature
+      operationId: Retrieve one feature
+      description: ''
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: id
+          in: path
+          description: ID of the feature
+          required: true
+          example: '1'
+          schema:
+            type: number
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Delete a feature
+      operationId: Delete a feature
+      description: ''
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: id
+          in: path
+          description: ID of the feature to delete
+          required: true
+          example: '1'
+          schema:
+            type: number
+  /manage/features/{id}/projects:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 771
+                  name: Test project
+      summary: Retrieve feature projects
+      operationId: Retrieve feature projects
+      description: Gets the projects with the specified feature assigned.
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: id
+          in: path
+          description: ID of the feature
+          required: true
+          example: '1'
+          schema:
+            type: number
+  /manage/features/{id}/admins:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 1
+                  name: Test user
+                  email: test@example.com
+      summary: Retrieve feature users
+      operationId: Retrieve feature users
+      description: Gets the users with the specified feature assigned.
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: id
+          in: path
+          description: ID of the feature
+          required: true
+          example: '1'
+          schema:
+            type: number
+  /manage/features:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 1
+                name: show-new-design
+                type: admin
+                description: Users with this feature will see new UI
+                created: '2016-04-28T15:24:51.620Z'
+      summary: Create a feature
+      operationId: Create a feature
+      description: >-
+        To create a new feature, provide the following parameters as JSON in the
+        request body:
+      tags:
+        - SUPER - Features
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: show
+              type: admin
+              description: Users with this feature will see new UI
+            schema:
+              type: object
+              required:
+                - description
+              properties:
+                name:
+                  type: string
+                  example: show
+                  description: new-design (required) - Feature name
+                type:
+                  type: string
+                  enum:
+                    - admin
+                    - project
+                description:
+                  type: string
+                  example: Users with this feature will see new UI
+                  description: Short description of the feature
+  /manage/projects/{project_id}/features:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectModel'
+              example:
+                id: 4088
+                name: Martinšík
+                type: production
+                region: us-east-1
+                created: 2017-12-11T09:02:13+0100
+                expires: null
+                features: []
+                dataSizeBytes: 22691704832
+                rowsCount: 4295727047
+                hasMysql: false
+                hasRedshift: false
+                hasSnowflake: true
+                hasSynapse: false
+                hasExasol: false
+                hasTeradata: false
+                defaultBackend: snowflake
+                hasTryModeOn: '0'
+                limits:
+                  components.jobsParallelism:
+                    name: components.jobsParallelism
+                    value: 10
+                  goodData.dataSizeBytes:
+                    name: goodData.dataSizeBytes
+                    value: 1000000000
+                  goodData.demoTokenEnabled:
+                    name: goodData.demoTokenEnabled
+                    value: 1
+                  goodData.prodTokenEnabled:
+                    name: goodData.prodTokenEnabled
+                    value: 0
+                  goodData.usersCount:
+                    name: goodData.usersCount
+                    value: 30
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 10
+                  kbc.extractorsCount:
+                    name: kbc.extractorsCount
+                    value: 0
+                  kbc.monthlyProjectPowerLimit:
+                    name: kbc.monthlyProjectPowerLimit
+                    value: 50
+                  kbc.writersCount:
+                    name: kbc.writersCount
+                    value: 0
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 10
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 50000000000
+                  storage.jobsParallelism:
+                    name: storage.jobsParallelism
+                    value: 10
+                metrics:
+                  kbc.adminsCount:
+                    name: kbc.adminsCount
+                    value: 1
+                  orchestrations.count:
+                    name: orchestrations.count
+                    value: 1
+                  storage.dataSizeBytes:
+                    name: storage.dataSizeBytes
+                    value: 22691704832
+                  storage.rowsCount:
+                    name: storage.rowsCount
+                    value: 4295727047
+                isDisabled: false
+                billedMonthlyPrice: null
+                dataRetentionTimeInDays: 7
+                organization:
+                  id: 5
+                  name: Martinovo
+                  created: 2013-12-31T11:22:33+0100
+                  allowAutoJoin: true
+                fileStorage:
+                  id: 2
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  region: us-east-1
+                  filesBucket: kbc-sapi-files
+                  owner: keboola
+                  isDefault: true
+                  created: ''
+                  creator:
+                    id: 0
+                    name: null
+                backends:
+                  snowflake:
+                    id: 353
+                    host: keboola.snowflakecomputing.com
+                    region: us-east-1
+                payAsYouGo:
+                  purchasedCredits: 123
+      summary: Add a project feature
+      operationId: Add a project feature
+      description: |-
+        Project features can be assigned only by a super admin.
+
+        *Note: Features have to exist before they can be added to a project.*
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              feature: show
+            schema:
+              type: object
+              required:
+                - feature
+              properties:
+                feature:
+                  type: string
+                  example: show
+                  description: Feature name
+  /manage/projects/{project_id}/features/{feature_name}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove a project feature
+      operationId: Remove a project feature
+      description: Project features can be removed only by a super admin.
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+        - name: feature_name
+          in: path
+          description: Feature string ID
+          required: true
+          schema:
+            type: string
+  /manage/users/{user_id_or_email}/features:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 2
+                name: Martin Halamicek
+                email: martin@keboola.com
+                features:
+                  - inline-manual
+      summary: Add a user feature
+      operationId: Add a user feature
+      description: '*Note: Features have to exist before they can be added to a user.*'
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: user_id_or_email
+          in: path
+          description: User ID or email
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              feature: show
+            schema:
+              type: object
+              properties:
+                feature:
+                  type: string
+                  example: show
+                  description: new-design (required) - Feature name
+  /manage/users/{user_id_or_email}/features/{feature}:
+    delete:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                id: 2
+                name: Martin Halamicek
+                email: martin@keboola.com
+                features:
+                  - inline-manual
+      summary: Remove a user feature
+      operationId: Remove a user feature
+      description: ''
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: user_id_or_email
+          in: path
+          description: User ID or email
+          required: true
+          schema:
+            type: string
+        - name: feature
+          in: path
+          description: Feature name
+          required: true
+          schema:
+            type: string
+  /manage/project-templates/{template}/features:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: 52
+                  name: test-feature
+                  type: project
+                  description: project template test feature
+                  created: 2018-04-12T21:46:37+0200
+      summary: List features
+      operationId: List features
+      description: Lists features assigned to a project template.
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: template
+          in: path
+          description: StringId of project template
+          required: true
+          schema:
+            type: string
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content: {}
+      summary: Add a feature
+      operationId: Add a feature
+      description: >-
+        *Note: Features have to exist before they can be added to a project
+        template and have to be of the type `project`.*
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: template
+          in: path
+          description: StringId of project template
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              feature: show
+            schema:
+              type: object
+              properties:
+                feature:
+                  type: string
+                  example: show
+                  description: new-design (required) - Feature name
+  /manage/project-templates/{template}/features/{feature}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove a feature
+      operationId: Remove a feature
+      description: Removes a feature assigned to a project template.
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: template
+          in: path
+          description: StringId of project template
+          required: true
+          schema:
+            type: string
+        - name: feature
+          in: path
+          description: Feature name
+          required: true
+          schema:
+            type: string
+  /manage/file-storage-s3:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  awsKey:
+                    type: string
+                  filesBucket:
+                    type: string
+                  region:
+                    type: string
+                  owner:
+                    type: string
+                    description: Associated AWS account owner
+                  id:
+                    type: string
+                  isDefault:
+                    type: string
+                  provider:
+                    type: string
+                  created:
+                    type: string
+                    description: 06-17T15:07:48+01:00
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                        description: of-creator
+                required:
+                  - awsKey
+                  - filesBucket
+                  - region
+                  - owner
+                  - id
+              example:
+                awsKey: SFASDF
+                filesBucket: kbc-sapi-files
+                region: us-east-1
+                owner: keboola
+                id: '123'
+                isDefault: 'false'
+                provider: aws
+                created: '2019'
+                creator:
+                  id: '123'
+                  name: name
+      summary: Create new AWS S3 Storage
+      operationId: Create new AWS S3 Storage
+      description: >-
+        New S3 file Storage will be registered. Provided AWS credentials are
+        verified and required permissions are validated.
+
+        The Storage region is automatically detected.
+      tags:
+        - SUPER - File Storage Management
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              awsKey: SFASDF
+              filesBucket: kbc-sapi-files
+              region: us-east-1
+              owner: keboola
+              awsSecret: xxxx
+            schema:
+              type: object
+              properties:
+                awsKey:
+                  type: string
+                filesBucket:
+                  type: string
+                region:
+                  type: string
+                owner:
+                  type: string
+                  description: Associated AWS account owner
+                awsSecret:
+                  type: string
+              required:
+                - awsKey
+                - filesBucket
+                - region
+                - owner
+                - awsSecret
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+              example:
+                - awsKey: SFASDF
+                  filesBucket: kbc-sapi-files
+                  region: us-east-1
+                  owner: keboola
+                  id: '123'
+                  isDefault: 'false'
+                  provider: aws
+                  created: '2019'
+                  creator:
+                    id: '123'
+                    name: name
+      summary: List storages
+      operationId: List storages
+      description: ''
+      tags:
+        - SUPER - File Storage Management
+      parameters: []
+  /manage/file-storage-s3/{file_storage_id}/default:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  awsKey:
+                    type: string
+                  filesBucket:
+                    type: string
+                  region:
+                    type: string
+                  owner:
+                    type: string
+                    description: Associated AWS account owner
+                  id:
+                    type: string
+                  isDefault:
+                    type: string
+                  provider:
+                    type: string
+                  created:
+                    type: string
+                    description: 06-17T15:07:48+01:00
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                        description: of-creator
+                required:
+                  - awsKey
+                  - filesBucket
+                  - region
+                  - owner
+                  - id
+              example:
+                awsKey: SFASDF
+                filesBucket: kbc-sapi-files
+                region: us-east-1
+                owner: keboola
+                id: '123'
+                isDefault: 'false'
+                provider: aws
+                created: '2019'
+                creator:
+                  id: '123'
+                  name: name
+      summary: Set S3 Storage as default
+      operationId: Set S3 Storage as default
+      description: ''
+      tags:
+        - SUPER - File Storage Management
+      parameters:
+        - name: file_storage_id
+          in: path
+          description: File Storage ID
+          required: true
+          schema:
+            type: string
+  /manage/file-storage-abs:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accountName:
+                    type: string
+                  containerName:
+                    type: string
+                    description: of-container (required)
+                  owner:
+                    type: string
+                  id:
+                    type: string
+                  isDefault:
+                    type: string
+                  provider:
+                    type: string
+                  created:
+                    type: string
+                    description: 06-17T15:07:48+01:00
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                        description: of-creator
+                required:
+                  - accountName
+                  - owner
+              example:
+                accountName: nameofaccount
+                containerName: name
+                owner: keboola
+                id: '123'
+                isDefault: 'false'
+                provider: azure
+                created: '2019'
+                creator:
+                  id: '123'
+                  name: name
+      summary: Create new Azure Blob Storage
+      operationId: Create new Azure Blob Storage
+      description: >-
+        Will register new Azure Blob Storage for using inside KBC. Connection
+        wil be verified during registraion.
+      tags:
+        - SUPER - File Storage Management
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              accountName: nameofaccount
+              containerName: name
+              owner: keboola
+              accountKey: TTASDASASDfasdf==
+            schema:
+              type: object
+              properties:
+                accountName:
+                  type: string
+                containerName:
+                  type: string
+                  description: of-container (required)
+                owner:
+                  type: string
+                accountKey:
+                  type: string
+                  description: new key to be rotated to
+              required:
+                - accountName
+                - owner
+                - accountKey
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+              example:
+                - accountName: nameofaccount
+                  containerName: name
+                  owner: keboola
+                  id: '123'
+                  isDefault: 'false'
+                  provider: azure
+                  created: '2019'
+                  creator:
+                    id: '123'
+                    name: name
+      summary: List Azure Blob Storage
+      operationId: List Azure Blob Storage
+      description: Returns all registered Azure Blob Storages.
+      tags:
+        - SUPER - File Storage Management
+      parameters: []
+  /manage/file-storage-abs/{file_storage_id}/default:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accountName:
+                    type: string
+                  containerName:
+                    type: string
+                    description: of-container (required)
+                  owner:
+                    type: string
+                  id:
+                    type: string
+                  isDefault:
+                    type: string
+                required:
+                  - accountName
+                  - owner
+              example:
+                accountName: nameofaccount
+                containerName: name
+                owner: keboola
+                id: '123'
+                isDefault: 'true'
+      summary: Set Blob Storage as default
+      operationId: Set Blob Storage as default
+      description: ''
+      tags:
+        - SUPER - File Storage Management
+      parameters:
+        - name: file_storage_id
+          in: path
+          description: File Storage ID
+          required: true
+          schema:
+            type: string
+  /manage/storage-backend:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  host:
+                    type: string
+                    description: >-
+                      37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com
+                      (required)
+                  backend:
+                    type: string
+                  region:
+                    type: string
+                    description: east-1
+                required:
+                  - id
+                  - backend
+              example:
+                id: 123
+                host: sapi
+                backend: redshift
+                region: us
+      summary: Create a new backend
+      operationId: Create a new backend
+      description: >-
+        #### Redshift
+
+
+        Credentials with superuser access to the database must be provided for
+        Redshift.
+
+
+        #### Snowflake
+
+
+        Credentials and storage warehouse are required. You can generate a user,
+        role and warehouse with the following queries:
+
+
+        ```
+
+        CREATE ROLE "KEBOOLA_STORAGE";
+
+        GRANT CREATE DATABASE ON ACCOUNT TO ROLE "KEBOOLA_STORAGE";
+
+        GRANT CREATE ROLE ON ACCOUNT TO ROLE "KEBOOLA_STORAGE" WITH GRANT
+        OPTION;
+
+        GRANT CREATE USER ON ACCOUNT TO ROLE "KEBOOLA_STORAGE" WITH GRANT
+        OPTION;
+
+        CREATE WAREHOUSE "YOUR_WAREHOUSE" WITH WAREHOUSE_SIZE = 'XSMALL'
+        WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 3600 AUTO_RESUME = TRUE;
+
+        GRANT USAGE ON WAREHOUSE "YOUR_WAREHOUSE" TO ROLE "KEBOOLA_STORAGE" WITH
+        GRANT OPTION;
+
+
+        CREATE USER "KEBOOLA_STORAGE"
+
+        PASSWORD = "YOUR_PASSWORD"
+
+        DEFAULT_ROLE = "KEBOOLA_STORAGE";
+
+
+        GRANT ROLE "KEBOOLA_STORAGE" TO USER "KEBOOLA_STORAGE";
+
+        GRANT ROLE "KEBOOLA_STORAGE" TO ROLE SYSADMIN;
+
+        ```
+
+
+        According to the previous example, the parameters for creating Storage
+        will be:
+
+
+        - `user` - `KEBOOLA_STORAGE`
+
+
+        - `warehouse` - `YOUR_WAREHOUSE`
+
+
+        - `password` - `YOUR_PASSWORD`
+
+
+        #### Synapse
+
+
+        Credentials for sql server admin must be provided with database name.
+
+
+        Master key for exports must be created on SQL pool
+
+
+        ```
+
+        CREATE MASTER KEY
+
+        ```
+      tags:
+        - SUPER - Storage Backends Management
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              backend: snowflake
+              host: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com
+              warehouse: production
+              username: keboola
+              password: '1234'
+              region: us-east-1
+              owner: keboola
+              database: MyDataWarehouse
+              useSynapseManagedIdentity: 'true'
+              useDynamicBackends: false
+            schema:
+              type: object
+              properties:
+                backend:
+                  type: string
+                  description: can be redshift, snowflake ,synapse, exasol, teradata
+                host:
+                  type: string
+                warehouse:
+                  type: string
+                  description: required only for Snowflake
+                username:
+                  type: string
+                password:
+                  type: string
+                region:
+                  type: string
+                owner:
+                  type: string
+                  description: associated AWS account owner
+                database:
+                  type: string
+                  description: required for Synapse and Teradata
+                useSynapseManagedIdentity:
+                  type: string
+                  description: optional for Synapse
+                useDynamicBackends:
+                  type: boolean
+                  description: >-
+                    Only for backends supporting dynamic sizing (Snowflake).
+                    When enabled, new projects get dynamic backends assigned
+                    automatically.
+              required:
+                - backend
+                - host
+                - username
+                - password
+                - region
+                - owner
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+              example:
+                - id: 123
+                  host: sapi
+                  backend: redshift
+                  region: us
+      summary: List backends
+      operationId: List backends
+      description: ''
+      tags:
+        - SUPER - Storage Backends Management
+      parameters: []
+  /manage/storage-backend/{backend_id}:
+    patch:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  host:
+                    type: string
+                    description: >-
+                      37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com
+                      (required)
+                  backend:
+                    type: string
+                  region:
+                    type: string
+                    description: east-1
+                required:
+                  - id
+                  - backend
+              example:
+                id: 123
+                host: sapi
+                backend: redshift
+                region: us
+      summary: Update backend
+      operationId: Update backend
+      description: >-
+        A partial update of a storage backend, one of the attributes are
+        required.
+      tags:
+        - SUPER - Storage Backends Management
+      parameters:
+        - name: backend_id
+          in: path
+          description: Backend ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              username: keboola
+              password: '1234'
+              useDynamicBackends: false
+            schema:
+              $ref: '#/components/schemas/StorageBackendUpdate'
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Delete backend
+      operationId: Delete backend
+      description: >-
+        All projects using the backend must be deleted and purged before it can
+        be deleted
+      tags:
+        - SUPER - Storage Backends Management
+      parameters:
+        - name: backend_id
+          in: path
+          description: Id of storage backend
+          required: true
+          schema:
+            type: string
+  /manage/commands:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  commandExecutionId:
+                    type: string
+                    description: >-
+                      execution ID; this ID is appended to all logs provided by
+                      the command
+                required:
+                  - commandExecutionId
+              example:
+                commandExecutionId: 123-abcd
+      summary: Run Command
+      operationId: Run Command
+      description: >-
+        Executes a Keboola Connection CLI command asynchronously. The command is
+        enqueued to the commands queue, `commandExecutionId` is returned.
+
+        You can use this ID to search the command output in Papertrail logs.
+      tags:
+        - SUPER - Commands
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              command: storage:workers-list
+              parameters:
+                - '--help'
+                - '23'
+            schema:
+              type: object
+              properties:
+                command:
+                  type: string
+                  description: command to execute
+                parameters:
+                  type: array
+                  description: command parameters
+                  items: {}
+              required:
+                - command
+  /manage/ui-apps:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              example:
+                - id: kbc.manageApps
+                  name: kbc.manageApps
+                  version: 0.0.3-33-ga6bc947
+                  basePath: >-
+                    https://kbc-uis.s3.amazonaws.com/kbc.manageApps/0.0.3-33-ga6bc947/
+                  scripts:
+                    - >-
+                      https://kbc-uis.s3.amazonaws.com/kbc.manageApps/0.0.3-33-ga6bc947/scripts/libs.js
+                    - >-
+                      https://kbc-uis.s3.amazonaws.com/kbc.manageApps/0.0.3-33-ga6bc947/scripts/scripts.js
+                  styles:
+                    - >-
+                      https://kbc-uis.s3.amazonaws.com/kbc.manageApps/0.0.3-33-ga6bc947/styles/libs.css
+                    - >-
+                      https://kbc-uis.s3.amazonaws.com/kbc.manageApps/0.0.3-33-ga6bc947/styles/select2.png
+      summary: List Applications
+      operationId: List Applications
+      description: >-
+        Returns active applications. This resource doesn't require
+        authentication.
+      tags:
+        - SUPER - UI Management
+      parameters: []
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              example:
+                app:
+                  id: '41'
+                  stringId: kbc
+                  name: kbc
+                  created: '2015-02-12 11:10:09'
+                verion:
+                  id: 1646
+                  created: '2015-08-17 17:43:37'
+                  version: 0.1.21-17-g3cae4c0
+                  isActive: true
+      summary: Register New Application/Version
+      operationId: Register New Application/Version
+      description: ''
+      tags:
+        - SUPER - UI Management
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              manifest_url: ''
+            schema:
+              type: object
+              required:
+                - manifest_url
+              properties:
+                manifest_url:
+                  type: string
+                  description: URL of manifest describing UI build
+                activate:
+                  type: boolean
+                  description: Activate version after registration
+  /manage/ui-apps/{id}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Delete Application
+      operationId: Delete Application
+      description: Deletes application and its versions
+      tags:
+        - SUPER - UI Management
+      parameters:
+        - name: id
+          in: path
+          description: stringId/name of application
+          required: true
+          schema:
+            type: string
+  /queue/workers:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content: {}
+      summary: Get Workers
+      operationId: Get Workers
+      description: >-
+        Endpoint should be: https://syrup.keboola.com/queue/workers
+
+
+        This API resource can be used, for example, by Hubot script for listing
+        running workers.
+      tags:
+        - Syrup API Integration
+      parameters: []
+
+security:
+  - ApiKeyAuth: []
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header     
+      name: X-KBC-ManageApiToken
+  schemas:
+    MaintainerModel:
+      type: object
+      properties:
+        id:
+          type: number
+        created:
+          type: string
+        url:
+          type: string
+        defaultConnectionMysqlId:
+          type: number
+        defaultConnectionRedshiftId:
+          type: number
+        defaultConnectionSnowflakeId:
+          type: number
+        defaultConnectionSynapseId:
+          type: number
+        defaultConnectionExasolId:
+          type: number
+        defaultConnectionTeradataId:
+          type: number
+        zendeskUrl:
+          type: string
+    OrganizationModel:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        created:
+          type: string
+        allowAutoJoin:
+          type: boolean
+        crmId:
+          type: string
+        mfaRequired:
+          type: boolean
+        projects:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+              created:
+                type: string
+    ProjectModel:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        type:
+          type: string
+        region:
+          type: string
+        created:
+          type: string
+        expires:
+          nullable: true
+        features:
+          type: array
+          items: {}
+        dataSizeBytes:
+          type: number
+        rowsCount:
+          type: number
+        hasMysql:
+          type: boolean
+        hasRedshift:
+          type: boolean
+        hasSnowflake:
+          type: boolean
+        hasSynapse:
+          type: boolean
+        hasExasol:
+          type: boolean
+        hasTeradata:
+          type: boolean
+        defaultBackend:
+          type: string
+        hasTryModeOn:
+          type: string
+        limits:
+          type: object
+          properties:
+            components.jobsParallelism:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            goodData.dataSizeBytes:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            goodData.demoTokenEnabled:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            goodData.prodTokenEnabled:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            goodData.usersCount:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            kbc.adminsCount:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            kbc.extractorsCount:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            kbc.monthlyProjectPowerLimit:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            kbc.writersCount:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            orchestrations.count:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            storage.dataSizeBytes:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            storage.jobsParallelism:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+        metrics:
+          type: object
+          properties:
+            kbc.adminsCount:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            orchestrations.count:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            storage.dataSizeBytes:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+            storage.rowsCount:
+              type: object
+              properties:
+                name:
+                  type: string
+                value:
+                  type: number
+        isDisabled:
+          type: boolean
+        billedMonthlyPrice:
+          nullable: true
+        dataRetentionTimeInDays:
+          type: number
+        organization:
+          type: object
+          properties:
+            id:
+              type: number
+            name:
+              type: string
+            created:
+              type: string
+            allowAutoJoin:
+              type: boolean
+        fileStorage:
+          type: object
+          properties:
+            id:
+              type: number
+            awsKey:
+              type: string
+            region:
+              type: string
+            filesBucket:
+              type: string
+            owner:
+              type: string
+            isDefault:
+              type: boolean
+            created:
+              type: string
+            creator:
+              type: object
+              properties:
+                id:
+                  type: number
+                name:
+                  nullable: true
+        backends:
+          type: object
+          properties:
+            snowflake:
+              type: object
+              properties:
+                id:
+                  type: number
+                host:
+                  type: string
+                region:
+                  type: string
+        payAsYouGo:
+          type: object
+          properties:
+            purchasedCredits:
+              type: number
+    ABSBase:
+      type: object
+      required:
+        - accountName
+        - owner
+      properties:
+        accountName:
+          type: string
+          example: nameofaccount
+        containerName:
+          type: string
+          example: name
+          description: of-container (required)
+        owner:
+          type: string
+          example: keboola
+    ABSCreate:
+      allOf:
+        - $ref: '#/components/schemas/ABSBase'
+        - type: object
+          required:
+            - accountKey
+          properties:
+            accountKey:
+              type: string
+              example: TTASDASASDfasdf==
+              description: new key to be rotated to
+    ABSCreated:
+      allOf:
+        - $ref: '#/components/schemas/ABSBase'
+        - type: object
+          properties:
+            id:
+              type: string
+              example: '123'
+            isDefault:
+              type: string
+              example: 'false'
+            provider:
+              type: string
+              example: azure
+            created:
+              type: string
+              example: '2019'
+              description: 06-17T15:07:48+01:00
+            creator:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: '123'
+                name:
+                  type: string
+                  example: name
+                  description: of-creator
+    ABSDefault:
+      allOf:
+        - $ref: '#/components/schemas/ABSBase'
+        - type: object
+          properties:
+            id:
+              type: string
+              example: '123'
+            isDefault:
+              type: string
+              example: 'true'
+    S3FileStorageBase:
+      type: object
+      required:
+        - awsKey
+        - filesBucket
+        - region
+        - owner
+      properties:
+        awsKey:
+          type: string
+          example: SFASDF
+        filesBucket:
+          type: string
+          example: kbc-sapi-files
+        region:
+          type: string
+          example: us-east-1
+        owner:
+          type: string
+          example: keboola
+          description: Associated AWS account owner
+    S3FileStorage:
+      allOf:
+        - $ref: '#/components/schemas/S3FileStorageBase'
+        - type: object
+          required:
+            - id
+          properties:
+            id:
+              type: string
+              example: '123'
+            isDefault:
+              type: string
+              example: 'false'
+            provider:
+              type: string
+              example: aws
+            created:
+              type: string
+              example: '2019'
+              description: 06-17T15:07:48+01:00
+            creator:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: '123'
+                name:
+                  type: string
+                  example: name
+                  description: of-creator
+    S3FileStorageRequest:
+      allOf:
+        - $ref: '#/components/schemas/S3FileStorageBase'
+        - type: object
+          required:
+            - awsSecret
+          properties:
+            awsSecret:
+              type: string
+              example: xxxx
+    StorageBackendCreate:
+      type: object
+      required:
+        - backend
+        - host
+        - username
+        - password
+        - region
+        - owner
+      properties:
+        backend:
+          type: string
+          example: snowflake
+          description: can be redshift, snowflake ,synapse, exasol, teradata
+        host:
+          type: string
+          example: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com
+        warehouse:
+          type: string
+          example: production
+          description: required only for Snowflake
+        username:
+          type: string
+          example: keboola
+        password:
+          type: string
+          example: '1234'
+        region:
+          type: string
+          example: us-east-1
+        owner:
+          type: string
+          example: keboola
+          description: associated AWS account owner
+        database:
+          type: string
+          example: MyDataWarehouse
+          description: required for Synapse and Teradata
+        useSynapseManagedIdentity:
+          type: string
+          example: 'true'
+          description: optional for Synapse
+        useDynamicBackends:
+          type: boolean
+          description: >-
+            Only for backends supporting dynamic sizing (Snowflake). When
+            enabled, new projects get dynamic backends assigned automatically.
+    StorageBackendUpdate:
+      type: object
+      properties:
+        username:
+          type: string
+          example: keboola
+        password:
+          type: string
+          example: '1234'
+        useDynamicBackends:
+          type: boolean
+          description: >-
+            Only for backends supporting dynamic sizing (Snowflake). When
+            enabled, new projects get dynamic backends assigned automatically.
+    StorageBackend:
+      type: object
+      required:
+        - id
+        - backend
+      properties:
+        id:
+          type: number
+          example: 123
+        host:
+          type: string
+          example: sapi
+          description: 37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
+        backend:
+          type: string
+          example: redshift
+        region:
+          type: string
+          example: us
+          description: east-1
+    StorageBackendListBase:
+      type: object
+      required:
+        - id
+        - owner
+        - created
+      properties:
+        id:
+          type: number
+          example: 123
+        region:
+          type: string
+          example: us
+          description: east-1 (required)
+        owner:
+          type: string
+          example: keboola
+        username:
+          type: string
+          example: username
+        stats:
+          type: object
+          required:
+            - projectsCount
+            - bucketsCount
+            - dataSizeGB
+            - rowsCount
+          properties:
+            projectsCount:
+              type: number
+              example: 10
+            bucketsCount:
+              type: number
+              example: 100
+            dataSizeGB:
+              type: number
+              example: 100
+            rowsCount:
+              type: number
+              example: 1000000
+        created:
+          type: string
+          example: '2020-05-11T15:30:00Z'
+          description: The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
+        creator:
+          type: object
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: number
+              example: 10
+            name:
+              type: string
+              example: keboola
+    StorageBackendListRedshift:
+      allOf:
+        - $ref: '#/components/schemas/StorageBackendListBase'
+        - type: object
+          required:
+            - backend
+          properties:
+            host:
+              type: string
+              example: demo.cmizbsfmzc6w.us
+              description: east-1.redshift.amazonaws.com (required)
+            backend:
+              type: string
+              example: redshift
+    StorageBackendListSnowflake:
+      allOf:
+        - $ref: '#/components/schemas/StorageBackendListBase'
+        - type: object
+          required:
+            - host
+            - backend
+          properties:
+            host:
+              type: string
+              example: demo.snowflakecomputing.com
+            backend:
+              type: string
+              example: snowflake
+            warehouse:
+              type: string
+              example: keboola
+    StorageBackendListSynapse:
+      allOf:
+        - $ref: '#/components/schemas/StorageBackendListBase'
+        - type: object
+          required:
+            - backend
+          properties:
+            host:
+              type: string
+              example: demo
+              description: synapse.database.windows.net (required)
+            backend:
+              type: string
+              example: synapse
+            database:
+              type: string
+              example: keboola
+            useSynapseManagedIdentity:
+              type: string
+              example: 'false'
+    StorageBackendListExasol:
+      allOf:
+        - $ref: '#/components/schemas/StorageBackendListBase'
+        - type: object
+          required:
+            - host
+            - backend
+          properties:
+            host:
+              type: string
+              example: database.exasol.com
+            backend:
+              type: string
+              example: exasol
+    StorageBackendListTeradata:
+      allOf:
+        - $ref: '#/components/schemas/StorageBackendListBase'
+        - type: object
+          required:
+            - host
+            - backend
+          properties:
+            host:
+              type: string
+              example: database.teradata.com
+            backend:
+              type: string
+              example: teradata
+            database:
+              type: string
+              example: keboola
+    CommandExecute:
+      type: object
+      required:
+        - command
+      properties:
+        command:
+          type: string
+          example: storage:workers-list
+          description: command to execute
+        parameters:
+          type: array
+          items: {}
+          description: command parameters
+    CommandExecuteResponse:
+      type: object
+      required:
+        - commandExecutionId
+      properties:
+        commandExecutionId:
+          type: string
+          example: 123-abcd
+          description: >-
+            execution ID; this ID is appended to all logs provided by the
+            command
+tags:
+  - name: Token Verification
+  - name: Maintainers
+  - name: Organizations
+  - name: Projects
+  - name: Deleted Projects
+    description: Operations on deleted projects are allowed only for a super admin.
+  - name: Users
+    description: Users can be managed only by a super admin.
+  - name: My Account
+  - name: Promo codes
+  - name: SUPER - Features
+  - name: SUPER - File Storage Management
+    description: >-
+      ## Management of file storages.
+
+
+      File storage can be represented:
+
+      1) By the Azure Blob Storage container with associated credentials of
+      Storage account
+
+      2) By the AWS S3 bucket with associated AWS IAM credentials with full
+      access to this bucket and access to the AWS STS service. At least one file
+      storage has to be registered for one supported region.
+
+
+      Each type of storage has its own endpoint.
+  - name: SUPER - Storage Backends Management
+    description: >-
+      Storage backends power Keboola Connection buckets and the main tabular
+      data storage.
+
+      Currently supported backends are:
+
+
+      - Redshift
+
+
+      - Snowflake
+
+
+      - Synapse
+
+
+      - Exasol
+
+
+      - Teradata
+  - name: SUPER - Commands
+  - name: SUPER - UI Management
+  - name: Syrup API Integration
+    description: >-
+      This is an example of an API call returning all running worker processes
+      and their state. This resource is accessible for tokens of the type
+      `super` with `super_monitoring` scope.
+
+      `Super` tokens can be created only by super admins.
+
+
+      ## Authentication
+
+
+      Syrup API will receive a management token in its header and will use it to
+      call the `Verify token` API call.
+
+      Details about the token will be returned, scopes associated to the token
+      are present in the response.
+
+      If the scope is `super_monitoring` and the token type is `super`, Syrup
+      will return the workers in the response, otherwise `403` is returned.
