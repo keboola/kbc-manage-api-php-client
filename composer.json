@@ -6,6 +6,7 @@
         "guzzlehttp/guzzle": "^7.0|^6.1"
     },
     "require-dev": {
+        "phpstan/phpdoc-parser": "1.5.1",
         "keboola/coding-standard": "^13.0",
         "keboola/phpunit-retry-annotations": "^0.3.0",
         "keboola/storage-api-client": "^12.0",
