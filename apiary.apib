@@ -41,9 +41,13 @@ There are the following types of tokens:
 | super | No | Yes | KBC management. Limited scopes can be specified `super_ui_deploy`, `super_monitoring`, ...  |
 
 
-## Token Verification [GET /manage/tokens/verify]
+# Group Token Verification
 
-+ Request
+## Token Verification [/manage/tokens/verify]
+
+### Token Verification [GET]
+
++ Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
@@ -52,18 +56,28 @@ There are the following types of tokens:
 
     ```js
     {
-        "id": 234,
-        "user" : {
-            "id": 416,
-            "name": "Martin Halamíček"
-        },
-        "created": "2014-11-11T08:40:51.620Z",
-        "type": "admin",
+        "id": 13702,
+        "description": "Example token",
+        "created": "2021-06-28T22:27:28+0200",
+        "lastUsed": "2022-06-13T22:29:03+0200",
+        "expires": "2031-06-26T22:27:28+0200",
+        "isSessionToken": false,
+        "isExpired": false,
+        "isDisabled": false,
         "scopes": [],
-        "access": {
-            "projects": [234, 23, 234],
-            "organizations": [23],
-            "maintainers": [1]
+        "type": "admin",
+        "creator": {
+            "id": 7919,
+            "name":  "John Doe"
+        },
+        "user": {
+            "id": 7919,
+            "name": "John Doe",
+            "email": "john.doe@keboola.com",
+            "mfaEnabled": true,
+            "features": [],
+            "canAccessLogs": true,
+            "isSuperAdmin": true
         }
     }
     ```
@@ -110,19 +124,7 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionSnowflakeId": 242,
             "defaultConnectionSynapseId": 235,
             "defaultConnectionExasolId": 236,
-            "defaultConnectionTeradataId": 236,
-            "organizations": [
-                {
-                    "id": 234,
-                    "name": "Development",
-                    "projects": []
-                },
-                {
-                    "id": 235,
-                    "name": "POC",
-                    "projects": []
-                }
-            ]
+            "defaultConnectionTeradataId": 236
         },
         {
             "id": 124,
@@ -133,19 +135,7 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionSnowflakeId": 242,
             "defaultConnectionSynapseId": 235,
             "defaultConnectionExasolId": 236,
-            "defaultConnectionTeradataId": 236,
-            "organizations": [
-                {
-                    "id": 234,
-                    "name": "Development",
-                    "projects": []
-                },
-                {
-                    "id": 235,
-                    "name": "POC",
-                    "projects": []
-                }
-            ]
+            "defaultConnectionTeradataId": 236
         }
     ]
     ```
@@ -174,19 +164,7 @@ A maintainer object has the following attributes:
         "defaultConnectionSynapseId": 235,
         "defaultConnectionExasolId": 236,
         "defaultConnectionTeradataId": 236,
-        "zendeskUrl": "https://some.url.com",
-        "organizations": [
-            {
-                "id": 234,
-                "name": "Development",
-                "projects": []
-            },
-            {
-                "id": 235,
-                "name": "POC",
-                "projects": []
-            }
-        ]
+        "zendeskUrl": "https://some.url.com"
     }
     ```
 ### Retrieve a maintainer [GET]
@@ -235,14 +213,14 @@ A partial update of a maintainer
 + Parameters
     + maintainer_id (required, int) - Maintainer ID
 
-### List invitations [GET]
+### List maintainers invitations [GET]
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     [
@@ -291,7 +269,7 @@ Only members of the maintainer and superadmins can invite other users.
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 201
++ Response 201 (application/json)
 
 
     ```js
@@ -318,14 +296,14 @@ Only members of the maintainer and superadmins can invite other users.
     + invitation_id (required, int) - User ID
 
 
-### Invitation detail [GET]
+### Maintainer invitation detail [GET]
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
 
     ```js
@@ -345,7 +323,7 @@ Only members of the maintainer and superadmins can invite other users.
     }
     ```
 
-### Cancel a invitation [DELETE]
+### Cancel maintainer invitation [DELETE]
 
 + Request (application/json)
     + Headers
@@ -356,12 +334,12 @@ Only members of the maintainer and superadmins can invite other users.
 
 
 
-## Maintainer Users [/manage/maintainers/{maintainer_id}/users]
+## Maintainer Users [/manage/maintainers/{maintainer_id}/users]
 
 + Parameters
     + maintainer_id: 1 (required, number) - ID of the maintainer
 
-### List users [GET]
+### List maintainer users [GET]
 
 + Request (application/json)
     + Headers
@@ -380,7 +358,7 @@ Only members of the maintainer and superadmins can invite other users.
     ]
     ```
 
-## Add a User [POST]
+## Add a User to maintainer [POST]
 
 Either `id` or `email` of a user must be set. If the email is not associated with a user, a new account is created and an invitation is sent.
 
@@ -397,7 +375,7 @@ Either `id` or `email` of a user must be set. If the email is not associated wit
 
 + Response 204
 
-## Remove a user [DELETE /manage/maintainers/{maintainer_id}/users/{user_id}]
+## Remove a user from maintainer [DELETE /manage/maintainers/{maintainer_id}/users/{user_id}]
 
 + Parameters
     + maintainer_id: 1 (required, number) - ID of the maintainer
@@ -574,7 +552,7 @@ An organization object has the following attributes:
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     {
@@ -612,7 +590,7 @@ Partial update of an organization
             X-KBC-ManageApiToken: your_token
 
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     {
@@ -680,14 +658,14 @@ Creates a new organization.
 + Parameters
     + organization_id (required, int) - Organization ID
 
-### List invitations [GET]
+### List organization invitations [GET]
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     [
@@ -736,7 +714,7 @@ Only members of the organization can invite other users.
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 201
++ Response 201 (application/json)
 
 
     ```js
@@ -763,14 +741,14 @@ Only members of the organization can invite other users.
     + invitation_id (required, int) - User ID
 
 
-### Invitation detail [GET]
+### Organization invitation detail [GET]
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
 
     ```js
@@ -790,7 +768,7 @@ Only members of the organization can invite other users.
     }
     ```
 
-### Cancel a invitation [DELETE]
+### Cancel organization invitation [DELETE]
 
 + Request (application/json)
     + Headers
@@ -800,13 +778,13 @@ Only members of the organization can invite other users.
 + Response 204
 
 
-## Organization Users [/manage/organizations/{organization_id}/users]
+## Organization Users [/manage/organizations/{organization_id}/users]
 
 
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization
 
-### List users [GET]
+### List organization users [GET]
 
 + Request (application/json)
     + Headers
@@ -825,7 +803,7 @@ Only members of the organization can invite other users.
     ]
     ```
 
-## Add a User [POST]
+## Add a User to organization [POST]
 
 Either `id` or `email` of a user must be set. If the email is not associated with a user, a new account is created and an invitation is sent.
 
@@ -841,7 +819,7 @@ Either `id` or `email` of a user must be set. If the email is not associated wit
 
 + Response 204
 
-## Remove a user [DELETE /manage/organizations/{organization_id}/users/{user_id}]
+## Remove a user from organization [DELETE /manage/organizations/{organization_id}/users/{user_id}]
 
 + Parameters
     + organization_id: 1 (required, number) - ID of the organization
@@ -856,7 +834,10 @@ Either `id` or `email` of a user must be set. If the email is not associated wit
 
 ## Projects Users In Organization [/manage/organizations/{organization_id}/projects-users]
 
-### List users [GET]
++ Parameters
+    + organization_id: 1 (required, number) - ID of the organization
+
+### List project users in organization [GET]
 
 List of all users who are members of at least one project in the organization. Only members of the organization can get this list.
 
@@ -980,7 +961,7 @@ Only organization members, members of the maintainer and super admins can change
         }
         ```
 
-+ Response 201
++ Response 201 (application/json)
 
     + Body
 
@@ -1015,7 +996,7 @@ Only members of the maintainer, members of organization and super admins can lis
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
     + Body
 
         ```js
@@ -1273,7 +1254,7 @@ A project will be created from a default template which defines its limits. Only
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     {
@@ -1487,7 +1468,7 @@ Only project members with Admin or Share roles, members of the maintainer, membe
         }
         ```
 
-+ Response 201
++ Response 201 (application/json)
     + Body
 
             [
@@ -1511,15 +1492,13 @@ Only project members with Admin or Share roles, members of the maintainer, membe
 ### List project Metadata [GET]
 Only project members, members of the maintainer, members of organization and super admins can list metadata.
 
-+ Parameters
-    + project_id (required, int) - Project ID
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
     + Body
 
             [
@@ -1562,14 +1541,14 @@ Only project members with Admin or Share roles, members of the maintainer, membe
 + Parameters
     + project_id (required, int) - Project ID
 
-### List invitations [GET]
+### List project invitations [GET]
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     [
@@ -1634,7 +1613,7 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 201
++ Response 201 (application/json)
 
 
     ```js
@@ -1664,14 +1643,14 @@ An optional expiration (seconds) and reason for joining can be added to the requ
     + invitation_id (required, int) - User ID
 
 
-### Invitation detail [GET]
+### Project invitation detail [GET]
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
 
     ```js
@@ -1693,7 +1672,7 @@ An optional expiration (seconds) and reason for joining can be added to the requ
         }
     }
     ```
-### Cancel a invitation [DELETE]
+### Cancel project invitation [DELETE]
 
 Only members of the project or its organization are allowed to cancel project invitation.
 
@@ -1710,14 +1689,14 @@ Only members of the project or its organization are allowed to cancel project in
     + project_id (required, int) - Project ID
 
 
-### List users [GET]
+### List project users [GET]
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     [
@@ -1794,24 +1773,24 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
     ```js
     [
         {
-            "id" => "poc15Days",
-            "name" => "POC 15 days",
-            "description" => "Proof of concept. 15 days trial.",
-            "expirationDays" => 15,
-            "billedMonthlyPrice" => null,
-            "hasTryModeOn" => false
+            "id": "poc15Days",
+            "name": "POC 15 days",
+            "description": "Proof of concept. 15 days trial.",
+            "expirationDays": 15,
+            "billedMonthlyPrice": null,
+            "hasTryModeOn": false
         },
         {
-            "id" => "poc15DaysGuideMode",
-            "name" => "POC Guide Mode",
-            "description" => "Proof of concept. 15 days trial - Guide Mode.",
-            "expirationDays" => 15,
-            "billedMonthlyPrice" => null,
-            "hasTryModeOn" => true
+            "id": "poc15DaysGuideMode",
+            "name": "POC Guide Mode",
+            "description": "Proof of concept. 15 days trial - Guide Mode.",
+            "expirationDays": 15,
+            "billedMonthlyPrice": null,
+            "hasTryModeOn": true
         }
     ]
     ```
@@ -1828,15 +1807,15 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
     ```js
     {
-        "id" => "poc15Days",
-        "name" => "POC 15 days",
-        "description" => "Proof of concept. 15 days trial.",
-        "expirationDays" => 15,
-        "billedMonthlyPrice" => null,
-        "hasTryModeOn" => false
+        "id": "poc15Days",
+        "name": "POC 15 days",
+        "description": "Proof of concept. 15 days trial.",
+        "expirationDays": 15,
+        "billedMonthlyPrice": null,
+        "hasTryModeOn": false
     }
     ```
 
@@ -1863,7 +1842,7 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     {
@@ -1944,7 +1923,7 @@ An optional expiration (in seconds) and reason for joining can be added to the r
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 201
++ Response 201 (application/json)
 
     ```js
     {
@@ -1973,7 +1952,7 @@ An optional expiration (in seconds) and reason for joining can be added to the r
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     [
@@ -2015,7 +1994,7 @@ An optional expiration (in seconds) and reason for joining can be added to the r
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     {
@@ -2101,7 +2080,7 @@ Only members of the project can reject join requests.
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 201
++ Response 201 (application/json)
 
     ```js
     {
@@ -2233,7 +2212,7 @@ Enqueues the command that fully deletes a project and returns its execution ID f
 
 ## List Deleted Projects [/manage/deleted-projects]
 
-### List deleted projects [GET]
+### List deleted projects [GET]
 
 Listing deleted projects is allowed only for a super admin.
 
@@ -2331,7 +2310,7 @@ Projects can be filtered by various filters:
 
 ## Cancel Project Deletion [/manage/deleted-projects/{project_id}{?expirationDays}]
 
-### Cancel project deletion [DELETE]
+### Cancel project deletion [DELETE]
 Cancelling project deletion is allowed only for a super admin.
 If the project has set expiration, the expiration is reset on the project renewal.
 You can also specify new expiration by `expirationDays` parameter.
@@ -2354,7 +2333,7 @@ Users can be managed only by a super admin.
 
 ## Manage User [/manage/users/{user_id_or_email}]
 
-### User detail [GET]
+### User detail [GET]
 
 + Parameters
     + user_id_or_email (required) - User ID or email
@@ -2469,7 +2448,7 @@ Removes also personal data of user (e-mail and name).
 
 ## Maintainers Invitations [/manage/current-user/maintainers-invitations]
 
-### List invitations [GET]
+### List my maintainer invitations [GET]
 
 + Request (application/json)
     + Headers
@@ -2498,7 +2477,7 @@ Removes also personal data of user (e-mail and name).
 
 ## Manage Maintainer Invitation [/manage/current-user/maintainers-invitations/{invitation_id}]
 
-### Invitation detail [GET]
+### My maintainer invitation detail [GET]
 
 + Parameters
     + invitation_id (number, required) - Invitation ID
@@ -2526,7 +2505,7 @@ Removes also personal data of user (e-mail and name).
     }
     ```
 
-### Accept a invitation [PUT]
+### Accept a maintainer invitation [PUT]
 
 Invitation will be accepted and current user will become a member of the maintainer.
 
@@ -2544,7 +2523,7 @@ Invitation will be accepted and current user will become a member of the maintai
 
 ## Organizations Invitations [/manage/current-user/organizations-invitations]
 
-### List invitations [GET]
+### List my organization invitations [GET]
 
 + Request (application/json)
     + Headers
@@ -2573,7 +2552,7 @@ Invitation will be accepted and current user will become a member of the maintai
 
 ## Manage Organization Invitation [/manage/current-user/organizations-invitations/{invitation_id}]
 
-### Invitation detail [GET]
+### My organization invitation detail [GET]
 
 + Parameters
     + invitation_id (number, required) - Invitation ID
@@ -2601,7 +2580,7 @@ Invitation will be accepted and current user will become a member of the maintai
     }
     ```
 
-### Accept a invitation [PUT]
+### Accept an organization invitation [PUT]
 
 Invitation will be accepted and current user will become a member of the organization.
 
@@ -2659,14 +2638,14 @@ Invitation will be accepted and current user will become a member of the organiz
     + join_request_id: 1 (required, integer)
 
 
-### Join request detail [GET]
+### My join request detail [GET]
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
 
-+ Response 200
++ Response 200 (application/json)
 
     ```js
     {
@@ -2693,7 +2672,7 @@ Invitation will be accepted and current user will become a member of the organiz
 
 ## Projects Invitations [/manage/current-user/projects-invitations]
 
-### List invitations [GET]
+### List my project invitations [GET]
 
 + Request (application/json)
     + Headers
@@ -2725,7 +2704,7 @@ Invitation will be accepted and current user will become a member of the organiz
 
 ## Manage Project Invitation [/manage/current-user/projects-invitations/{invitation_id}]
 
-### Invitation detail [GET]
+### My project invitation detail [GET]
 
 + Parameters
     + invitation_id (number, required) - Invitation ID
@@ -2756,7 +2735,7 @@ Invitation will be accepted and current user will become a member of the organiz
     }
     ```
 
-### Accept a invitation [PUT]
+### Accept a project invitation [PUT]
 
 Invitation will be accepted and current user will be added to the project.
 
@@ -2904,10 +2883,10 @@ Create a new project from given promo code
 
 ## Promo codes [/manage/maintainers/{maintainer_id}/promo-codes]
 
-### Retrieve all promo codes [GET]
-
 + Parameters
     + maintainer_id: 1 (required, integer)
+
+### Retrieve all promo codes [GET]
 
 + Request (application/json)
     + Headers
@@ -3027,12 +3006,15 @@ add the `type` parameter to your query.
             "name": "show-new-design",
             "type": "admin",
             "description": "Users with this feature will see new UI",
-            "created": "2016-04-28T15:24:51.620Z",
+            "created": "2016-04-28T15:24:51.620Z"
         }
     ]
     ```
 
 ### Retrieve one feature [GET /manage/features/{id}]
+
++ Parameters
+    + id: 1 (required, number) - ID of the feature
 
 + Request (application/json)
     + Headers
@@ -3047,13 +3029,16 @@ add the `type` parameter to your query.
         "name": "show-new-design",
         "type": "admin",
         "description": "Users with this feature will see new UI",
-        "created": "2016-04-28T15:24:51.620Z",
+        "created": "2016-04-28T15:24:51.620Z"
     }
     ```
 
 ### Retrieve feature projects [GET /manage/features/{id}/projects]
 
 Gets the projects with the specified feature assigned.
+
++ Parameters
+    + id: 1 (required, number) - ID of the feature
 
 + Request (application/json)
     + Headers
@@ -3074,6 +3059,9 @@ Gets the projects with the specified feature assigned.
 ### Retrieve feature users [GET /manage/features/{id}/admins]
 
 Gets the users with the specified feature assigned.
+
++ Parameters
+    + id: 1 (required, number) - ID of the feature
 
 + Request (application/json)
     + Headers
@@ -3115,7 +3103,7 @@ To create a new feature, provide the following parameters as JSON in the request
         "name": "show-new-design",
         "type": "admin",
         "description": "Users with this feature will see new UI",
-        "created": "2016-04-28T15:24:51.620Z",
+        "created": "2016-04-28T15:24:51.620Z"
     }
     ```
 
@@ -3144,7 +3132,7 @@ Project features can be assigned only by a super admin.
 
 + Attributes
 
-    + feature: show-new-design (required) - Feature name
+    + feature: show (required) - Feature name
 
 + Request (application/json)
     + Headers
@@ -3153,26 +3141,7 @@ Project features can be assigned only by a super admin.
 
 + Response 200 (application/json)
 
-    ```js
-    {
-        "id":259,
-        "name":"New Project",
-        "features":["new-orchestrator","es-events"],
-        "redshift": {
-            "connectionId":309,
-            "databaseName":"sapi_258"
-        }
-        "organization": {
-            "id": 3432
-        },
-        "limits": {
-            "goodData.usersCount": {
-                "name": "goodData.usersCount",
-                "value": 23
-            }
-        }
-    }
-    ```
+    [Project][]
 
 ### Remove a project feature [DELETE /manage/projects/{project_id}/features/{feature_name}]
 
@@ -3180,6 +3149,7 @@ Project features can be removed only by a super admin.
 
 + Parameters
     + project_id (required, int) - Project ID
+    + feature_name (required, string) - Feature string ID
 
 + Request (application/json)
     + Headers
@@ -3192,7 +3162,7 @@ Project features can be removed only by a super admin.
 ## User Features [/manage/users/{user_id_or_email}/features]
 
 
-### Add a user feature [POST /manage/users/{user_id_or_email}/features]
+### Add a user feature [POST /manage/users/{user_id_or_email}/features]
 
 *Note: Features have to exist before they can be added to a user.*
 
@@ -3275,7 +3245,7 @@ Lists features assigned to a project template.
     ]
     ```
 
-### Add a feature [POST /manage/project-templates/{template}/features]
+### Add a feature [POST /manage/project-templates/{template}/features]
 
 *Note: Features have to exist before they can be added to a project template and have to be of the type `project`.*
 
@@ -3351,7 +3321,7 @@ Only storage owned by **keboola** can be set as default.
 + Parameters
     + file_storage_id (required) - File Storage ID
 
-### Set Storage as default [POST]
+### Set S3 Storage as default [POST]
 
 + Request (application/json)
 
@@ -3398,14 +3368,14 @@ Returns all registered Azure Blob Storages.
     + Attributes(array[ABSCreated])
 
 
-## Blob Storage - Set storage as default [/manage/file-storage-abs/{file_storage_id}/default]
+## Blob Storage - Set Blob storage as default [/manage/file-storage-abs/{file_storage_id}/default]
 
 Only storage owned by **keboola** can be set as default.
 
 + Parameters
     + file_storage_id (required) - File Storage ID
 
-### Set Storage as default [POST]
+### Set Blob Storage as default [POST]
 
 + Request (application/json)
 
@@ -3535,12 +3505,14 @@ CREATE MASTER KEY
 
 + Response 200 (application/json)
 
-    + Attributes (array[StorageBackendListRedshift,StorageBackendListSnowflake,StorageBackendListSynapse,StorageBackendListExasol,StorageBackendListTeradata])
+    + Attributes (array[StorageBackend])
 
 ### Update backend [PATCH /manage/storage-backend/{backend_id}]
 
 A partial update of a storage backend, one of the attributes are required.
 
++ Parameters
+    + backend_id (required) - Backend ID
 + Attributes (StorageBackendUpdate)
 
 + Request (application/json)
@@ -3667,7 +3639,9 @@ You can use this ID to search the command output in Papertrail logs.
 
 # Group SUPER - UI Management
 
-## List Applications [GET /manage/ui-apps]
+## SUPER - UI Management [/manage/ui-apps]
+
+### List Applications [GET]
 
 Returns active applications. This resource doesn't require authentication.
 
@@ -3699,16 +3673,17 @@ Returns active applications. This resource doesn't require authentication.
     ]
     ```
 
-## Register New Application/Version [POST /manage/ui-apps?{manifest_url,activate}]
+### Register New Application/Version [POST]
 
-+ Parameters
-    + manifest_url (required, string) - URL of manifest describing UI build
-    + activate (optional, int) - Activate version after registration
 
 + Request (application/json)
     + Headers
 
             X-KBC-ManageApiToken: your_token
+
++ Attributes
+    + manifest_url (required, string) - URL of manifest describing UI build
+    + activate (optional, boolean) - Activate version after registration
 
 + Response 201 (application/json)
 
@@ -3729,7 +3704,7 @@ Returns active applications. This resource doesn't require authentication.
     }
     ```
 
-## Delete Application [DELETE /manage/ui-apps/{id}]
+### Delete Application [DELETE /manage/ui-apps/{id}]
 
 Deletes application and its versions
 
@@ -3749,7 +3724,7 @@ This is an example of an API call returning all running worker processes and the
 `Super` tokens can be created only by super admins.
 
 
-## Authentication
+## Authentication
 Syrup API will receive a management token in its header and will use it to call the `Verify token` API call.
 Details about the token will be returned, scopes associated to the token are present in the response.
 If the scope is `super_monitoring` and the token type is `super`, Syrup will return the workers in the response, otherwise `403` is returned.
