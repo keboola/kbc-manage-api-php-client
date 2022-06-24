@@ -898,4 +898,24 @@ class Client
             return $requestException->getMessage();
         }
     }
+
+    public function createGcsFileStorage(array $options)
+    {
+        return $this->apiPost('/manage/file-storage-gcs/', $options);
+    }
+
+    public function rotateGcsFileStorageCredentials(int $fileStorageId, array $options)
+    {
+        return $this->apiPost($this->encode('manage/file-storage-gcs/%s/credentials', $fileStorageId), $options);
+    }
+
+    public function listGcsFileStorage()
+    {
+        return $this->apiGet('manage/file-storage-gcs/');
+    }
+
+    public function setGcsFileStorageAsDefault(int $fileStorageId)
+    {
+        return $this->apiPost($this->encode('manage/file-storage-gcs/%s/default', $fileStorageId));
+    }
 }
