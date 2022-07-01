@@ -16,16 +16,8 @@ define('TEST_S3_REGION', getenv('TEST_S3_REGION'));
 define('TEST_S3_SECRET', getenv('TEST_S3_SECRET'));
 define('SUITE_NAME', getenv('SUITE_NAME'));
 
-define('TEST_GCS_TYPE', getenv('TEST_GCS_TYPE'));
-define('TEST_GCS_PROJECT_ID', getenv('TEST_GCS_PROJECT_ID'));
-define('TEST_GCS_PRIVATE_KEY_ID', getenv('TEST_GCS_PRIVATE_KEY_ID'));
-define('TEST_GCS_PRIVATE_KEY', getenv('TEST_GCS_PRIVATE_KEY'));
-define('TEST_GCS_CLIENT_EMAIL', getenv('TEST_GCS_CLIENT_EMAIL'));
-define('TEST_GCS_CLIENT_ID', getenv('TEST_GCS_CLIENT_ID'));
-define('TEST_GCS_AUTH_URI', getenv('TEST_GCS_AUTH_URI'));
-define('TEST_GCS_TOKEN_URI', getenv('TEST_GCS_TOKEN_URI'));
-define('TEST_GCS_AUTH_PROVIDER_X509_CERT_URL', getenv('TEST_GCS_AUTH_PROVIDER_X509_CERT_URL'));
-define('TEST_GCS_CLIENT_X509_CERT_URL', getenv('TEST_GCS_CLIENT_X509_CERT_URL'));
+define('TEST_GCS_KEY_FILE', getenv('TEST_GCS_KEY_FILE'));
 define('TEST_GCS_REGION', getenv('TEST_GCS_REGION'));
+define('TEST_GCS_FILES_BUCKET', getenv('TEST_GCS_FILES_BUCKET'));
 
 $loader = require __DIR__ . '/../vendor/autoload.php';

@@ -9,47 +9,39 @@ use Keboola\ManageApi\ClientException;
  */
 class FileStorageGcsTest extends ClientTestCase
 {
-    public const DEFAULT_GCS_OPTIONS = [
-        'type' => TEST_GCS_TYPE,
-        'projectId' => TEST_GCS_PROJECT_ID,
-        'privateKeyId' => TEST_GCS_PRIVATE_KEY_ID,
-        'privateKey' => TEST_GCS_PRIVATE_KEY,
-        'clientEmail' => TEST_GCS_CLIENT_EMAIL,
-        'clientId' => TEST_GCS_CLIENT_ID,
-        'authUri' => TEST_GCS_AUTH_URI,
-        'tokenUri' => TEST_GCS_TOKEN_URI,
-        'authProviderX509CertUrl' => TEST_GCS_AUTH_PROVIDER_X509_CERT_URL,
-        'clientX509CertUrl' => TEST_GCS_CLIENT_X509_CERT_URL,
-        'owner' => 'keboola',
-        'region' => TEST_GCS_REGION,
-    ];
-    private const ROTATE_GCS_OPTIONS = [
-        'privateKeyId' => TEST_GCS_PRIVATE_KEY_ID,
-        'privateKey' => TEST_GCS_PRIVATE_KEY,
-        'clientEmail' => TEST_GCS_CLIENT_EMAIL,
-        'clientId' => TEST_GCS_CLIENT_ID,
-        'authUri' => TEST_GCS_AUTH_URI,
-        'tokenUri' => TEST_GCS_TOKEN_URI,
-        'authProviderX509CertUrl' => TEST_GCS_AUTH_PROVIDER_X509_CERT_URL,
-        'clientX509CertUrl' => TEST_GCS_CLIENT_X509_CERT_URL,
-    ];
+    public function getGcsDefaultOptions(): array
+    {
+        return [
+            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE, true, 512, \JSON_THROW_ON_ERROR),
+            'owner' => 'keboola',
+            'region' => TEST_GCS_REGION,
+            'filesBucket' => TEST_GCS_FILES_BUCKET
+        ];
+    }
+
+    public function getGcsRotateOptions(): array
+    {
+        return [
+            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE, true, 512, \JSON_THROW_ON_ERROR),
+        ];
+    }
+
+    public function getExpectedGcsCredentialsWithoutPk(): array
+    {
+        $credentials = json_decode(TEST_GCS_KEY_FILE, true, 512, \JSON_THROW_ON_ERROR);
+        $privateKeyArrayKey = 'private_key';
+        $this->assertArrayHasKey($privateKeyArrayKey, $credentials);
+        unset($credentials[$privateKeyArrayKey]);
+        return $credentials;
+    }
 
     public function testFileStorageGcsCreate()
     {
-        $storage = $this->client->createGcsFileStorage(self::DEFAULT_GCS_OPTIONS);
+        $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
-        $this->assertArrayNotHasKey('private_key', $storage);
-
-        $this->assertSame(TEST_GCS_TYPE, $storage['type']);
-        $this->assertSame(TEST_GCS_PROJECT_ID, $storage['projectId']);
-        $this->assertSame(TEST_GCS_PRIVATE_KEY_ID, $storage['privateKeyId']);
-        $this->assertSame(TEST_GCS_PRIVATE_KEY, $storage['privateKey']);
-        $this->assertSame(TEST_GCS_CLIENT_EMAIL, $storage['clientEmail']);
-        $this->assertSame(TEST_GCS_CLIENT_ID, $storage['clientId']);
-        $this->assertSame(TEST_GCS_AUTH_URI, $storage['authUri']);
-        $this->assertSame(TEST_GCS_TOKEN_URI, $storage['tokenUri']);
-        $this->assertSame(TEST_GCS_AUTH_PROVIDER_X509_CERT_URL, $storage['authProviderX509CertUrl']);
-        $this->assertSame(TEST_GCS_CLIENT_X509_CERT_URL, $storage['clientX509CertUrl']);
+        $credentials = $storage['gcsCredentials'];
+        $this->assertArrayNotHasKey('private_key', $credentials);
+        $this->assertSame($this->getExpectedGcsCredentialsWithoutPk(), $credentials);
         $this->assertSame('keboola', $storage['owner']);
         $this->assertSame(TEST_GCS_REGION, $storage['region']);
         $this->assertSame($storage['provider'], 'gcp');
@@ -58,9 +50,9 @@ class FileStorageGcsTest extends ClientTestCase
 
     public function testRotateGcsKey()
     {
-        $storage = $this->client->createGcsFileStorage(self::DEFAULT_GCS_OPTIONS);
+        $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
-        $rotatedStorage = $this->client->rotateGcsFileStorageCredentials($storage['id'], self::ROTATE_GCS_OPTIONS);
+        $rotatedStorage = $this->client->rotateGcsFileStorageCredentials($storage['id'], $this->getGcsRotateOptions());
         $this->assertArrayNotHasKey('accountKey', $storage);
         $this->assertSame($rotatedStorage['accountName'], TEST_ABS_ACCOUNT_NAME);
         $this->assertSame($rotatedStorage['containerName'], TEST_ABS_CONTAINER_NAME);
@@ -71,7 +63,7 @@ class FileStorageGcsTest extends ClientTestCase
     public function testListGcsStorages()
     {
         $initCount = count($this->client->listGcsFileStorage());
-        $this->client->createGcsFileStorage(self::DEFAULT_GCS_OPTIONS);
+        $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
         $storages = $this->client->listGcsFileStorage();
 
         $this->assertSame($initCount + 1, count($storages));
@@ -85,7 +77,7 @@ class FileStorageGcsTest extends ClientTestCase
 
     public function testSetGcsStorageAsDefault()
     {
-        $storage = $this->client->createGcsFileStorage(self::DEFAULT_GCS_OPTIONS);
+        $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
         $this->assertFalse($storage['isDefault']);
 
@@ -104,7 +96,7 @@ class FileStorageGcsTest extends ClientTestCase
                 array_push($regions, $item['region']);
             }
 
-            if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === self::DEFAULT_GCS_OPTIONS['region']) {
+            if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === $this->getGcsDefaultOptions()['region']) {
                 $this->fail('Eu storage backend was not set as default correctly');
             }
         }
@@ -112,7 +104,7 @@ class FileStorageGcsTest extends ClientTestCase
 
     public function testCrossProviderStorageDefaultGcsS3()
     {
-        $storage = $this->client->createGcsFileStorage(self::DEFAULT_GCS_OPTIONS);
+        $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage(sprintf('AWS S3 file storage "%d" not found', $storage['id']));
@@ -134,7 +126,7 @@ Errors:
 
     public function testRotateGcsCredentialsWithoutRequiredParams()
     {
-        $storage = $this->client->createGcsFileStorage(self::DEFAULT_GCS_OPTIONS);
+        $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage('Invalid request
@@ -157,7 +149,7 @@ Errors:
             'name' => 'My test',
         ]);
 
-        $storage = $this->client->createGcsFileStorage(self::DEFAULT_GCS_OPTIONS);
+        $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
         $this->client->assignFileStorage($project['id'], $storage['id']);
 
@@ -167,7 +159,7 @@ Errors:
 
     public function testCrossProviderStorageCredentialsRotateGcsS3()
     {
-        $storage = $this->client->createGcsFileStorage(self::DEFAULT_GCS_OPTIONS);
+        $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage(sprintf('AWS S3 file storage "%d" not found', $storage['id']));
