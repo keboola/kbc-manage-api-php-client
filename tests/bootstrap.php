@@ -17,6 +17,7 @@ define('TEST_S3_SECRET', getenv('TEST_S3_SECRET'));
 define('SUITE_NAME', getenv('SUITE_NAME'));
 
 define('TEST_GCS_KEY_FILE', getenv('TEST_GCS_KEY_FILE'));
+define('TEST_GCS_KEY_FILE_ROTATE', getenv('TEST_GCS_KEY_FILE_ROTATE'));
 define('TEST_GCS_REGION', getenv('TEST_GCS_REGION'));
 define('TEST_GCS_FILES_BUCKET', getenv('TEST_GCS_FILES_BUCKET'));
 

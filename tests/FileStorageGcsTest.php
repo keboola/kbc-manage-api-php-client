@@ -22,7 +22,7 @@ class FileStorageGcsTest extends ClientTestCase
     public function getGcsRotateOptions(): array
     {
         return [
-            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE, true, 512, \JSON_THROW_ON_ERROR),
+            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE_ROTATE, true, 512, \JSON_THROW_ON_ERROR),
         ];
     }
 
@@ -51,13 +51,16 @@ class FileStorageGcsTest extends ClientTestCase
     public function testRotateGcsKey()
     {
         $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
+        $rotateOptions = $this->getGcsRotateOptions();
+        $this->assertNotSame($rotateOptions['gcsCredentials']['private_key_id'], $storage['gcsCredentials']['private_key_id']);
 
-        $rotatedStorage = $this->client->rotateGcsFileStorageCredentials($storage['id'], $this->getGcsRotateOptions());
-        $this->assertArrayNotHasKey('accountKey', $storage);
-        $this->assertSame($rotatedStorage['accountName'], TEST_ABS_ACCOUNT_NAME);
-        $this->assertSame($rotatedStorage['containerName'], TEST_ABS_CONTAINER_NAME);
-        $this->assertSame($rotatedStorage['provider'], 'azure');
+        $rotatedStorage = $this->client->rotateGcsFileStorageCredentials($storage['id'], $rotateOptions);
+
+        $this->assertSame('gcp', $rotatedStorage['provider']);
         $this->assertFalse($rotatedStorage['isDefault']);
+        $rotatedGcsCredentials = $rotatedStorage['gcsCredentials'];
+        $this->assertArrayNotHasKey('private_key', $rotatedGcsCredentials);
+        $this->assertSame($rotatedGcsCredentials['private_key_id'], $rotatedGcsCredentials['private_key_id']);
     }
 
     public function testListGcsStorages()
