@@ -10,10 +10,26 @@ use const JSON_THROW_ON_ERROR;
  */
 class FileStorageGcsTest extends ClientTestCase
 {
+    private const ROTATE_S3_OPTIONS = [
+        'awsKey' => TEST_S3_ROTATE_KEY,
+        'awsSecret' => TEST_S3_ROTATE_SECRET,
+    ];
+
+    private array $credentials;
+
+    private array $rotateCredentials;
+
+    public function setUp(): void
+    {
+        $this->credentials = json_decode((string) TEST_GCS_KEYFILE_JSON, true, 512, JSON_THROW_ON_ERROR);
+        $this->rotateCredentials = json_decode((string) TEST_GCS_KEYFILE_ROTATE_JSON, true, 512, JSON_THROW_ON_ERROR);
+        parent::setUp();
+    }
+
     public function getGcsDefaultOptions(): array
     {
         return [
-            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE, true, 512, JSON_THROW_ON_ERROR),
+            'gcsCredentials' => $this->credentials,
             'owner' => 'keboola',
             'region' => TEST_GCS_REGION,
             'filesBucket' => TEST_GCS_FILES_BUCKET,
@@ -23,13 +39,13 @@ class FileStorageGcsTest extends ClientTestCase
     public function getGcsRotateOptions(): array
     {
         return [
-            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE_ROTATE, true, 512, JSON_THROW_ON_ERROR),
+            'gcsCredentials' => $this->rotateCredentials,
         ];
     }
 
     public function getExpectedGcsCredentialsWithoutPk(): array
     {
-        $credentials = json_decode(TEST_GCS_KEY_FILE, true, 512, JSON_THROW_ON_ERROR);
+        $credentials = $this->credentials;
         $privateKeyArrayKey = 'private_key';
         $this->assertArrayHasKey($privateKeyArrayKey, $credentials);
         unset($credentials[$privateKeyArrayKey]);
