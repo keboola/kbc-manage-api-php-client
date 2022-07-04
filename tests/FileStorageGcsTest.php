@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use const JSON_THROW_ON_ERROR;
 
 /**
  * @group FileStorage
@@ -12,23 +13,23 @@ class FileStorageGcsTest extends ClientTestCase
     public function getGcsDefaultOptions(): array
     {
         return [
-            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE, true, 512, \JSON_THROW_ON_ERROR),
+            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE, true, 512, JSON_THROW_ON_ERROR),
             'owner' => 'keboola',
             'region' => TEST_GCS_REGION,
-            'filesBucket' => TEST_GCS_FILES_BUCKET
+            'filesBucket' => TEST_GCS_FILES_BUCKET,
         ];
     }
 
     public function getGcsRotateOptions(): array
     {
         return [
-            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE_ROTATE, true, 512, \JSON_THROW_ON_ERROR),
+            'gcsCredentials' => json_decode(TEST_GCS_KEY_FILE_ROTATE, true, 512, JSON_THROW_ON_ERROR),
         ];
     }
 
     public function getExpectedGcsCredentialsWithoutPk(): array
     {
-        $credentials = json_decode(TEST_GCS_KEY_FILE, true, 512, \JSON_THROW_ON_ERROR);
+        $credentials = json_decode(TEST_GCS_KEY_FILE, true, 512, JSON_THROW_ON_ERROR);
         $privateKeyArrayKey = 'private_key';
         $this->assertArrayHasKey($privateKeyArrayKey, $credentials);
         unset($credentials[$privateKeyArrayKey]);
