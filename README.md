@@ -98,6 +98,10 @@ TEST_S3_FILES_BUCKET=
 TEST_S3_KEY=
 TEST_S3_REGION=
 TEST_S3_SECRET=
+TEST_GCS_KEY_FILE=
+TEST_GCS_KEY_FILE_ROTATE=
+TEST_GCS_FILES_BUCKET=
+TEST_GCS_REGION=
 
 # OPTIONAL - required only for running testCreateStorageBackend, you have to have new snowflake backend and fill credentials into following environment variables
 
@@ -137,10 +141,14 @@ These variables are used for testing file storage. You have to copy these values
  - `TEST_ABS_ROTATE_ACCOUNT_KEY` - Second secret key for Azure Storage account
  - `TEST_S3_ROTATE_KEY` - Second AWS key
  - `TEST_S3_ROTATE_SECRET` - Second AWS secret
- - `TEST_S3_FILES_BUCKET` - Name of file bucker on S3
+ - `TEST_S3_FILES_BUCKET` - Name of file bucket on S3
  - `TEST_S3_KEY` - First AWS key
  - `TEST_S3_REGION` - Region where your S3 is located
  - `TEST_S3_SECRET` - First AWS secret
+ - `TEST_GCS_KEY_FILE` - First key file (json) for the GCS 
+ - `TEST_GCS_KEY_FILE_ROTATE` - Second key file for the GCS 
+ - `TEST_GCS_FILES_BUCKET` - Name of file bucket on GCS 
+ - `TEST_GCS_REGION` - Region whare GCS is located
  
  Variable prefixed with _ROTATE_ are used for rotating credentials and they MUST be working credentials.
 
