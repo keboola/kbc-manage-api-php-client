@@ -72,8 +72,8 @@ class FileStorageGcsTest extends ClientTestCase
         $this->assertSame($initCount + 1, count($storages));
 
         foreach ($storages as $storage) {
-            if ($storage['provider'] !== 'azure') {
-                $this->fail('List of Azure Blob Storages contains also S3 Storage');
+            if ($storage['provider'] !== 'gcp') {
+                $this->fail('List of Google Cloud Storages contains also other storages');
             }
         }
     }
@@ -119,12 +119,21 @@ class FileStorageGcsTest extends ClientTestCase
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage('Invalid request
 Errors:
-"accountName": This field is missing.
-"accountKey": This field is missing.
-"containerName": This field is missing.
 "owner": This field is missing.
+"region": This field is missing.
+"gcsCredentials[type]": This field is missing.
+"gcsCredentials[project_id]": This field is missing.
+"gcsCredentials[private_key_id]": This field is missing.
+"gcsCredentials[private_key]": This field is missing.
+"gcsCredentials[client_email]": This field is missing.
+"gcsCredentials[client_id]": This field is missing.
+"gcsCredentials[auth_uri]": This field is missing.
+"gcsCredentials[token_uri]": This field is missing.
+"gcsCredentials[auth_provider_x509_cert_url]": This field is missing.
+"gcsCredentials[client_x509_cert_url]": This field is missing.
+"filesBucket": This field is missing.
 ');
-        $this->client->createGcsFileStorage([]);
+        $this->client->createGcsFileStorage(['gcsCredentials'=>[]]);
     }
 
     public function testRotateGcsCredentialsWithoutRequiredParams()
@@ -134,9 +143,19 @@ Errors:
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage('Invalid request
 Errors:
-"accountKey": This field is missing');
+"gcsCredentials[type]": This field is missing.
+"gcsCredentials[project_id]": This field is missing.
+"gcsCredentials[private_key_id]": This field is missing.
+"gcsCredentials[private_key]": This field is missing.
+"gcsCredentials[client_email]": This field is missing.
+"gcsCredentials[client_id]": This field is missing.
+"gcsCredentials[auth_uri]": This field is missing.
+"gcsCredentials[token_uri]": This field is missing.
+"gcsCredentials[auth_provider_x509_cert_url]": This field is missing.
+"gcsCredentials[client_x509_cert_url]": This field is missing.
+');
 
-        $this->client->rotateGcsFileStorageCredentials($storage['id'], []);
+        $this->client->rotateGcsFileStorageCredentials($storage['id'], ['gcsCredentials'=>[]]);
     }
 
     public function testProjectAssignGcsFileStorage()
