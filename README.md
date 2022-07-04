@@ -98,8 +98,8 @@ TEST_S3_FILES_BUCKET=
 TEST_S3_KEY=
 TEST_S3_REGION=
 TEST_S3_SECRET=
-TEST_GCS_KEY_FILE=
-TEST_GCS_KEY_FILE_ROTATE=
+TEST_GCS_KEYFILE_JSON=
+TEST_GCS_KEYFILE_ROTATE_JSON=
 TEST_GCS_FILES_BUCKET=
 TEST_GCS_REGION=
 
@@ -145,8 +145,8 @@ These variables are used for testing file storage. You have to copy these values
  - `TEST_S3_KEY` - First AWS key
  - `TEST_S3_REGION` - Region where your S3 is located
  - `TEST_S3_SECRET` - First AWS secret
- - `TEST_GCS_KEY_FILE` - First key file (json) for the GCS 
- - `TEST_GCS_KEY_FILE_ROTATE` - Second key file for the GCS 
+ - `TEST_GCS_KEYFILE_JSON` - First GCS key file contents as json string  
+ - `TEST_GCS_KEYFILE_ROTATE_JSON` - Second GCS key file contents as json string used for testing rotation 
  - `TEST_GCS_FILES_BUCKET` - Name of file bucket on GCS 
  - `TEST_GCS_REGION` - Region whare GCS is located
  
