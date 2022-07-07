@@ -11,6 +11,9 @@ parameters:
         - '#Method .* has no return typehint specified#'
         - '#Property .* has no typehint specified#'
         - '#Method (.*) has parameter (.*) with no typehint specified.#'
+        -
+            message: '#Unreachable statement - code above always terminates.#'
+            path: tests/FileStorageGcsTest.php
 includes:
     - phpstan-baseline.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon
