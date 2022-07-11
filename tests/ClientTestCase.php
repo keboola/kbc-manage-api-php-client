@@ -290,7 +290,7 @@ class ClientTestCase extends TestCase
      * @param Client $client
      * @param int $organizationId
      * @param array<mixed> $params
-     * @return int
+     * @return array
      */
     protected function createRedshiftProjectForClient($client, int $organizationId, $params = [])
     {
