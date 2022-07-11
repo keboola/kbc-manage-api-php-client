@@ -177,8 +177,6 @@ Errors:
 
     public function testProjectAssignGcsFileStorage()
     {
-        $this->markTestSkipped('Will be enabled after Azure FS will be fully working');
-
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => $name,
