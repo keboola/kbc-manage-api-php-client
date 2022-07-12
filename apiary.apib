@@ -3537,6 +3537,60 @@ All projects using the backend must be deleted and purged before it can be delet
 
 + Response 204 (application/json)
 
+# Group SUPER - Data Planes Management
+
+## Data Plane Collection [/manage/data-planes]
+
+### Register a new data plane  [POST]
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(DataPlaneCreate)
+
++ Response 201 (application/json)
+
+    + Attributes(DataPlane)
+
+### List data planes [GET]
+
++ Response 200 (application/json)
+
+    + Attributes (array[DataPlane])
+
+### Update data plane [PATCH /manage/data-planes/{data_plane_id}]
+
+A partial update of a data plane, one of the attributes are required.
+
++ Parameters
+    + data_plane_id (required) - Backend ID
++ Attributes (DataPlaneUpdate)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(DataPlane)
+
+
+### Delete data plane [DELETE /manage/data-planes/{data_plane_id}]
++ Parameters
+    + data_plane_id (required) - Id of data plane
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204 (application/json)
+
+
 ## Data Structures
 
 ### StorageBackendCreate
@@ -3558,6 +3612,19 @@ All projects using the backend must be deleted and purged before it can be delet
 + username: keboola (string)
 + password: 1234 (string)
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
+
+### DataPlaneCreate
+
++ provider: aws (required) - can be aws, azure, gcp or other cloud provider
++ owner: keboola (required) - associated data plane owner
++ region: `us-east-1` (required)
++ parameters: [] (required, object) - data plane configuration
+    + test: value
+
+### DataPlaneUpdate
+
++ parameters: [] (required, object) - data plane configuration
+    + test: value
 
 ## StorageBackend
 + id: 123 (number, required)
@@ -3603,6 +3670,18 @@ All projects using the backend must be deleted and purged before it can be delet
 + host: database.teradata.com (required)
 + backend: teradata (required)
 + database: keboola
+
+## DataPlane
++ id: 123 (number, required)
++ owner: keboola (required)
++ region: us-east-1 (required)
++ provider: keboola (required)
++ parameters
+    + test: value
++ created: `2020-05-11T15:30:00Z` (required, string) - The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
++ creator
+    + id: 10 (number, required)
+    + name: keboola (required)
 
 # Group SUPER - Commands
 
