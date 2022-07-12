@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\ClientException;
+
 class DataPlanesTest extends ClientTestCase
 {
     private const TEST_DATA_PLANE_OWNER = 'ManageApiTest\DataPlanesTest';
@@ -34,6 +36,15 @@ class DataPlanesTest extends ClientTestCase
         $this->assertIsTestDataPlane($dataPlane);
     }
 
+    public function testNormalAdminCannotCreateDataPlane(): void
+    {
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Data planes can be managed only by super admin.');
+        $this->expectExceptionCode(403);
+
+        $this->normalUserClient->createDataPlane(self::TEST_DATA_PLANE_DATA);
+    }
+
     public function testListDataPlanes(): void
     {
         $dataPlane = $this->client->createDataPlane(self::TEST_DATA_PLANE_DATA);
@@ -44,6 +55,15 @@ class DataPlanesTest extends ClientTestCase
 
         self::assertCount(1, $dataPlanes);
         self::assertSame($dataPlane, reset($dataPlanes));
+    }
+
+    public function testNormalAdminCannotListDataPlanes(): void
+    {
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Data planes can be managed only by super admin.');
+        $this->expectExceptionCode(403);
+
+        $this->normalUserClient->listDataPlanes();
     }
 
     public function testUpdateDataPlane(): void
@@ -60,6 +80,25 @@ class DataPlanesTest extends ClientTestCase
 
         $dataPlane = $this->client->updateDataPlane($dataPlane['id'], ['parameters' => $newParams]);
         $this->assertIsTestDataPlane($dataPlane, $newParams);
+    }
+
+    public function testNormalAdminCannotUpdateDataPlanes(): void
+    {
+        $dataPlane = $this->client->createDataPlane(self::TEST_DATA_PLANE_DATA);
+        $this->assertIsTestDataPlane($dataPlane, ['foo' => 'bar']);
+
+        $newParams = [
+            'foo' => 'bar',
+            'meta' => [
+                'hello' => 'world',
+            ],
+        ];
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Data planes can be managed only by super admin.');
+        $this->expectExceptionCode(403);
+
+        $this->normalUserClient->updateDataPlane($dataPlane['id'], ['parameters' => $newParams]);
     }
 
     public function testDeleteDataPlane(): void
@@ -79,6 +118,17 @@ class DataPlanesTest extends ClientTestCase
         });
 
         self::assertCount(0, $dataPlanes);
+    }
+
+    public function testNormalAdminCannotDeleteDataPlane(): void
+    {
+        $dataPlane = $this->client->createDataPlane(self::TEST_DATA_PLANE_DATA);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Data planes can be managed only by super admin.');
+        $this->expectExceptionCode(403);
+
+        $this->normalUserClient->removeDataPlane($dataPlane['id']);
     }
 
     private function assertIsTestDataPlane(array $dataPlane, array $expectedParams = ['foo' => 'bar']): void
