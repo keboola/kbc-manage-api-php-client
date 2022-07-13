@@ -23,6 +23,12 @@ class DataPlanesTest extends ClientTestCase
     {
         parent::setUp();
 
+        foreach ($this->client->listMaintainers() as $maintainer) {
+            if ($maintainer['name'] === self::TEST_DATA_PLANE_OWNER) {
+                $this->client->deleteMaintainer($maintainer['id']);
+            }
+        }
+
         foreach ($this->client->listDataPlanes() as $dataPlane) {
             if ($dataPlane['owner'] === self::TEST_DATA_PLANE_OWNER) {
                 $this->client->removeDataPlane($dataPlane['id']);
@@ -129,6 +135,18 @@ class DataPlanesTest extends ClientTestCase
         $this->expectExceptionCode(403);
 
         $this->normalUserClient->removeDataPlane($dataPlane['id']);
+    }
+
+    public function testCreateMaintainerWithDataPlane(): void
+    {
+        $dataPlane = $this->client->createDataPlane(self::TEST_DATA_PLANE_DATA);
+
+        $maintainer = $this->client->createMaintainer([
+            'name' => self::TEST_DATA_PLANE_OWNER,
+            'dataPlaneId' => $dataPlane['id'],
+        ]);
+
+        self::assertSame($dataPlane['id'], $maintainer['dataPlaneId']);
     }
 
     private function assertIsTestDataPlane(array $dataPlane, array $expectedParams = ['foo' => 'bar']): void
