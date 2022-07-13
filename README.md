@@ -146,4 +146,17 @@ These variables are used for testing file storage. You have to copy these values
 
 ## License
 
+## Build OpenAPI document
+
+Currently, we mainly document APIs in apiary.apib file. But we want to move to OpenAPI format. By calling following commands, the apiary.apib file will be translated to OpenAPI format and stored in file openapi.yml. Then you can commit it. We should put it in CI.
+
+You need to install `apib2swagger` [tool](https://github.com/kminami/apib2swagger) .
+```
+$ npm install -g apib2swagger
+```
+Then run following commands 
+```
+$ cat apiary.apib | grep -v "X-KBC-ManageApiToken:" | apib2swagger -o openapi.yml -y --open-api-3 --info-title="Manage API" 
+$ php AdjustApi.php
+```
 MIT licensed, see [LICENSE](./LICENSE) file.
