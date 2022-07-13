@@ -16,4 +16,9 @@ define('TEST_S3_REGION', getenv('TEST_S3_REGION'));
 define('TEST_S3_SECRET', getenv('TEST_S3_SECRET'));
 define('SUITE_NAME', getenv('SUITE_NAME'));
 
+define('TEST_GCS_KEYFILE_JSON', getenv('TEST_GCS_KEYFILE_JSON'));
+define('TEST_GCS_KEYFILE_ROTATE_JSON', getenv('TEST_GCS_KEYFILE_ROTATE_JSON'));
+define('TEST_GCS_REGION', getenv('TEST_GCS_REGION'));
+define('TEST_GCS_FILES_BUCKET', getenv('TEST_GCS_FILES_BUCKET'));
+
 $loader = require __DIR__ . '/../vendor/autoload.php';

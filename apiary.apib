@@ -3335,6 +3335,38 @@ Only storage owned by **keboola** can be set as default.
     + Attributes(S3FileStorage)
 
 
+## Google Cloud Storage - File Storage Collection [/manage/file-storage-gcs]
+
+### Create new Google Cloud Storage [POST]
+
+Will register new Google Cloud Storage for using inside KBC. Connection wil be verified during registraion.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(GCSCreate)
+
++ Response 201 (application/json)
+
+    + Attributes(GCSCreate)
+
+### List Azure Blob Storage [GET]
+
+Returns all registered Azure Blob Storages.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(array[GCSCreated])
+
 ## Blob Storage - File Storage Collection [/manage/file-storage-abs]
 
 ### Create new Azure Blob Storage [POST]
@@ -3388,6 +3420,39 @@ Only storage owned by **keboola** can be set as default.
     + Attributes(ABSDefault)
 
 ## Data Structures
+
+### GCSCredentials
++ type: service_account (string, required)
++ projectId: 123456789 (string, required)
++ privateKeyId: xxx (string, required)
++ privateKey: `-----BEGIN PRIVATE KEY-----<key contents>-----END PRIVATE KEY-----\n` (string, required)
++ clientEmail: something@else.iam.gserviceaccount.com (string, required)
++ clientId: 123456789 (string, required)
++ authUri: https://accounts.google.com/o/oauth2/auth (string, required)
++ tokenUri: https://oauth2.googleapis.com/token (string, required)
++ authProviderX509CertUrl: https://oauth2.googleapis.com/token (string, required)
++ clientX509CertUrl: https://www.googleapis.com/robot/v1/metadata/x509/something (string, required)
+
+### GCSCreate
++ credentials(GCSCredentials)
++ bucketName: `my-bucket` (string, required) - name of the bucket
++ owner: keboola, client (enum, required)
+
+### GCSCreated
++ id: 123 (number)
++ isDefault: false (boolean)
++ provider: gcp (string)
++ created: `2019-06-17T15:07:48+01:00` (string) - (ISO8601 format) `Y-m-d\TH:i:sO`
++ creator(AdminIdAndName)
++ credentials(GCSCredentials)
++ bucketName: `my-bucket` (string) - name of the bucket
+
+### GCSRotate
++ credentials(GCSCredentials)
+
+### AdminIdAndName
++ id: 123 (number)
++ name: Joe "The Admin" Doe
 
 ### ABSBase
 + accountName: nameofaccount (required)
