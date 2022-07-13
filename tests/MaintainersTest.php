@@ -29,6 +29,7 @@ class MaintainersTest extends ClientTestCase
             'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
             'defaultConnectionSynapseId' => $testMaintainer['defaultConnectionSynapseId'],
             'defaultConnectionExasolId' => $testMaintainer['defaultConnectionExasolId'],
+            'defaultFileStorageId' => $testMaintainer['defaultFileStorageId'],
         ]);
 
         $this->assertEquals($maintainerName, $newMaintainer['name']);
@@ -38,6 +39,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals($testMaintainer['defaultConnectionSnowflakeId'], $newMaintainer['defaultConnectionSnowflakeId']);
         $this->assertEquals($testMaintainer['defaultConnectionSynapseId'], $newMaintainer['defaultConnectionSynapseId']);
         $this->assertEquals($testMaintainer['defaultConnectionExasolId'], $newMaintainer['defaultConnectionExasolId']);
+        $this->assertEquals($testMaintainer['defaultFileStorageId'], $newMaintainer['defaultFileStorageId']);
         $this->assertArrayHasKey('zendeskUrl', $newMaintainer);
         $this->assertNull($newMaintainer['zendeskUrl']);
 
@@ -240,6 +242,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertArrayHasKey('defaultConnectionSnowflakeId', $maintainer);
         $this->assertArrayHasKey('defaultConnectionSynapseId', $maintainer);
         $this->assertArrayHasKey('defaultConnectionExasolId', $maintainer);
+        $this->assertArrayHasKey('defaultFileStorageId', $maintainer);
         $this->assertArrayHasKey('zendeskUrl', $maintainer);
         $this->assertNull($maintainer['zendeskUrl']);
     }

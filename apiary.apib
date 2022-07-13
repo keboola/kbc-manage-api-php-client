@@ -91,6 +91,13 @@ Creates a new maintainer. The user associated with the token will become an admi
 
 + Attributes
     + name:Example (required) - Maintainer name
+    + defaultConnectionRedshiftId:234 (optional) - Default Redshift Connection ID
+    + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection ID
+    + defaultConnectionSynapseId:324 (optional) - Default Synapse Connection ID
+    + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
+    + defaultConnectionTeradataId:324 (optional) - Default Teradata Connection ID
+    + defaultFileStorageId:456 (optional) - Default File Storage ID
+    + zendeskUrl:https://keboola.zendesk.com (optional)
 
 
 + Request (application/json)
@@ -124,7 +131,9 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionSnowflakeId": 242,
             "defaultConnectionSynapseId": 235,
             "defaultConnectionExasolId": 236,
-            "defaultConnectionTeradataId": 236
+            "defaultConnectionTeradataId": 236,
+            "defaultFileStorageId": null,
+            "zendeskUrl": "https://some.url.com"
         },
         {
             "id": 124,
@@ -136,6 +145,8 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionSynapseId": 235,
             "defaultConnectionExasolId": 236,
             "defaultConnectionTeradataId": 236
+            "defaultFileStorageId": 236,
+            "zendeskUrl": "https://some.url.com"
         }
     ]
     ```
@@ -164,6 +175,7 @@ A maintainer object has the following attributes:
         "defaultConnectionSynapseId": 235,
         "defaultConnectionExasolId": 236,
         "defaultConnectionTeradataId": 236,
+        "defaultFileStorageId": 456,
         "zendeskUrl": "https://some.url.com"
     }
     ```
@@ -187,6 +199,7 @@ A partial update of a maintainer
     + defaultConnectionSynapseId:324 (optional) - Default Synapse Connection ID
     + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
     + defaultConnectionTeradataId:324 (optional) - Default Teradata Connection ID
+    + defaultFileStorageId:456 (optional) - Default File Storage ID
     + zendeskUrl:https://keboola.zendesk.com (optional)
 
 + Request (application/json)
