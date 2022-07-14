@@ -797,6 +797,11 @@ class Client
         return $this->apiPatch($this->encode('/manage/data-planes/%s', $dataPlaneId), $options);
     }
 
+    public function getDataPlane(int $dataPlaneId): array
+    {
+        return $this->apiGet($this->encode('/manage/data-planes/%s', $dataPlaneId));
+    }
+
     public function removeDataPlane(int $dataPlaneId): void
     {
         $this->apiDelete($this->encode('/manage/data-planes/%s', $dataPlaneId));
