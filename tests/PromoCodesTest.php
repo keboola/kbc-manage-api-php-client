@@ -251,7 +251,12 @@ class PromoCodesTest extends ClientTestCase
 
         $newProject = $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
         $detailProject = $this->normalUserClient->getProject($newProject['id']);
-        unset($detailProject['organization'], $detailProject['backends'], $detailProject['fileStorage']);
+        unset(
+            $detailProject['organization'],
+            $detailProject['backends'],
+            $detailProject['fileStorage'],
+            $detailProject['dataPlanes'],
+        );
 
         $this->assertEquals($detailProject, $newProject);
     }
