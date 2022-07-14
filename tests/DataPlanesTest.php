@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 
 class DataPlanesTest extends ClientTestCase
@@ -25,6 +26,14 @@ class DataPlanesTest extends ClientTestCase
 
         foreach ($this->client->listMaintainers() as $maintainer) {
             if ($maintainer['name'] === self::TEST_DATA_PLANE_OWNER) {
+                foreach ($this->client->listMaintainerOrganizations($maintainer['id']) as $organization) {
+                    foreach ($this->client->listOrganizationProjects($organization['id']) as $project) {
+                        $this->client->deleteProject($project['id']);
+                    }
+
+                    $this->client->deleteOrganization($organization['id']);
+                }
+
                 $this->client->deleteMaintainer($maintainer['id']);
             }
         }
@@ -147,6 +156,32 @@ class DataPlanesTest extends ClientTestCase
         ]);
 
         self::assertSame($dataPlane['id'], $maintainer['dataPlaneId']);
+    }
+
+    public function testCreateProjectWithDataPlane(): void
+    {
+        $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
+        $dataPlane = $this->client->createDataPlane(self::TEST_DATA_PLANE_DATA);
+
+        $maintainer = $this->client->createMaintainer([
+            'name' => self::TEST_DATA_PLANE_OWNER,
+            'dataPlaneId' => $dataPlane['id'],
+            'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
+        ]);
+
+        $organization = $this->client->createOrganization($maintainer['id'], [
+            'name' => self::TEST_DATA_PLANE_OWNER,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => self::TEST_DATA_PLANE_OWNER,
+            'defaultBackend' => Backend::SNOWFLAKE,
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $project = $this->client->getProject($project['id']);
+        self::assertArrayHasKey('dataPlanes', $project);
+        self::assertSame([$dataPlane], $project['dataPlanes']);
     }
 
     private function assertIsTestDataPlane(array $dataPlane, array $expectedParams = ['foo' => 'bar']): void
