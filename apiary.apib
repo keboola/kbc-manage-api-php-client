@@ -3655,11 +3655,15 @@ All projects using the backend must be deleted and purged before it can be delet
 
 ### List data planes [GET]
 
+This endpoint can also be accessed using application tokens with scope `data-planes:read`
+
 + Response 200 (application/json)
 
     + Attributes (array[DataPlane])
 
-### Data plane detail [PATCH /manage/data-planes/{data_plane_id}]
+### Data plane detail [GET /manage/data-planes/{data_plane_id}]
+
+This endpoint can also be accessed using application tokens with scope `data-planes:read`
 
 + Parameters
     + data_plane_id (required) - Backend ID
