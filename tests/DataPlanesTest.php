@@ -60,7 +60,7 @@ class DataPlanesTest extends ClientTestCase
         $this->normalUserClient->createDataPlane(self::TEST_DATA_PLANE_DATA);
     }
 
-    public function testListDataPlanes(): void
+    public function testListDataPlanesAndDataPlaneDetail(): void
     {
         $dataPlane = $this->client->createDataPlane(self::TEST_DATA_PLANE_DATA);
 
@@ -70,12 +70,15 @@ class DataPlanesTest extends ClientTestCase
 
         self::assertCount(1, $dataPlanes);
         self::assertSame($dataPlane, reset($dataPlanes));
+
+        $dataPlaneDetail = $this->client->getDataPlane($dataPlane['id']);
+        self::assertSame($dataPlane, $dataPlaneDetail);
     }
 
     public function testNormalAdminCannotListDataPlanes(): void
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('Data planes can be managed only by super admin.');
+        $this->expectExceptionMessage('Data planes details are available only for super admin or application token having "data-planes:read" scope.');
         $this->expectExceptionCode(403);
 
         $this->normalUserClient->listDataPlanes();
@@ -114,6 +117,18 @@ class DataPlanesTest extends ClientTestCase
         $this->expectExceptionCode(403);
 
         $this->normalUserClient->updateDataPlane($dataPlane['id'], ['parameters' => $newParams]);
+    }
+
+    public function testNormalAdminCannotGetDataPlaneDetail(): void
+    {
+        $dataPlane = $this->client->createDataPlane(self::TEST_DATA_PLANE_DATA);
+        $this->assertIsTestDataPlane($dataPlane, ['foo' => 'bar']);
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Data planes details are available only for super admin or application token having "data-planes:read" scope.');
+        $this->expectExceptionCode(403);
+
+        $this->normalUserClient->getDataPlane($dataPlane['id']);
     }
 
     public function testDeleteDataPlane(): void

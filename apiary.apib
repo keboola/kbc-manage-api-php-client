@@ -3659,6 +3659,20 @@ All projects using the backend must be deleted and purged before it can be delet
 
     + Attributes (array[DataPlane])
 
+### Data plane detail [PATCH /manage/data-planes/{data_plane_id}]
+
++ Parameters
+    + data_plane_id (required) - Backend ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(DataPlane)
+
 ### Update data plane [PATCH /manage/data-planes/{data_plane_id}]
 
 A partial update of a data plane, one of the attributes are required.
