@@ -40,6 +40,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals($testMaintainer['defaultConnectionSynapseId'], $newMaintainer['defaultConnectionSynapseId']);
         $this->assertEquals($testMaintainer['defaultConnectionExasolId'], $newMaintainer['defaultConnectionExasolId']);
         $this->assertEquals($testMaintainer['defaultFileStorageId'], $newMaintainer['defaultFileStorageId']);
+        $this->assertNull($newMaintainer['dataPlaneId']);
         $this->assertArrayHasKey('zendeskUrl', $newMaintainer);
         $this->assertNull($newMaintainer['zendeskUrl']);
 
@@ -243,6 +244,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertArrayHasKey('defaultConnectionSynapseId', $maintainer);
         $this->assertArrayHasKey('defaultConnectionExasolId', $maintainer);
         $this->assertArrayHasKey('defaultFileStorageId', $maintainer);
+        $this->assertArrayHasKey('dataPlaneId', $maintainer);
         $this->assertArrayHasKey('zendeskUrl', $maintainer);
         $this->assertNull($maintainer['zendeskUrl']);
     }
