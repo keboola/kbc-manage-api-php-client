@@ -63,6 +63,20 @@ class MaintainersTest extends ClientTestCase
 
     public function testUpdateMaintainer()
     {
+        $fileStorages = array_merge(
+            $this->client->listS3FileStorage(),
+            $this->client->listAbsFileStorage(),
+            $this->client->listGcsFileStorage()
+        );
+
+        $defaultFileStorageId = null;
+        foreach ($fileStorages as $fileStorage) {
+            if ($fileStorage['isDefault'] === true) {
+                $defaultFileStorageId = $fileStorage['id'];
+                break;
+            }
+        }
+
         $backends = $this->client->listStorageBackend();
         $exasolBackend = $synapseBackend = $mysqlBackend = $redshiftBackend = $snowflakeBackend = null;
 
@@ -108,6 +122,9 @@ class MaintainersTest extends ClientTestCase
         if (!is_null($exasolBackend)) {
             $updateArray['defaultConnectionExasolId'] = $exasolBackend['id'];
         }
+        if (!is_null($defaultFileStorageId)) {
+            $updateArray['defaultFileStorageId'] = $defaultFileStorageId;
+        }
 
         $updateArray['zendeskUrl'] = 'https://fake.url.com';
 
@@ -130,6 +147,9 @@ class MaintainersTest extends ClientTestCase
         if (array_key_exists('defaultConnectionExasolId', $updateArray)) {
             $this->assertEquals($exasolBackend['id'], $updatedMaintainer['defaultConnectionExasolId']);
         }
+        if (array_key_exists('defaultFileStorageId', $updateArray)) {
+            $this->assertEquals($defaultFileStorageId, $updatedMaintainer['defaultFileStorageId']);
+        }
 
         // test nulling out connection ids
         $upd = $this->client->updateMaintainer($newMaintainer['id'], [
@@ -138,12 +158,14 @@ class MaintainersTest extends ClientTestCase
             'defaultConnectionSnowflakeId' => null,
             'defaultConnectionExasolId' => null,
             'defaultConnectionSynapseId' => null,
+            'defaultFileStorageId' => null,
         ]);
         $this->assertNull($upd['defaultConnectionMysqlId']);
         $this->assertNull($upd['defaultConnectionRedshiftId']);
         $this->assertNull($upd['defaultConnectionSnowflakeId']);
         $this->assertNull($upd['defaultConnectionSynapseId']);
         $this->assertNull($upd['defaultConnectionExasolId']);
+        $this->assertNull($upd['defaultFileStorageId']);
     }
 
 
