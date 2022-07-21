@@ -161,7 +161,7 @@ class DataPlanesTest extends ClientTestCase
         $this->normalUserClient->removeDataPlane($dataPlane['id']);
     }
 
-    public function testCreateMaintainerWithDataPlane(): void
+    public function testCreateAndUpdateMaintainerWithDataPlane(): void
     {
         $dataPlane = $this->client->createDataPlane(self::TEST_DATA_PLANE_DATA);
 
@@ -171,9 +171,15 @@ class DataPlanesTest extends ClientTestCase
         ]);
 
         self::assertSame($dataPlane['id'], $maintainer['dataPlaneId']);
+
+        $maintainer = $this->client->updateMaintainer($maintainer['id'], [
+            'dataPlaneId' => null,
+        ]);
+
+        self::assertNull($maintainer['dataPlaneId']);
     }
 
-    public function testCreateProjectWithDataPlane(): void
+    public function testCreateProjectWithDataPlaneAndUpdateMaintainerDataPlane(): void
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
         $dataPlane = $this->client->createDataPlane(self::TEST_DATA_PLANE_DATA);
@@ -197,6 +203,13 @@ class DataPlanesTest extends ClientTestCase
         $project = $this->client->getProject($project['id']);
         self::assertArrayHasKey('dataPlanes', $project);
         self::assertSame([$dataPlane], $project['dataPlanes']);
+
+        $maintainer = $this->client->updateMaintainer($maintainer['id'], [
+            'dataPlaneId' => null,
+        ]);
+        $project = $this->client->getProject($project['id']);
+        self::assertArrayHasKey('dataPlanes', $project);
+        self::assertSame([], $project['dataPlanes']);
     }
 
     private function assertIsTestDataPlane(array $dataPlane, array $expectedParams = ['foo' => 'bar']): void
