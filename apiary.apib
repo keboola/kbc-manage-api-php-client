@@ -3732,9 +3732,7 @@ A partial update of a data plane, one of the attributes are required.
 
 ### DataPlaneCreate
 
-+ provider: aws (required) - can be aws, azure, gcp or other cloud provider
 + owner: keboola (required) - associated data plane owner
-+ region: `us-east-1` (required)
 + parameters: [] (required, object) - data plane configuration
     + test: value
 
@@ -3791,8 +3789,6 @@ A partial update of a data plane, one of the attributes are required.
 ## DataPlane
 + id: 123 (number, required)
 + owner: keboola (required)
-+ region: us-east-1 (required)
-+ provider: aws (required) - can be aws, azure, gcp or other cloud provider
 + parameters
     + test: value
 + created: `2020-05-11T15:30:00Z` (required, string) - The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
