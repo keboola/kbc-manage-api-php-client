@@ -13,8 +13,6 @@ class DataPlanesTest extends ClientTestCase
 
     private const TEST_DATA_PLANE_DATA = [
         'owner' => self::TEST_DATA_PLANE_OWNER,
-        'provider' => 'aws',
-        'region' => 'eu-central',
         'parameters' => [
             'foo' => 'bar',
         ],
@@ -217,8 +215,6 @@ class DataPlanesTest extends ClientTestCase
         self::assertSame([
             'id',
             'owner',
-            'region',
-            'provider',
             'parameters',
             'created',
             'creator',
@@ -226,8 +222,6 @@ class DataPlanesTest extends ClientTestCase
 
         self::assertIsInt($dataPlane['id']);
         self::assertSame('ManageApiTest\DataPlanesTest', $dataPlane['owner']);
-        self::assertSame('eu-central', $dataPlane['region']);
-        self::assertSame('aws', $dataPlane['provider']);
         self::assertSame($expectedParams, $dataPlane['parameters']);
         self::assertNotEmpty($dataPlane['created']);
         self::assertSame([
