@@ -3387,9 +3387,9 @@ Will register new Google Cloud Storage for using inside KBC. Connection wil be v
 
     + Attributes(GCSCreate)
 
-### List Azure Blob Storage [GET]
+### List Google Cloud Storage [GET]
 
-Returns all registered Azure Blob Storages.
+Returns all registered Google Cloud Storages.
 
 + Request (application/json)
 
@@ -3457,20 +3457,21 @@ Only storage owned by **keboola** can be set as default.
 
 ### GCSCredentials
 + type: service_account (string, required)
-+ projectId: 123456789 (string, required)
-+ privateKeyId: xxx (string, required)
-+ privateKey: `-----BEGIN PRIVATE KEY-----<key contents>-----END PRIVATE KEY-----\n` (string, required)
-+ clientEmail: something@else.iam.gserviceaccount.com (string, required)
-+ clientId: 123456789 (string, required)
-+ authUri: https://accounts.google.com/o/oauth2/auth (string, required)
-+ tokenUri: https://oauth2.googleapis.com/token (string, required)
-+ authProviderX509CertUrl: https://oauth2.googleapis.com/token (string, required)
-+ clientX509CertUrl: https://www.googleapis.com/robot/v1/metadata/x509/something (string, required)
++ project_id: 123456789 (string, required)
++ private_key_id: xxx (string, required)
++ private_key: `-----BEGIN PRIVATE KEY-----<key contents>-----END PRIVATE KEY-----\n` (string, required)
++ client_email: something@else.iam.gserviceaccount.com (string, required)
++ client_id: 123456789 (string, required)
++ auth_uri: https://accounts.google.com/o/oauth2/auth (string, required)
++ token_uri: https://oauth2.googleapis.com/token (string, required)
++ auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs (string, required)
++ client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something (string, required)
 
 ### GCSCreate
-+ credentials(GCSCredentials)
-+ bucketName: `my-bucket` (string, required) - name of the bucket
++ gcsCredentials(GCSCredentials)
++ filesBucket: `my-bucket` (string, required) - name of the bucket
 + owner: keboola, client (enum, required)
++ region: `europe-west1` (string, required)
 
 ### GCSCreated
 + id: 123 (number)
