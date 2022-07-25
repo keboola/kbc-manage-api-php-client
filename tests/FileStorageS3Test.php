@@ -40,6 +40,7 @@ class FileStorageS3Test extends ClientTestCase
         $this->assertSame($storage['filesBucket'], TEST_S3_FILES_BUCKET);
         $this->assertSame($storage['provider'], 'aws');
         $this->assertFalse($storage['isDefault']);
+        $this->assertArrayNotHasKey('gcsSnowflakeIntegrationName', $storage);
     }
 
     public function testRotateS3Key()
