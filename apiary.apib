@@ -3385,7 +3385,7 @@ Will register new Google Cloud Storage for using inside KBC. Connection wil be v
 
 + Response 201 (application/json)
 
-    + Attributes(GCSCreate)
+    + Attributes(GCSCreated)
 
 ### List Google Cloud Storage [GET]
 
@@ -3467,6 +3467,17 @@ Only storage owned by **keboola** can be set as default.
 + auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs (string, required)
 + client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something (string, required)
 
+### GCSCredentialsNoPK
++ type: service_account (string, required)
++ project_id: 123456789 (string, required)
++ private_key_id: xxx (string, required)
++ client_email: something@else.iam.gserviceaccount.com (string, required)
++ client_id: 123456789 (string, required)
++ auth_uri: https://accounts.google.com/o/oauth2/auth (string, required)
++ token_uri: https://oauth2.googleapis.com/token (string, required)
++ auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs (string, required)
++ client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something (string, required)
+
 ### GCSCreate
 + gcsCredentials(GCSCredentials)
 + filesBucket: `my-bucket` (string, required) - name of the bucket
@@ -3477,10 +3488,12 @@ Only storage owned by **keboola** can be set as default.
 + id: 123 (number)
 + isDefault: false (boolean)
 + provider: gcp (string)
++ region: `europe-west1` (string)
 + created: `2019-06-17T15:07:48+01:00` (string) - (ISO8601 format) `Y-m-d\TH:i:sO`
 + creator(AdminIdAndName)
-+ credentials(GCSCredentials)
-+ bucketName: `my-bucket` (string) - name of the bucket
++ gcsCredentials(GCSCredentialsNoPK)
++ gcsSnowflakeIntegrationName: KEBOOLA_123_GCS (string)
++ filesBucket: `my-bucket` (string) - name of the bucket
 
 ### GCSRotate
 + credentials(GCSCredentials)
