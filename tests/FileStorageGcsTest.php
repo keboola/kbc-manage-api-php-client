@@ -63,6 +63,7 @@ class FileStorageGcsTest extends ClientTestCase
         $this->assertSame(TEST_GCS_REGION, $storage['region']);
         $this->assertSame($storage['provider'], 'gcp');
         $this->assertFalse($storage['isDefault']);
+        $this->assertStringEndsWith('_' . $storage['id'] . '_GCS', $storage['gcsSnowflakeIntegrationName']);
     }
 
     public function testRotateGcsKey()
