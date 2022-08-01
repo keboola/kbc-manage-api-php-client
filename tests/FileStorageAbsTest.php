@@ -36,6 +36,7 @@ class FileStorageAbsTest extends ClientTestCase
         $this->assertSame($storage['containerName'], TEST_ABS_CONTAINER_NAME);
         $this->assertSame($storage['provider'], 'azure');
         $this->assertFalse($storage['isDefault']);
+        $this->assertArrayNotHasKey('gcsSnowflakeIntegrationName', $storage);
     }
 
     public function testRotateAbsKey()
