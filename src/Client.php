@@ -597,6 +597,33 @@ class Client
         $this->apiDelete($this->encode('/manage/users/%s/features/%s', $emailOrId, $feature));
     }
 
+    /**
+     * @param string|int $emailOrId
+     */
+    public function setUserMetadata($emailOrId, string $provider, array $metadata): array
+    {
+        return $this->apiPost($this->encode('/manage/users/%s/metadata', $emailOrId), [
+            'provider' => $provider,
+            'metadata' => $metadata,
+        ]);
+    }
+
+    /**
+     * @param string|int $emailOrId
+     */
+    public function listUserMetadata($emailOrId): array
+    {
+        return $this->apiGet($this->encode('/manage/users/%s/metadata', $emailOrId));
+    }
+
+    /**
+     * @param string|int $emailOrId
+     */
+    public function deleteUserMetadata($emailOrId, int $metadataId): void
+    {
+        $this->apiDelete($this->encode('/manage/users/%s/metadata/%s', $emailOrId, $metadataId));
+    }
+
     public function getProjectTemplate($templateStringId)
     {
         return $this->apiGet($this->encode('/manage/project-templates/%s', $templateStringId));
