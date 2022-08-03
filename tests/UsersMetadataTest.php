@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Generator;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use PHPUnit\Framework\ExpectationFailedException;
@@ -41,26 +42,41 @@ class UsersMetadataTest extends ClientTestCase
         }
     }
 
-    public function testNormalUserCannotManageOthersMetadata(): void
+    public function tokenTypeProvider(): Generator
     {
+        yield 'manage token' => [false];
+
+        yield 'session manage token' => [true];
+    }
+
+    /**
+     * @dataProvider tokenTypeProvider
+     */
+    public function testNormalUserCannotManageOthersMetadata(bool $useSessionToken): void
+    {
+        $client = $this->normalUserClient;
+        if ($useSessionToken) {
+            $client = $this->getSessionTokenClient($client);
+        }
+
         $metadataArray = $this->createUserMetadata($this->client, $this->superAdmin['email']);
 
         try {
-            $this->createUserMetadata($this->normalUserClient, $this->superAdmin['email']);
+            $this->createUserMetadata($client, $this->superAdmin['email']);
             $this->fail('Should fail with, normal user cannot update other users.');
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());
         }
 
         try {
-            $this->createSystemMetadata($this->normalUserClient, $this->normalUser['email']);
+            $this->createSystemMetadata($client, $this->normalUser['email']);
             $this->fail('Should fail with, normal user cannot create system metadata.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
 
         try {
-            $this->normalUserClient->listUserMetadata($this->superAdmin['email']);
+            $client->listUserMetadata($this->superAdmin['email']);
             $this->fail('Should fail, normal user cannot list others metadata.');
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());
@@ -69,7 +85,7 @@ class UsersMetadataTest extends ClientTestCase
         $metadata = reset($metadataArray);
 
         try {
-            $this->normalUserClient->deleteUserMetadata($this->superAdmin['email'], $metadata['id']);
+            $client->deleteUserMetadata($this->superAdmin['email'], $metadata['id']);
             $this->fail('Should fail. Normal user cannot delete other others metadata.');
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());
@@ -92,13 +108,7 @@ class UsersMetadataTest extends ClientTestCase
 
     public function testNormalUserCanManageOwnMetadataWithSessionManageToken(): void
     {
-        $sessionToken = $this->normalUserClient->createSessionToken();
-
-        $sessionTokenClient = $this->getClient([
-            'token' => $sessionToken['token'],
-            'url' => getenv('KBC_MANAGE_API_URL'),
-            'backoffMaxTries' => 0,
-        ]);
+        $sessionTokenClient = $this->getSessionTokenClient($this->normalUserClient);
 
         $metadataArray = $this->createUserMetadata($sessionTokenClient, $this->normalUser['email']);
 
