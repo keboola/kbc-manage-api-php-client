@@ -19,6 +19,7 @@ class ProjectDeleteTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';
+    private const FILE_STORAGE_PROVIDER_GCS = 'gcp';
 
     private $organization;
 
@@ -56,6 +57,10 @@ class ProjectDeleteTest extends ClientTestCase
         yield 'exasol with S3 file storage' => [
             'backend' => Backend::EXASOL,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
+        ];
+        yield 'snowflake with GCS file storage' => [
+            'backend' => Backend::SNOWFLAKE,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_GCS,
         ];
     }
 
@@ -314,6 +319,13 @@ class ProjectDeleteTest extends ClientTestCase
         if ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_ABS) {
             $fileStorages = array_filter(
                 $this->client->listAbsFileStorage(),
+                function (array $fileStorage) {
+                    return $fileStorage['owner'] === 'keboola';
+                }
+            );
+        } elseif ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_GCS) {
+            $fileStorages = array_filter(
+                $this->client->listGcsFileStorage(),
                 function (array $fileStorage) {
                     return $fileStorage['owner'] === 'keboola';
                 }
