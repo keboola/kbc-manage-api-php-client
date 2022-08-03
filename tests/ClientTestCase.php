@@ -119,6 +119,15 @@ class ClientTestCase extends TestCase
         return new StorageClient($options);
     }
 
+    public function getSessionTokenClient(Client $client): Client
+    {
+        return $this->getClient([
+            'token' => $client->createSessionToken()['token'],
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 0,
+        ]);
+    }
+
     /**
      * @return string
      */

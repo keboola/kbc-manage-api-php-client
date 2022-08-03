@@ -2477,6 +2477,112 @@ Removes also personal data of user (e-mail and name).
 
 + Response 204 (application/json)
 
+## User Metadata [/manage/users/{user_id_or_email}/metadata]
+Metadata allows you to assign custom information to your users.
+
++ Parameters
+    + user_id_or_email (required, string) - Project ID
+
+### Set user metadata [POST]
+Sets multiple metadata with one call. If the given key and provider combination already exist
+for the user, the data will be updated with the new value and timestamp.
+Each user can set only own metadata. Super admins can set everyone's metadata.
++ Attributes
+    + provider (required, enum[string])
+        + Members
+            + user
+            + system - only super admin can change these metadata
+    + metadata (required, array[object]) - Array of metadata objects
+        + key (required)
+        + value (required)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token or your_session_token
+
+    + Body
+
+        ```js
+        {
+            "provider": "user",
+            "metadata": [
+                {
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+        }
+        ```
+
++ Response 201 (application/json)
+    + Body
+
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+
+
+### List user Metadata [GET]
+Each user can list only own metadata. Super admins can list everyone's metadata.
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token or your_session_token
+
++ Response 200 (application/json)
+    + Body
+
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+
+### Remove User Metadata [DELETE /manage/users/{user_id_or_email}/metadata/{metadata_id}]
+Each user can delete only own metadata. Super admins can delete everyone's metadata.
+
++ Parameters
+    + user_id_or_email (required, string) - User ID
+    + metadata_id (required, int) - Metadata ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token or your_session_token
+
++ Response 204
+
 
 # Group My Account
 
