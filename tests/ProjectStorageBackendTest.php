@@ -12,8 +12,9 @@ class ProjectStorageBackendTest extends ClientTestCase
     {
         return [
             [Backend::REDSHIFT],
-            [Backend::SYNAPSE],
-            //[Backend::EXASOL],
+//            [Backend::SYNAPSE],
+        // synapse isnt available on e2e testing
+            [Backend::EXASOL],
         ];
     }
 
@@ -48,15 +49,6 @@ class ProjectStorageBackendTest extends ClientTestCase
         $this->assertArrayHasKey('backends', $project);
         $this->assertEquals('snowflake', $project['defaultBackend']);
 
-        if ($backendName === Backend::SYNAPSE) {
-            $absFileStorages = $this->client->listAbsFileStorage();
-            foreach ($absFileStorages as $storage) {
-                if ($storage['provider'] === 'azure') {
-                    $this->client->assignFileStorage($project['id'], $storage['id']);
-                    break;
-                }
-            }
-        }
 
         $backends = $project['backends'];
 

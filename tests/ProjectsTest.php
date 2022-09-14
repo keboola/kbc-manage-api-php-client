@@ -14,6 +14,7 @@ class ProjectsTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';
+    private const FILE_STORAGE_PROVIDER_GCS = 'gcs';
     private const PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME = 'pay-as-you-go-credits-admin';
     private const PAY_AS_YOU_GO_PROJECT_FEATURE_NAME = 'pay-as-you-go';
 
@@ -36,9 +37,9 @@ class ProjectsTest extends ClientTestCase
                 'Redshift does not support other file storage than S3.',
             ],
             [
-                Backend::SYNAPSE,
-                self::FILE_STORAGE_PROVIDER_S3,
-                'Synapse storage backend supports only ABS file storage.',
+                Backend::EXASOL,
+                self::FILE_STORAGE_PROVIDER_GCS,
+                'TODO', // TODO
             ],
         ];
     }
