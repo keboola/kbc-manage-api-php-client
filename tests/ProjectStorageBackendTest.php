@@ -49,7 +49,6 @@ class ProjectStorageBackendTest extends ClientTestCase
         $this->assertArrayHasKey('backends', $project);
         $this->assertEquals('snowflake', $project['defaultBackend']);
 
-
         $backends = $project['backends'];
 
         $this->assertArrayHasKey('snowflake', $backends);
