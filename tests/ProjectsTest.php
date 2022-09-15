@@ -67,7 +67,7 @@ class ProjectsTest extends ClientTestCase
                 $storage = $this->client->listS3FileStorage()[0];
                 break;
             case self::FILE_STORAGE_PROVIDER_GCS:
-                $storage = $this->client->listAbsFileStorage()[0];
+                $storage = $this->client->listGcsFileStorage()[0];
                 break;
         }
 
@@ -121,7 +121,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $s3Storage = $this->client->listS3FileStorage()[0];
-        $AbsStorage = $this->client->listAbsFileStorage()[0];
+        $AbsStorage = $this->client->listGcsFileStorage()[0];
 
         $backends = $this->client->listStorageBackend();
         $backendToAssign = null;
