@@ -33,7 +33,7 @@ class ProjectsTest extends ClientTestCase
         return [
             [
                 Backend::REDSHIFT,
-                self::FILE_STORAGE_PROVIDER_ABS,
+                self::FILE_STORAGE_PROVIDER_GCS,
                 'Redshift does not support other file storage than S3.',
             ],
             [
@@ -66,7 +66,7 @@ class ProjectsTest extends ClientTestCase
             case self::FILE_STORAGE_PROVIDER_S3:
                 $storage = $this->client->listS3FileStorage()[0];
                 break;
-            case self::FILE_STORAGE_PROVIDER_ABS:
+            case self::FILE_STORAGE_PROVIDER_GCS:
                 $storage = $this->client->listAbsFileStorage()[0];
                 break;
         }
@@ -136,7 +136,7 @@ class ProjectsTest extends ClientTestCase
                 $unsupportedFileStorage = $s3Storage;
                 $supportedFileStorage = $AbsStorage;
                 break;
-            case self::FILE_STORAGE_PROVIDER_ABS:
+            case self::FILE_STORAGE_PROVIDER_GCS:
                 $unsupportedFileStorage = $AbsStorage;
                 $supportedFileStorage = $s3Storage;
                 break;
