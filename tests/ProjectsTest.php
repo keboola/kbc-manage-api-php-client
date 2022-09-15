@@ -39,7 +39,7 @@ class ProjectsTest extends ClientTestCase
             [
                 Backend::EXASOL,
                 self::FILE_STORAGE_PROVIDER_GCS,
-                'TODO', // TODO
+                'Exasol storage backend supports only S3 file storage.',
             ],
         ];
     }
