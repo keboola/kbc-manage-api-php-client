@@ -38,21 +38,21 @@ class ProjectDeleteTest extends ClientTestCase
             'backend' => Backend::SNOWFLAKE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
         ];
-        yield 'snowflake with ABS file storage test' => [
+        yield 'snowflake with GCS file storage test' => [
             'backend' => Backend::SNOWFLAKE,
-            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_GCS,
         ];
         yield 'redshift with S3 file storage' => [
             'backend' => Backend::REDSHIFT,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
         ];
-        yield 'synapse with ABS file storage' => [
+        yield 'synapse with GCS file storage' => [
             'backend' => Backend::SYNAPSE,
-            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_GCS,
         ];
-        yield 'exasol with ABS file storage' => [
+        yield 'exasol with GCS file storage' => [
             'backend' => Backend::EXASOL,
-            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_ABS,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_GCS,
         ];
         yield 'exasol with S3 file storage' => [
             'backend' => Backend::EXASOL,
