@@ -14,6 +14,7 @@ class ProjectsTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';
+    private const FILE_STORAGE_PROVIDER_GCS = 'gcs';
     private const PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME = 'pay-as-you-go-credits-admin';
     private const PAY_AS_YOU_GO_PROJECT_FEATURE_NAME = 'pay-as-you-go';
 
@@ -32,13 +33,13 @@ class ProjectsTest extends ClientTestCase
         return [
             [
                 Backend::REDSHIFT,
-                self::FILE_STORAGE_PROVIDER_ABS,
+                self::FILE_STORAGE_PROVIDER_GCS,
                 'Redshift does not support other file storage than S3.',
             ],
             [
-                Backend::SYNAPSE,
-                self::FILE_STORAGE_PROVIDER_S3,
-                'Synapse storage backend supports only ABS file storage.',
+                Backend::EXASOL,
+                self::FILE_STORAGE_PROVIDER_GCS,
+                'Exasol storage backend supports only S3 file storage.',
             ],
         ];
     }
@@ -65,8 +66,8 @@ class ProjectsTest extends ClientTestCase
             case self::FILE_STORAGE_PROVIDER_S3:
                 $storage = $this->client->listS3FileStorage()[0];
                 break;
-            case self::FILE_STORAGE_PROVIDER_ABS:
-                $storage = $this->client->listAbsFileStorage()[0];
+            case self::FILE_STORAGE_PROVIDER_GCS:
+                $storage = $this->client->listGcsFileStorage()[0];
                 break;
         }
 
@@ -120,7 +121,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $s3Storage = $this->client->listS3FileStorage()[0];
-        $AbsStorage = $this->client->listAbsFileStorage()[0];
+        $AbsStorage = $this->client->listGcsFileStorage()[0];
 
         $backends = $this->client->listStorageBackend();
         $backendToAssign = null;
@@ -135,7 +136,7 @@ class ProjectsTest extends ClientTestCase
                 $unsupportedFileStorage = $s3Storage;
                 $supportedFileStorage = $AbsStorage;
                 break;
-            case self::FILE_STORAGE_PROVIDER_ABS:
+            case self::FILE_STORAGE_PROVIDER_GCS:
                 $unsupportedFileStorage = $AbsStorage;
                 $supportedFileStorage = $s3Storage;
                 break;
