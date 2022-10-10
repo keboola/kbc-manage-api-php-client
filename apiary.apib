@@ -3561,7 +3561,7 @@ Only storage owned by **keboola** can be set as default.
 
 ## Data Structures
 
-### GCSCredentials
+### GCPCredentials
 + type: service_account (string, required)
 + project_id: 123456789 (string, required)
 + private_key_id: xxx (string, required)
@@ -3573,7 +3573,7 @@ Only storage owned by **keboola** can be set as default.
 + auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs (string, required)
 + client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something (string, required)
 
-### GCSCredentialsNoPK
+### GCPCredentialsNoPK
 + type: service_account (string, required)
 + project_id: 123456789 (string, required)
 + private_key_id: xxx (string, required)
@@ -3585,7 +3585,7 @@ Only storage owned by **keboola** can be set as default.
 + client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something (string, required)
 
 ### GCSCreate
-+ gcsCredentials(GCSCredentials)
++ gcsCredentials(GCPCredentials)
 + filesBucket: `my-bucket` (string, required) - name of the bucket
 + owner: keboola, client (enum, required)
 + region: `europe-west1` (string, required)
@@ -3597,12 +3597,12 @@ Only storage owned by **keboola** can be set as default.
 + region: `europe-west1` (string)
 + created: `2019-06-17T15:07:48+01:00` (string) - (ISO8601 format) `Y-m-d\TH:i:sO`
 + creator(AdminIdAndName)
-+ gcsCredentials(GCSCredentialsNoPK)
++ gcsCredentials(GCPCredentialsNoPK)
 + gcsSnowflakeIntegrationName: KEBOOLA_123_GCS (string)
 + filesBucket: `my-bucket` (string) - name of the bucket
 
 ### GCSRotate
-+ credentials(GCSCredentials)
++ credentials(GCPCredentials)
 
 ### AdminIdAndName
 + id: 123 (number)
@@ -3756,6 +3756,45 @@ All projects using the backend must be deleted and purged before it can be delet
 
 + Response 204 (application/json)
 
+## BigQuery - Storage Backend Collection [/manage/storage-backend/bigquery]
+
+Other actions like List and Delete are the same as for other backends.
+### Create a new BigQuery backend [POST]
+
+You must create a new project and service account in a folder in your organization,
+this service account must have the right to create new projects (roles/resourcemanager.projectCreator) in this folder (only in this folder)
+and use the generated json [keyFile](https://cloud.google.com/iam/docs/creating-managing-service-account-keys)
+for this `service account` in the `credentials` parameter, the folder id then as `folderId`.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(BigQueryStorageBackendCreate)
+
++ Response 201 (application/json)
+
+    + Attributes(BigQueryStorageBackendCreated)
+
+### Update BigQuery backend [PATCH /manage/storage-backend/bigquery/{backend_id}]
+
+Update of the credentials for BigQuery backend.
+
++ Parameters
+    + backend_id (required) - Backend ID
++ Attributes (BigQueryStorageBackendUpdate)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+    + Attributes(BigQueryStorageBackendCreated)
+
 # Group SUPER - Data Planes Management
 
 ## Data Plane Collection [/manage/data-planes]
@@ -3843,6 +3882,19 @@ A partial update of a data plane, one of the attributes are required.
 + useSynapseManagedIdentity: true - optional for Synapse
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
 
+### BigQueryStorageBackendCreate
++ owner: keboola (required) - associated GCP account owner
++ folderId: 123(required) - where is service account created
++ credentials(GCPCredentials)
+
+### BigQueryStorageBackendCreated
++ id:  12 (number)
++ backend: bigquery
++ credentials(GCPCredentialsNoPK)
++ folderId: 123 (number)
+
+### BigQueryStorageBackendUpdate
++ credentials(GCPCredentials)
 
 ### StorageBackendUpdate
 
