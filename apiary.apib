@@ -3885,10 +3885,12 @@ A partial update of a data plane, one of the attributes are required.
 ### BigQueryStorageBackendCreate
 + owner: keboola (required) - associated GCP account owner
 + folderId: 123(required) - where is service account created
++ region: `us-east-1` (required)
 + credentials(GCPCredentials)
 
 ### BigQueryStorageBackendCreated
 + id:  12 (number)
++ region: `us-east-1` (required)
 + backend: bigquery
 + credentials(GCPCredentialsNoPK)
 + folderId: 123 (number)
