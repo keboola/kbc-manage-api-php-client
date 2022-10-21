@@ -1,6 +1,7 @@
 {
     "name": "keboola/kbc-manage-api-php-client",
     "description": "Keboola Management API Client",
+    "license": "MIT",
     "require": {
         "php" : "^7.4|^8.0",
         "guzzlehttp/guzzle": "^7.0|^6.1"
