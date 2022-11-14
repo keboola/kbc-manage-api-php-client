@@ -24,6 +24,7 @@ class ProjectsTest extends ClientTestCase
             [Backend::SNOWFLAKE],
             [Backend::REDSHIFT],
             [Backend::SYNAPSE],
+            [Backend::TERADATA],
 //            [Backend::EXASOL], // tmp disable until exasol will work again
         ];
     }

@@ -58,6 +58,10 @@ class ProjectDeleteTest extends ClientTestCase
             'backend' => Backend::EXASOL,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
         ];
+        yield 'teradata with S3 file storage' => [
+            'backend' => Backend::TERADATA,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
+        ];
         yield 'snowflake with GCS file storage' => [
             'backend' => Backend::SNOWFLAKE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_GCS,
@@ -212,6 +216,7 @@ class ProjectDeleteTest extends ClientTestCase
         if ($backend === Backend::REDSHIFT
             || $backend === Backend::SYNAPSE
             || $backend === Backend::EXASOL
+            || $backend === Backend::TERADATA
         ) {
             $this->client->assignProjectStorageBackend($project['id'], $maintainer[$connectionParamName]);
         }
