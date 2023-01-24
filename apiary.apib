@@ -3721,6 +3721,9 @@ CREATE MASTER KEY
     + Attributes(StorageBackend)
 
 ### List backends [GET]
++ Request (application/json)
+    + Headers
+            X-KBC-ManageApiToken: your_token
 
 + Response 200 (application/json)
 
@@ -3816,7 +3819,9 @@ Update of the credentials for BigQuery backend.
 ### List data planes [GET]
 
 This endpoint can also be accessed using application tokens with scope `data-planes:read`
-
++ Request (application/json)
+    + Headers
+            X-KBC-ManageApiToken: your_token
 + Response 200 (application/json)
 
     + Attributes (array[DataPlane])
