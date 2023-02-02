@@ -15,6 +15,9 @@ use Keboola\StorageApi\Options\Components\Configuration;
 use Keboola\StorageApi\Options\Components\ConfigurationMetadata;
 use Keboola\StorageApi\Workspaces;
 
+/**
+ * @retryAttempts 0
+ */
 class ProjectDeleteTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
@@ -248,14 +251,17 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->assertEquals($backend, $workspace['connection']['backend']);
 
-        $workspaces->loadWorkspaceData($workspace['id'], [
-            'input' => [
-                [
-                    'source' => $tableId,
-                    'destination' => 'users',
+        // Teradata doesn't support workspace load
+        if ($backend !== Backend::TERADATA) {
+            $workspaces->loadWorkspaceData($workspace['id'], [
+                'input' => [
+                    [
+                        'source' => $tableId,
+                        'destination' => 'users',
+                    ],
                 ],
-            ],
-        ]);
+            ]);
+        }
 
         // add some configuration to project
         $configuration = (new ComponentsOptions\Configuration())
