@@ -81,7 +81,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         $bucket = $sapiClient->getBucket($bucketId);
         $this->assertEquals($backendName, $bucket['backend']);
 
-        $sapiClient->dropBucket($bucketId);
+        $sapiClient->dropBucket($bucketId, ['async' => true]);
 
         $this->client->removeProjectStorageBackend($project['id'], $backendToAssign['id']);
 
