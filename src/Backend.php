@@ -10,6 +10,7 @@ final class Backend
     public const SNOWFLAKE = 'snowflake';
     public const SYNAPSE = 'synapse';
     public const EXASOL = 'exasol';
+    public const TERADATA = 'teradata';
 
     public static function getDefaultBackend(): string
     {
