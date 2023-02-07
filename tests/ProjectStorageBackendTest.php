@@ -15,6 +15,7 @@ class ProjectStorageBackendTest extends ClientTestCase
 //            [Backend::SYNAPSE],
         // synapse isnt available on e2e testing
             [Backend::EXASOL],
+            [Backend::TERADATA],
         ];
     }
 
@@ -80,7 +81,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         $bucket = $sapiClient->getBucket($bucketId);
         $this->assertEquals($backendName, $bucket['backend']);
 
-        $sapiClient->dropBucket($bucketId);
+        $sapiClient->dropBucket($bucketId, ['async' => true]);
 
         $this->client->removeProjectStorageBackend($project['id'], $backendToAssign['id']);
 

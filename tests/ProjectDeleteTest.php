@@ -15,6 +15,9 @@ use Keboola\StorageApi\Options\Components\Configuration;
 use Keboola\StorageApi\Options\Components\ConfigurationMetadata;
 use Keboola\StorageApi\Workspaces;
 
+/**
+ * @retryAttempts 0
+ */
 class ProjectDeleteTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
@@ -56,6 +59,10 @@ class ProjectDeleteTest extends ClientTestCase
         ];
         yield 'exasol with S3 file storage' => [
             'backend' => Backend::EXASOL,
+            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
+        ];
+        yield 'teradata with S3 file storage' => [
+            'backend' => Backend::TERADATA,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
         ];
         yield 'snowflake with GCS file storage' => [
@@ -212,6 +219,7 @@ class ProjectDeleteTest extends ClientTestCase
         if ($backend === Backend::REDSHIFT
             || $backend === Backend::SYNAPSE
             || $backend === Backend::EXASOL
+            || $backend === Backend::TERADATA
         ) {
             $this->client->assignProjectStorageBackend($project['id'], $maintainer[$connectionParamName]);
         }
@@ -243,14 +251,17 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->assertEquals($backend, $workspace['connection']['backend']);
 
-        $workspaces->loadWorkspaceData($workspace['id'], [
-            'input' => [
-                [
-                    'source' => $tableId,
-                    'destination' => 'users',
+        // Teradata doesn't support workspace load
+        if ($backend !== Backend::TERADATA) {
+            $workspaces->loadWorkspaceData($workspace['id'], [
+                'input' => [
+                    [
+                        'source' => $tableId,
+                        'destination' => 'users',
+                    ],
                 ],
-            ],
-        ]);
+            ]);
+        }
 
         // add some configuration to project
         $configuration = (new ComponentsOptions\Configuration())
