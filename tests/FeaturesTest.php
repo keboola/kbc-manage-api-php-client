@@ -231,8 +231,10 @@ class FeaturesTest extends ClientTestCase
 
     public function testRemoveNonexistentFeature()
     {
+        $features = $this->client->listFeatures();
+        $lastFeature = end($features);
         try {
-            $this->client->removeFeature('random-feature-' . $this->getRandomFeatureSuffix());
+            $this->client->removeFeature($lastFeature['id'] + 1);
             $this->fail('Feature not found');
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());
