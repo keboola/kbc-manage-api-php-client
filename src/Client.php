@@ -536,6 +536,11 @@ class Client
         ]);
     }
 
+    public function updateFeature(int $id, ?array $options = [])
+    {
+        return $this->apiPatch($this->encode('/manage/features/%s', $id), $options);
+    }
+
     public function removeFeature($id)
     {
         $this->apiDelete($this->encode('/manage/features/%s', $id));
