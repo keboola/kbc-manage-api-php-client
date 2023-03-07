@@ -127,7 +127,7 @@ class AssignProjectFeatureTest extends ClientTestCase
             $this->fail('The feature "%s" can\'t be added via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
-            $this->assertSame(400, $exception->getCode());
+            $this->assertSame(422, $exception->getCode());
         }
 
         $this->client->updateFeature($feature['id'], [
@@ -151,7 +151,7 @@ class AssignProjectFeatureTest extends ClientTestCase
             $this->fail('The feature "%s" can\'t be removed via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
-            $this->assertSame(400, $exception->getCode());
+            $this->assertSame(422, $exception->getCode());
         }
     }
 
@@ -267,7 +267,7 @@ class AssignProjectFeatureTest extends ClientTestCase
             $this->fail('The feature "%s" can\'t be added via API');
         } catch (ClientException $exception) {
             $this->assertStringContainsString(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
-            $this->assertSame(400, $exception->getCode());
+            $this->assertSame(422, $exception->getCode());
         }
 
         $this->client->updateFeature($feature['id'], [
@@ -291,7 +291,7 @@ class AssignProjectFeatureTest extends ClientTestCase
             $this->fail('The feature "%s" can\'t be assigned via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
-            $this->assertSame(400, $exception->getCode());
+            $this->assertSame(422, $exception->getCode());
         }
     }
 
@@ -322,6 +322,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Should fail, only admin role can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());
@@ -336,6 +337,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Should fail, only admin role can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());
@@ -380,6 +382,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Should fail, only admin in project can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());
@@ -394,6 +397,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Should fail, only admin in project can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());
@@ -423,6 +427,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Should fail, only admin in project can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());
@@ -437,6 +442,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Should fail, only admin in project can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());

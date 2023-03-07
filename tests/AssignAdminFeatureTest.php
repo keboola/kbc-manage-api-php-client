@@ -181,6 +181,7 @@ class AssignAdminFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());
@@ -193,6 +194,7 @@ class AssignAdminFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());
@@ -218,6 +220,7 @@ class AssignAdminFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());
@@ -230,6 +233,7 @@ class AssignAdminFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
             $this->assertSame(403, $exception->getCode());
