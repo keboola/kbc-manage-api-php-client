@@ -355,16 +355,15 @@ class ClientTestCase extends TestCase
         return $testSuiteName . get_class($this) . '\\' . $this->getName();
     }
 
-    public function assertArrayEqualsSorted($expected, $actual, $sortKey, $message = ''): void
+    public function sortByKey($data, $sortKey): array
     {
         $comparsion = function ($attrLeft, $attrRight) use ($sortKey) {
-            if ($attrLeft[$sortKey] == $attrRight[$sortKey]) {
+            if ($attrLeft[$sortKey] === $attrRight[$sortKey]) {
                 return 0;
             }
             return $attrLeft[$sortKey] < $attrRight[$sortKey] ? -1 : 1;
         };
-        usort($expected, $comparsion);
-        usort($actual, $comparsion);
-        $this->assertEquals($expected, $actual, $message);
+        usort($data, $comparsion);
+        return $data;
     }
 }
