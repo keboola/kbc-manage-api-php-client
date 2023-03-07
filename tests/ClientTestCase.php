@@ -91,6 +91,17 @@ class ClientTestCase extends TestCase
         return new Client($options);
     }
 
+    protected function cleanupFeatures(string $featureName, string $type): void
+    {
+        $features = $this->client->listFeatures(['type' => $type]);
+        foreach ($features as $item) {
+            if ($item['name'] === $featureName) {
+                $this->client->removeFeature($item['id']);
+                break;
+            }
+        }
+    }
+
     /**
      * @param array $token
      * @return StorageClient
@@ -362,5 +373,10 @@ class ClientTestCase extends TestCase
         };
         usort($data, $comparsion);
         return $data;
+    }
+
+    protected function testFeatureName(): string
+    {
+        return 'test-feature-' . sha1($this->generateDescriptionForTestObject());
     }
 }
