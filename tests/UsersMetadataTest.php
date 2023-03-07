@@ -21,18 +21,6 @@ class UsersMetadataTest extends ClientTestCase
             'value' => 'testval',
         ],
     ];
-    public const TEST_EXPECTED_METADATA = [
-        [
-            'key' => 'test_metadata_key1',
-            'value' => 'testval',
-            'provider' => 'user'
-        ],
-        [
-            'key' => 'test.metadata.key1',
-            'value' => 'testval',
-            'provider' => 'user'
-        ],
-    ];
     public const PROVIDER_USER = 'user';
     public const PROVIDER_SYSTEM = 'system';
 
@@ -293,18 +281,31 @@ class UsersMetadataTest extends ClientTestCase
     {
         $this->assertCount(2, $metadata);
 
-        $this->assertArrayEqualsSorted(self::TEST_EXPECTED_METADATA, $metadata, 'key');
+        $metadata = $this->sortByKey($metadata, 'key');
+        $this->assertSame('test.metadata.key1', $metadata[0]['key']);
+        $this->assertSame('testval', $metadata[0]['value']);
+        $this->assertSame('user', $metadata[0]['provider']);
+
+        $this->assertSame('test_metadata_key1', $metadata[1]['key']);
+        $this->assertSame('testval', $metadata[1]['value']);
+        $this->assertSame('user', $metadata[1]['provider']);
 
         $metadataArray = $client->listUserMetadata($userEmail);
         $this->assertCount(2, $metadataArray);
 
+        $metadataArray = $this->sortByKey($metadataArray, 'key');
         $this->assertArrayHasKey('id', $metadataArray[0]);
         $this->assertArrayHasKey('key', $metadataArray[0]);
         $this->assertArrayHasKey('value', $metadataArray[0]);
         $this->assertArrayHasKey('provider', $metadataArray[0]);
         $this->assertArrayHasKey('timestamp', $metadataArray[0]);
 
-        $this->assertArrayEqualsSorted(self::TEST_EXPECTED_METADATA, $metadataArray, 'key');
+        $this->assertSame('test.metadata.key1', $metadataArray[0]['key']);
+        $this->assertSame('testval', $metadataArray[0]['value']);
+        $this->assertSame('user', $metadataArray[0]['provider']);
 
+        $this->assertSame('test_metadata_key1', $metadataArray[1]['key']);
+        $this->assertSame('testval', $metadataArray[1]['value']);
+        $this->assertSame('user', $metadataArray[1]['provider']);
     }
 }
