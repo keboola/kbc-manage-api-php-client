@@ -2,18 +2,22 @@
 
 namespace Keboola\ManageApiTest;
 
+use Generator;
 use Keboola\ManageApi\ClientException;
 
 class FeaturesTest extends ClientTestCase
 {
-    public function testCreateListAndDeleteFeature()
+    /**
+     * @dataProvider featureProvider
+     */
+    public function testCreateListAndDeleteFeature(array $createFeature, array $expectedFeature)
     {
-        $expectedFeature = $this->prepareRandomFeature('global');
-
         $this->client->createFeature(
-            $expectedFeature['name'],
-            $expectedFeature['type'],
-            $expectedFeature['description']
+            $createFeature['name'],
+            $createFeature['type'],
+            $createFeature['description'],
+            $createFeature['canBeManageByAdmin'],
+            $createFeature['canBeManagedViaAPI']
         );
 
         $features = $this->client->listFeatures();
@@ -21,7 +25,7 @@ class FeaturesTest extends ClientTestCase
         $featureFound = null;
 
         foreach ($features as $feature) {
-            if (array_search($expectedFeature['name'], $feature) !== false) {
+            if ($expectedFeature['name'] === $feature['name']) {
                 $featureFound = $feature;
                 break;
             }
@@ -31,6 +35,9 @@ class FeaturesTest extends ClientTestCase
         $this->assertSame($expectedFeature['name'], $featureFound['name']);
         $this->assertSame($expectedFeature['type'], $featureFound['type']);
         $this->assertSame($expectedFeature['description'], $featureFound['description']);
+        $this->assertSame($expectedFeature['canBeManageByAdmin'], $featureFound['canBeManageByAdmin']);
+        $this->assertSame($expectedFeature['canBeManagedViaAPI'], $featureFound['canBeManagedViaAPI']);
+
 
         $secondFeature = $this->prepareRandomFeature('admin');
 
@@ -43,6 +50,78 @@ class FeaturesTest extends ClientTestCase
         $this->client->removeFeature($featureFound['id']);
 
         $this->assertSame(count($features), count($this->client->listFeatures()));
+    }
+
+    public function featureProvider(): Generator
+    {
+        $name = 'test-feature-' . $this->getRandomFeatureSuffix();
+        yield 'global, canBeManageByAdmin:true, canBeManagedViaAPI:true' => [
+            [
+                'name' => $name,
+                'type' => 'global',
+                'canBeManageByAdmin' => true,
+                'canBeManagedViaAPI' => true,
+                'description' => 'test global feature',
+            ],
+            [
+                'name' => $name,
+                'type' => 'global',
+                'canBeManageByAdmin' => true,
+                'canBeManagedViaAPI' => true,
+                'description' => 'test global feature',
+            ],
+        ];
+
+        yield 'global, canBeManageByAdmin:false, canBeManagedViaAPI:false' => [
+            [
+                'name' => $name,
+                'type' => 'global',
+                'canBeManageByAdmin' => false,
+                'canBeManagedViaAPI' => false,
+                'description' => 'test global feature',
+            ],
+            [
+                'name' => $name,
+                'type' => 'global',
+                'canBeManageByAdmin' => false,
+                'canBeManagedViaAPI' => false,
+                'description' => 'test global feature',
+            ],
+        ];
+
+        yield 'global, canBeManageByAdmin:false, canBeManagedViaAPI:true' => [
+            [
+                'name' => $name,
+                'type' => 'global',
+                'canBeManageByAdmin' => false,
+                'canBeManagedViaAPI' => true,
+                'description' => 'test global feature',
+            ],
+            [
+                'name' => $name,
+                'type' => 'global',
+                'canBeManageByAdmin' => false,
+                'canBeManagedViaAPI' => true,
+                'description' => 'test global feature',
+            ],
+        ];
+
+        yield 'global, canBeManageByAdmin:true, canBeManagedViaAPI:false' => [
+            [
+                'name' => $name,
+                'type' => 'global',
+                'canBeManageByAdmin' => true,
+                'canBeManagedViaAPI' => false,
+                'description' => 'test global feature',
+            ],
+            [
+                'name' => $name,
+                'type' => 'global',
+                'canBeManageByAdmin' => true,
+                'canBeManagedViaAPI' => false,
+                'description' => 'test global feature',
+            ],
+        ];
     }
 
     public function testFilterFeatures()
@@ -59,7 +138,7 @@ class FeaturesTest extends ClientTestCase
         $globalFeatures = $this->client->listFeatures(['type' => 'global']);
         $featureFoundInWrongList = false;
         foreach ($globalFeatures as $feature) {
-            if (array_search($expectedFeature['name'], $feature) !== false) {
+            if ($expectedFeature['name'] === $feature['name']) {
                 $featureFoundInWrongList = true;
                 break;
             }
@@ -72,7 +151,7 @@ class FeaturesTest extends ClientTestCase
         $foundFeature = null;
 
         foreach ($projectFeatures as $feature) {
-            if (array_search($expectedFeature['name'], $feature) !== false) {
+            if ($expectedFeature['name'] === $feature['name']) {
                 $foundFeature = $feature;
                 break;
             }

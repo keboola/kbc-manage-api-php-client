@@ -525,12 +525,14 @@ class Client
         $this->apiDelete($this->encode('/manage/organizations/%s/metadata/%s', $organizationId, $metadataId));
     }
 
-    public function createFeature($name, $type, $description)
+    public function createFeature(string $name, string $type, string $description, ?bool $canBeManageByAdmin = false, ?bool $canBeManagedViaAPI = true)
     {
         return $this->apiPost('/manage/features', [
             'name' => $name,
             'type' => $type,
             'description' => $description,
+            'canBeManageByAdmin' => $canBeManageByAdmin,
+            'canBeManagedViaAPI' => $canBeManagedViaAPI,
         ]);
     }
 
