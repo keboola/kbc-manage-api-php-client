@@ -3224,11 +3224,19 @@ Gets the users with the specified feature assigned.
 
 To create a new feature, provide the following parameters as JSON in the request body:
 
+If the `canBeManageByAdmin` parameter is true, the token of a user without a super admin role can assign the feature.
+In the case of the `project` feature, it must be in the project and have the `Admin` role.
+It is not enough to have the maintainer admin or organization admin permission.
+
+In the case of the `admin` role, an admin who does not have super admin privileges can only set the feature for himself.
+
 + Attributes
 
     + name: show-new-design (required) - Feature name
     + type: admin, project (enum) (required) - Feature type
     + description: Users with this feature will see new UI (required) - Short description of the feature
+    + canBeManageByAdmin: false (boolean, optional) - If true, the feature can be assigned by a user without the superadmin role
+    + canBeManagedViaAPI: true (boolean, optional) - Enables or disables the ability to assign the project/admin feature using the API
 
 + Request (application/json)
     + Headers
@@ -3243,6 +3251,40 @@ To create a new feature, provide the following parameters as JSON in the request
         "name": "show-new-design",
         "type": "admin",
         "description": "Users with this feature will see new UI",
+        "canBeManageByAdmin": false,
+        "canBeManagedViaAPI": true,
+        "created": "2016-04-28T15:24:51.620Z"
+    }
+    ```
+
+### Update a feature [PATCH /manage/features/{id}]
+A partial update of a feature
+
++ Parameters
+    + id: 1 (required, number) - ID of the feature to update
+
++ Attributes
+
+    + description: Users with this feature will see new UI (optional) - Short description of the feature
+    + canBeManageByAdmin: false (boolean, optional) - If true, the feature can be assigned by a user without the superadmin role
+    + canBeManagedViaAPI: true (boolean, optional) - Enables or disables the ability to assign the project/admin feature using the API
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
+
++ Response 200
+     ```js
+    {
+        "id": 1,
+        "name": "show-new-design",
+        "type": "admin",
+        "description": "Users with this feature will see new UI",
+        "canBeManageByAdmin": false,
+        "canBeManagedViaAPI": true,
         "created": "2016-04-28T15:24:51.620Z"
     }
     ```
@@ -3263,7 +3305,12 @@ To create a new feature, provide the following parameters as JSON in the request
 
 ### Add a project feature [POST]
 
-Project features can be assigned only by a super admin.
+If the parameter `canBeManageByAdmin` of the feature is `false` project features can be assigned only by a super admin.
+
+If the `canBeManageByAdmin` is `true`, the project features can be set by an admin without super admin privileges.
+But this admin must be in the project to which he wants to assign this features with the role `Admin`.
+
+Organization and maintainer admin have no effect and the user has to actually join the project.
 
 *Note: Features have to exist before they can be added to a project.*
 
@@ -3285,7 +3332,12 @@ Project features can be assigned only by a super admin.
 
 ### Remove a project feature [DELETE /manage/projects/{project_id}/features/{feature_name}]
 
-Project features can be removed only by a super admin.
+If the parameter `canBeManageByAdmin` of the feature is `false` project features can be removed only by a super admin.
+
+If the `canBeManageByAdmin` is `true`, the project features can be removed by an admin without super admin privileges.
+But this admin must be in the project to which he wants to remove this features with the role `Admin`.
+
+Organization and maintainer admin have no effect and the user has to actually join the project.
 
 + Parameters
     + project_id (required, int) - Project ID
@@ -3303,6 +3355,12 @@ Project features can be removed only by a super admin.
 
 
 ### Add a user feature [POST /manage/users/{user_id_or_email}/features]
+
+If the parameter `canBeManageByAdmin` of the feature is `false` project features can be set only by a super admin.
+If the `canBeManageByAdmin` parameter of the feature is `true`, the feature can be assigned by an admin without super admin permission,
+but he can assign the feature only to himself.
+
+Organization and maintainer admin have no effect.
 
 *Note: Features have to exist before they can be added to a user.*
 
@@ -3332,6 +3390,12 @@ Project features can be removed only by a super admin.
     ```
 
 ### Remove a user feature [DELETE /manage/users/{user_id_or_email}/features/{feature}]
+
+If the parameter `canBeManageByAdmin` of the feature is `false` project features can be removed only by a super admin.
+If the `canBeManageByAdmin` parameter of the feature is `true`, the feature can be removed by an admin without super admin permission,
+but he can assign the feature only to himself.
+
+Organization and maintainer admin have no effect.
 
 + Parameters
     + user_id_or_email (required) - User ID or email
