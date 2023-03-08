@@ -1,4 +1,4 @@
-Jira: KBC-XXX
+Jira: CT-XXX
 Connection PR: XXXXX
 
 Before asking for review make sure that:
