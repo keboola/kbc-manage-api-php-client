@@ -281,6 +281,7 @@ class UsersMetadataTest extends ClientTestCase
     {
         $this->assertCount(2, $metadata);
 
+        $metadata = $this->sortByKey($metadata, 'key');
         $this->assertSame('test.metadata.key1', $metadata[0]['key']);
         $this->assertSame('testval', $metadata[0]['value']);
         $this->assertSame('user', $metadata[0]['provider']);
@@ -292,6 +293,7 @@ class UsersMetadataTest extends ClientTestCase
         $metadataArray = $client->listUserMetadata($userEmail);
         $this->assertCount(2, $metadataArray);
 
+        $metadataArray = $this->sortByKey($metadataArray, 'key');
         $this->assertArrayHasKey('id', $metadataArray[0]);
         $this->assertArrayHasKey('key', $metadataArray[0]);
         $this->assertArrayHasKey('value', $metadataArray[0]);
