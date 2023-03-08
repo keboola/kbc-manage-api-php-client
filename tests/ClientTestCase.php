@@ -358,7 +358,7 @@ class ClientTestCase extends TestCase
     public function sortByKey($data, $sortKey): array
     {
         $comparsion = function ($attrLeft, $attrRight) use ($sortKey) {
-            return strcmp($attrLeft[$sortKey], $attrRight[$sortKey])
+            return strcmp($attrLeft[$sortKey], $attrRight[$sortKey]);
         };
         usort($data, $comparsion);
         return $data;
