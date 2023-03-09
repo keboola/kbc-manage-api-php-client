@@ -124,7 +124,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->client->addProjectFeature($projectId, $featureName);
-            $this->fail('The feature "%s" can\'t be added via API');
+            $this->fail('The feature can\'t be added via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
             $this->assertSame(422, $exception->getCode());
@@ -148,7 +148,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->client->removeProjectFeature($projectId, $featureName);
-            $this->fail('The feature "%s" can\'t be removed via API');
+            $this->fail('The feature can\'t be removed via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
             $this->assertSame(422, $exception->getCode());
@@ -215,6 +215,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $this->fail('The feature can\'t be added by normal admin');
         } catch (ClientException $e) {
             $this->assertStringContainsString('You can\'t edit project features', $e->getMessage());
             $this->assertSame(403, $e->getCode());
@@ -229,6 +230,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->removeProjectFeature($projectId, $featureName);
+            $this->fail('The feature can\'t be removed by normal admin');
         } catch (ClientException $e) {
             $this->assertStringContainsString('You can\'t edit project features', $e->getMessage());
             $this->assertSame(403, $e->getCode());
@@ -264,7 +266,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
-            $this->fail('The feature "%s" can\'t be added via API');
+            $this->fail('The feature can\'t be added via API');
         } catch (ClientException $exception) {
             $this->assertStringContainsString(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
             $this->assertSame(422, $exception->getCode());
@@ -288,7 +290,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         try {
             $this->normalUserClient->removeProjectFeature($projectId, $featureName);
-            $this->fail('The feature "%s" can\'t be assigned via API');
+            $this->fail('The feature can\'t be assigned via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
             $this->assertSame(422, $exception->getCode());
