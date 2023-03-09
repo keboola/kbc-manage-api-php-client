@@ -103,8 +103,8 @@ class AssignProjectFeatureTest extends ClientTestCase
     public function canBeManageByAdminProvider(): array
     {
         return [
-            [true],
-            [false],
+            'admin can manage' => [true],
+            'admin cannot manage' => [false],
         ];
     }
 
