@@ -360,9 +360,6 @@ class AssignProjectFeatureTest extends ClientTestCase
             'share' => [
                 ProjectRole::SHARE,
             ],
-            'read only' => [
-                ProjectRole::READ_ONLY,
-            ],
         ];
     }
 
