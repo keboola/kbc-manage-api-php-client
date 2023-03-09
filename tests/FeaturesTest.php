@@ -40,11 +40,13 @@ class FeaturesTest extends ClientTestCase
 
         $this->client->updateFeature($featureFound['id'], [
             'description' => 'Updated desc',
-            'canBeManageByAdmin' => $createFeature['canBeManageByAdmin'],
-            'canBeManagedViaAPI' => $createFeature['canBeManagedViaAPI'],
+            'canBeManageByAdmin' => !$createFeature['canBeManageByAdmin'],
+            'canBeManagedViaAPI' => !$createFeature['canBeManagedViaAPI'],
         ]);
         $feature = $this->client->getFeature($featureFound['id']);
         $this->assertSame('Updated desc', $feature['description']);
+        $this->assertSame(!$expectedFeature['canBeManageByAdmin'], !$createFeature['canBeManageByAdmin']);
+        $this->assertSame(!$expectedFeature['canBeManagedViaAPI'], !$createFeature['canBeManagedViaAPI']);
 
         $secondFeature = $this->prepareRandomFeature('admin');
 
