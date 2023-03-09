@@ -3305,7 +3305,7 @@ A partial update of a feature
 
 ### Add a project feature [POST]
 
-If the parameter `canBeManageByAdmin` of the feature is `false` project features can be assigned only by a super admin.
+If the parameter `canBeManageByAdmin` of the feature is `false`, project features can be assigned only by a super admin.
 
 If the `canBeManageByAdmin` is `true`, the project features can be set by an admin without super admin privileges.
 But this admin must be in the project to which he wants to assign this features with the role `Admin`.
@@ -3332,7 +3332,7 @@ Organization and maintainer admin have no effect and the user has to actually jo
 
 ### Remove a project feature [DELETE /manage/projects/{project_id}/features/{feature_name}]
 
-If the parameter `canBeManageByAdmin` of the feature is `false` project features can be removed only by a super admin.
+If the parameter `canBeManageByAdmin` of the feature is `false`, project features can be removed only by a super admin.
 
 If the `canBeManageByAdmin` is `true`, the project features can be removed by an admin without super admin privileges.
 But this admin must be in the project to which he wants to remove this features with the role `Admin`.
@@ -3356,7 +3356,7 @@ Organization and maintainer admin have no effect and the user has to actually jo
 
 ### Add a user feature [POST /manage/users/{user_id_or_email}/features]
 
-If the parameter `canBeManageByAdmin` of the feature is `false` project features can be set only by a super admin.
+If the parameter `canBeManageByAdmin` of the feature is `false`, project features can be set only by a super admin.
 If the `canBeManageByAdmin` parameter of the feature is `true`, the feature can be assigned by an admin without super admin permission,
 but he can assign the feature only to himself.
 
@@ -3391,7 +3391,7 @@ Organization and maintainer admin have no effect.
 
 ### Remove a user feature [DELETE /manage/users/{user_id_or_email}/features/{feature}]
 
-If the parameter `canBeManageByAdmin` of the feature is `false` project features can be removed only by a super admin.
+If the parameter `canBeManageByAdmin` of the feature is `false`, project features can be removed only by a super admin.
 If the `canBeManageByAdmin` parameter of the feature is `true`, the feature can be removed by an admin without super admin permission,
 but he can assign the feature only to himself.
 
