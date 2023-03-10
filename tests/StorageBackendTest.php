@@ -15,8 +15,10 @@ class StorageBackendTest extends ClientTestCase
         $this->assertBackendExist($newBackend['id']);
         $this->client->removeStorageBackend($newBackend['id']);
 
-        $this->expectExceptionMessage('You can\'t access storage backends');
-        $this->normalUserClient->createStorageBackend($this->getBackendCreateOptions());
+        $newBackend = $this->normalUserClient->createStorageBackend($this->getBackendCreateOptions());
+        $this->assertSame($newBackend['backend'], 'snowflake');
+        $this->assertBackendExist($newBackend['id']);
+        $this->client->removeStorageBackend($newBackend['id']);
     }
 
     /**
