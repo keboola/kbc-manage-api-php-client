@@ -8,6 +8,17 @@ use Keboola\StorageApi\Workspaces;
 
 class StorageBackendTest extends ClientTestCase
 {
+    public function testOnlySuperadminCanRegisterStorageBackend(): void
+    {
+        $newBackend = $this->client->createStorageBackend($this->getBackendCreateOptions());
+        $this->assertSame($newBackend['backend'], 'snowflake');
+        $this->assertBackendExist($newBackend['id']);
+        $this->client->removeStorageBackend($newBackend['id']);
+
+        $this->expectExceptionMessage('You can\'t access storage backends');
+        $this->normalUserClient->createStorageBackend($this->getBackendCreateOptions());
+    }
+
     /**
      * @dataProvider storageBackendOptionsProvider
      */
