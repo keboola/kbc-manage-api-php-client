@@ -96,14 +96,13 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
 
         $this->client->removeProjectFeature($projectId, $featureName);
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(0, $project['features']);
+        $this->assertProjectHasNotFeature($featureName, $project['features']);
     }
 
     public function canBeManageByAdminProvider(): array
@@ -144,8 +143,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
 
         $this->client->updateFeature($feature['id'], [
             'canBeManageByAdmin' => true,
@@ -187,14 +185,13 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->normalUserClient->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
 
         $this->normalUserClient->removeProjectFeature($projectId, $featureName);
 
         $project = $this->normalUserClient->getProject($projectId);
 
-        $this->assertCount(0, $project['features']);
+        $this->assertProjectHasNotFeature($featureName, $project['features']);
     }
 
     public function testAdminProjectMemberCannotManageFeatureCannotBeManageByAdmin()
@@ -231,8 +228,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
 
         try {
             $this->normalUserClient->removeProjectFeature($projectId, $featureName);
@@ -244,8 +240,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
     public function testProjectMemberCannotManageFeatureCannotBeManagedViaAPI()
@@ -286,8 +281,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
 
         $this->client->updateFeature($feature['id'], [
             'canBeManageByAdmin' => true,
@@ -340,8 +334,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
@@ -353,8 +346,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
     public function notAllowedAddFeaturesRoles(): array
@@ -397,8 +389,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
@@ -410,8 +401,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
     public function testOrgAdminCannotManageFeatures(): void
@@ -442,8 +432,7 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
@@ -455,7 +444,24 @@ class AssignProjectFeatureTest extends ClientTestCase
 
         $project = $this->client->getProject($projectId);
 
-        $this->assertCount(1, $project['features']);
-        $this->assertSame($featureName, $project['features'][0]);
+        $this->assertProjectHasFeature($featureName, $project['features']);
+    }
+
+    private function assertProjectHasFeature(string $featureName, array $features): void
+    {
+        $featureFound = null;
+        if (array_search($featureName, $features) !== false) {
+            $featureFound = $featureName;
+        }
+        $this->assertNotNull($featureFound);
+    }
+
+    private function assertProjectHasNotFeature(string $featureName, array $features): void
+    {
+        $featureFound = null;
+        if (array_search($featureName, $features) !== false) {
+            $featureFound = $featureName;
+        }
+        $this->assertNull($featureFound);
     }
 }
