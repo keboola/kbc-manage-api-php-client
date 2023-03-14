@@ -23,7 +23,7 @@ class ProjectTemplateFeaturesTest extends ClientTestCase
         $featureFound = null;
 
         foreach ($featuresAfterAdd as $feature) {
-            if (array_search($randomFeature['name'], $feature) !== false) {
+            if ($randomFeature['name'] === $feature['name']) {
                 $featureFound = $feature;
                 break;
             }
