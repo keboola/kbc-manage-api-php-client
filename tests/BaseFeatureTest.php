@@ -8,6 +8,7 @@ class BaseFeatureTest extends ClientTestCase
 {
     public const MANAGE_TOKEN_CLIENT = 'manageTokenClient';
     public const SESSION_TOKEN_CLIENT = 'sessionTokenClient';
+    protected string $sessionToken;
 
     protected array $organization;
     
@@ -42,6 +43,37 @@ class BaseFeatureTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
+    protected function getNormalUserClient()
+    {
+        if ($this->usesDataProvider()) {
+            if (in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+                $sessionToken = $this->normalUserClient->createSessionToken();
+                return $this->getClient([
+                    'token' => $sessionToken['token'],
+                    'url' => getenv('KBC_MANAGE_API_URL'),
+                    'backoffMaxTries' => 0,
+                ]);
+            }
+        }
+
+        return $this->normalUserClient;
+    }
+
+    protected function getSuperAdminClient()
+    {
+        if ($this->usesDataProvider()) {
+            if (in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+                $sessionToken = $this->client->createSessionToken();
+                return $this->getClient([
+                    'token' => $sessionToken['token'],
+                    'url' => getenv('KBC_MANAGE_API_URL'),
+                    'backoffMaxTries' => 0,
+                ]);
+            }
+        }
+
+        return $this->client;
+    }
 
     public function canBeManageByAdminProvider(): array
     {
