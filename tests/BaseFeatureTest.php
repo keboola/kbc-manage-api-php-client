@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\Client;
+
 class BaseFeatureTest extends ClientTestCase
 {
     public const MANAGE_TOKEN_CLIENT = 'manageTokenClient';
     public const SESSION_TOKEN_CLIENT = 'sessionTokenClient';
     protected string $sessionToken;
-
     protected array $organization;
-    
+
     public function setUp(): void
     {
         parent::setUp();
@@ -43,7 +44,7 @@ class BaseFeatureTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    protected function getNormalUserClient()
+    protected function getNormalUserClient(): CLient
     {
         if ($this->usesDataProvider()) {
             if (in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
@@ -59,7 +60,7 @@ class BaseFeatureTest extends ClientTestCase
         return $this->normalUserClient;
     }
 
-    protected function getSuperAdminClient()
+    protected function getSuperAdminClient(): Client
     {
         if ($this->usesDataProvider()) {
             if (in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
@@ -85,12 +86,11 @@ class BaseFeatureTest extends ClientTestCase
         ];
     }
 
-    public function provideVariousOfTokensClient()
+    public function provideVariousOfTokensClient(): array
     {
         return [
             'manage token' => [self::MANAGE_TOKEN_CLIENT],
             'session token' => [self::SESSION_TOKEN_CLIENT],
         ];
     }
-
 }
