@@ -109,14 +109,6 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         }
     }
 
-    public function canBeManageByAdminProvider(): array
-    {
-        return [
-            'admin can manage' => [true],
-            'admin cannot manage' => [false],
-        ];
-    }
-
     public function testUserCanManageOwnFeatures()
     {
         $featureName = $this->testFeatureName();

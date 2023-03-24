@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Keboola\ManageApiTest;
 
 class BaseFeatureTest extends ClientTestCase
+{
+    public const MANAGE_TOKEN_CLIENT = 'manageTokenClient';
+    public const SESSION_TOKEN_CLIENT = 'sessionTokenClient';
 
     protected array $organization;
     
@@ -39,5 +42,23 @@ class BaseFeatureTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
+
+    public function canBeManageByAdminProvider(): array
+    {
+        return [
+            'admin can manage with manage token' => [true, self::MANAGE_TOKEN_CLIENT],
+            'admin cannot manage with manage token' => [false, self::MANAGE_TOKEN_CLIENT],
+            'admin can manage with session token' => [true, self::SESSION_TOKEN_CLIENT],
+            'admin cannot manage with session token' => [false, self::SESSION_TOKEN_CLIENT],
+        ];
+    }
+
+    public function provideVariousOfTokensClient()
+    {
+        return [
+            'manage token' => [self::MANAGE_TOKEN_CLIENT],
+            'session token' => [self::SESSION_TOKEN_CLIENT],
+        ];
+    }
 
 }

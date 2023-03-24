@@ -106,14 +106,6 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasNotFeature($featureName, $project['features']);
     }
 
-    public function canBeManageByAdminProvider(): array
-    {
-        return [
-            'admin can manage' => [true],
-            'admin cannot manage' => [false],
-        ];
-    }
-
     public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
