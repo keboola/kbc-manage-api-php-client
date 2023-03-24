@@ -48,13 +48,27 @@ class AssignAdminFeatureTest extends ClientTestCase
     public function testSuperAdminCanManageAdminFeatureForAnybody(bool $canBeManageByAdmin)
     {
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
             $canBeManageByAdmin,
             true
         );
+
+        $features = $this->client->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->client->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         $this->client->addUserFeature($this->normalUser['email'], $featureName);
 
@@ -69,13 +83,27 @@ class AssignAdminFeatureTest extends ClientTestCase
     public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI()
     {
         $featureName = $this->testFeatureName();
-        $feature = $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
             false,
             false
         );
+
+        $features = $this->client->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->client->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         try {
             $this->client->addUserFeature($this->normalUser['email'], $featureName);
@@ -120,13 +148,27 @@ class AssignAdminFeatureTest extends ClientTestCase
     public function testUserCanManageOwnFeatures()
     {
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
             true,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         $this->normalUserClient->addUserFeature($this->normalUser['email'], $featureName);
 
@@ -142,13 +184,27 @@ class AssignAdminFeatureTest extends ClientTestCase
     public function testUserCanNotManageOtherUserFeatures()
     {
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
             true,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         try {
             $this->normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
@@ -178,13 +234,27 @@ class AssignAdminFeatureTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
             true,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         try {
             $this->normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
@@ -217,13 +287,27 @@ class AssignAdminFeatureTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
             true,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         try {
             $this->normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);

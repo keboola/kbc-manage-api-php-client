@@ -48,13 +48,27 @@ class AssignProjectFeatureTest extends ClientTestCase
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'project',
             $featureName,
             true,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
@@ -84,13 +98,27 @@ class AssignProjectFeatureTest extends ClientTestCase
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'project',
             $featureName,
             $canBeManageByAdmin,
             true
         );
+
+        $features = $this->client->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->client->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         $this->client->addProjectFeature($projectId, $featureName);
 
@@ -119,13 +147,28 @@ class AssignProjectFeatureTest extends ClientTestCase
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
 
         $featureName = $this->testFeatureName();
-        $feature = $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'project',
             $featureName,
             false,
             false
         );
+
+        // but super admin can list it
+        $features = $this->client->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->client->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         try {
             $this->client->addProjectFeature($projectId, $featureName);
@@ -173,13 +216,27 @@ class AssignProjectFeatureTest extends ClientTestCase
         );
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'project',
             $featureName,
             true,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         $this->normalUserClient->addProjectFeature($projectId, $featureName);
 
@@ -208,13 +265,24 @@ class AssignProjectFeatureTest extends ClientTestCase
         );
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'project',
             $featureName,
             false,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $this->assertNotContains($featureName, $features);
+
+        try {
+            $this->normalUserClient->getFeature($newFeature['id']);
+            $this->fail('The feature can\'t be get by normal admin');
+        } catch (ClientException $e) {
+            $this->assertStringContainsString('Feature not found', $e->getMessage());
+            $this->assertSame(404, $e->getCode());
+        }
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
@@ -257,13 +325,24 @@ class AssignProjectFeatureTest extends ClientTestCase
         );
 
         $featureName = $this->testFeatureName();
-        $feature = $this->client->createFeature(
+        $newFeature = $feature = $this->client->createFeature(
             $featureName,
             'project',
             $featureName,
             true,
             false
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $this->assertNotContains($featureName, $features);
+
+        try {
+            $this->normalUserClient->getFeature($newFeature['id']);
+            $this->fail('The feature can\'t be get by normal admin');
+        } catch (ClientException $e) {
+            $this->assertStringContainsString('Feature not found', $e->getMessage());
+            $this->assertSame(404, $e->getCode());
+        }
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
@@ -314,13 +393,27 @@ class AssignProjectFeatureTest extends ClientTestCase
         );
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'project',
             $featureName,
             true,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
@@ -369,13 +462,27 @@ class AssignProjectFeatureTest extends ClientTestCase
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'project',
             $featureName,
             true,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
@@ -412,13 +519,27 @@ class AssignProjectFeatureTest extends ClientTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'project',
             $featureName,
             true,
             true
         );
+
+        $features = $this->normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
 
         try {
             $this->normalUserClient->addProjectFeature($projectId, $featureName);
