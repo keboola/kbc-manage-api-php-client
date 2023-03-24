@@ -15,6 +15,9 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->cleanupFeatures($this->testFeatureName(), 'project');
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testNormalUserCannotManageFeatureToProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -29,7 +32,8 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             true
         );
 
-        $features = $this->normalUserClient->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -40,11 +44,11 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
         try {
-            $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $normalUserClient->addProjectFeature($projectId, $featureName);
             $this->fail('Normal user can\'t add project features that he doesn\'t belong to.');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You don\'t have access to project', $exception->getMessage());
@@ -54,7 +58,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->client->addProjectFeature($projectId, $featureName);
 
         try {
-            $this->normalUserClient->removeProjectFeature($projectId, $featureName);
+            $normalUserClient->removeProjectFeature($projectId, $featureName);
             $this->fail('Normal user can\'t remove project features that he doesn\'t belong to.');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You don\'t have access to project', $exception->getMessage());
@@ -79,7 +83,8 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             true
         );
 
-        $features = $this->client->listFeatures();
+        $superAdminClient = $this->getSuperAdminClient();
+        $features = $superAdminClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -90,22 +95,25 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $this->client->getFeature($newFeature['id']);
+        $feature = $superAdminClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
-        $this->client->addProjectFeature($projectId, $featureName);
+        $superAdminClient->addProjectFeature($projectId, $featureName);
 
         $project = $this->client->getProject($projectId);
 
         $this->assertProjectHasFeature($featureName, $project['features']);
 
-        $this->client->removeProjectFeature($projectId, $featureName);
+        $superAdminClient->removeProjectFeature($projectId, $featureName);
 
         $project = $this->client->getProject($projectId);
 
         $this->assertProjectHasNotFeature($featureName, $project['features']);
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -120,8 +128,9 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             false
         );
 
+        $superAdminClient = $this->getSuperAdminClient();
         // but super admin can list it
-        $features = $this->client->listFeatures();
+        $features = $superAdminClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -132,11 +141,11 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $this->client->getFeature($newFeature['id']);
+        $feature = $superAdminClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
         try {
-            $this->client->addProjectFeature($projectId, $featureName);
+            $superAdminClient->addProjectFeature($projectId, $featureName);
             $this->fail('The feature can\'t be added via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
@@ -159,7 +168,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         ]);
 
         try {
-            $this->client->removeProjectFeature($projectId, $featureName);
+            $superAdminClient->removeProjectFeature($projectId, $featureName);
             $this->fail('The feature can\'t be removed via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
@@ -167,6 +176,9 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testAdminProjectMemberManageFeatureCanBeManageByAdmin()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -189,7 +201,8 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             true
         );
 
-        $features = $this->normalUserClient->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -200,22 +213,25 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
-        $this->normalUserClient->addProjectFeature($projectId, $featureName);
+        $normalUserClient->addProjectFeature($projectId, $featureName);
 
         $project = $this->normalUserClient->getProject($projectId);
 
         $this->assertProjectHasFeature($featureName, $project['features']);
 
-        $this->normalUserClient->removeProjectFeature($projectId, $featureName);
+        $normalUserClient->removeProjectFeature($projectId, $featureName);
 
         $project = $this->normalUserClient->getProject($projectId);
 
         $this->assertProjectHasNotFeature($featureName, $project['features']);
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testAdminProjectMemberCannotManageFeatureCannotBeManageByAdmin()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -238,11 +254,12 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             true
         );
 
-        $features = $this->normalUserClient->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $this->assertNotContains($featureName, $features);
 
         try {
-            $this->normalUserClient->getFeature($newFeature['id']);
+            $normalUserClient->getFeature($newFeature['id']);
             $this->fail('The feature can\'t be get by normal admin');
         } catch (ClientException $e) {
             $this->assertStringContainsString('Feature not found', $e->getMessage());
@@ -250,7 +267,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
 
         try {
-            $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $normalUserClient->addProjectFeature($projectId, $featureName);
             $this->fail('The feature can\'t be added by normal admin');
         } catch (ClientException $e) {
             $this->assertStringContainsString('You can\'t edit project features', $e->getMessage());
@@ -264,7 +281,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
 
         try {
-            $this->normalUserClient->removeProjectFeature($projectId, $featureName);
+            $normalUserClient->removeProjectFeature($projectId, $featureName);
             $this->fail('The feature can\'t be removed by normal admin');
         } catch (ClientException $e) {
             $this->assertStringContainsString('You can\'t edit project features', $e->getMessage());
@@ -276,6 +293,9 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testProjectMemberCannotManageFeatureCannotBeManagedViaAPI()
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -298,11 +318,12 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             false
         );
 
-        $features = $this->normalUserClient->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $this->assertNotContains($featureName, $features);
 
         try {
-            $this->normalUserClient->getFeature($newFeature['id']);
+            $normalUserClient->getFeature($newFeature['id']);
             $this->fail('The feature can\'t be get by normal admin');
         } catch (ClientException $e) {
             $this->assertStringContainsString('Feature not found', $e->getMessage());
@@ -310,7 +331,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
 
         try {
-            $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $normalUserClient->addProjectFeature($projectId, $featureName);
             $this->fail('The feature can\'t be added via API');
         } catch (ClientException $exception) {
             $this->assertStringContainsString(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
@@ -333,7 +354,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         ]);
 
         try {
-            $this->normalUserClient->removeProjectFeature($projectId, $featureName);
+            $normalUserClient->removeProjectFeature($projectId, $featureName);
             $this->fail('The feature can\'t be assigned via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
@@ -366,7 +387,8 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             true
         );
 
-        $features = $this->normalUserClient->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -381,7 +403,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertSame($featureName, $feature['name']);
 
         try {
-            $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $normalUserClient->addProjectFeature($projectId, $featureName);
             $this->fail('Should fail, only admin role can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
@@ -395,7 +417,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
 
         try {
-            $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $normalUserClient->addProjectFeature($projectId, $featureName);
             $this->fail('Should fail, only admin role can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
@@ -410,15 +432,28 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     public function notAllowedAddFeaturesRoles(): array
     {
         return [
-            'guest' => [
+            'guest manage token' => [
                 ProjectRole::GUEST,
+                self::MANAGE_TOKEN_CLIENT,
             ],
-            'share' => [
+            'share mange token' => [
                 ProjectRole::SHARE,
+                self::MANAGE_TOKEN_CLIENT,
+            ],
+            'guest session token' => [
+                ProjectRole::GUEST,
+                self::SESSION_TOKEN_CLIENT,
+            ],
+            'share session token' => [
+                ProjectRole::SHARE,
+                self::SESSION_TOKEN_CLIENT,
             ],
         ];
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testMaintainerAdminCannotManageFeatures(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -435,7 +470,8 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             true
         );
 
-        $features = $this->normalUserClient->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -446,11 +482,11 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
         try {
-            $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $normalUserClient->addProjectFeature($projectId, $featureName);
             $this->fail('Should fail, only admin in project can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
@@ -464,7 +500,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
 
         try {
-            $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $normalUserClient->addProjectFeature($projectId, $featureName);
             $this->fail('Should fail, only admin in project can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
@@ -476,6 +512,9 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testOrgAdminCannotManageFeatures(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -492,7 +531,8 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             true
         );
 
-        $features = $this->normalUserClient->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -503,11 +543,11 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $this->normalUserClient->getFeature($newFeature['id']);
+        $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
         try {
-            $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $normalUserClient->addProjectFeature($projectId, $featureName);
             $this->fail('Should fail, only admin in project can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
@@ -521,7 +561,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
 
         try {
-            $this->normalUserClient->addProjectFeature($projectId, $featureName);
+            $normalUserClient->addProjectFeature($projectId, $featureName);
             $this->fail('Should fail, only admin in project can manage project features');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
