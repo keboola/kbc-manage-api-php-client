@@ -28,8 +28,8 @@ class AssignAdminFeatureTest extends BaseFeatureTest
             true
         );
 
-        $client = $this->getSuperAdminClient();
-        $features = $client->listFeatures();
+        $superAdminClient = $this->getSuperAdminClient();
+        $features = $superAdminClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -40,15 +40,15 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $client->getFeature($newFeature['id']);
+        $feature = $superAdminClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
-        $client->addUserFeature($this->normalUser['email'], $featureName);
+        $superAdminClient->addUserFeature($this->normalUser['email'], $featureName);
 
         $user = $this->client->getUser($this->normalUser['id']);
         $this->assertContains($featureName, $user['features']);
 
-        $client->removeUserFeature($this->normalUser['email'], $featureName);
+        $superAdminClient->removeUserFeature($this->normalUser['email'], $featureName);
         $user = $this->client->getUser($this->normalUser['id']);
         $this->assertNotContains($featureName, $user['features']);
     }
@@ -67,8 +67,8 @@ class AssignAdminFeatureTest extends BaseFeatureTest
             false
         );
 
-        $client = $this->getSuperAdminClient();
-        $features = $client->listFeatures();
+        $superAdminClient = $this->getSuperAdminClient();
+        $features = $superAdminClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -79,11 +79,11 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $client->getFeature($newFeature['id']);
+        $feature = $superAdminClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
         try {
-            $client->addUserFeature($this->normalUser['email'], $featureName);
+            $superAdminClient->addUserFeature($this->normalUser['email'], $featureName);
             $this->fail('The feature "%s" can\'t be added via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
@@ -106,7 +106,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         ]);
 
         try {
-            $client->removeUserFeature($this->normalUser['email'], $featureName);
+            $superAdminClient->removeUserFeature($this->normalUser['email'], $featureName);
             $this->fail('The feature "%s" can\'t be removed via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
@@ -128,8 +128,8 @@ class AssignAdminFeatureTest extends BaseFeatureTest
             true
         );
 
-        $client = $this->getNormalUserClient();
-        $features = $client->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -140,16 +140,16 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $client->getFeature($newFeature['id']);
+        $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
-        $client->addUserFeature($this->normalUser['email'], $featureName);
+        $normalUserClient->addUserFeature($this->normalUser['email'], $featureName);
 
         // assert user has newly created feature
         $user = $this->client->getUser($this->normalUser['id']);
         $this->assertContains($featureName, $user['features']);
 
-        $client->removeUserFeature($this->normalUser['email'], $featureName);
+        $normalUserClient->removeUserFeature($this->normalUser['email'], $featureName);
         $user = $this->client->getUser($this->normalUser['id']);
         $this->assertNotContains($featureName, $user['features']);
     }
@@ -168,8 +168,8 @@ class AssignAdminFeatureTest extends BaseFeatureTest
             true
         );
 
-        $client = $this->getNormalUserClient();
-        $features = $client->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -180,11 +180,11 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $client->getFeature($newFeature['id']);
+        $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
         try {
-            $client->addUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -197,7 +197,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         $this->assertContains($featureName, $user['features']);
 
         try {
-            $client->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to remove feature from other user');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -222,8 +222,8 @@ class AssignAdminFeatureTest extends BaseFeatureTest
             true
         );
 
-        $client = $this->getNormalUserClient();
-        $features = $client->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -234,11 +234,11 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $client->getFeature($newFeature['id']);
+        $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
         try {
-            $client->addUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
@@ -251,7 +251,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         $this->assertContains($featureName, $user['features']);
 
         try {
-            $client->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
@@ -279,8 +279,8 @@ class AssignAdminFeatureTest extends BaseFeatureTest
             true
         );
 
-        $client = $this->getNormalUserClient();
-        $features = $client->listFeatures();
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
         $featureFound = null;
 
         foreach ($features as $feature) {
@@ -291,11 +291,11 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         }
         $this->assertSame($featureName, $featureFound['name']);
 
-        $feature = $client->getFeature($newFeature['id']);
+        $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
         try {
-            $client->addUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
@@ -308,7 +308,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         $this->assertContains($featureName, $user['features']);
 
         try {
-            $client->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
