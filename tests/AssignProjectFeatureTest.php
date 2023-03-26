@@ -448,6 +448,14 @@ class AssignProjectFeatureTest extends BaseFeatureTest
                 ProjectRole::SHARE,
                 self::SESSION_TOKEN_CLIENT,
             ],
+            'readOnly manage token' => [
+                ProjectRole::READ_ONLY,
+                self::MANAGE_TOKEN_CLIENT,
+            ],
+            'readOnly session token' => [
+                ProjectRole::READ_ONLY,
+                self::SESSION_TOKEN_CLIENT,
+            ],
         ];
     }
 
