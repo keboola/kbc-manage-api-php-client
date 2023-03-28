@@ -3129,13 +3129,16 @@ To create a new promo-code, provide the following parameters as JSON in the requ
 Gets all features. To filter only the features with a specific type,
 add the `type` parameter to your query.
 
+In case the token you are using for the call does not have super admin permissions,
+the response will only contain features that have `canBeManageByAdmin: true`, `canBeManagedViaAPI: true` set.
+
 + Parameters
     + type: admin (string) - Type of features you want to filter
 
 + Request (application/json)
     + Headers
 
-            X-KBC-ManageApiToken: your_token
+            X-KBC-ManageApiToken: your_token or your_session_token
 
 + Response 200 (application/json)
 
@@ -3153,13 +3156,17 @@ add the `type` parameter to your query.
 
 ### Retrieve one feature [GET /manage/features/{id}]
 
+In case your token that you use when calling does not have super admin permissions,
+the feature must have parameters `canBeManageByAdmin: true`, `canBeManagedViaAPI: true` set to be able to view its detail.
+Otherwise the response will be 404 Not Found.
+
 + Parameters
     + id: 1 (required, number) - ID of the feature
 
 + Request (application/json)
     + Headers
 
-            X-KBC-ManageApiToken: your_token
+            X-KBC-ManageApiToken: your_token or your_session_token
 
 + Response 200 (application/json)
 
