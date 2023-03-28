@@ -6,40 +6,12 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class AssignAdminFeatureTest extends ClientTestCase
+class AssignAdminFeatureTest extends BaseFeatureTest
 {
-    private array $organization;
-
     public function setUp(): void
     {
         parent::setUp();
         $this->cleanupFeatures($this->testFeatureName(), 'admin');
-
-        // 1. add a user as placeholder for the maintainer, later I will need to remove a $this->client and it wouldn't work if there was only one
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => 'devel-tests+spam@keboola.com']);
-
-        // 2. Resetting the settings maintainer admins created in tests, because in some tests we add a user to the maintainer to make it an maintainer admin.
-        foreach ($this->client->listMaintainerMembers($this->testMaintainerId) as $member) {
-            if ($member['id'] === $this->normalUser['id']) {
-                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
-            }
-
-            if ($member['id'] === $this->superAdmin['id']) {
-                $this->client->removeUserFromMaintainer($this->testMaintainerId, $member['id']);
-            }
-        }
-
-        // 3. create new org for tests, because in some tests we add a user to the org to make it an org admin.
-        // This way we ensure that every time the test is run, everything is reset
-        $this->organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => 'My org',
-        ]);
-
-        // 4. add a user as placeholder for the organization, later I will need to remove a $this->client and it wouldn't work if there was only one
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
-
-        // 5. remove superAdmin from org, we want to have super admin without maintainer and org. admin
-        $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
     /**
@@ -48,7 +20,7 @@ class AssignAdminFeatureTest extends ClientTestCase
     public function testSuperAdminCanManageAdminFeatureForAnybody(bool $canBeManageByAdmin)
     {
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
@@ -56,20 +28,38 @@ class AssignAdminFeatureTest extends ClientTestCase
             true
         );
 
-        $this->client->addUserFeature($this->normalUser['email'], $featureName);
+        $superAdminClient = $this->getSuperAdminClient();
+        $features = $superAdminClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $superAdminClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
+
+        $superAdminClient->addUserFeature($this->normalUser['email'], $featureName);
 
         $user = $this->client->getUser($this->normalUser['id']);
         $this->assertContains($featureName, $user['features']);
 
-        $this->client->removeUserFeature($this->normalUser['email'], $featureName);
+        $superAdminClient->removeUserFeature($this->normalUser['email'], $featureName);
         $user = $this->client->getUser($this->normalUser['id']);
         $this->assertNotContains($featureName, $user['features']);
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI()
     {
         $featureName = $this->testFeatureName();
-        $feature = $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
@@ -77,8 +67,23 @@ class AssignAdminFeatureTest extends ClientTestCase
             false
         );
 
+        $superAdminClient = $this->getSuperAdminClient();
+        $features = $superAdminClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $superAdminClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
+
         try {
-            $this->client->addUserFeature($this->normalUser['email'], $featureName);
+            $superAdminClient->addUserFeature($this->normalUser['email'], $featureName);
             $this->fail('The feature "%s" can\'t be added via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
@@ -101,7 +106,7 @@ class AssignAdminFeatureTest extends ClientTestCase
         ]);
 
         try {
-            $this->client->removeUserFeature($this->normalUser['email'], $featureName);
+            $superAdminClient->removeUserFeature($this->normalUser['email'], $featureName);
             $this->fail('The feature "%s" can\'t be removed via API');
         } catch (ClientException $exception) {
             $this->assertSame(sprintf('The feature "%s" can\'t be assigned via API', $featureName), $exception->getMessage());
@@ -109,18 +114,13 @@ class AssignAdminFeatureTest extends ClientTestCase
         }
     }
 
-    public function canBeManageByAdminProvider(): array
-    {
-        return [
-            'admin can manage' => [true],
-            'admin cannot manage' => [false],
-        ];
-    }
-
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testUserCanManageOwnFeatures()
     {
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
@@ -128,21 +128,39 @@ class AssignAdminFeatureTest extends ClientTestCase
             true
         );
 
-        $this->normalUserClient->addUserFeature($this->normalUser['email'], $featureName);
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
+
+        $normalUserClient->addUserFeature($this->normalUser['email'], $featureName);
 
         // assert user has newly created feature
         $user = $this->client->getUser($this->normalUser['id']);
         $this->assertContains($featureName, $user['features']);
 
-        $this->normalUserClient->removeUserFeature($this->normalUser['email'], $featureName);
+        $normalUserClient->removeUserFeature($this->normalUser['email'], $featureName);
         $user = $this->client->getUser($this->normalUser['id']);
         $this->assertNotContains($featureName, $user['features']);
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testUserCanNotManageOtherUserFeatures()
     {
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
@@ -150,8 +168,23 @@ class AssignAdminFeatureTest extends ClientTestCase
             true
         );
 
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
+
         try {
-            $this->normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -164,7 +197,7 @@ class AssignAdminFeatureTest extends ClientTestCase
         $this->assertContains($featureName, $user['features']);
 
         try {
-            $this->normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to remove feature from other user');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -172,13 +205,16 @@ class AssignAdminFeatureTest extends ClientTestCase
         }
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testMaintainerAdminCannotManageFeatures(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
@@ -186,8 +222,23 @@ class AssignAdminFeatureTest extends ClientTestCase
             true
         );
 
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
+
         try {
-            $this->normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
@@ -200,7 +251,7 @@ class AssignAdminFeatureTest extends ClientTestCase
         $this->assertContains($featureName, $user['features']);
 
         try {
-            $this->normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
@@ -211,13 +262,16 @@ class AssignAdminFeatureTest extends ClientTestCase
         $this->assertContains($featureName, $user['features']);
     }
 
+    /**
+     * @dataProvider provideVariousOfTokensClient
+     */
     public function testOrgAdminCannotManageFeatures(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $featureName = $this->testFeatureName();
-        $this->client->createFeature(
+        $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
             $featureName,
@@ -225,8 +279,23 @@ class AssignAdminFeatureTest extends ClientTestCase
             true
         );
 
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($featureName === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+        $this->assertSame($featureName, $featureFound['name']);
+
+        $feature = $normalUserClient->getFeature($newFeature['id']);
+        $this->assertSame($featureName, $feature['name']);
+
         try {
-            $this->normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->addUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
@@ -239,7 +308,7 @@ class AssignAdminFeatureTest extends ClientTestCase
         $this->assertContains($featureName, $user['features']);
 
         try {
-            $this->normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
+            $normalUserClient->removeUserFeature($this->normalUserWithMfa['email'], $featureName);
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $exception) {
             $this->assertStringContainsString('You can\'t access other users', $exception->getMessage());
