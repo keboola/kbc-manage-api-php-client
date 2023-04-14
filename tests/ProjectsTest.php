@@ -928,7 +928,7 @@ class ProjectsTest extends ClientTestCase
         $initialFeaturesCount = count($project['features']);
 
         $newFeature = 'random-feature-' . $this->getRandomFeatureSuffix();
-        $this->client->createFeature($newFeature, 'project', $newFeature);
+        $this->client->createFeature($newFeature, 'project', $newFeature, $newFeature);
         $this->client->addProjectFeature($project['id'], $newFeature);
 
         $project = $this->client->getProject($project['id']);
@@ -961,14 +961,14 @@ class ProjectsTest extends ClientTestCase
 
         $this->assertNotContains($firstFeatureName, $project['features']);
 
-        $this->client->createFeature($firstFeatureName, 'project', $firstFeatureName);
+        $this->client->createFeature($firstFeatureName, 'project', $firstFeatureName, $firstFeatureName);
         $this->client->addProjectFeature($project['id'], $firstFeatureName);
         $project = $this->client->getProject($project['id']);
 
         $this->assertContains($firstFeatureName, $project['features']);
 
         $secondFeatureName = 'second-feature-' . $this->getRandomFeatureSuffix();
-        $this->client->createFeature($secondFeatureName, 'project', $secondFeatureName);
+        $this->client->createFeature($secondFeatureName, 'project', $secondFeatureName, $secondFeatureName);
         $this->client->addProjectFeature($project['id'], $secondFeatureName);
         $project = $this->client->getProject($project['id']);
         $this->assertGreaterThanOrEqual(2, count($project['features']));

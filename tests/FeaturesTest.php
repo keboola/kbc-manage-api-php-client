@@ -15,9 +15,10 @@ class FeaturesTest extends ClientTestCase
         $this->client->createFeature(
             $createFeature['name'],
             $createFeature['type'],
+            $createFeature['title'],
             $createFeature['description'],
             $createFeature['canBeManageByAdmin'],
-            $createFeature['canBeManagedViaAPI']
+            $createFeature['canBeManagedViaAPI'],
         );
 
         $features = $this->client->listFeatures();
@@ -34,16 +35,19 @@ class FeaturesTest extends ClientTestCase
         $this->assertTrue($featureFound !== null);
         $this->assertSame($expectedFeature['name'], $featureFound['name']);
         $this->assertSame($expectedFeature['type'], $featureFound['type']);
+        $this->assertSame($expectedFeature['title'], $featureFound['title']);
         $this->assertSame($expectedFeature['description'], $featureFound['description']);
         $this->assertSame($expectedFeature['canBeManageByAdmin'], $featureFound['canBeManageByAdmin']);
         $this->assertSame($expectedFeature['canBeManagedViaAPI'], $featureFound['canBeManagedViaAPI']);
 
         $this->client->updateFeature($featureFound['id'], [
+            'title' => 'Updated title',
             'description' => 'Updated desc',
             'canBeManageByAdmin' => !$createFeature['canBeManageByAdmin'],
             'canBeManagedViaAPI' => !$createFeature['canBeManagedViaAPI'],
         ]);
         $feature = $this->client->getFeature($featureFound['id']);
+        $this->assertSame('Updated title', $feature['title']);
         $this->assertSame('Updated desc', $feature['description']);
         $this->assertSame(!$expectedFeature['canBeManageByAdmin'], !$createFeature['canBeManageByAdmin']);
         $this->assertSame(!$expectedFeature['canBeManagedViaAPI'], !$createFeature['canBeManagedViaAPI']);
@@ -51,6 +55,7 @@ class FeaturesTest extends ClientTestCase
         // test if values stay stame if not provided
         $this->client->updateFeature($featureFound['id'], []);
         $feature = $this->client->getFeature($featureFound['id']);
+        $this->assertSame('Updated title', $feature['title']);
         $this->assertSame('Updated desc', $feature['description']);
         $this->assertSame(!$expectedFeature['canBeManageByAdmin'], !$createFeature['canBeManageByAdmin']);
         $this->assertSame(!$expectedFeature['canBeManagedViaAPI'], !$createFeature['canBeManagedViaAPI']);
@@ -60,6 +65,7 @@ class FeaturesTest extends ClientTestCase
         $this->client->createFeature(
             $secondFeature['name'],
             $secondFeature['type'],
+            $secondFeature['title'],
             $secondFeature['description']
         );
 
@@ -70,11 +76,15 @@ class FeaturesTest extends ClientTestCase
 
     public function featureProvider(): Generator
     {
-        $name = 'test-feature-' . $this->getRandomFeatureSuffix();
+        $suffix = $this->getRandomFeatureSuffix();
+        $name = 'test-feature-' . $suffix;
+        $title = 'Test Feature ' . $suffix;
+
         yield 'global, canBeManageByAdmin:true, canBeManagedViaAPI:true' => [
             [
                 'name' => $name,
                 'type' => 'global',
+                'title' => $title,
                 'canBeManageByAdmin' => true,
                 'canBeManagedViaAPI' => true,
                 'description' => 'test global feature',
@@ -82,6 +92,7 @@ class FeaturesTest extends ClientTestCase
             [
                 'name' => $name,
                 'type' => 'global',
+                'title' => $title,
                 'canBeManageByAdmin' => true,
                 'canBeManagedViaAPI' => true,
                 'description' => 'test global feature',
@@ -92,6 +103,7 @@ class FeaturesTest extends ClientTestCase
             [
                 'name' => $name,
                 'type' => 'global',
+                'title' => $title,
                 'canBeManageByAdmin' => false,
                 'canBeManagedViaAPI' => false,
                 'description' => 'test global feature',
@@ -99,6 +111,7 @@ class FeaturesTest extends ClientTestCase
             [
                 'name' => $name,
                 'type' => 'global',
+                'title' => $title,
                 'canBeManageByAdmin' => false,
                 'canBeManagedViaAPI' => false,
                 'description' => 'test global feature',
@@ -109,6 +122,7 @@ class FeaturesTest extends ClientTestCase
             [
                 'name' => $name,
                 'type' => 'global',
+                'title' => $title,
                 'canBeManageByAdmin' => false,
                 'canBeManagedViaAPI' => true,
                 'description' => 'test global feature',
@@ -116,6 +130,7 @@ class FeaturesTest extends ClientTestCase
             [
                 'name' => $name,
                 'type' => 'global',
+                'title' => $title,
                 'canBeManageByAdmin' => false,
                 'canBeManagedViaAPI' => true,
                 'description' => 'test global feature',
@@ -126,6 +141,7 @@ class FeaturesTest extends ClientTestCase
             [
                 'name' => $name,
                 'type' => 'global',
+                'title' => $title,
                 'canBeManageByAdmin' => true,
                 'canBeManagedViaAPI' => false,
                 'description' => 'test global feature',
@@ -133,6 +149,7 @@ class FeaturesTest extends ClientTestCase
             [
                 'name' => $name,
                 'type' => 'global',
+                'title' => $title,
                 'canBeManageByAdmin' => true,
                 'canBeManagedViaAPI' => false,
                 'description' => 'test global feature',
@@ -147,6 +164,7 @@ class FeaturesTest extends ClientTestCase
         $this->client->createFeature(
             $expectedFeature['name'],
             $expectedFeature['type'],
+            $expectedFeature['title'],
             $expectedFeature['description']
         );
 
@@ -176,6 +194,7 @@ class FeaturesTest extends ClientTestCase
         $this->assertTrue($foundFeature !== null);
         $this->assertSame($expectedFeature['name'], $foundFeature['name']);
         $this->assertSame($expectedFeature['type'], $foundFeature['type']);
+        $this->assertSame($expectedFeature['title'], $foundFeature['title']);
         $this->assertSame($expectedFeature['description'], $foundFeature['description']);
     }
 
@@ -186,6 +205,7 @@ class FeaturesTest extends ClientTestCase
         $insertedFeature = $this->client->createFeature(
             $newFeature['name'],
             $newFeature['type'],
+            $newFeature['title'],
             $newFeature['description']
         );
 
@@ -193,6 +213,7 @@ class FeaturesTest extends ClientTestCase
 
         $this->assertSame($newFeature['name'], $fetchedFeature['name']);
         $this->assertSame($newFeature['type'], $fetchedFeature['type']);
+        $this->assertSame($newFeature['title'], $fetchedFeature['title']);
         $this->assertSame($newFeature['description'], $fetchedFeature['description']);
     }
 
@@ -204,6 +225,7 @@ class FeaturesTest extends ClientTestCase
         $insertedFeature = $this->client->createFeature(
             $newFeature['name'],
             $newFeature['type'],
+            $newFeature['title'],
             $newFeature['description']
         );
 
@@ -246,6 +268,7 @@ class FeaturesTest extends ClientTestCase
         $insertedFeature = $this->client->createFeature(
             $newFeature['name'],
             $newFeature['type'],
+            $newFeature['title'],
             $newFeature['description']
         );
 
@@ -289,6 +312,7 @@ class FeaturesTest extends ClientTestCase
         $this->client->createFeature(
             $newFeature['name'],
             $newFeature['type'],
+            $newFeature['title'],
             $newFeature['description']
         );
 
@@ -298,6 +322,7 @@ class FeaturesTest extends ClientTestCase
             $this->client->createFeature(
                 $newFeature['name'],
                 $newFeature['type'],
+                $newFeature['title'],
                 $newFeature['description']
             );
             $this->fail('Feature already exists');
@@ -316,6 +341,7 @@ class FeaturesTest extends ClientTestCase
             $this->client->createFeature(
                 $newFeature['name'],
                 $newFeature['type'],
+                $newFeature['title'],
                 $newFeature['description']
             );
             $this->fail('Invalid feature type');
@@ -336,11 +362,16 @@ class FeaturesTest extends ClientTestCase
         }
     }
 
-    private function prepareRandomFeature($type)
+    /**
+     * @return array{name: string, type: string, title: string, description: string}
+     */
+    private function prepareRandomFeature(string $type): array
     {
+        $suffix = $this->getRandomFeatureSuffix();
         return [
-            'name' => 'test-feature-' . $this->getRandomFeatureSuffix(),
+            'name' => 'test-feature-' . $suffix,
             'type' => $type,
+            'title' => 'Test Feature ' . $suffix,
             'description' => 'test ' . $type . 'feature',
         ];
     }

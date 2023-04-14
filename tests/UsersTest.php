@@ -18,7 +18,7 @@ class UsersTest extends ClientTestCase
         $initialFeaturesCount = count($user['features']);
 
         $feature = 'manage-feature-test-' . $this->getRandomFeatureSuffix();
-        $this->client->createFeature($feature, 'admin', $feature);
+        $this->client->createFeature($feature, 'admin', $feature, $feature);
         $this->client->addUserFeature($userEmail, $feature);
 
         $user = $this->client->getUser($userEmail);
@@ -26,7 +26,7 @@ class UsersTest extends ClientTestCase
         $this->assertContains($feature, $user['features']);
 
         $feature2 = 'manage-feature-test-2-' . $this->getRandomFeatureSuffix();
-        $this->client->createFeature($feature2, 'admin', $feature2);
+        $this->client->createFeature($feature2, 'admin', $feature2, $feature2);
         $this->client->addUserFeature($userId, $feature2);
 
         $user = $this->client->getUser($userEmail);
@@ -75,7 +75,7 @@ class UsersTest extends ClientTestCase
         $initialFeaturesCount = count($user['features']);
 
         $newFeature = 'new-feature-' . $this->getRandomFeatureSuffix();
-        $this->client->createFeature($newFeature, 'admin', $newFeature);
+        $this->client->createFeature($newFeature, 'admin', $newFeature, $newFeature);
         $this->client->addUserFeature($userId, $newFeature);
 
         $user = $this->client->getUser($userId);

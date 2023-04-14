@@ -32,6 +32,7 @@ class ProjectTemplateFeaturesTest extends ClientTestCase
         $this->assertNotNull($featureFound);
         $this->assertSame($randomFeature['name'], $featureFound['name']);
         $this->assertSame($randomFeature['type'], $featureFound['type']);
+        $this->assertSame($randomFeature['title'], $featureFound['title']);
         $this->assertSame($randomFeature['description'], $featureFound['description']);
 
         $this->client->removeProjectTemplateFeature(self::TEST_PROJECT_TEMPLATE_STRING_ID, $randomFeature['name']);
@@ -82,18 +83,23 @@ class ProjectTemplateFeaturesTest extends ClientTestCase
         }
     }
 
-    private function prepareRandomFeature()
+    /**
+     * @return array{name: string, type: string, title: string, description: string}
+     */
+    private function prepareRandomFeature(): array
     {
+        $suffix = uniqid('', true);
         return [
-            'name' => 'test-feature-project-template-' . uniqid('', true),
+            'name' => 'test-feature-project-template-' . $suffix,
             'type' => 'project',
+            'title' => 'test feature project template ' . $suffix,
             'description' => 'project template feature',
         ];
     }
 
-    private function createFeature($feature)
+    private function createFeature($feature): void
     {
-        $this->client->createFeature($feature['name'], $feature['type'], $feature['description']);
+        $this->client->createFeature($feature['name'], $feature['type'], $feature['title'], $feature['description']);
     }
 
     private function getFeatures()

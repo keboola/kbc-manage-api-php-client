@@ -28,6 +28,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             $featureName,
             'project',
             $featureName,
+            $featureName,
             true,
             true
         );
@@ -79,6 +80,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             $featureName,
             'project',
             $featureName,
+            $featureName,
             $canBeManageByAdmin,
             true
         );
@@ -123,6 +125,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $newFeature = $this->client->createFeature(
             $featureName,
             'project',
+            $featureName,
             $featureName,
             false,
             false
@@ -197,6 +200,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             $featureName,
             'project',
             $featureName,
+            $featureName,
             true,
             true
         );
@@ -249,6 +253,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $newFeature = $this->client->createFeature(
             $featureName,
             'project',
+            $featureName,
             $featureName,
             false,
             true
@@ -313,6 +318,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $newFeature = $feature = $this->client->createFeature(
             $featureName,
             'project',
+            $featureName,
             $featureName,
             true,
             false
@@ -382,6 +388,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $newFeature = $this->client->createFeature(
             $featureName,
             'project',
+            $featureName,
             $featureName,
             true,
             true
@@ -474,6 +481,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             $featureName,
             'project',
             $featureName,
+            $featureName,
             true,
             true
         );
@@ -534,6 +542,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $newFeature = $this->client->createFeature(
             $featureName,
             'project',
+            $featureName,
             $featureName,
             true,
             true
