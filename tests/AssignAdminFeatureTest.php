@@ -24,6 +24,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
             $featureName,
             'admin',
             $featureName,
+            $featureName,
             $canBeManageByAdmin,
             true
         );
@@ -62,6 +63,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
+            $featureName,
             $featureName,
             false,
             false
@@ -124,6 +126,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
             $featureName,
             'admin',
             $featureName,
+            $featureName,
             true,
             true
         );
@@ -163,6 +166,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
+            $featureName,
             $featureName,
             true,
             true
@@ -217,6 +221,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
+            $featureName,
             $featureName,
             true,
             true
@@ -274,6 +279,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
         $newFeature = $this->client->createFeature(
             $featureName,
             'admin',
+            $featureName,
             $featureName,
             true,
             true
