@@ -3148,6 +3148,7 @@ the response will only contain features that have `canBeManageByAdmin: true`, `c
             "id": 1,
             "name": "show-new-design",
             "type": "admin",
+            "title": "Show new design",
             "description": "Users with this feature will see new UI",
             "created": "2016-04-28T15:24:51.620Z"
         }
@@ -3175,6 +3176,7 @@ Otherwise the response will be 404 Not Found.
         "id": 1,
         "name": "show-new-design",
         "type": "admin",
+        "title": "Show new design",
         "description": "Users with this feature will see new UI",
         "created": "2016-04-28T15:24:51.620Z"
     }
@@ -3239,8 +3241,9 @@ In the case of the `admin` role, an admin who does not have super admin privileg
 
 + Attributes
 
-    + name: show-new-design (required) - Feature name
+    + name: `show-new-design` (required) - Feature name (programmatic name)
     + type: admin, project (enum) (required) - Feature type
+    + title: Show new design (required) - Feature title (display name)
     + description: Users with this feature will see new UI (required) - Short description of the feature
     + canBeManageByAdmin: false (boolean, optional) - If true, the feature can be assigned by a user without the superadmin role
     + canBeManagedViaAPI: true (boolean, optional) - Enables or disables the ability to assign the project/admin feature using the API
@@ -3257,6 +3260,7 @@ In the case of the `admin` role, an admin who does not have super admin privileg
         "id": 1,
         "name": "show-new-design",
         "type": "admin",
+        "title": "Show new design",
         "description": "Users with this feature will see new UI",
         "canBeManageByAdmin": false,
         "canBeManagedViaAPI": true,
@@ -3272,6 +3276,7 @@ A partial update of a feature
 
 + Attributes
 
+    + title: Show new design (optional) - Feature title (display name)
     + description: Users with this feature will see new UI (optional) - Short description of the feature
     + canBeManageByAdmin: false (boolean, optional) - If true, the feature can be assigned by a user without the superadmin role
     + canBeManagedViaAPI: true (boolean, optional) - Enables or disables the ability to assign the project/admin feature using the API
@@ -3289,6 +3294,7 @@ A partial update of a feature
         "id": 1,
         "name": "show-new-design",
         "type": "admin",
+        "title": "Show new design",
         "description": "Users with this feature will see new UI",
         "canBeManageByAdmin": false,
         "canBeManagedViaAPI": true,
@@ -3326,7 +3332,7 @@ Organization and maintainer admin have no effect and the user has to actually jo
 
 + Attributes
 
-    + feature: show (required) - Feature name
+    + feature: `show-new-design` (required) - Feature name
 
 + Request (application/json)
     + Headers
@@ -3337,7 +3343,7 @@ Organization and maintainer admin have no effect and the user has to actually jo
 
     [Project][]
 
-### Remove a project feature [DELETE /manage/projects/{project_id}/features/{feature_name}]
+### Remove a project feature [DELETE /manage/projects/{project_id}/features/{feature}]
 
 If the parameter `canBeManageByAdmin` of the feature is `false`, project features can be removed only by a super admin.
 
@@ -3348,7 +3354,7 @@ Organization and maintainer admin have no effect and the user has to actually jo
 
 + Parameters
     + project_id (required, int) - Project ID
-    + feature_name (required, string) - Feature string ID
+    + feature: `show-new-design` (required, string) - Feature string ID
 
 + Request (application/json)
     + Headers
@@ -3376,7 +3382,7 @@ Organization and maintainer admin have no effect.
 
 + Attributes
 
-    + feature: show-new-design (required) - Feature name
+    + feature: `show-new-design` (required) - Feature name
 
 + Request (application/json)
     + Headers
@@ -3406,7 +3412,7 @@ Organization and maintainer admin have no effect.
 
 + Parameters
     + user_id_or_email (required) - User ID or email
-    + feature (required) - Feature name
+    + feature: `show-new-design` (required) - Feature name
 
 + Request (application/json)
     + Headers
@@ -3450,6 +3456,7 @@ Lists features assigned to a project template.
             "id": 52,
             "name": "test-feature",
             "type": "project",
+            "title": "Test feature",
             "description": "project template test feature",
             "created": "2018-04-12T21:46:37+0200"
         }
@@ -3465,7 +3472,7 @@ Lists features assigned to a project template.
 
 + Attributes
 
-    + feature: show-new-design (required) - Feature name
+    + feature: `show-new-design` (required) - Feature name
 
 + Request (application/json)
     + Headers
@@ -3480,7 +3487,7 @@ Removes a feature assigned to a project template.
 
 + Parameters
     + template (required) - StringId of project template
-    + feature (required) - Feature name
+    + feature: `show-new-design` (required) - Feature name
 
 + Request (application/json)
     + Headers

@@ -37,18 +37,23 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
         return $project;
     }
 
-    private function prepareRandomFeature()
+    /**
+     * @return array{name: string, type: string, title: string, description: string}
+     */
+    private function prepareRandomFeature(): array
     {
+        $suffix = uniqid('', true);
         return [
-            'name' => 'test-feature-project-template-' . uniqid('', true),
+            'name' => 'test-feature-project-template-' . $suffix,
             'type' => 'project',
+            'title' => 'test feature project template ' . $suffix,
             'description' => 'project template feature',
         ];
     }
 
-    private function createFeature($feature)
+    private function createFeature($feature): void
     {
-        $this->client->createFeature($feature['name'], $feature['type'], $feature['description']);
+        $this->client->createFeature($feature['name'], $feature['type'], $feature['title'], $feature['description']);
     }
 
     public function testCreateProjectWithROIMFeatureFromTemplate()
@@ -56,7 +61,7 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
         $roimFeatureName = 'input-mapping-read-only-storage';
 
         try {
-            $this->client->createFeature($roimFeatureName, 'project', 'Input mapping read only storage test feature');
+            $this->client->createFeature($roimFeatureName, 'project', $roimFeatureName, 'Input mapping read only storage test feature');
             $this->fail('Should fail');
         } catch (Throwable $e) {
             self::assertEquals($e->getMessage(), 'Feature already exists');
