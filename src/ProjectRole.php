@@ -10,4 +10,7 @@ final class ProjectRole
     public const GUEST = 'guest';
     public const READ_ONLY = 'readOnly';
     public const SHARE = 'share';
+    public const PRODUCTION_MANAGER = 'productionManager';
+    public const DEVELOPER = 'developer';
+    public const REVIEWER = 'reviewer';
 }
