@@ -45,6 +45,7 @@ class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         foreach ($this->client->listMyProjectInvitations() as $invitation) {
             $this->client->declineMyProjectInvitation($invitation['id']);
         }
+        $this->cleanupFeatures($this->testFeatureName(), 'project');
     }
 
     private function createProject(string $userEmail, ?Client $client = null): array
@@ -391,5 +392,75 @@ class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         $this->assertEquals($this->superAdmin['id'], $projectUser['approver']['id']);
         $this->assertEquals($this->superAdmin['email'], $projectUser['approver']['email']);
         $this->assertEquals($this->superAdmin['name'], $projectUser['approver']['name']);
+    }
+
+    public function testAddFeatureToProject(): void
+    {
+        ['id' => $projectId] = $this->createProject($this->superAdmin['email'], $this->client);
+
+        $featureName = $this->testFeatureName();
+        $this->client->createFeature(
+            $featureName,
+            'project',
+            $featureName,
+            $featureName,
+            true,
+            true
+        );
+
+        $getClient = function (Client $client): Client {
+            $sessionToken = $client->createSessionToken();
+            return $this->getClient([
+                'token' => $sessionToken['token'],
+                'url' => getenv('KBC_MANAGE_API_URL'),
+                'backoffMaxTries' => 0,
+            ]);
+        };
+
+        $productionManagerClient = $getClient($this->client);
+        $productionManagerClient->addProjectFeature($projectId, $featureName);
+        $project = $this->client->getProject($projectId);
+        $this->assertProjectHasFeature($featureName, $project['features']);
+        $productionManagerClient->removeProjectFeature($projectId, $featureName);
+
+        $this->client->addUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUser['email'],
+                'role' => 'developer',
+            ]
+        );
+        $developerClient = $getClient($this->normalUserClient);
+        try {
+            $developerClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Developer shouldn\'t be able to add project feature');
+        } catch (ClientException $e) {
+            $this->assertSame(403, $e->getCode());
+        }
+        $this->client->removeUserFromProject($projectId, $this->normalUser['id']);
+
+        $this->client->addUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUser['email'],
+                'role' => 'reviewer',
+            ]
+        );
+        $reviewerClient = $getClient($this->normalUserClient);
+        try {
+            $reviewerClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Reviewer shouldn\'t be able to add project feature');
+        } catch (ClientException $e) {
+            $this->assertSame(403, $e->getCode());
+        }
+    }
+
+    private function assertProjectHasFeature(string $featureName, array $features): void
+    {
+        $featureFound = null;
+        if (in_array($featureName, $features, true)) {
+            $featureFound = $featureName;
+        }
+        $this->assertNotNull($featureFound);
     }
 }
