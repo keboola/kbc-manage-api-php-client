@@ -588,6 +588,7 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->fail('user who is not maintainer nor org member should not have access to the org metadata');
         } catch (Exception $e) {
             $this->assertEquals(sprintf('You can\'t edit metadata for organization %s with maintainer provider', $this->organization['id']), $e->getMessage());
+            $this->assertEquals(403, $e->getCode());
         }
     }
 
@@ -621,7 +622,8 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $metadata[0]['id']);
             $this->fail('org member but not maintainer member cannot delete maintainer metadata');
         } catch (Exception $e) {
-            $this->assertEquals(sprintf('You can\'t delete metadata for organization %s with maintainer provider', $this->organization['id']), $e->getMessage());
+            $this->assertEquals(sprintf('You can\'t edit metadata for organization %s with maintainer provider', $this->organization['id']), $e->getMessage());
+            $this->assertEquals(403, $e->getCode());
         }
 
         // but still can see
@@ -643,6 +645,7 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->fail('org member but not maintainer member cannot delete maintainer metadata');
         } catch (Exception $e) {
             $this->assertEquals(sprintf('You don\'t have access to the organization %s', $this->organization['id']), $e->getMessage());
+            $this->assertEquals(403, $e->getCode());
         }
     }
 }
