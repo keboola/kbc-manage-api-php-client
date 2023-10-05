@@ -6,6 +6,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApi\Exception;
 use Keboola\ManageApi\ProjectRole;
 
 class OrganizationsMetadataTest extends ClientTestCase
@@ -468,6 +469,20 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->assertArrayHasKey('timestamp', $actual);
     }
 
+    private function validateMetadataAsSortedArray(array $expected, array $actual, string $provider)
+    {
+        usort($expected, function ($a, $b) {
+            return strcmp($a['key'], $b['key']);
+        });
+        usort($actual, function ($a, $b) {
+            return strcmp($a['key'], $b['key']);
+        });
+
+        foreach ($expected as $index => $metadata) {
+            $this->validateMetadataEquality($metadata, $actual[$index], $provider);
+        }
+    }
+
     private function cannotManageUserMetadata(Client $client, $metadataId, array $metadata = self::TEST_METADATA)
     {
         // note there is no cannotManageSYSTEMMetadata because LIST operation is the same and SET/DELETE operations are tested explicitly
@@ -543,6 +558,86 @@ class OrganizationsMetadataTest extends ClientTestCase
             $client->deleteOrganizationMetadata($this->organization['id'], $metadataId);
             $this->fail('Test should not reach this line.');
         } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+        }
+    }
+
+    public function testNormalUserCannotSetMetadataWithMaintainerProvider(): void
+    {
+        try {
+            $this->normalUserClient->setOrganizationMetadata($this->organization['id'], 'maintainer', self::TEST_METADATA);
+            $this->fail('user who is not maintainer nor org member should not have access to the org metadata');
+        } catch (Exception $e) {
+            $this->assertEquals(sprintf('You don\'t have access to the organization %s', $this->organization['id']), $e->getMessage());
+        }
+    }
+
+    public function testOrgMemberCannotSetMetadataWithMaintainerProvider(): void
+    {
+        try {
+            $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+            $this->normalUserClient->setOrganizationMetadata($this->organization['id'], 'maintainer', self::TEST_METADATA);
+            $this->fail('user who is not maintainer nor org member should not have access to the org metadata');
+        } catch (ClientException $e) {
+            $this->assertEquals(sprintf('You can\'t edit metadata for organization %s with maintainer provider', $this->organization['id']), $e->getMessage());
+            $this->assertEquals(403, $e->getCode());
+        }
+    }
+
+    public function testMaintainerMemberCanSetAndDeleteMetadataWithMaintainerProvider(): void
+    {
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->normalUserClient->setOrganizationMetadata($this->organization['id'], 'maintainer', self::TEST_METADATA);
+        $metadata = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->validateMetadataAsSortedArray(self::TEST_METADATA, $metadata, 'maintainer');
+
+        $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $metadata[0]['id']);
+
+        $metadata = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->validateMetadataEquality(self::TEST_METADATA[0], $metadata[0], 'maintainer');
+        $this->assertCount(1, $metadata);
+    }
+
+    public function testOrgMemberCannotDeleteMaintainerMetadata(): void
+    {
+        //setup
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+        $this->normalUserClient->setOrganizationMetadata($this->organization['id'], 'maintainer', self::TEST_METADATA);
+        $metadata = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->normalUser['id']);
+
+        // make user member of the org
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+
+        try {
+            $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $metadata[0]['id']);
+            $this->fail('org member but not maintainer member cannot delete maintainer metadata');
+        } catch (ClientException $e) {
+            $this->assertEquals(sprintf('You can\'t edit metadata for organization %s with maintainer provider', $this->organization['id']), $e->getMessage());
+            $this->assertEquals(403, $e->getCode());
+        }
+
+        // but still can see
+        $metadata = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->validateMetadataAsSortedArray(self::TEST_METADATA, $metadata, 'maintainer');
+        $this->assertCount(2, $metadata);
+    }
+
+    public function testNormalUserCannotDeleteMaintainerMetadata(): void
+    {
+        // setup
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+        $this->normalUserClient->setOrganizationMetadata($this->organization['id'], 'maintainer', self::TEST_METADATA);
+        $metadata = $this->normalUserClient->listOrganizationMetadata($this->organization['id']);
+        $this->client->removeUserFromMaintainer($this->testMaintainerId, $this->normalUser['id']);
+
+        try {
+            $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $metadata[0]['id']);
+            $this->fail('org member but not maintainer member cannot delete maintainer metadata');
+        } catch (ClientException $e) {
+            $this->assertEquals(sprintf('You don\'t have access to the organization %s', $this->organization['id']), $e->getMessage());
             $this->assertEquals(403, $e->getCode());
         }
     }
