@@ -539,6 +539,7 @@ An organization object has the following attributes:
 + allowAutoJoin
 + projects - an array of project objects
 + crmId - CRM id only for internal purposes
++ activityCenterProjectId - only for internal purposes
 + mfaRequired
 
 + Parameters
@@ -553,6 +554,7 @@ An organization object has the following attributes:
         "created": "2014-11-11T08:40:51.620Z",
         "allowAutoJoin": true,
         "crmId": "6232456",
+        "activityCenterProjectId": 123,
         "mfaRequired": false,
         "projects": [
             {
@@ -579,6 +581,7 @@ An organization object has the following attributes:
         "created": "2015-10-02T11:03:44+0200",
         "allowAutoJoin": true,
         "crmId": "6232456",
+        "activityCenterProjectId": 123,
         "mfaRequired": false,
         "projects": [
             {
@@ -600,6 +603,7 @@ Partial update of an organization
     + maintainerId - Assign the organization to another maintainer.
     + allowAutoJoin - Set whether superAdmins need approval to join the organization's projects (default `true`).
     + crmId:123456 - Set CRM ID. Only maintainer members and superadmins can change this.
+    + activityCenterProjectId:123 - Set ActivityCenter ProjectId. Only maintainer members and superadmins can change this.
     + mfaRequired - Toggle whether all members of or organization and its projects must have enabled multi-factor authentication (default `false`).
 
 + Request (application/json)
@@ -617,6 +621,7 @@ Partial update of an organization
         "created": "2015-10-02T11:03:44+0200",
         "allowAutoJoin": true,
         "crmId": "123456",
+        "activityCenterProjectId": 123,
         "mfaRequired": false,
         "projects": [
             {
@@ -924,6 +929,7 @@ Only members of the organization with MFA enabled can perform this action.
         "created": "2015-10-02T11:03:44+0200",
         "allowAutoJoin": true,
         "crmId": "123456",
+        "activityCenterProjectId": 123,
         "mfaRequired": true,
         "projects": [
             {
@@ -3046,6 +3052,7 @@ Create a new project from given promo code
                 "created": "2019-09-09T14:43:29+0200",
                 "allowAutoJoin": true,
                 "crmId": "",
+                "activityCenterProjectId": 123,
                 "mfaRequired": false
             },
             "projectTemplate": {
@@ -3066,6 +3073,7 @@ Create a new project from given promo code
                 "created": "2019-09-09T14:43:29+0200",
                 "allowAutoJoin": true,
                 "crmId": "",
+                "activityCenterProjectId": 123,
                 "mfaRequired": false
             },
             "projectTemplate": {
@@ -3107,6 +3115,7 @@ To create a new promo-code, provide the following parameters as JSON in the requ
             "created": "2019-09-09T14:43:29+0200",
             "allowAutoJoin": true,
             "crmId": "",
+            "activityCenterProjectId": 123,
             "mfaRequired": false
         },
         "projectTemplate": {
