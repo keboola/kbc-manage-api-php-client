@@ -58,7 +58,7 @@ class OrganizationsTest extends ClientTestCase
         $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
         $initialOrgsCount = count($organizations);
         $organization = $this->client->createOrganization($this->testMaintainerId, [
-           'name' => 'My org',
+            'name' => 'My org',
         ]);
 
         $fromList = array_values(array_filter($this->client->listOrganizations(), function ($org) use ($organization) {
@@ -88,6 +88,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEquals($org['name'], $organization['name']);
         $this->assertEmpty($org['projects']);
         $this->assertEmpty($org['crmId']);
+        $this->assertEmpty($org['activityCenterProjectId']);
         $this->assertNotEmpty($organization['created']);
 
         // permissions of another user
@@ -420,6 +421,60 @@ class OrganizationsTest extends ClientTestCase
             } else {
                 $this->assertEquals($projUser['email'], $normalUser['email']);
             }
+        }
+    }
+
+    public function testActivityCenterId()
+    {
+        $normalUser = $this->normalUserClient->verifyToken()['user'];
+
+        $organizationA = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org A',
+        ]);
+
+        // just to be able to create project B somewhere
+        $organizationB = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org B',
+        ]);
+
+        $this->client->addUserToOrganization($organizationA['id'], [
+            'email' => $normalUser['email'],
+        ]);
+
+        $this->client->addUserToOrganization($organizationB['id'], [
+            'email' => $normalUser['email'],
+        ]);
+
+        $testProjectA = $this->createRedshiftProjectForClient($this->normalUserClient, $organizationA['id'], [
+            'name' => 'Test Project A',
+        ]);
+        $testProjectB = $this->createRedshiftProjectForClient($this->normalUserClient, $organizationB['id'], [
+            'name' => 'Test Project B',
+        ]);
+
+        try {
+            $this->normalUserClient->updateOrganization($organizationA['id'], ['activityCenterProjectId' => $testProjectA['id']]);
+            $this->fail('should fail');
+        } catch (ClientException $e) {
+            $this->assertEquals('Only maintainer members can change ActivityCenter ProjectId', $e->getMessage());
+        }
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, [
+            'email' => $normalUser['email'],
+        ]);
+
+        $orgDetail = $this->normalUserClient->updateOrganization($organizationA['id'], ['activityCenterProjectId' => $testProjectA['id']]);
+        $this->assertEquals($testProjectA['id'], $orgDetail['activityCenterProjectId']);
+
+        $orgDetail = $this->normalUserClient->updateOrganization($organizationA['id'], ['activityCenterProjectId' => null]);
+        $this->assertEquals(null, $orgDetail['activityCenterProjectId']);
+
+        try {
+            // project B is not in the organization
+            $this->normalUserClient->updateOrganization($organizationA['id'], ['activityCenterProjectId' => $testProjectB['id']]);
+            $this->fail('should fail');
+        } catch (ClientException $e) {
+            $this->assertEquals('Project not found', $e->getMessage());
         }
     }
 }
