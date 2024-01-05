@@ -476,5 +476,19 @@ class OrganizationsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals('Project not found', $e->getMessage());
         }
+
+        // move project A under Org B .
+        $this->normalUserClient->changeProjectOrganization($testProjectA['id'], $organizationB['id']);
+
+        $orgADetail = $this->normalUserClient->getOrganization($organizationA['id']);
+        $this->assertNull($orgADetail['activityCenterProjectId']);
+
+        // set activity center project in OrgB (because it is there) and delete the project
+        $orgDetail = $this->normalUserClient->updateOrganization($organizationB['id'], ['activityCenterProjectId' => $testProjectA['id']]);
+        $this->assertEquals($testProjectA['id'], $orgDetail['activityCenterProjectId']);
+
+        $this->client->deleteProject($testProjectA['id']);
+        $orgADetail = $this->normalUserClient->getOrganization($organizationB['id']);
+        $this->assertNull($orgADetail['activityCenterProjectId']);
     }
 }
