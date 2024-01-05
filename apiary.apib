@@ -1250,7 +1250,7 @@ This endpoint can also be accessed using application tokens with scope `projects
     [Project][]
 
 ### Delete a project [DELETE]
-A project will not be physically deleted. It'll only be inaccessible and hidden.
+A project will not be physically deleted. It'll only be inaccessible and hidden. If project was listed as `activityCenterProjectId` in it's organization and it will be deleted, the `activityCenterProjectId` will be set to `null`.
 
 + Parameters
     + project_id (required, int) - Project ID
@@ -1331,7 +1331,7 @@ A project will be created from a default template which defines its limits. Only
 
 
 ## Move Project to Another Organization [/manage/projects/{project_id}/organizations]
-
+If project was listed as `activityCenterProjectId` in it's organization and it will be moved, the `activityCenterProjectId` will be set to `null`.
 + Parameters
     + project_id (required, int)  - Project ID
 
