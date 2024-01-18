@@ -758,6 +758,11 @@ class Client
         $this->apiDelete($this->encode('manage/ui-apps/%s', $name));
     }
 
+    public function activateUiAppVersion(string $name, string $version)
+    {
+        return $this->apiPost($this->encode('manage/ui-apps/%s/activate/%s', $name, $version));
+    }
+
     public function runCommand(array $options)
     {
         return $this->apiPost('/manage/commands', $options);

@@ -4168,6 +4168,21 @@ Returns active applications. This resource doesn't require authentication.
     }
     ```
 
+### Activate application version [POST /manage/ui-apps/{id}/activate/{version}]
+
+Activates application version
+
++ Parameters
+    + id (required, string) - stringId/name of application
+    + version (required, string) - version of application
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
 ### Delete Application [DELETE /manage/ui-apps/{id}]
 
 Deletes application and its versions

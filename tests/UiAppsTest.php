@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
+use Keboola\ManageApi\ClientException;
 
 class UiAppsTest extends ClientTestCase
 {
@@ -45,6 +46,41 @@ class UiAppsTest extends ClientTestCase
         $this->assertSame(count($listOfAppsBeforeCreation), (count($listOfAppsAfterCreation) - 1));
         $this->assertNotFalse(array_search($newAppName, $listOfAppsAfterCreation));
         $this->assertEquals($listOfAppsBeforeCreation, $listOfAppsAfterDeletion);
+    }
+
+    public function testAppActivate()
+    {
+        $client = $this->getClient([
+            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 1,
+        ]);
+
+        $newAppName = 'Sample KBC Application';
+
+        try {
+            $client->deleteUiApp($newAppName);
+        } catch (ClientException $e) {
+            // intentionally empty
+        }
+
+        $client->registerUiApp([
+            'manifestUrl' => 'https://keboola.github.io/kbc-ui-app-manifest-file/sample.json',
+            'activate' => false,
+        ]);
+
+        $apps = array_filter($client->listUiApps(), function ($app) use ($newAppName) {
+            return $app['name'] === $newAppName;
+        });
+
+        $this->assertCount(0, $apps, 'Without active version should not be returned');
+
+        $client->activateUiAppVersion($newAppName, '1');
+
+        $apps = array_values(array_filter($client->listUiApps(), function ($app) use ($newAppName) {
+            return $app['name'] === $newAppName;
+        }));
+        $this->assertCount(1, $apps, 'Active version should be returned');
     }
 
     public function testPublicList()
