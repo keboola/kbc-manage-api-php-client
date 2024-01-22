@@ -11,8 +11,8 @@
         "keboola/coding-standard": "^15.0",
         "keboola/phpunit-retry-annotations": "^0.3.0",
         "keboola/storage-api-client": "^12.0",
-        "phpstan/phpstan": "^0.12.94",
-        "phpstan/phpstan-phpunit": "^0.12.22",
+        "phpstan/phpstan": "^1.10",
+        "phpstan/phpstan-phpunit": "^1",
         "phpunit/phpunit": "^7.0|^8.0"
     },
     "autoload": {
@@ -32,7 +32,7 @@
         ],
         "phpcs": "phpcs -s -n -p --extensions=php src tests",
         "phpcbf": "phpcbf -s -n -p --extensions=php src tests",
-        "phpstan": "phpstan analyse ./src ./tests --level=max -c phpstan.neon",
+        "phpstan": "phpstan analyse ./src ./tests -c phpstan.neon",
         "tests": "phpunit"
     },
     "authors": [

@@ -6,11 +6,6 @@ parameters:
 			path: src/Client.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$stringCode\\)\\: Unexpected token \"\\$stringCode\", expected type at offset 18$#"
-			count: 1
-			path: src/Exception.php
-
-		-
 			message: "#^Parameter \\#1 \\$message of method Exception\\:\\:__construct\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: src/Exception.php
@@ -26,19 +21,24 @@ parameters:
 			path: tests/ClientTestCase.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$parameters\\)\\: Unexpected token \"\\$parameters\", expected type at offset 56$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
-			path: tests/CommandsTest.php
+			path: tests/FileStorageAbsTest.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$parameters\\)\\: Unexpected token \"\\$parameters\", expected type at offset 58$#"
+			message: "#^Property Keboola\\\\ManageApiTest\\\\FileStorageGcsTest\\:\\:\\$credentials is never written, only read\\.$#"
 			count: 1
-			path: tests/CommandsTest.php
+			path: tests/FileStorageGcsTest.php
+
+		-
+			message: "#^Property Keboola\\\\ManageApiTest\\\\FileStorageGcsTest\\:\\:\\$rotateCredentials is never written, only read\\.$#"
+			count: 1
+			path: tests/FileStorageGcsTest.php
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
-			path: tests/FileStorageAbsTest.php
+			path: tests/FileStorageGcsTest.php
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
@@ -61,23 +61,23 @@ parameters:
 			path: tests/ProjectMembershipRolesTest.php
 
 		-
-			message: "#^Offset 'role' does not exist on array\\|null\\.$#"
-			count: 4
-			path: tests/ProjectsTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$organizationId\\)\\: Unexpected token \"\\$organizationId\", expected type at offset 18$#"
+			message: "#^Constant Keboola\\\\ManageApiTest\\\\ProjectsTest\\:\\:FILE_STORAGE_PROVIDER_ABS is unused\\.$#"
 			count: 1
 			path: tests/ProjectsTest.php
 
 		-
-			message: "#^Variable \\$organization might not be defined\\.$#"
-			count: 4
+			message: "#^Method Keboola\\\\ManageApiTest\\\\ProjectsTest\\:\\:initTestOrganization\\(\\) should return array but returns array\\|ArrayAccess\\.$#"
+			count: 1
 			path: tests/ProjectsTest.php
 
 		-
-			message: "#^Variable \\$project might not be defined\\.$#"
-			count: 3
+			message: "#^Method Keboola\\\\ManageApiTest\\\\ProjectsTest\\:\\:initTestProject\\(\\) should return array but returns array\\|ArrayAccess\\.$#"
+			count: 1
+			path: tests/ProjectsTest.php
+
+		-
+			message: "#^Offset 'role' does not exist on array\\|null\\.$#"
+			count: 4
 			path: tests/ProjectsTest.php
 
 		-
