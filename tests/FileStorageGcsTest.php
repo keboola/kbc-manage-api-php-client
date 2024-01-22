@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use RuntimeException;
 use const JSON_THROW_ON_ERROR;
 
 /**
@@ -21,8 +22,16 @@ class FileStorageGcsTest extends ClientTestCase
 
     public function setUp(): void
     {
-        $this->credentials = json_decode((string) TEST_GCS_KEYFILE_JSON, true, 512, JSON_THROW_ON_ERROR);
-        $this->rotateCredentials = json_decode((string) TEST_GCS_KEYFILE_ROTATE_JSON, true, 512, JSON_THROW_ON_ERROR);
+        $credentials = json_decode((string) TEST_GCS_KEYFILE_JSON, true, 512, JSON_THROW_ON_ERROR);
+        if ($credentials === null) {
+            throw new RuntimeException('Cannot parse credentials');
+        }
+        $this->credentials = $credentials;
+        $rotateCredentials = json_decode((string) TEST_GCS_KEYFILE_ROTATE_JSON, true, 512, JSON_THROW_ON_ERROR);
+        if ($rotateCredentials === null) {
+            throw new RuntimeException('Cannot parse credentials');
+        }
+        $this->rotateCredentials = $rotateCredentials;
         parent::setUp();
     }
 
