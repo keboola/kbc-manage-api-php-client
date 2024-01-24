@@ -45,6 +45,7 @@ class MaintainersMetadataTest extends ClientTestCase
             'defaultConnectionMysqlId' => $testMaintainer['defaultConnectionMysqlId'],
             'defaultConnectionRedshiftId' => $testMaintainer['defaultConnectionRedshiftId'],
             'defaultConnectionSnowflakeId' => $testMaintainer['defaultConnectionSnowflakeId'],
+            'defaultFileStorageId' => $testMaintainer['defaultFileStorageId'],
         ]);
 
         // add dummy user as maintainer admin
