@@ -26,6 +26,7 @@ class StorageBackendTest extends ClientTestCase
      */
     public function testCreateStorageBackend(array $options)
     {
+        $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
 
         $newBackend = $this->client->createStorageBackend($options);
@@ -36,6 +37,7 @@ class StorageBackendTest extends ClientTestCase
         $newMaintainer = $this->client->createMaintainer([
             'name' => $maintainerName,
             'defaultConnectionSnowflakeId' => $newBackend['id'],
+            'defaultFileStorageId' => $testMaintainer['defaultFileStorageId'],
         ]);
 
         $name = 'My org';
@@ -205,10 +207,12 @@ class StorageBackendTest extends ClientTestCase
         if (array_key_exists('useDynamicBackends', $updateOptions)) {
             $this->assertNotSame($backend['useDynamicBackends'], $updatedBackend['useDynamicBackends']);
         }
+        $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
         $newMaintainer = $this->client->createMaintainer([
             'name' => $maintainerName,
             'defaultConnectionSnowflakeId' => $backend['id'],
+            'defaultFileStorageId' => $testMaintainer['defaultFileStorageId'],
         ]);
 
         $name = 'My org';
