@@ -20,6 +20,7 @@ class ProjectStorageBackendTest extends ClientTestCase
     }
 
     /**
+     * @group skipOnGcp
      * @dataProvider supportedNonDefaultBackends
      * @param string $backendName
      */
