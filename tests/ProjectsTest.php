@@ -46,6 +46,7 @@ class ProjectsTest extends ClientTestCase
     }
 
     /**
+     * @group skipOnGcp
      * @dataProvider unsupportedBackendFileStorageCombinations
      */
     public function testUnsupportedFileStorageForBackend(
@@ -224,11 +225,26 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($firstLimit['name'], $limitKeys[0]);
 
         $this->assertArrayHasKey('fileStorage', $project);
+
         $fileStorage = $project['fileStorage'];
         $this->assertIsInt($fileStorage['id']);
-        $this->assertArrayHasKey('awsKey', $fileStorage);
         $this->assertArrayHasKey('region', $fileStorage);
-        $this->assertArrayHasKey('filesBucket', $fileStorage);
+        switch ($fileStorage['provider']) {
+            case self::FILE_STORAGE_PROVIDER_S3:
+                $this->assertArrayHasKey('awsKey', $fileStorage);
+                $this->assertArrayHasKey('filesBucket', $fileStorage);
+                break;
+            case 'gcp':
+                $this->assertArrayHasKey('gcsCredentials', $fileStorage);
+                $this->assertArrayHasKey('gcsSnowflakeIntegrationName', $fileStorage);
+                $this->assertArrayHasKey('filesBucket', $fileStorage);
+                break;
+            case self::FILE_STORAGE_PROVIDER_ABS:
+                $this->assertArrayHasKey('accountName', $fileStorage);
+                $this->assertArrayHasKey('containerName', $fileStorage);
+                $this->assertArrayHasKey('containerName', $fileStorage);
+                break;
+        }
 
         $this->assertArrayHasKey('backends', $project);
 
