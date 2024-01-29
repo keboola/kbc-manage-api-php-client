@@ -104,6 +104,7 @@ class ProjectsTest extends ClientTestCase
     }
 
     /**
+     * @group skipOnGcp
      * @dataProvider unsupportedBackendFileStorageCombinations
      */
     public function testUnsupportedBackendForFileStorage(
