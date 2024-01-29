@@ -214,7 +214,12 @@ class ProjectDeleteTest extends ClientTestCase
 
         $this->assertEquals($backend, $project['defaultBackend']);
 
-        $this->client->assignFileStorage($project['id'], $this->loadFileStorageId($fileStorageProvider));
+        $fileStorageId = $this->loadFileStorageId($fileStorageProvider);
+        if ($fileStorageId === null) {
+            $this->markTestSkipped(sprintf('File storage "%s" is not available on this stack.', $fileStorageProvider));
+        }
+
+        $this->client->assignFileStorage($project['id'], $fileStorageId);
 
         if ($backend === Backend::REDSHIFT
             || $backend === Backend::SYNAPSE
@@ -325,7 +330,7 @@ class ProjectDeleteTest extends ClientTestCase
         $this->assertNotNull($deletedProject['purgedTime']);
     }
 
-    private function loadFileStorageId(string $fileStorageProvider): int
+    private function loadFileStorageId(string $fileStorageProvider): ?int
     {
         if ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_ABS) {
             $fileStorages = array_filter(
@@ -351,6 +356,6 @@ class ProjectDeleteTest extends ClientTestCase
         }
 
         $fileStorage = end($fileStorages);
-        return $fileStorage['id'];
+        return $fileStorage['id'] ?? null;
     }
 }
