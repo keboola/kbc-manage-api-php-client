@@ -16,21 +16,18 @@ class FileStorageGcsTest extends ClientTestCase
         'awsSecret' => TEST_S3_ROTATE_SECRET,
     ];
 
+
     private array $credentials;
 
     private array $rotateCredentials;
 
     public function setUp(): void
     {
-        $credentials = json_decode((string) TEST_GCS_KEYFILE_JSON, true, 512, JSON_THROW_ON_ERROR);
-        if ($credentials === null) {
-            throw new RuntimeException('Cannot parse credentials');
-        }
+        /** @var mixed[] $credentials */
+        $credentials = json_decode((string) 'Xxx', true, 512, JSON_THROW_ON_ERROR);
         $this->credentials = $credentials;
-        $rotateCredentials = json_decode((string) TEST_GCS_KEYFILE_ROTATE_JSON, true, 512, JSON_THROW_ON_ERROR);
-        if ($rotateCredentials === null) {
-            throw new RuntimeException('Cannot parse credentials');
-        }
+        /** @var mixed[] $rotateCredentials */
+        $rotateCredentials = json_decode((string) 'Xxx', true, 512, JSON_THROW_ON_ERROR);
         $this->rotateCredentials = $rotateCredentials;
         parent::setUp();
     }

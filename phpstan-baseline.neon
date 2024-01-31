@@ -26,21 +26,6 @@ parameters:
 			path: tests/FileStorageAbsTest.php
 
 		-
-			message: "#^Property Keboola\\\\ManageApiTest\\\\FileStorageGcsTest\\:\\:\\$credentials is never written, only read\\.$#"
-			count: 1
-			path: tests/FileStorageGcsTest.php
-
-		-
-			message: "#^Property Keboola\\\\ManageApiTest\\\\FileStorageGcsTest\\:\\:\\$rotateCredentials is never written, only read\\.$#"
-			count: 1
-			path: tests/FileStorageGcsTest.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: tests/FileStorageGcsTest.php
-
-		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: tests/FileStorageS3Test.php
@@ -59,11 +44,6 @@ parameters:
 			message: "#^Offset 'role' does not exist on array\\|null\\.$#"
 			count: 2
 			path: tests/ProjectMembershipRolesTest.php
-
-		-
-			message: "#^Constant Keboola\\\\ManageApiTest\\\\ProjectsTest\\:\\:FILE_STORAGE_PROVIDER_ABS is unused\\.$#"
-			count: 1
-			path: tests/ProjectsTest.php
 
 		-
 			message: "#^Method Keboola\\\\ManageApiTest\\\\ProjectsTest\\:\\:initTestOrganization\\(\\) should return array but returns array\\|ArrayAccess\\.$#"
