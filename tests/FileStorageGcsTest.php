@@ -16,7 +16,6 @@ class FileStorageGcsTest extends ClientTestCase
         'awsSecret' => TEST_S3_ROTATE_SECRET,
     ];
 
-
     private array $credentials;
 
     private array $rotateCredentials;
@@ -24,10 +23,10 @@ class FileStorageGcsTest extends ClientTestCase
     public function setUp(): void
     {
         /** @var mixed[] $credentials */
-        $credentials = json_decode((string) 'Xxx', true, 512, JSON_THROW_ON_ERROR);
+        $credentials = json_decode((string) TEST_GCS_KEYFILE_JSON, true, 512, JSON_THROW_ON_ERROR);
         $this->credentials = $credentials;
         /** @var mixed[] $rotateCredentials */
-        $rotateCredentials = json_decode((string) 'Xxx', true, 512, JSON_THROW_ON_ERROR);
+        $rotateCredentials = json_decode((string) TEST_GCS_KEYFILE_ROTATE_JSON, true, 512, JSON_THROW_ON_ERROR);
         $this->rotateCredentials = $rotateCredentials;
         parent::setUp();
     }
