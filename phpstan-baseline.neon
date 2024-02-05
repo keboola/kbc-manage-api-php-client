@@ -6,11 +6,6 @@ parameters:
 			path: src/Client.php
 
 		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$stringCode\\)\\: Unexpected token \"\\$stringCode\", expected type at offset 18$#"
-			count: 1
-			path: src/Exception.php
-
-		-
 			message: "#^Parameter \\#1 \\$message of method Exception\\:\\:__construct\\(\\) expects string, string\\|null given\\.$#"
 			count: 1
 			path: src/Exception.php
@@ -24,16 +19,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$url of function parse_url expects string, string\\|false given\\.$#"
 			count: 1
 			path: tests/ClientTestCase.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$parameters\\)\\: Unexpected token \"\\$parameters\", expected type at offset 56$#"
-			count: 1
-			path: tests/CommandsTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$parameters\\)\\: Unexpected token \"\\$parameters\", expected type at offset 58$#"
-			count: 1
-			path: tests/CommandsTest.php
 
 		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
@@ -61,23 +46,18 @@ parameters:
 			path: tests/ProjectMembershipRolesTest.php
 
 		-
-			message: "#^Offset 'role' does not exist on array\\|null\\.$#"
-			count: 4
-			path: tests/ProjectsTest.php
-
-		-
-			message: "#^PHPDoc tag @param has invalid value \\(\\$organizationId\\)\\: Unexpected token \"\\$organizationId\", expected type at offset 18$#"
+			message: "#^Method Keboola\\\\ManageApiTest\\\\ProjectsTest\\:\\:initTestOrganization\\(\\) should return array but returns array\\|ArrayAccess\\.$#"
 			count: 1
 			path: tests/ProjectsTest.php
 
 		-
-			message: "#^Variable \\$organization might not be defined\\.$#"
-			count: 4
+			message: "#^Method Keboola\\\\ManageApiTest\\\\ProjectsTest\\:\\:initTestProject\\(\\) should return array but returns array\\|ArrayAccess\\.$#"
+			count: 1
 			path: tests/ProjectsTest.php
 
 		-
-			message: "#^Variable \\$project might not be defined\\.$#"
-			count: 3
+			message: "#^Offset 'role' does not exist on array\\|null\\.$#"
+			count: 4
 			path: tests/ProjectsTest.php
 
 		-
