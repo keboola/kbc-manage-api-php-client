@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use RuntimeException;
 use const JSON_THROW_ON_ERROR;
 
 /**
@@ -21,8 +22,12 @@ class FileStorageGcsTest extends ClientTestCase
 
     public function setUp(): void
     {
-        $this->credentials = json_decode((string) TEST_GCS_KEYFILE_JSON, true, 512, JSON_THROW_ON_ERROR);
-        $this->rotateCredentials = json_decode((string) TEST_GCS_KEYFILE_ROTATE_JSON, true, 512, JSON_THROW_ON_ERROR);
+        /** @var mixed[] $credentials */
+        $credentials = json_decode((string) TEST_GCS_KEYFILE_JSON, true, 512, JSON_THROW_ON_ERROR);
+        $this->credentials = $credentials;
+        /** @var mixed[] $rotateCredentials */
+        $rotateCredentials = json_decode((string) TEST_GCS_KEYFILE_ROTATE_JSON, true, 512, JSON_THROW_ON_ERROR);
+        $this->rotateCredentials = $rotateCredentials;
         parent::setUp();
     }
 
