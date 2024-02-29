@@ -673,7 +673,19 @@ Creates a new organization.
 
 + Response 200
 
-    [Organization][]
+    ```js
+    [
+        {
+          "id": 123,
+          "name": "sample org",
+          "created": "2014-11-11T08:40:51.620Z",
+          "allowAutoJoin": true,
+          "crmId": "6232456",
+          "activityCenterProjectId": 123,
+          "mfaRequired": false
+        }
+    ]
+    ```
 
 
 ## Organization Invitations [/manage/organizations/{organization_id}/invitations]
