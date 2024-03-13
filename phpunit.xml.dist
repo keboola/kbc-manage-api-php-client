@@ -2,11 +2,25 @@
 <phpunit bootstrap="./tests/bootstrap.php"
          colors="true">
     <testsuites>
-        <testsuite>
+        <testsuite name="manage">
             <directory>tests</directory>
             <exclude>tests/FileStorageAbsTest.php</exclude>
             <exclude>tests/FileStorageS3Test.php</exclude>
             <exclude>tests/FileStorageGcsTest.php</exclude>
+
+
+            <exclude>tests/MaintainersMetadataTest.php</exclude>
+            <exclude>tests/OrganizationsMetadataTest.php</exclude>
+            <exclude>tests/ProjectsMetadataTest.php</exclude>
+            <exclude>tests/UsersMetadataTest.php</exclude>
+            <exclude>tests/PromoCodesTest.php</exclude>
+        </testsuite>
+        <testsuite name="manage-part-2">
+            <file>tests/MaintainersMetadataTest.php</file>
+            <file>tests/OrganizationsMetadataTest.php</file>
+            <file>tests/ProjectsMetadataTest.php</file>
+            <file>tests/UsersMetadataTest.php</file>
+            <file>tests/PromoCodesTest.php</file>
         </testsuite>
     </testsuites>
     <filter>
