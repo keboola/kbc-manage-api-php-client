@@ -208,4 +208,18 @@ Errors:
         $this->expectExceptionMessage(sprintf('AWS S3 file storage "%d" not found', $storage['id']));
         $this->client->rotateS3FileStorageCredentials($storage['id'], self::ROTATE_S3_OPTIONS);
     }
+
+    public function testNonSuperAdminFileStorageGcsCreate(): void
+    {
+        $storage = $this->normalUserClient->createGcsFileStorage($this->getGcsDefaultOptions());
+
+        $credentials = $storage['gcsCredentials'];
+        $this->assertArrayNotHasKey('private_key', $credentials);
+        $this->assertSame($this->getExpectedGcsCredentialsWithoutPk(), $credentials);
+        $this->assertSame('keboola', $storage['owner']);
+        $this->assertSame(TEST_GCS_REGION, $storage['region']);
+        $this->assertSame($storage['provider'], 'gcp');
+        $this->assertFalse($storage['isDefault']);
+        $this->assertStringEndsWith('_' . $storage['id'] . '_GCS', $storage['gcsSnowflakeIntegrationName']);
+    }
 }
