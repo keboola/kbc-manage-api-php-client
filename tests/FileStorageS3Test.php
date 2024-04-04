@@ -206,6 +206,7 @@ Errors:
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
 
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
