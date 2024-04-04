@@ -1,15 +1,15 @@
 provider "google" {
-  project = var.gcs_project_id
-  region  = var.gcs_project_region
+  project = var.gcp_project_id
+  region  = var.gcp_project_region
 }
 
-variable "gcs_project_id" {
+variable "gcp_project_id" {
   type = string
 }
-variable "gcs_project_region" {
+variable "gcp_project_region" {
   type = string
 }
-variable "gcs_storage_location" {
+variable "gcp_storage_location" {
   type = string
 }
 
@@ -18,7 +18,7 @@ variable "gcs_storage_location" {
 module "gcp_storage" {
   source = "./modules/gcp/storage"
 
-  storage_location  = var.gcs_storage_location
+  storage_location  = var.gcp_storage_location
   service_name      = local.service_name
 }
 
@@ -39,7 +39,7 @@ module "gcp_account_rotate" {
 # Outputs
 
 output "TEST_GCS_REGION" {
-  value       = var.gcs_storage_location
+  value       = var.gcp_storage_location
   description = "Region whare GCS is located"
 }
 output "TEST_GCS_FILES_BUCKET" {
