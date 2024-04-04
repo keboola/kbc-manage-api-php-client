@@ -1,16 +1,16 @@
 
-resource "aws_s3_bucket" "s3_files_bucket" {
+resource "aws_s3_bucket" "mapi_file_storage" {
   bucket = "${var.service_name}-s3-bucket"
 
   tags = {
-    Name = "keboola-mapi-file-storage"
+    Name = "mapi-file-storage"
   }
 
   force_destroy = true
 }
 
 resource "aws_s3_bucket_cors_configuration" "s3_files_bucket_cors_configuration" {
-  bucket = aws_s3_bucket.s3_files_bucket.bucket
+  bucket = aws_s3_bucket.mapi_file_storage.bucket
 
   cors_rule {
     allowed_headers = ["*"]
@@ -26,7 +26,7 @@ resource "aws_s3_bucket_cors_configuration" "s3_files_bucket_cors_configuration"
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "s3_files_bucket_lifecycle_config" {
-  bucket = aws_s3_bucket.s3_files_bucket.bucket
+  bucket = aws_s3_bucket.mapi_file_storage.bucket
   rule {
     id = "After 30 days IA, 180 days to glacier and 270 delete"
     filter {

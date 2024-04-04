@@ -17,58 +17,61 @@ variable "aws_account" {
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
-module "create_bucket" {
-  source = "./modules/aws/bucket"
+# Create resources
+
+module "aws_storage" {
+  source = "./modules/aws/storage"
 
   service_name = local.service_name
 }
 
-module "create_policy" {
+module "aws_policy" {
   source = "./modules/aws/policy"
 
-  service_name = local.service_name
-  bucket_arn = module.create_bucket.bucket_arn
+  service_name  = local.service_name
+  bucket_arn    = module.aws_storage.bucket_arn
 }
 
-module "create_user" {
+module "aws_user" {
   source = "./modules/aws/user"
 
-  service_name = local.service_name
-  policy_arn = module.create_policy.policy_arn
+  service_name  = local.service_name
+  policy_arn    = module.aws_policy.policy_arn
 }
 
-module "create_user_rotate" {
+module "aws_user_rotate" {
   source = "./modules/aws/user"
 
-  service_name = local.rotate_service_name
-  policy_arn = module.create_policy.policy_arn
+  service_name  = local.rotate_service_name
+  policy_arn    = module.aws_policy.policy_arn
 }
 
+# Outputs
 
 output "TEST_S3_REGION" {
   value = data.aws_region.current.id
   description = "Region where your S3 is located"
 }
 output "TEST_S3_KEY" {
-  value = module.create_user.access_key_id
+  value = module.aws_user.access_key_id
   description = "First AWS key"
 }
 output "TEST_S3_SECRET" {
-  value = module.create_user.access_key_secret
+  value = module.aws_user.access_key_secret
   sensitive = true
   description = "First AWS secret"
 }
 output "TEST_S3_ROTATE_KEY" {
-  value = module.create_user_rotate.access_key_id
+  value = module.aws_user_rotate.access_key_id
   description = "Second AWS key"
 }
 output "TEST_S3_ROTATE_SECRET" {
-  value = module.create_user_rotate.access_key_secret
+  value = module.aws_user_rotate.access_key_secret
   sensitive = true
   description = "Second AWS secret"
 }
 output "TEST_S3_FILES_BUCKET" {
-  value = module.create_bucket.bucket_name
+  value = module.aws_storage.bucket_name
   description = "Name of file bucket on S3"
 }
 

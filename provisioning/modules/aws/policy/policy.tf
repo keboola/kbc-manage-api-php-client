@@ -1,4 +1,4 @@
-data "aws_iam_policy_document" "access-policy-document" {
+data "aws_iam_policy_document" "mapi_access_policy_document" {
   statement {
     sid    = "S3Access"
     effect = "Allow"
@@ -37,8 +37,8 @@ data "aws_iam_policy_document" "access-policy-document" {
   }
 }
 
-resource "aws_iam_policy" "app-policy" {
-  name        = "${var.service_name}-app-policy"
+resource "aws_iam_policy" "mapi_app_policy" {
+  name        = "${var.service_name}-mapi_app_policy"
   description = "${var.service_name} - MAPI App Services"
-  policy      = data.aws_iam_policy_document.access-policy-document.json
+  policy      = data.aws_iam_policy_document.mapi_access_policy_document.json
 }

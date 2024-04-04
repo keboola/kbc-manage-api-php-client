@@ -1,20 +1,20 @@
-resource "azurerm_storage_account" "files" {
+resource "azurerm_storage_account" "mapi_file_storage" {
   account_replication_type  = "RAGRS"
   account_tier              = "Standard"
   location                  = var.resource_group_location
-  name                      = "kbcfs${var.resource_group_uuid}"
+  name                      = "mapi${var.resource_group_uuid}"
   resource_group_name       = var.resource_group_name
   account_kind              = "StorageV2"
   enable_https_traffic_only = true
 }
 
-resource "azurerm_storage_container" "files_test_container" {
+resource "azurerm_storage_container" "mapi_file_storage_container" {
   name                 = var.files_container
-  storage_account_name = azurerm_storage_account.files.name
+  storage_account_name = azurerm_storage_account.mapi_file_storage.name
 }
 
-resource "azurerm_storage_management_policy" "files_policy" {
-  storage_account_id = azurerm_storage_account.files.id
+resource "azurerm_storage_management_policy" "mapi_file_storage_policy" {
+  storage_account_id = azurerm_storage_account.mapi_file_storage.id
 
   rule {
     name    = "48-hours-expire"
