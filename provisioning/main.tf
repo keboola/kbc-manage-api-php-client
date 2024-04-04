@@ -25,14 +25,8 @@ terraform {
 variable "name_prefix" {
   type = string
 }
-variable "gcs_storage_location" {
-  type = string
-}
-
 
 locals {
-  service_name = "${var.name_prefix}-mapi-services"
-  rotate_service_name = "${var.name_prefix}-mapi-rotate-services"
+  service_name = "${var.name_prefix}-mapi"
+  rotate_service_name = "${var.name_prefix}-mapi-rotate"
 }
-
-
