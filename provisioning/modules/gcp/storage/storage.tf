@@ -1,4 +1,4 @@
-resource "google_storage_bucket" "mapi_file_storage_backend" {
+resource "google_storage_bucket" "mapi_file_storage" {
   name                     = "${var.service_name}-files-storage"
   location                 = var.storage_location
   storage_class            = "STANDARD"
