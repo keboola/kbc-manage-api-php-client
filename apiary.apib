@@ -3533,6 +3533,8 @@ Each type of storage has its own endpoint.
 
 ### Create new AWS S3 Storage [POST]
 
+Superuser credentials are not required for storage registration
+
 New S3 file Storage will be registered. Provided AWS credentials are verified and required permissions are validated.
 The Storage region is automatically detected.
 
@@ -3580,6 +3582,8 @@ Only storage owned by **keboola** can be set as default.
 
 ### Create new Google Cloud Storage [POST]
 
+Superuser credentials are not required for storage registration
+
 Will register new Google Cloud Storage for using inside KBC. Connection wil be verified during registraion.
 
 + Request (application/json)
@@ -3611,6 +3615,8 @@ Returns all registered Google Cloud Storages.
 ## Blob Storage - File Storage Collection [/manage/file-storage-abs]
 
 ### Create new Azure Blob Storage [POST]
+
+Superuser credentials are not required for storage registration
 
 Will register new Azure Blob Storage for using inside KBC. Connection wil be verified during registraion.
 
