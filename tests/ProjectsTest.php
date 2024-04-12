@@ -1026,6 +1026,38 @@ class ProjectsTest extends ClientTestCase
         $this->assertEmpty($verified['bucketPermissions']);
     }
 
+    public function testCreateProjectStorageTokenUsingApplicationTokenWithScope(): void
+    {
+        $objectName = $this->generateDescriptionForTestObject();
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => $objectName,
+        ]);
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
+            'name' => $objectName,
+        ]);
+
+        $manageClient = new Client([
+            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_STORAGE_TOKEN_SCOPE'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 0,
+        ]);
+        $manageClient->createProjectStorageToken($project['id'], [
+            'description' => $objectName,
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+            'canReadAllFileUploads' => true,
+            'canPurgeTrash' => true,
+        ]);
+        $storageClient = $this->getStorageClient(
+            [
+                'url' => getenv('KBC_MANAGE_API_URL'),
+                'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            ]
+        );
+        $bucketId = $storageClient->createBucket($objectName, 'in');
+        $this->assertSame('xxx', $bucketId);
+    }
+
     public function testCreateProjectStorageTokenWithMorePermissions()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
