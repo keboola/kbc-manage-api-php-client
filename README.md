@@ -107,6 +107,9 @@ docker-compose run --rm dev composer tests
 #### Prerequisites:
 
 - configured and logged in az, aws and gcp CLI tools
+  - `az login`
+  - `aws sso login --profile=<your_profile>`
+  - `gcloud auth application-default login`
 - installed terraform (https://www.terraform.io) and jq (https://stedolan.github.io/jq) to setup local env
 
 ```shell
