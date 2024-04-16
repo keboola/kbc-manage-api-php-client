@@ -105,12 +105,18 @@ class FileStorageAbsTest extends ClientTestCase
     public function testCreateAbsStorageWithoutRequiredParam()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('Invalid request
+        $this->expectExceptionMessage('Invalid request:
+ - accountName: "This field is missing."
+ - accountKey: "This field is missing."
+ - containerName: "This field is missing."
+ - owner: "This field is missing."
+ - region: "This field is missing."
 Errors:
 "accountName": This field is missing.
 "accountKey": This field is missing.
 "containerName": This field is missing.
 "owner": This field is missing.
+"region": This field is missing.
 ');
         $this->client->createAbsFileStorage([]);
     }
@@ -120,9 +126,11 @@ Errors:
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('Invalid request
+        $this->expectExceptionMessage('Invalid request:
+ - accountKey: "This field is missing."
 Errors:
-"accountKey": This field is missing');
+"accountKey": This field is missing.
+');
 
         $this->client->rotateAbsFileStorageCredentials($storage['id'], []);
     }

@@ -2,11 +2,16 @@
 <phpunit bootstrap="./tests/bootstrap.php"
          colors="true">
     <testsuites>
-        <testsuite>
+        <testsuite name="Main">
             <directory>tests</directory>
             <exclude>tests/FileStorageAbsTest.php</exclude>
             <exclude>tests/FileStorageS3Test.php</exclude>
             <exclude>tests/FileStorageGcsTest.php</exclude>
+        </testsuite>
+        <testsuite name="File Storage">
+            <file>tests/FileStorageAbsTest.php</file>
+            <file>tests/FileStorageS3Test.php</file>
+            <file>tests/FileStorageGcsTest.php</file>
         </testsuite>
     </testsuites>
     <filter>

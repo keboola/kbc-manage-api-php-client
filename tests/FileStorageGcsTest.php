@@ -140,7 +140,20 @@ class FileStorageGcsTest extends ClientTestCase
     public function testCreateGcsStorageWithoutRequiredParam()
     {
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('Invalid request
+        $this->expectExceptionMessage('Invalid request:
+ - owner: "This field is missing."
+ - region: "This field is missing."
+ - gcsCredentials[type]: "This field is missing."
+ - gcsCredentials[project_id]: "This field is missing."
+ - gcsCredentials[private_key_id]: "This field is missing."
+ - gcsCredentials[private_key]: "This field is missing."
+ - gcsCredentials[client_email]: "This field is missing."
+ - gcsCredentials[client_id]: "This field is missing."
+ - gcsCredentials[auth_uri]: "This field is missing."
+ - gcsCredentials[token_uri]: "This field is missing."
+ - gcsCredentials[auth_provider_x509_cert_url]: "This field is missing."
+ - gcsCredentials[client_x509_cert_url]: "This field is missing."
+ - filesBucket: "This field is missing."
 Errors:
 "owner": This field is missing.
 "region": This field is missing.
@@ -164,7 +177,17 @@ Errors:
         $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('Invalid request
+        $this->expectExceptionMessage('Invalid request:
+ - gcsCredentials[type]: "This field is missing."
+ - gcsCredentials[project_id]: "This field is missing."
+ - gcsCredentials[private_key_id]: "This field is missing."
+ - gcsCredentials[private_key]: "This field is missing."
+ - gcsCredentials[client_email]: "This field is missing."
+ - gcsCredentials[client_id]: "This field is missing."
+ - gcsCredentials[auth_uri]: "This field is missing."
+ - gcsCredentials[token_uri]: "This field is missing."
+ - gcsCredentials[auth_provider_x509_cert_url]: "This field is missing."
+ - gcsCredentials[client_x509_cert_url]: "This field is missing."
 Errors:
 "gcsCredentials[type]": This field is missing.
 "gcsCredentials[project_id]": This field is missing.

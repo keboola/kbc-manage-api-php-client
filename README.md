@@ -72,66 +72,81 @@ so you can disable this by creating new file `phpunit-retry.xml` from `phpunit-r
 Create file `.env` with environment variables`:
 
 ```bash
-#REQUIRED - must be filled before running any test
-KBC_MANAGE_API_URL=https://connection.keboola.com  
-KBC_MANAGE_API_TOKEN=your_token
-KBC_SUPER_API_TOKEN=your_token
+# REQUIRED - must be filled before running any test
+KBC_MANAGE_API_URL=https://connection.keboola.com  # URL where Keboola Connection is running
+KBC_MANAGE_API_TOKEN=your_token # manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens. User must have Multi-Factor Authentication disabled.
+KBC_SUPER_API_TOKEN=your_token # can be created in manage-apps on the Tokens tab
 KBC_MANAGE_API_SUPER_TOKEN_WITH_PROJECTS_READ_SCOPE=super_token_with_projects_read_scope
 KBC_MANAGE_API_SUPER_TOKEN_WITHOUT_SCOPES=super_token_without_scopes
 KBC_MANAGE_API_SUPER_TOKEN_WITH_DELETED_PROJECTS_READ_SCOPE=super_token_with_deleted_projects_read_scope
-KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE=super_token_with_ui_manage_scope
-KBC_TEST_MAINTAINER_ID=2
-KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled
-KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled
-KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled
-KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled
-
-# OPTIONAL - required only for running file storage test (tests are skipped by default)
-TEST_ABS_ACCOUNT_KEY=
-TEST_ABS_ACCOUNT_NAME=
-TEST_ABS_CONTAINER_NAME=
-TEST_ABS_REGION=
-TEST_ABS_ROTATE_ACCOUNT_KEY=
-TEST_S3_ROTATE_KEY=
-TEST_S3_ROTATE_SECRET=
-TEST_S3_FILES_BUCKET=
-TEST_S3_KEY=
-TEST_S3_REGION=
-TEST_S3_SECRET=
-TEST_GCS_KEYFILE_JSON=
-TEST_GCS_KEYFILE_ROTATE_JSON=
-TEST_GCS_FILES_BUCKET=
-TEST_GCS_REGION=
+KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE=super_token_with_ui_manage_scope # can be created in manage-apps on the Tokens tab. Token must have "ui manage" scope
+KBC_TEST_MAINTAINER_ID=id # `id` of maintainer. Please create a new maintainer dedicated to test suite. All maintainer's organizations and projects all purged before tests!
+KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled # email address of another user without any organizations
+KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled # is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have Multi-Factor Authentication disabled.
+KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled # email address of another user without any organizations and having Multi-Factor Authentication enabled
+KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled # is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` or `KBC_TEST_ADMIN_TOKEN`
 
 # OPTIONAL - required only for running testCreateStorageBackend, you have to have new snowflake backend and fill credentials into following environment variables
-
 KBC_TEST_SNOWFLAKE_BACKEND_NAME=
 KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD=
 KBC_TEST_SNOWFLAKE_HOST=
 KBC_TEST_SNOWFLAKE_WAREHOUSE=
 KBC_TEST_SNOWFLAKE_BACKEND_REGION=
-
 ```
 
-Source newly created file and run tests:
-
+Run tests
 ```bash
 docker-compose run --rm dev composer tests
 ```
 
-### Required variables
 
-- `KBC_MANAGE_API_URL` - URL where Keboola Connection is running
-- `KBC_MANAGE_API_TOKEN` - manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens. User must have Multi-Factor Authentication disabled.
-- `KBC_SUPER_API_TOKEN` - can be created in manage-apps on the Tokens tab
-- `KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE` - can be created in manage-apps on the Tokens tab. Token must have "ui manage" scope
-- `KBC_TEST_MAINTAINER_ID` - `id` of maintainer. Please create a new maintainer dedicated to test suite. All maintainer's organizations and projects all purged before tests!
-- `KBC_TEST_ADMIN_EMAIL` - email address of another user without any organizations
-- `KBC_TEST_ADMIN_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have Multi-Factor Authentication disabled.
-- `KBC_TEST_ADMIN_WITH_MFA_EMAIL` - email address of another user without any organizations and having Multi-Factor Authentication enabled
-- `KBC_TEST_ADMIN_WITH_MFA_TOKEN` - is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` or `KBC_TEST_ADMIN_TOKEN`
+## File Storage tests
 
-### Optional variables
+### Setup cloud resources for File Storage tests
+
+#### Prerequisites:
+
+- configured and logged in az, aws and gcp CLI tools
+  - `az login`
+  - `aws sso login --profile=<your_profile>`
+  - `gcloud auth application-default login`
+- installed terraform (https://www.terraform.io) and jq (https://stedolan.github.io/jq) to setup local env
+
+```shell
+# create terraform.tfvars file from terraform.tfvars.dist
+cp ./provisioning/terraform.tfvars.dist ./provisioning/terraform.tfvars
+
+# set terraform variables
+name_prefix = "<your_nick>" # your name/nickname to make your resource unique & recognizable, allowed characters are [a-zA-Z0-9-]
+gcp_storage_location = "<your_region>" # region of GCP resources
+gcp_project_id = "<your_project_id>" # GCP project id
+gcp_project_region = "<your_region>" # region of GCP project
+azure_storage_location = "<your_region>" # region of Azure resources 
+azure_tenant_id = "<your_tenant_id>" # Azure tenant id
+azure_subscription_id = "<your_subscription_id>" # Azure subscription id
+aws_profile = "<your_profile>"  # your aws profile name
+aws_region = "<your_region>" # region of AWS resources
+aws_account = "<your_account_id>" # your aws account id
+
+
+# Initialize terraform
+terraform -chdir=./provisioning init
+# Create resources
+terraform -chdir=./provisioning apply
+
+# For destroying resources run 
+terraform -chdir=./provisioning apply -destroy
+
+# Setup terraform variables to .env file (will be prepended to .env file)
+# For Azure
+./provisioning/update-env.sh azure
+# For Aws
+./provisioning/update-env.sh aws
+# For GCP
+./provisioning/update-env.sh gcp
+```
+
+### Required variables for File Storage tests
 
 These variables are used for testing file storage. You have to copy these values from Azure and AWS portal.  
  - `TEST_ABS_ACCOUNT_KEY` - First secret key for Azure Storage account
@@ -152,7 +167,13 @@ These variables are used for testing file storage. You have to copy these values
  
  Variable prefixed with _ROTATE_ are used for rotating credentials and they MUST be working credentials.
 
-## License
+
+### Run File Storage tests
+
+```bash
+docker-compose run --rm dev composer tests-file-storage
+```
+
 
 ## Build OpenAPI document
 
@@ -167,4 +188,7 @@ Then run following commands
 $ cat apiary.apib | grep -v "X-KBC-ManageApiToken:" | apib2swagger -o openapi.yml -y --open-api-3 --info-title="Manage API" 
 $ php AdjustApi.php
 ```
+
+## License
+
 MIT licensed, see [LICENSE](./LICENSE) file.
