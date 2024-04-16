@@ -100,9 +100,9 @@ docker-compose run --rm dev composer tests
 ```
 
 
-## Storage tests
+## File Storage tests
 
-### Setup cloud resources for storage tests
+### Setup cloud resources for File Storage tests
 
 #### Prerequisites:
 
@@ -157,7 +157,7 @@ terraform -chdir=./provisioning apply -destroy
 ./provisioning/update-env.sh gcp
 ```
 
-### Required variables for storage tests
+### Required variables for File Storage tests
 
 These variables are used for testing file storage. You have to copy these values from Azure and AWS portal.  
  - `TEST_ABS_ACCOUNT_KEY` - First secret key for Azure Storage account
@@ -179,10 +179,10 @@ These variables are used for testing file storage. You have to copy these values
  Variable prefixed with _ROTATE_ are used for rotating credentials and they MUST be working credentials.
 
 
-### Run storage tests
+### Run File Storage tests
 
 ```bash
-docker-compose run --rm dev composer tests-storage
+docker-compose run --rm dev composer tests-file-storage
 ```
 
 
