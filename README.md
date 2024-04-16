@@ -72,19 +72,19 @@ so you can disable this by creating new file `phpunit-retry.xml` from `phpunit-r
 Create file `.env` with environment variables`:
 
 ```bash
-#REQUIRED - must be filled before running any test
-KBC_MANAGE_API_URL=https://connection.keboola.com  
-KBC_MANAGE_API_TOKEN=your_token
-KBC_SUPER_API_TOKEN=your_token
+# REQUIRED - must be filled before running any test
+KBC_MANAGE_API_URL=https://connection.keboola.com  # URL where Keboola Connection is running
+KBC_MANAGE_API_TOKEN=your_token # manage api token assigned to user **with** **superadmin** privileges. Can be created in Account Settings under the title Personal Access Tokens. User must have Multi-Factor Authentication disabled.
+KBC_SUPER_API_TOKEN=your_token # can be created in manage-apps on the Tokens tab
 KBC_MANAGE_API_SUPER_TOKEN_WITH_PROJECTS_READ_SCOPE=super_token_with_projects_read_scope
 KBC_MANAGE_API_SUPER_TOKEN_WITHOUT_SCOPES=super_token_without_scopes
 KBC_MANAGE_API_SUPER_TOKEN_WITH_DELETED_PROJECTS_READ_SCOPE=super_token_with_deleted_projects_read_scope
-KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE=super_token_with_ui_manage_scope
-KBC_TEST_MAINTAINER_ID=2
-KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled
-KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled
-KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled
-KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled
+KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE=super_token_with_ui_manage_scope # can be created in manage-apps on the Tokens tab. Token must have "ui manage" scope
+KBC_TEST_MAINTAINER_ID=id # `id` of maintainer. Please create a new maintainer dedicated to test suite. All maintainer's organizations and projects all purged before tests!
+KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled # email address of another user without any organizations
+KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled # is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have Multi-Factor Authentication disabled.
+KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled # email address of another user without any organizations and having Multi-Factor Authentication enabled
+KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled # is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` or `KBC_TEST_ADMIN_TOKEN`
 
 # OPTIONAL - required only for running testCreateStorageBackend, you have to have new snowflake backend and fill credentials into following environment variables
 KBC_TEST_SNOWFLAKE_BACKEND_NAME=
