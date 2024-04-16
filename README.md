@@ -113,32 +113,21 @@ docker-compose run --rm dev composer tests
 - installed terraform (https://www.terraform.io) and jq (https://stedolan.github.io/jq) to setup local env
 
 ```shell
+# create terraform.tfvars file from terraform.tfvars.dist
+cp ./provisioning/terraform.tfvars.dist ./provisioning/terraform.tfvars
 
-# set environment variables
-export NAME_PREFIX=<your_nick> # your name/nickname to make your resource unique & recognizable, allowed characters are [a-zA-Z0-9-]
-export AWS_PROFILE=<your_profile> # your aws profile name
-export AWS_ACCOUNT=<your_account_id> # your aws account id
-export AWS_REGION=<your_region> # region of AWS resources
-export GCP_REGION=<your_region> # region of GCP resources
-export GCP_PROJECT_ID=<your_project_id> # GCP project id
-export GCP_PROJECT_REGION=<your_region> # region of GCP project
-export AZURE_REGION=<your_region> # region of Azure resources 
-export AZURE_TENANT_ID=<your_tenant_id> # Azure tenant id
-export AZURE_SUBSCRIPTION_ID=<your_subscription_id> # Azure subscription id
+# set terraform variables
+name_prefix = "<your_nick>" # your name/nickname to make your resource unique & recognizable, allowed characters are [a-zA-Z0-9-]
+gcp_storage_location = "<your_region>" # region of GCP resources
+gcp_project_id = "<your_project_id>" # GCP project id
+gcp_project_region = "<your_region>" # region of GCP project
+azure_storage_location = "<your_region>" # region of Azure resources 
+azure_tenant_id = "<your_tenant_id>" # Azure tenant id
+azure_subscription_id = "<your_subscription_id>" # Azure subscription id
+aws_profile = "<your_profile>"  # your aws profile name
+aws_region = "<your_region>" # region of AWS resources
+aws_account = "<your_account_id>" # your aws account id
 
-# persist variables to terraform
-cat <<EOF > ./provisioning/terraform.tfvars
-name_prefix = "${NAME_PREFIX}"
-aws_profile = "${AWS_PROFILE}"
-aws_account = "${AWS_ACCOUNT}"
-aws_region = "${AWS_REGION}"
-gcp_project_id = "${GCP_PROJECT_ID}"
-gcp_project_region = "${GCP_PROJECT_REGION}"
-gcp_storage_location = "${GCP_REGION}"
-azure_storage_location = "${AZURE_REGION}"
-azure_tenant_id = "${AZURE_TENANT_ID}"
-azure_subscription_id = "${AZURE_SUBSCRIPTION_ID}"
-EOF
 
 # Initialize terraform
 terraform -chdir=./provisioning init
