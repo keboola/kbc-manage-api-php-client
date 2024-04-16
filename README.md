@@ -115,7 +115,7 @@ docker-compose run --rm dev composer tests
 ```shell
 
 # set environment variables
-export NAME_PREFIX=<your_nick> # your name/nickname to make your resource unique & recognizable
+export NAME_PREFIX=<your_nick> # your name/nickname to make your resource unique & recognizable, allowed characters are [a-zA-Z0-9-]
 export AWS_PROFILE=<your_profile> # your aws profile name
 export AWS_ACCOUNT=<your_account_id> # your aws account id
 export AWS_REGION=<your_region> # region of AWS resources
