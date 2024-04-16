@@ -1,0 +1,11 @@
+name_prefix = "<your_nick>"
+gcp_storage_location = "<your_region>"
+gcp_project_id = "<your_project_id>"
+gcp_project_region = "<your_region>"
+azure_storage_location = "<your_region>"
+azure_tenant_id = "<your_tenant_id>"
+azure_subscription_id = "<your_subscription_id>"
+aws_profile = "<your_profile>"
+aws_region = "<your_region>"
+aws_account = "<your_account_id>"
+
