@@ -1038,7 +1038,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $manageClient = new Client([
-            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_STORAGE_TOKEN_SCOPE'),
+            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_STORAGE_TOKENS_SCOPE'),
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 0,
         ]);
