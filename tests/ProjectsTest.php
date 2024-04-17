@@ -8,6 +8,7 @@ use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
+use Keboola\StorageApi\Options\ListFilesOptions;
 use Throwable;
 
 class ProjectsTest extends ClientTestCase
@@ -1041,7 +1042,7 @@ class ProjectsTest extends ClientTestCase
             'url' => getenv('KBC_MANAGE_API_URL'),
             'backoffMaxTries' => 0,
         ]);
-        $manageClient->createProjectStorageToken($project['id'], [
+        $storageToken = $manageClient->createProjectStorageToken($project['id'], [
             'description' => $objectName,
             'expiresIn' => 60,
             'canManageBuckets' => true,
@@ -1051,11 +1052,16 @@ class ProjectsTest extends ClientTestCase
         $storageClient = $this->getStorageClient(
             [
                 'url' => getenv('KBC_MANAGE_API_URL'),
-                'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+                'token' => $storageToken['token'],
             ]
         );
-        $bucketId = $storageClient->createBucket($objectName, 'in');
-        $this->assertSame('xxx', $bucketId);
+        $verified = $storageClient->verifyToken();
+        $this->assertEquals($project['id'], $verified['owner']['id']);
+        $this->assertTrue($verified['canManageBuckets']);
+        $this->assertFalse($verified['canManageTokens']);
+        $this->assertTrue($verified['canReadAllFileUploads']);
+        $this->assertTrue($verified['canPurgeTrash']);
+        $this->assertEmpty($verified['bucketPermissions']);
     }
 
     public function testCreateProjectStorageTokenWithMorePermissions()
