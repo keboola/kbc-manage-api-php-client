@@ -2117,6 +2117,8 @@ Only members of the project can reject join requests.
 
 ### Create Storage token [POST]
 
+Requires the management token of admin who is either superuser or has joined the project previously. Alternatively it
+can be called with an application token with scope `manage:storage-tokens`.
 
 + Attributes
 
