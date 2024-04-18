@@ -360,6 +360,13 @@ class FeaturesTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(404, $e->getCode());
         }
+
+        try {
+            $this->client->removeFeature('');
+            $this->fail('Feature not found');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+        }
     }
 
     /**
