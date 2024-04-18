@@ -8,6 +8,7 @@ use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
+use Keboola\StorageApi\Options\ListFilesOptions;
 use Throwable;
 
 class ProjectsTest extends ClientTestCase
@@ -1023,6 +1024,43 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($verified['canManageTokens']);
         $this->assertFalse($verified['canReadAllFileUploads']);
         $this->assertFalse($verified['canPurgeTrash']);
+        $this->assertEmpty($verified['bucketPermissions']);
+    }
+
+    public function testCreateProjectStorageTokenUsingApplicationTokenWithScope(): void
+    {
+        $objectName = $this->generateDescriptionForTestObject();
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => $objectName,
+        ]);
+        $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
+            'name' => $objectName,
+        ]);
+
+        $manageClient = new Client([
+            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_STORAGE_TOKENS_SCOPE'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 0,
+        ]);
+        $storageToken = $manageClient->createProjectStorageToken($project['id'], [
+            'description' => $objectName,
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+            'canReadAllFileUploads' => true,
+            'canPurgeTrash' => true,
+        ]);
+        $storageClient = $this->getStorageClient(
+            [
+                'url' => getenv('KBC_MANAGE_API_URL'),
+                'token' => $storageToken['token'],
+            ]
+        );
+        $verified = $storageClient->verifyToken();
+        $this->assertEquals($project['id'], $verified['owner']['id']);
+        $this->assertTrue($verified['canManageBuckets']);
+        $this->assertFalse($verified['canManageTokens']);
+        $this->assertTrue($verified['canReadAllFileUploads']);
+        $this->assertTrue($verified['canPurgeTrash']);
         $this->assertEmpty($verified['bucketPermissions']);
     }
 

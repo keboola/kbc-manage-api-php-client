@@ -80,6 +80,7 @@ KBC_MANAGE_API_SUPER_TOKEN_WITH_PROJECTS_READ_SCOPE=super_token_with_projects_re
 KBC_MANAGE_API_SUPER_TOKEN_WITHOUT_SCOPES=super_token_without_scopes
 KBC_MANAGE_API_SUPER_TOKEN_WITH_DELETED_PROJECTS_READ_SCOPE=super_token_with_deleted_projects_read_scope
 KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE=super_token_with_ui_manage_scope # can be created in manage-apps on the Tokens tab. Token must have "ui manage" scope
+KBC_MANAGE_API_SUPER_TOKEN_WITH_STORAGE_TOKENS_SCOPE=super_token_with_storage_tokens_scope # can be created in manage-apps on the Tokens tab. Token must have "manage:storage-tokens" scope
 KBC_TEST_MAINTAINER_ID=id # `id` of maintainer. Please create a new maintainer dedicated to test suite. All maintainer's organizations and projects all purged before tests!
 KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled # email address of another user without any organizations
 KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled # is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have Multi-Factor Authentication disabled.
