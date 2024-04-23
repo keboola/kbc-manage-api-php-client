@@ -3,8 +3,10 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Backend;
+use Keboola\ManageApi\Client as ManageClient;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
+use ReflectionMethod;
 
 class ProjectStorageBackendTest extends ClientTestCase
 {
@@ -85,6 +87,47 @@ class ProjectStorageBackendTest extends ClientTestCase
         $sapiClient->dropBucket($bucketId, ['async' => true]);
 
         $this->client->removeProjectStorageBackend($project['id'], $backendToAssign['id']);
+
+        $this->client->deleteProject($project['id']);
+        $this->client->purgeDeletedProject($project['id']);
+    }
+
+    public function testProjectStorageAssignBackendFailedWithNonNumericBackendId(): void
+    {
+        $name = 'My org';
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => $name,
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $apiPostMethod = new ReflectionMethod(ManageClient::class, 'apiPost');
+        $apiPostMethod->setAccessible(true);
+
+        try {
+            $apiPostMethod->invoke($this->client, '/manage/projects/' . $project['id'] . '/storage-backend', [
+                'storageBackendId' => 'non-numeric',
+            ]);
+            // @phpstan-ignore-next-line calling by `invoke` is not recognized by PHPStan as this is dynamic call by reflection
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertEquals('storageBackendId must be an integer.', $e->getMessage());
+        }
+
+        try {
+            $apiPostMethod->invoke($this->client, '/manage/projects/' . $project['id'] . '/storage-backend', [
+                'storageBackendId' => '666',
+            ]);
+            // @phpstan-ignore-next-line calling by `invoke` is not recognized by PHPStan as this is dynamic call by reflection
+        } catch (ClientException $e) {
+            // backend storage '666' not found
+            // here we're only testing the format of `storageBackendId` so we don't care about the existence of backend storage
+            $this->assertEquals(500, $e->getCode());
+            $this->assertEquals('Application error.', $e->getMessage());
+        }
 
         $this->client->deleteProject($project['id']);
         $this->client->purgeDeletedProject($project['id']);
