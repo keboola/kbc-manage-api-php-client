@@ -65,10 +65,6 @@ info:
     their tokens become invalid too.
 
 
-    `$ curl -H "X-KBC-ManageApiToken: USER_TOKEN"
-    https://connection.keboola.com/management/tokens/verify`
-
-
     ## Token Types
 
 
@@ -98,6 +94,55 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  description:
+                    type: string
+                  created:
+                    type: string
+                  lastUsed:
+                    type: string
+                  expires:
+                    type: string
+                  isSessionToken:
+                    type: boolean
+                  isExpired:
+                    type: boolean
+                  isDisabled:
+                    type: boolean
+                  scopes:
+                    type: array
+                    items: {}
+                  type:
+                    type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
+                      mfaEnabled:
+                        type: boolean
+                      features:
+                        type: array
+                        items: {}
+                      canAccessLogs:
+                        type: boolean
+                      isSuperAdmin:
+                        type: boolean
               example:
                 id: 13702
                 description: Example token
@@ -146,6 +191,8 @@ paths:
                 defaultConnectionSynapseId: 235
                 defaultConnectionExasolId: 236
                 defaultConnectionTeradataId: 236
+                defaultFileStorageId: 456
+                dataPlaneId: 456
                 zendeskUrl: https://some.url.com
       summary: Create a maintainer
       operationId: Create a maintainer
@@ -160,6 +207,14 @@ paths:
           application/json:
             example:
               name: Example
+              defaultConnectionRedshiftId: '234'
+              defaultConnectionSnowflakeId: '324'
+              defaultConnectionSynapseId: '324'
+              defaultConnectionExasolId: '324'
+              defaultConnectionTeradataId: '324'
+              defaultFileStorageId: '456'
+              dataPlaneId: '456'
+              zendeskUrl: https://keboola.zendesk.com
             schema:
               type: object
               required:
@@ -169,32 +224,43 @@ paths:
                   type: string
                   example: Example
                   description: Maintainer name
+                defaultConnectionRedshiftId:
+                  type: string
+                  example: '234'
+                  description: Default Redshift Connection ID
+                defaultConnectionSnowflakeId:
+                  type: string
+                  example: '324'
+                  description: Default Snowflake Connection ID
+                defaultConnectionSynapseId:
+                  type: string
+                  example: '324'
+                  description: Default Synapse Connection ID
+                defaultConnectionExasolId:
+                  type: string
+                  example: '324'
+                  description: Default Exasol Connection ID
+                defaultConnectionTeradataId:
+                  type: string
+                  example: '324'
+                  description: Default Teradata Connection ID
+                defaultFileStorageId:
+                  type: string
+                  example: '456'
+                  description: Default File Storage ID
+                dataPlaneId:
+                  type: string
+                  example: '456'
+                  description: Data Plane ID
+                zendeskUrl:
+                  type: string
+                  example: https://keboola.zendesk.com
     get:
       responses:
         '200':
           description: OK
           headers: {}
-          content:
-            application/json:
-              example:
-                - id: 123
-                  name: Keboola CZ
-                  created: '2014-11-11T08:40:51.620Z'
-                  defaultConnectionMysqlId: 234
-                  defaultConnectionRedshiftId: 232
-                  defaultConnectionSnowflakeId: 242
-                  defaultConnectionSynapseId: 235
-                  defaultConnectionExasolId: 236
-                  defaultConnectionTeradataId: 236
-                - id: 124
-                  name: abc
-                  crated: '2014-11-11T08:40:51.620Z'
-                  defaultConnectionMysqlId: 234
-                  defaultConnectionRedshiftId: 232
-                  defaultConnectionSnowflakeId: 242
-                  defaultConnectionSynapseId: 235
-                  defaultConnectionExasolId: 236
-                  defaultConnectionTeradataId: 236
+          content: {}
       summary: List maintainers
       operationId: List maintainers
       description: ''
@@ -221,6 +287,8 @@ paths:
                 defaultConnectionSynapseId: 235
                 defaultConnectionExasolId: 236
                 defaultConnectionTeradataId: 236
+                defaultFileStorageId: 456
+                dataPlaneId: 456
                 zendeskUrl: https://some.url.com
       summary: Retrieve a maintainer
       operationId: Retrieve a maintainer
@@ -255,6 +323,8 @@ paths:
                 defaultConnectionSynapseId: 235
                 defaultConnectionExasolId: 236
                 defaultConnectionTeradataId: 236
+                defaultFileStorageId: 456
+                dataPlaneId: 456
                 zendeskUrl: https://some.url.com
       summary: Update a maintainer
       operationId: Update a maintainer
@@ -273,6 +343,8 @@ paths:
               defaultConnectionSynapseId: '324'
               defaultConnectionExasolId: '324'
               defaultConnectionTeradataId: '324'
+              defaultFileStorageId: '456'
+              dataPlaneId: '456'
               zendeskUrl: https://keboola.zendesk.com
             schema:
               type: object
@@ -301,6 +373,14 @@ paths:
                   type: string
                   example: '324'
                   description: Default Teradata Connection ID
+                defaultFileStorageId:
+                  type: string
+                  example: '456'
+                  description: Default File Storage ID
+                dataPlaneId:
+                  type: string
+                  example: '456'
+                  description: Data Plane ID
                 zendeskUrl:
                   type: string
                   example: https://keboola.zendesk.com
@@ -325,6 +405,38 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    created:
+                      type: string
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
+                    creator:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
+                  required:
+                    - id
+                    - created
+                    - user
+                    - creator
               example:
                 - id: 112
                   created: 2018-07-10T10:45:11+0200
@@ -366,6 +478,31 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 113
                 created: 2018-07-10T10:50:00+0200
@@ -406,6 +543,31 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 113
                 created: 2018-07-10T10:50:00+0200
@@ -459,6 +621,17 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
               example:
                 - id: 23423
                   name: Martin Halamicek
@@ -639,12 +812,41 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  created:
+                    type: string
+                  allowAutoJoin:
+                    type: boolean
+                  crmId:
+                    type: string
+                  activityCenterProjectId:
+                    type: number
+                  mfaRequired:
+                    type: boolean
+                  projects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        created:
+                          type: string
               example:
                 id: 123
                 name: sample org
                 created: 2015-10-02T11:03:44+0200
                 allowAutoJoin: true
                 crmId: '6232456'
+                activityCenterProjectId: 123
                 mfaRequired: false
                 projects:
                   - id: 123
@@ -671,12 +873,41 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  created:
+                    type: string
+                  allowAutoJoin:
+                    type: boolean
+                  crmId:
+                    type: string
+                  activityCenterProjectId:
+                    type: number
+                  mfaRequired:
+                    type: boolean
+                  projects:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        created:
+                          type: string
               example:
                 id: 123
                 name: POC
                 created: 2015-10-02T11:03:44+0200
                 allowAutoJoin: true
                 crmId: '123456'
+                activityCenterProjectId: 123
                 mfaRequired: false
                 projects:
                   - id: 123
@@ -697,6 +928,7 @@ paths:
               maintainerId: ''
               allowAutoJoin: ''
               crmId: '123456'
+              activityCenterProjectId: '123'
               mfaRequired: ''
             schema:
               type: object
@@ -719,6 +951,12 @@ paths:
                   description: >-
                     Set CRM ID. Only maintainer members and superadmins can
                     change this.
+                activityCenterProjectId:
+                  type: string
+                  example: '123'
+                  description: >-
+                    Set ActivityCenter ProjectId. Only maintainer members and
+                    superadmins can change this.
                 mfaRequired:
                   type: string
                   description: >-
@@ -754,6 +992,7 @@ paths:
                 created: '2014-11-11T08:40:51.620Z'
                 allowAutoJoin: true
                 crmId: '6232456'
+                activityCenterProjectId: 123
                 mfaRequired: false
                 projects:
                   - id: 123
@@ -797,21 +1036,7 @@ paths:
         '200':
           description: OK
           headers: {}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OrganizationModel'
-              example:
-                id: 123
-                name: sample org
-                created: '2014-11-11T08:40:51.620Z'
-                allowAutoJoin: true
-                crmId: '6232456'
-                mfaRequired: false
-                projects:
-                  - id: 123
-                    name: Demo
-                    created: '2014-11-11T08:40:51.620Z'
+          content: {}
       summary: List maintainer's organizations
       operationId: List maintainer's organizations
       description: ''
@@ -827,6 +1052,38 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    created:
+                      type: string
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
+                    creator:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
+                  required:
+                    - id
+                    - created
+                    - user
+                    - creator
               example:
                 - id: 112
                   created: 2018-07-10T10:45:11+0200
@@ -868,6 +1125,31 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 113
                 created: 2018-07-10T10:50:00+0200
@@ -908,6 +1190,31 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 113
                 created: 2018-07-10T10:50:00+0200
@@ -961,6 +1268,17 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
               example:
                 - id: 23423
                   name: Martin Halamicek
@@ -1047,6 +1365,21 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
+                  required:
+                    - id
+                    - name
+                    - email
               example:
                 - id: 123
                   name: test user
@@ -1124,6 +1457,27 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    provider:
+                      type: string
+                    timestamp:
+                      type: string
+                    key:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                    - id
+                    - provider
+                    - timestamp
+                    - key
+                    - value
               example:
                 - id: 123
                   provider: user
@@ -1187,6 +1541,27 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    provider:
+                      type: string
+                    timestamp:
+                      type: string
+                    key:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                    - id
+                    - provider
+                    - timestamp
+                    - key
+                    - value
               example:
                 - id: 123
                   provider: user
@@ -1321,11 +1696,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1342,6 +1719,17 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Project detail
       operationId: Project detail
       description: >-
@@ -1453,11 +1841,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1471,8 +1861,20 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Update a project
       operationId: Update a project
       description: ''
@@ -1536,7 +1938,9 @@ paths:
       operationId: Delete a project
       description: >-
         A project will not be physically deleted. It'll only be inaccessible and
-        hidden.
+        hidden. If project was listed as `activityCenterProjectId` in it's
+        organization and it will be deleted, the `activityCenterProjectId` will
+        be set to `null`.
       tags:
         - Projects
       parameters:
@@ -1630,11 +2034,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1651,6 +2057,17 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Add a project
       operationId: Add a project
       description: ''
@@ -1703,6 +2120,66 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  type:
+                    type: string
+                  region:
+                    type: string
+                  created:
+                    type: string
+                  expires:
+                    nullable: true
+                  features:
+                    type: array
+                    items:
+                      type: string
+                  dataSizeBytes:
+                    type: number
+                  rowsCount:
+                    type: number
+                  hasMysql:
+                    type: boolean
+                  hasRedshift:
+                    type: boolean
+                  hasSynapse:
+                    type: boolean
+                  hasExasol:
+                    type: boolean
+                  hasTeradata:
+                    type: boolean
+                  hasSnowflake:
+                    type: boolean
+                  defaultBackend:
+                    type: string
+                  hasTryModeOn:
+                    type: string
+                  limits:
+                    type: object
+                    properties:
+                      limitName:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                  metrics:
+                    type: object
+                    properties: {}
+                  isDisabled:
+                    type: boolean
+                  billedMonthlyPrice:
+                    nullable: true
+                  dataRetentionTimeInDays:
+                    type: number
+                  fileStorageProvider:
+                    type: string
               example:
                 id: 101
                 name: test project
@@ -1822,11 +2299,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1843,6 +2322,17 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Move a project
       operationId: Move a project
       description: ''
@@ -1953,11 +2443,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1974,6 +2466,17 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Assign project Storage backend
       operationId: Assign project Storage backend
       description: ''
@@ -2084,11 +2587,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2102,8 +2607,20 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Remove project Storage backend
       operationId: Remove project Storage backend
       description: ''
@@ -2208,11 +2725,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2229,6 +2748,17 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Assign project file Storage
       operationId: Assign project file Storage
       description: ''
@@ -2339,11 +2869,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2360,6 +2892,17 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Set project limits
       operationId: Set project limits
       description: ''
@@ -2424,6 +2967,27 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    provider:
+                      type: string
+                    timestamp:
+                      type: string
+                    key:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                    - id
+                    - provider
+                    - timestamp
+                    - key
+                    - value
               example:
                 - id: 123
                   provider: user
@@ -2489,6 +3053,27 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    provider:
+                      type: string
+                    timestamp:
+                      type: string
+                    key:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                    - id
+                    - provider
+                    - timestamp
+                    - key
+                    - value
               example:
                 - id: 123
                   provider: user
@@ -2542,6 +3127,45 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    created:
+                      type: string
+                    expires:
+                      type: string
+                      nullable: true
+                    reason:
+                      type: string
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
+                    creator:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
+                  required:
+                    - id
+                    - created
+                    - expires
+                    - reason
+                    - user
+                    - creator
               example:
                 - id: 112
                   created: 2018-07-10T10:45:11+0200
@@ -2587,6 +3211,37 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  expires:
+                    type: string
+                  reason:
+                    type: string
+                  role:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 113
                 created: 2018-07-10T10:50:00+0200
@@ -2658,6 +3313,37 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  expires:
+                    type: string
+                  reason:
+                    type: string
+                  role:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 113
                 created: 2018-07-10T10:50:00+0200
@@ -2716,6 +3402,62 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
+                    features:
+                      type: array
+                      items: {}
+                    expires:
+                      type: string
+                      nullable: true
+                    created:
+                      type: string
+                    reason:
+                      type: string
+                    role:
+                      type: string
+                    status:
+                      type: string
+                    invitor:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
+                      nullable: true
+                    approver:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
+                  required:
+                    - id
+                    - name
+                    - email
+                    - features
+                    - expires
+                    - created
+                    - reason
+                    - role
+                    - status
+                    - invitor
+                    - approver
               example:
                 - id: 123
                   name: test user
@@ -2814,6 +3556,30 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+                    expirationDays:
+                      type: number
+                    billedMonthlyPrice:
+                      nullable: true
+                    hasTryModeOn:
+                      type: boolean
+                  required:
+                    - id
+                    - name
+                    - description
+                    - expirationDays
+                    - billedMonthlyPrice
+                    - hasTryModeOn
               example:
                 - id: poc15Days
                   name: POC 15 days
@@ -2841,6 +3607,21 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  expirationDays:
+                    type: number
+                  billedMonthlyPrice:
+                    nullable: true
+                  hasTryModeOn:
+                    type: boolean
               example:
                 id: poc15Days
                 name: POC 15 days
@@ -2868,6 +3649,39 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  features:
+                    type: array
+                    items: {}
+                  expires:
+                    nullable: true
+                  created:
+                    type: string
+                  reason:
+                    type: string
+                  role:
+                    type: string
+                  status:
+                    type: string
+                  invitor:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
+                  approver:
+                    nullable: true
               example:
                 id: 123
                 name: test user
@@ -2986,6 +3800,24 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  expires:
+                    type: string
+                  reason:
+                    type: string
+                  project:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
               example:
                 id: 124
                 created: 2016-02-22T15:01:13+0200
@@ -3037,6 +3869,35 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    created:
+                      type: string
+                    expires:
+                      type: string
+                      nullable: true
+                    reason:
+                      type: string
+                    user:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
+                  required:
+                    - id
+                    - created
+                    - expires
+                    - reason
+                    - user
               example:
                 - id: 1234
                   created: 2016-02-22T15:01:13+0200
@@ -3074,6 +3935,26 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  expires:
+                    nullable: true
+                  reason:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 1235
                 created: 2016-02-30T11:50:13+0200
@@ -3218,11 +4099,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -3236,8 +4119,20 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Change project disabled status
       operationId: Change project disabled status
       description: ''
@@ -3280,6 +4175,40 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  token:
+                    type: string
+                  created:
+                    type: string
+                  description:
+                    type: string
+                  uri:
+                    type: string
+                  isMasterToken:
+                    type: boolean
+                  canManageBuckets:
+                    type: boolean
+                  canManageTokens:
+                    type: boolean
+                  canReadAllFileUploads:
+                    type: boolean
+                  canPurgeTrash:
+                    type: boolean
+                  expires:
+                    nullable: true
+                  isExpired:
+                    type: boolean
+                  isDisabled:
+                    type: boolean
+                  dailyCapacity:
+                    type: number
+                  bucketPermissions:
+                    type: object
+                    properties: {}
               example:
                 id: 3846
                 token: TOKEN_VALUE
@@ -3298,7 +4227,12 @@ paths:
                 bucketPermissions: {}
       summary: Create Storage token
       operationId: Create Storage token
-      description: ''
+      description: >-
+        Requires the management token of admin who is either superuser or has
+        joined the project previously. Alternatively it
+
+        can be called with an application token with scope
+        `manage:storage-tokens`.
       tags:
         - Projects
       parameters:
@@ -3363,6 +4297,21 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  creditsAmount:
+                    type: number
+                  moneyAmount:
+                    nullable: true
+                  idStripeInvoice:
+                    nullable: true
+                  description:
+                    type: string
+                  created:
+                    type: string
               example:
                 id: 259
                 creditsAmount: 10
@@ -3415,6 +4364,64 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  type:
+                    type: string
+                  region:
+                    type: string
+                  created:
+                    type: string
+                  expires:
+                    nullable: true
+                  features:
+                    type: array
+                    items: {}
+                  dataSizeBytes:
+                    type: number
+                  rowsCount:
+                    type: number
+                  hasMysql:
+                    type: boolean
+                  hasRedshift:
+                    type: boolean
+                  hasSynapse:
+                    type: boolean
+                  hasExasol:
+                    type: boolean
+                  hasTeradata:
+                    type: boolean
+                  hasSnowflake:
+                    type: boolean
+                  defaultBackend:
+                    type: string
+                  hasTryModeOn:
+                    type: string
+                  limits:
+                    type: object
+                    properties: {}
+                  metrics:
+                    type: object
+                    properties: {}
+                  isDisabled:
+                    type: boolean
+                  billedMonthlyPrice:
+                    nullable: true
+                  dataRetentionTimeInDays:
+                    type: number
+                  isPurged:
+                    type: boolean
+                  isDeleted:
+                    type: boolean
+                  deletedTime:
+                    type: string
+                  purgedTime:
+                    nullable: true
               example:
                 id: 101
                 name: test project
@@ -3540,6 +4547,105 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    type:
+                      type: string
+                    region:
+                      type: string
+                    created:
+                      type: string
+                    expires:
+                      nullable: true
+                    features:
+                      type: array
+                      items: {}
+                    dataSizeBytes:
+                      type: number
+                    rowsCount:
+                      type: number
+                    hasMysql:
+                      type: boolean
+                    hasRedshift:
+                      type: boolean
+                    hasSnowflake:
+                      type: boolean
+                    hasSynapse:
+                      type: boolean
+                    hasTeradata:
+                      type: boolean
+                    hasExasol:
+                      type: boolean
+                    defaultBackend:
+                      type: string
+                    hasTryModeOn:
+                      type: string
+                    limits:
+                      type: object
+                      properties: {}
+                    metrics:
+                      type: object
+                      properties: {}
+                    isDisabled:
+                      type: boolean
+                    billedMonthlyPrice:
+                      nullable: true
+                    dataRetentionTimeInDays:
+                      type: number
+                    isPurged:
+                      type: boolean
+                    isDeleted:
+                      type: boolean
+                    deletedTime:
+                      type: string
+                    purgedTime:
+                      nullable: true
+                    organization:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        created:
+                          type: string
+                        allowAutoJoin:
+                          type: boolean
+                  required:
+                    - id
+                    - name
+                    - type
+                    - region
+                    - created
+                    - expires
+                    - features
+                    - dataSizeBytes
+                    - rowsCount
+                    - hasMysql
+                    - hasRedshift
+                    - hasSnowflake
+                    - hasSynapse
+                    - hasTeradata
+                    - hasExasol
+                    - defaultBackend
+                    - hasTryModeOn
+                    - limits
+                    - metrics
+                    - isDisabled
+                    - billedMonthlyPrice
+                    - dataRetentionTimeInDays
+                    - isPurged
+                    - isDeleted
+                    - deletedTime
+                    - purgedTime
+                    - organization
               example:
                 - id: 101
                   name: test project
@@ -3632,6 +4738,25 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  features:
+                    type: array
+                    items:
+                      type: string
+                  mfaEnabled:
+                    type: boolean
+                  canAccessLogs:
+                    type: boolean
+                  isSuperAdmin:
+                    type: boolean
               example:
                 id: 2
                 name: Martin
@@ -3660,6 +4785,25 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  features:
+                    type: array
+                    items:
+                      type: string
+                  mfaEnabled:
+                    type: boolean
+                  canAccessLogs:
+                    type: boolean
+                  isSuperAdmin:
+                    type: boolean
               example:
                 id: 2
                 name: Martin
@@ -3742,6 +4886,25 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  features:
+                    type: array
+                    items:
+                      type: string
+                  mfaEnabled:
+                    type: boolean
+                  canAccessLogs:
+                    type: boolean
+                  isSuperAdmin:
+                    type: boolean
               example:
                 id: 2
                 name: Corrected Spelling
@@ -3763,6 +4926,166 @@ paths:
           required: true
           schema:
             type: string
+  /manage/users/{user_id_or_email}/metadata:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    provider:
+                      type: string
+                    timestamp:
+                      type: string
+                    key:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                    - id
+                    - provider
+                    - timestamp
+                    - key
+                    - value
+              example:
+                - id: 123
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - id: 124
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: someMetadataKey
+                  value: Some value
+      summary: Set user metadata
+      operationId: Set user metadata
+      description: >-
+        Sets multiple metadata with one call. If the given key and provider
+        combination already exist
+
+        for the user, the data will be updated with the new value and timestamp.
+
+        Each user can set only own metadata. Super admins can set everyone's
+        metadata.
+      tags:
+        - Users
+      parameters:
+        - &ref_21
+          name: user_id_or_email
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              provider: user
+              metadata:
+                - key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - key: someMetadataKey
+                  value: Some value
+            schema:
+              type: object
+              required:
+                - provider
+                - metadata
+              properties:
+                provider:
+                  type: string
+                  enum:
+                    - user
+                    - system
+                metadata:
+                  type: array
+                  items: {}
+                  description: Array of metadata objects
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    provider:
+                      type: string
+                    timestamp:
+                      type: string
+                    key:
+                      type: string
+                    value:
+                      type: string
+                  required:
+                    - id
+                    - provider
+                    - timestamp
+                    - key
+                    - value
+              example:
+                - id: 123
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: KBC.SomeEnity.metadataKey
+                  value: Some value
+                - id: 124
+                  provider: user
+                  timestamp: 2021-02-17T15:05:21+0100
+                  key: someMetadataKey
+                  value: Some value
+      summary: List user Metadata
+      operationId: List user Metadata
+      description: >-
+        Each user can list only own metadata. Super admins can list everyone's
+        metadata.
+      tags:
+        - Users
+      parameters:
+        - *ref_21
+  /manage/users/{user_id_or_email}/metadata/{metadata_id}:
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Remove User Metadata
+      operationId: Remove User Metadata
+      description: >-
+        Each user can delete only own metadata. Super admins can delete
+        everyone's metadata.
+      tags:
+        - Users
+      parameters:
+        - name: user_id_or_email
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+        - name: metadata_id
+          in: path
+          description: Metadata ID
+          required: true
+          schema:
+            type: string
   /manage/current-user/maintainers-invitations:
     get:
       responses:
@@ -3771,6 +5094,31 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    created:
+                      type: string
+                    maintainer:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                    creator:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
               example:
                 - id: 113
                   created: 2018-07-10T11:13:00+0200
@@ -3795,6 +5143,29 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  maintainer:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 113
                 created: 2018-07-10T11:13:00+0200
@@ -3845,6 +5216,31 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    created:
+                      type: string
+                    organization:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                    creator:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
               example:
                 - id: 113
                   created: 2018-07-10T11:13:00+0200
@@ -3869,6 +5265,29 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  organization:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 113
                 created: 2018-07-10T11:13:00+0200
@@ -3919,6 +5338,34 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    created:
+                      type: string
+                    expires:
+                      type: string
+                      nullable: true
+                    reason:
+                      type: string
+                    project:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                    crated:
+                      type: string
+                  required:
+                    - id
+                    - expires
+                    - reason
+                    - project
               example:
                 - id: 124
                   created: 2016-02-22T15:01:13+0200
@@ -3948,6 +5395,24 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  expires:
+                    type: string
+                  reason:
+                    type: string
+                  project:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
               example:
                 id: 124
                 created: 2016-02-22T15:01:13+0200
@@ -3962,7 +5427,7 @@ paths:
       tags:
         - My Account
       parameters:
-        - &ref_21
+        - &ref_22
           name: join_request_id
           in: path
           description: ''
@@ -3982,7 +5447,7 @@ paths:
       tags:
         - My Account
       parameters:
-        - *ref_21
+        - *ref_22
   /manage/current-user/projects-invitations:
     get:
       responses:
@@ -3991,6 +5456,37 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    created:
+                      type: string
+                    expires:
+                      nullable: true
+                    reason:
+                      type: string
+                    role:
+                      type: string
+                    project:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                    creator:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        email:
+                          type: string
               example:
                 - id: 113
                   created: 2018-07-10T11:13:00+0200
@@ -4018,6 +5514,35 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  created:
+                    type: string
+                  expires:
+                    nullable: true
+                  reason:
+                    type: string
+                  role:
+                    type: string
+                  project:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      email:
+                        type: string
               example:
                 id: 113
                 created: 2018-07-10T11:13:00+0200
@@ -4089,6 +5614,133 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  type:
+                    type: string
+                  region:
+                    type: string
+                  created:
+                    type: string
+                  expires:
+                    type: string
+                  features:
+                    type: array
+                    items: {}
+                  dataSizeBytes:
+                    type: number
+                  rowsCount:
+                    type: number
+                  hasMysql:
+                    type: boolean
+                  hasRedshift:
+                    type: boolean
+                  hasSnowflake:
+                    type: boolean
+                  hasExasol:
+                    type: boolean
+                  hasSynapse:
+                    type: boolean
+                  hasTeradata:
+                    type: boolean
+                  defaultBackend:
+                    type: string
+                  hasTryModeOn:
+                    type: string
+                  limits:
+                    type: object
+                    properties:
+                      components.jobsParallelism:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      goodData.dataSizeBytes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      goodData.demoTokenEnabled:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      goodData.prodTokenEnabled:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      goodData.usersCount:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      kbc.adminsCount:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      kbc.extractorsCount:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      kbc.writersCount:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      orchestrations.count:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      storage.dataSizeBytes:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                      storage.jobsParallelism:
+                        type: object
+                        properties:
+                          name:
+                            type: string
+                          value:
+                            type: number
+                  metrics:
+                    type: object
+                    properties: {}
+                  isDisabled:
+                    type: boolean
+                  billedMonthlyPrice:
+                    nullable: true
+                  dataRetentionTimeInDays:
+                    type: number
               example:
                 id: 89
                 name: dev user (TEST1568723795)
@@ -4172,6 +5824,26 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                    usedAt:
+                      type: string
+                    project:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                  required:
+                    - code
+                    - usedAt
+                    - project
               example:
                 - code: TEST1568723795
                   usedAt: 2019-09-17T15:14:38+0200
@@ -4197,6 +5869,52 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    code:
+                      type: string
+                    expires:
+                      type: string
+                    organization:
+                      type: object
+                      properties:
+                        id:
+                          type: number
+                        name:
+                          type: string
+                        created:
+                          type: string
+                        allowAutoJoin:
+                          type: boolean
+                        crmId:
+                          type: string
+                        activityCenterProjectId:
+                          type: number
+                        mfaRequired:
+                          type: boolean
+                    projectTemplate:
+                      type: object
+                      properties:
+                        stringId:
+                          type: string
+                        name:
+                          type: string
+                        description:
+                          type: string
+                        expirationDays:
+                          type: number
+                        billedMonthlyPrice:
+                          nullable: true
+                        hasTryModeOn:
+                          type: boolean
+                  required:
+                    - code
+                    - expires
+                    - organization
+                    - projectTemplate
               example:
                 - code: GUIDE-MODE
                   expires: 2029-08-06T23:59:59+0200
@@ -4206,6 +5924,7 @@ paths:
                     created: 2019-09-09T14:43:29+0200
                     allowAutoJoin: true
                     crmId: ''
+                    activityCenterProjectId: 123
                     mfaRequired: false
                   projectTemplate:
                     stringId: poc15DaysGuideMode
@@ -4222,6 +5941,7 @@ paths:
                     created: 2019-09-09T14:43:29+0200
                     allowAutoJoin: true
                     crmId: ''
+                    activityCenterProjectId: 123
                     mfaRequired: false
                   projectTemplate:
                     stringId: poc15DaysGuideMode
@@ -4236,7 +5956,7 @@ paths:
       tags:
         - Promo codes
       parameters:
-        - &ref_22
+        - &ref_23
           name: maintainer_id
           in: path
           description: ''
@@ -4251,6 +5971,45 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  expires:
+                    type: string
+                  organization:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                      created:
+                        type: string
+                      allowAutoJoin:
+                        type: boolean
+                      crmId:
+                        type: string
+                      activityCenterProjectId:
+                        type: number
+                      mfaRequired:
+                        type: boolean
+                  projectTemplate:
+                    type: object
+                    properties:
+                      stringId:
+                        type: string
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      expirationDays:
+                        type: number
+                      billedMonthlyPrice:
+                        nullable: true
+                      hasTryModeOn:
+                        type: boolean
               example:
                 code: TEST
                 expires: '2019-08-23 23:59:59'
@@ -4260,6 +6019,7 @@ paths:
                   created: 2019-09-09T14:43:29+0200
                   allowAutoJoin: true
                   crmId: ''
+                  activityCenterProjectId: 123
                   mfaRequired: false
                 projectTemplate:
                   stringId: poc15DaysGuideMode
@@ -4276,7 +6036,7 @@ paths:
       tags:
         - Promo codes
       parameters:
-        - *ref_22
+        - *ref_23
       requestBody:
         content:
           application/json:
@@ -4317,17 +6077,43 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    type:
+                      type: string
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    created:
+                      type: string
               example:
                 - id: 1
                   name: show-new-design
                   type: admin
+                  title: Show new design
                   description: Users with this feature will see new UI
                   created: '2016-04-28T15:24:51.620Z'
       summary: Retrieve all features
       operationId: Retrieve all features
-      description: |-
+      description: >-
         Gets all features. To filter only the features with a specific type,
+
         add the `type` parameter to your query.
+
+
+        In case the token you are using for the call does not have super admin
+        permissions,
+
+        the response will only contain features that have `canBeManageByAdmin:
+        true`, `canBeManagedViaAPI: true` set.
       tags:
         - SUPER - Features
       parameters:
@@ -4346,15 +6132,38 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  created:
+                    type: string
               example:
                 id: 1
                 name: show-new-design
                 type: admin
+                title: Show new design
                 description: Users with this feature will see new UI
                 created: '2016-04-28T15:24:51.620Z'
       summary: Retrieve one feature
       operationId: Retrieve one feature
-      description: ''
+      description: >-
+        In case your token that you use when calling does not have super admin
+        permissions,
+
+        the feature must have parameters `canBeManageByAdmin: true`,
+        `canBeManagedViaAPI: true` set to be able to view its detail.
+
+        Otherwise the response will be 404 Not Found.
       tags:
         - SUPER - Features
       parameters:
@@ -4365,6 +6174,55 @@ paths:
           example: '1'
           schema:
             type: number
+    patch:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content: {}
+      summary: Update a feature
+      operationId: Update a feature
+      description: A partial update of a feature
+      tags:
+        - SUPER - Features
+      parameters:
+        - name: id
+          in: path
+          description: ID of the feature to update
+          required: true
+          example: '1'
+          schema:
+            type: number
+      requestBody:
+        content:
+          application/json:
+            example:
+              title: Show new design
+              description: Users with this feature will see new UI
+              canBeManageByAdmin: false
+              canBeManagedViaAPI: true
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Show new design
+                  description: Feature title (display name)
+                description:
+                  type: string
+                  example: Users with this feature will see new UI
+                  description: Short description of the feature
+                canBeManageByAdmin:
+                  type: boolean
+                  description: >-
+                    If true, the feature can be assigned by a user without the
+                    superadmin role
+                canBeManagedViaAPI:
+                  type: boolean
+                  example: true
+                  description: >-
+                    Enables or disables the ability to assign the project/admin
+                    feature using the API
     delete:
       responses:
         '204':
@@ -4392,6 +6250,15 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
               example:
                 - id: 771
                   name: Test project
@@ -4416,6 +6283,17 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
               example:
                 - id: 1
                   name: Test user
@@ -4441,17 +6319,53 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  type:
+                    type: string
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  canBeManageByAdmin:
+                    type: boolean
+                  canBeManagedViaAPI:
+                    type: boolean
+                  created:
+                    type: string
               example:
                 id: 1
                 name: show-new-design
                 type: admin
+                title: Show new design
                 description: Users with this feature will see new UI
+                canBeManageByAdmin: false
+                canBeManagedViaAPI: true
                 created: '2016-04-28T15:24:51.620Z'
       summary: Create a feature
       operationId: Create a feature
       description: >-
         To create a new feature, provide the following parameters as JSON in the
         request body:
+
+
+        If the `canBeManageByAdmin` parameter is true, the token of a user
+        without a super admin role can assign the feature.
+
+        In the case of the `project` feature, it must be in the project and have
+        the `Admin` role.
+
+        It is not enough to have the maintainer admin or organization admin
+        permission.
+
+
+        In the case of the `admin` role, an admin who does not have super admin
+        privileges can only set the feature for himself.
       tags:
         - SUPER - Features
       parameters: []
@@ -4459,27 +6373,47 @@ paths:
         content:
           application/json:
             example:
-              name: show
+              name: show-new-design
               type: admin
+              title: Show new design
               description: Users with this feature will see new UI
+              canBeManageByAdmin: false
+              canBeManagedViaAPI: true
             schema:
               type: object
               required:
+                - name
+                - title
                 - description
               properties:
                 name:
                   type: string
-                  example: show
-                  description: new-design (required) - Feature name
+                  example: show-new-design
+                  description: Feature name (programmatic name)
                 type:
                   type: string
                   enum:
                     - admin
                     - project
+                title:
+                  type: string
+                  example: Show new design
+                  description: Feature title (display name)
                 description:
                   type: string
                   example: Users with this feature will see new UI
                   description: Short description of the feature
+                canBeManageByAdmin:
+                  type: boolean
+                  description: >-
+                    If true, the feature can be assigned by a user without the
+                    superadmin role
+                canBeManagedViaAPI:
+                  type: boolean
+                  example: true
+                  description: >-
+                    Enables or disables the ability to assign the project/admin
+                    feature using the API
   /manage/projects/{project_id}/features:
     post:
       responses:
@@ -4564,11 +6498,13 @@ paths:
                 organization:
                   id: 5
                   name: Martinovo
+                  crmId: ''
+                  activityCenterProjectId: ''
                   created: 2013-12-31T11:22:33+0100
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: ABCDEFGHIJ1234567890
+                  awsKey: AKIAJ2N244XSWYVVYVLQ
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -4585,10 +6521,34 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                dataPlanes:
+                  - id: 123
+                    owner: keboola
+                    region: us-east-1
+                    provider: aws
+                    parameters:
+                      test: value
+                    created: '2020-05-11T15:30:00Z'
+                    creator:
+                      id: 10
+                      name: keboola
       summary: Add a project feature
       operationId: Add a project feature
-      description: |-
-        Project features can be assigned only by a super admin.
+      description: >-
+        If the parameter `canBeManageByAdmin` of the feature is `false`, project
+        features can be assigned only by a super admin.
+
+
+        If the `canBeManageByAdmin` is `true`, the project features can be set
+        by an admin without super admin privileges.
+
+        But this admin must be in the project to which he wants to assign this
+        features with the role `Admin`.
+
+
+        Organization and maintainer admin have no effect and the user has to
+        actually join the project.
+
 
         *Note: Features have to exist before they can be added to a project.*
       tags:
@@ -4604,7 +6564,7 @@ paths:
         content:
           application/json:
             example:
-              feature: show
+              feature: show-new-design
             schema:
               type: object
               required:
@@ -4612,9 +6572,9 @@ paths:
               properties:
                 feature:
                   type: string
-                  example: show
+                  example: show-new-design
                   description: Feature name
-  /manage/projects/{project_id}/features/{feature_name}:
+  /manage/projects/{project_id}/features/{feature}:
     delete:
       responses:
         '204':
@@ -4623,7 +6583,20 @@ paths:
           content: {}
       summary: Remove a project feature
       operationId: Remove a project feature
-      description: Project features can be removed only by a super admin.
+      description: >-
+        If the parameter `canBeManageByAdmin` of the feature is `false`, project
+        features can be removed only by a super admin.
+
+
+        If the `canBeManageByAdmin` is `true`, the project features can be
+        removed by an admin without super admin privileges.
+
+        But this admin must be in the project to which he wants to remove this
+        features with the role `Admin`.
+
+
+        Organization and maintainer admin have no effect and the user has to
+        actually join the project.
       tags:
         - SUPER - Features
       parameters:
@@ -4633,10 +6606,11 @@ paths:
           required: true
           schema:
             type: string
-        - name: feature_name
+        - name: feature
           in: path
           description: Feature string ID
           required: true
+          example: show-new-design
           schema:
             type: string
   /manage/users/{user_id_or_email}/features:
@@ -4647,6 +6621,19 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  features:
+                    type: array
+                    items:
+                      type: string
               example:
                 id: 2
                 name: Martin Halamicek
@@ -4655,7 +6642,20 @@ paths:
                   - inline-manual
       summary: Add a user feature
       operationId: Add a user feature
-      description: '*Note: Features have to exist before they can be added to a user.*'
+      description: >-
+        If the parameter `canBeManageByAdmin` of the feature is `false`, project
+        features can be set only by a super admin.
+
+        If the `canBeManageByAdmin` parameter of the feature is `true`, the
+        feature can be assigned by an admin without super admin permission,
+
+        but he can assign the feature only to himself.
+
+
+        Organization and maintainer admin have no effect.
+
+
+        *Note: Features have to exist before they can be added to a user.*
       tags:
         - SUPER - Features
       parameters:
@@ -4669,14 +6669,16 @@ paths:
         content:
           application/json:
             example:
-              feature: show
+              feature: show-new-design
             schema:
               type: object
+              required:
+                - feature
               properties:
                 feature:
                   type: string
-                  example: show
-                  description: new-design (required) - Feature name
+                  example: show-new-design
+                  description: Feature name
   /manage/users/{user_id_or_email}/features/{feature}:
     delete:
       responses:
@@ -4685,6 +6687,19 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+                  email:
+                    type: string
+                  features:
+                    type: array
+                    items:
+                      type: string
               example:
                 id: 2
                 name: Martin Halamicek
@@ -4693,7 +6708,17 @@ paths:
                   - inline-manual
       summary: Remove a user feature
       operationId: Remove a user feature
-      description: ''
+      description: >-
+        If the parameter `canBeManageByAdmin` of the feature is `false`, project
+        features can be removed only by a super admin.
+
+        If the `canBeManageByAdmin` parameter of the feature is `true`, the
+        feature can be removed by an admin without super admin permission,
+
+        but he can assign the feature only to himself.
+
+
+        Organization and maintainer admin have no effect.
       tags:
         - SUPER - Features
       parameters:
@@ -4707,6 +6732,7 @@ paths:
           in: path
           description: Feature name
           required: true
+          example: show-new-design
           schema:
             type: string
   /manage/project-templates/{template}/features:
@@ -4717,10 +6743,28 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    type:
+                      type: string
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    created:
+                      type: string
               example:
                 - id: 52
                   name: test-feature
                   type: project
+                  title: Test feature
                   description: project template test feature
                   created: 2018-04-12T21:46:37+0200
       summary: List features
@@ -4759,14 +6803,16 @@ paths:
         content:
           application/json:
             example:
-              feature: show
+              feature: show-new-design
             schema:
               type: object
+              required:
+                - feature
               properties:
                 feature:
                   type: string
-                  example: show
-                  description: new-design (required) - Feature name
+                  example: show-new-design
+                  description: Feature name
   /manage/project-templates/{template}/features/{feature}:
     delete:
       responses:
@@ -4790,6 +6836,7 @@ paths:
           in: path
           description: Feature name
           required: true
+          example: show-new-design
           schema:
             type: string
   /manage/file-storage-s3:
@@ -4850,6 +6897,9 @@ paths:
       summary: Create new AWS S3 Storage
       operationId: Create new AWS S3 Storage
       description: >-
+        Superuser credentials are not required for storage registration
+
+
         New S3 file Storage will be registered. Provided AWS credentials are
         verified and required permissions are validated.
 
@@ -4981,6 +7031,212 @@ paths:
           required: true
           schema:
             type: string
+  /manage/file-storage-gcs:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  isDefault:
+                    type: boolean
+                  provider:
+                    type: string
+                  region:
+                    type: string
+                  created:
+                    type: string
+                    description: (ISO8601 format) `Y-m-d\TH:i:sO`
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                  gcsCredentials:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      project_id:
+                        type: string
+                      private_key_id:
+                        type: string
+                      client_email:
+                        type: string
+                      client_id:
+                        type: string
+                      auth_uri:
+                        type: string
+                      token_uri:
+                        type: string
+                      auth_provider_x509_cert_url:
+                        type: string
+                      client_x509_cert_url:
+                        type: string
+                    required:
+                      - type
+                      - project_id
+                      - private_key_id
+                      - client_email
+                      - client_id
+                      - auth_uri
+                      - token_uri
+                      - auth_provider_x509_cert_url
+                      - client_x509_cert_url
+                  gcsSnowflakeIntegrationName:
+                    type: string
+                  filesBucket:
+                    type: string
+                    description: name of the bucket
+              example:
+                id: 123
+                isDefault: false
+                provider: gcp
+                region: europe-west1
+                created: '2019-06-17T15:07:48+01:00'
+                creator:
+                  id: 123
+                  name: Joe "The Admin" Doe
+                gcsCredentials:
+                  type: service_account
+                  project_id: '123456789'
+                  private_key_id: xxx
+                  client_email: something@else.iam.gserviceaccount.com
+                  client_id: '123456789'
+                  auth_uri: https://accounts.google.com/o/oauth2/auth
+                  token_uri: https://oauth2.googleapis.com/token
+                  auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+                  client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
+                gcsSnowflakeIntegrationName: KEBOOLA_123_GCS
+                filesBucket: my-bucket
+      summary: Create new Google Cloud Storage
+      operationId: Create new Google Cloud Storage
+      description: >-
+        Superuser credentials are not required for storage registration
+
+
+        Will register new Google Cloud Storage for using inside KBC. Connection
+        wil be verified during registraion.
+      tags:
+        - SUPER - File Storage Management
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              gcsCredentials:
+                type: service_account
+                project_id: '123456789'
+                private_key_id: xxx
+                private_key: >-
+                  -----BEGIN PRIVATE KEY-----<key contents>-----END PRIVATE
+                  KEY-----\n
+                client_email: something@else.iam.gserviceaccount.com
+                client_id: '123456789'
+                auth_uri: https://accounts.google.com/o/oauth2/auth
+                token_uri: https://oauth2.googleapis.com/token
+                auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+                client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
+              filesBucket: my-bucket
+              owner: keboola
+              region: europe-west1
+            schema:
+              type: object
+              properties:
+                gcsCredentials:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    project_id:
+                      type: string
+                    private_key_id:
+                      type: string
+                    private_key:
+                      type: string
+                    client_email:
+                      type: string
+                    client_id:
+                      type: string
+                    auth_uri:
+                      type: string
+                    token_uri:
+                      type: string
+                    auth_provider_x509_cert_url:
+                      type: string
+                    client_x509_cert_url:
+                      type: string
+                  required:
+                    - type
+                    - project_id
+                    - private_key_id
+                    - private_key
+                    - client_email
+                    - client_id
+                    - auth_uri
+                    - token_uri
+                    - auth_provider_x509_cert_url
+                    - client_x509_cert_url
+                filesBucket:
+                  type: string
+                  description: name of the bucket
+                owner:
+                  type: string
+                  enum:
+                    - keboola
+                    - client
+                region:
+                  type: string
+              required:
+                - filesBucket
+                - owner
+                - region
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+              example:
+                - id: 123
+                  isDefault: false
+                  provider: gcp
+                  region: europe-west1
+                  created: '2019-06-17T15:07:48+01:00'
+                  creator:
+                    id: 123
+                    name: Joe "The Admin" Doe
+                  gcsCredentials:
+                    type: service_account
+                    project_id: '123456789'
+                    private_key_id: xxx
+                    client_email: something@else.iam.gserviceaccount.com
+                    client_id: '123456789'
+                    auth_uri: https://accounts.google.com/o/oauth2/auth
+                    token_uri: https://oauth2.googleapis.com/token
+                    auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+                    client_x509_cert_url: >-
+                      https://www.googleapis.com/robot/v1/metadata/x509/something
+                  gcsSnowflakeIntegrationName: KEBOOLA_123_GCS
+                  filesBucket: my-bucket
+      summary: List Google Cloud Storage
+      operationId: List Google Cloud Storage
+      description: Returns all registered Google Cloud Storages.
+      tags:
+        - SUPER - File Storage Management
+      parameters: []
   /manage/file-storage-abs:
     post:
       responses:
@@ -5033,6 +7289,9 @@ paths:
       summary: Create new Azure Blob Storage
       operationId: Create new Azure Blob Storage
       description: >-
+        Superuser credentials are not required for storage registration
+
+
         Will register new Azure Blob Storage for using inside KBC. Connection
         wil be verified during registraion.
       tags:
@@ -5167,6 +7426,9 @@ paths:
       summary: Create a new backend
       operationId: Create a new backend
       description: >-
+        Superuser credentials are *not required* for backend registration
+
+
         #### Redshift
 
 
@@ -5194,7 +7456,7 @@ paths:
         OPTION;
 
         CREATE WAREHOUSE "YOUR_WAREHOUSE" WITH WAREHOUSE_SIZE = 'XSMALL'
-        WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 3600 AUTO_RESUME = TRUE;
+        WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 300 AUTO_RESUME = TRUE;
 
         GRANT USAGE ON WAREHOUSE "YOUR_WAREHOUSE" TO ROLE "KEBOOLA_STORAGE" WITH
         GRANT OPTION;
@@ -5392,6 +7654,502 @@ paths:
           required: true
           schema:
             type: string
+  /manage/storage-backend/bigquery:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  region:
+                    type: string
+                  backend:
+                    type: string
+                  credentials:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      project_id:
+                        type: string
+                      private_key_id:
+                        type: string
+                      client_email:
+                        type: string
+                      client_id:
+                        type: string
+                      auth_uri:
+                        type: string
+                      token_uri:
+                        type: string
+                      auth_provider_x509_cert_url:
+                        type: string
+                      client_x509_cert_url:
+                        type: string
+                    required:
+                      - type
+                      - project_id
+                      - private_key_id
+                      - client_email
+                      - client_id
+                      - auth_uri
+                      - token_uri
+                      - auth_provider_x509_cert_url
+                      - client_x509_cert_url
+                  folderId:
+                    type: number
+                required:
+                  - region
+              example:
+                id: 12
+                region: us-east-1
+                backend: bigquery
+                credentials:
+                  type: service_account
+                  project_id: '123456789'
+                  private_key_id: xxx
+                  client_email: something@else.iam.gserviceaccount.com
+                  client_id: '123456789'
+                  auth_uri: https://accounts.google.com/o/oauth2/auth
+                  token_uri: https://oauth2.googleapis.com/token
+                  auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+                  client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
+                folderId: 123
+      summary: Create a new BigQuery backend
+      operationId: Create a new BigQuery backend
+      description: >-
+        You must create a new project and service account in a folder in your
+        organization,
+
+        this service account must have the right to create new projects
+        (roles/resourcemanager.projectCreator) in this folder (only in this
+        folder)
+
+        and use the generated json
+        [keyFile](https://cloud.google.com/iam/docs/creating-managing-service-account-keys)
+
+        for this `service account` in the `credentials` parameter, the folder id
+        then as `folderId`.
+      tags:
+        - SUPER - Storage Backends Management
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              owner: keboola
+              folderId: '123'
+              region: us-east-1
+              credentials:
+                type: service_account
+                project_id: '123456789'
+                private_key_id: xxx
+                private_key: >-
+                  -----BEGIN PRIVATE KEY-----<key contents>-----END PRIVATE
+                  KEY-----\n
+                client_email: something@else.iam.gserviceaccount.com
+                client_id: '123456789'
+                auth_uri: https://accounts.google.com/o/oauth2/auth
+                token_uri: https://oauth2.googleapis.com/token
+                auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+                client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
+            schema:
+              type: object
+              properties:
+                owner:
+                  type: string
+                  description: associated GCP account owner
+                folderId:
+                  type: string
+                  description: where is service account created
+                region:
+                  type: string
+                credentials:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    project_id:
+                      type: string
+                    private_key_id:
+                      type: string
+                    private_key:
+                      type: string
+                    client_email:
+                      type: string
+                    client_id:
+                      type: string
+                    auth_uri:
+                      type: string
+                    token_uri:
+                      type: string
+                    auth_provider_x509_cert_url:
+                      type: string
+                    client_x509_cert_url:
+                      type: string
+                  required:
+                    - type
+                    - project_id
+                    - private_key_id
+                    - private_key
+                    - client_email
+                    - client_id
+                    - auth_uri
+                    - token_uri
+                    - auth_provider_x509_cert_url
+                    - client_x509_cert_url
+              required:
+                - owner
+                - folderId
+                - region
+  /manage/storage-backend/bigquery/{backend_id}:
+    patch:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  region:
+                    type: string
+                  backend:
+                    type: string
+                  credentials:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      project_id:
+                        type: string
+                      private_key_id:
+                        type: string
+                      client_email:
+                        type: string
+                      client_id:
+                        type: string
+                      auth_uri:
+                        type: string
+                      token_uri:
+                        type: string
+                      auth_provider_x509_cert_url:
+                        type: string
+                      client_x509_cert_url:
+                        type: string
+                    required:
+                      - type
+                      - project_id
+                      - private_key_id
+                      - client_email
+                      - client_id
+                      - auth_uri
+                      - token_uri
+                      - auth_provider_x509_cert_url
+                      - client_x509_cert_url
+                  folderId:
+                    type: number
+                required:
+                  - region
+              example:
+                id: 12
+                region: us-east-1
+                backend: bigquery
+                credentials:
+                  type: service_account
+                  project_id: '123456789'
+                  private_key_id: xxx
+                  client_email: something@else.iam.gserviceaccount.com
+                  client_id: '123456789'
+                  auth_uri: https://accounts.google.com/o/oauth2/auth
+                  token_uri: https://oauth2.googleapis.com/token
+                  auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+                  client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
+                folderId: 123
+      summary: Update BigQuery backend
+      operationId: Update BigQuery backend
+      description: Update of the credentials for BigQuery backend.
+      tags:
+        - SUPER - Storage Backends Management
+      parameters:
+        - name: backend_id
+          in: path
+          description: Backend ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              credentials:
+                type: service_account
+                project_id: '123456789'
+                private_key_id: xxx
+                private_key: >-
+                  -----BEGIN PRIVATE KEY-----<key contents>-----END PRIVATE
+                  KEY-----\n
+                client_email: something@else.iam.gserviceaccount.com
+                client_id: '123456789'
+                auth_uri: https://accounts.google.com/o/oauth2/auth
+                token_uri: https://oauth2.googleapis.com/token
+                auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+                client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
+            schema:
+              $ref: '#/components/schemas/BigQueryStorageBackendUpdate'
+  /manage/data-planes:
+    post:
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  owner:
+                    type: string
+                  parameters:
+                    type: object
+                    properties:
+                      test:
+                        type: string
+                  created:
+                    type: string
+                    description: The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                    required:
+                      - id
+                      - name
+                required:
+                  - id
+                  - owner
+                  - created
+              example:
+                id: 123
+                owner: keboola
+                parameters:
+                  test: value
+                created: '2020-05-11T15:30:00Z'
+                creator:
+                  id: 10
+                  name: keboola
+      summary: Register a new data plane
+      operationId: Register a new data plane
+      description: ''
+      tags:
+        - SUPER - Data Planes Management
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              owner: keboola
+              parameters:
+                test: value
+            schema:
+              type: object
+              properties:
+                owner:
+                  type: string
+                  description: associated data plane owner
+                parameters:
+                  type: object
+                  properties:
+                    test:
+                      type: string
+                  description: data plane configuration
+              required:
+                - owner
+                - parameters
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+              example:
+                - id: 123
+                  owner: keboola
+                  parameters:
+                    test: value
+                  created: '2020-05-11T15:30:00Z'
+                  creator:
+                    id: 10
+                    name: keboola
+      summary: List data planes
+      operationId: List data planes
+      description: >-
+        This endpoint can also be accessed using application tokens with scope
+        `data-planes:read`
+      tags:
+        - SUPER - Data Planes Management
+      parameters: []
+  /manage/data-planes/{data_plane_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  owner:
+                    type: string
+                  parameters:
+                    type: object
+                    properties:
+                      test:
+                        type: string
+                  created:
+                    type: string
+                    description: The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                    required:
+                      - id
+                      - name
+                required:
+                  - id
+                  - owner
+                  - created
+              example:
+                id: 123
+                owner: keboola
+                parameters:
+                  test: value
+                created: '2020-05-11T15:30:00Z'
+                creator:
+                  id: 10
+                  name: keboola
+      summary: Data plane detail
+      operationId: Data plane detail
+      description: >-
+        This endpoint can also be accessed using application tokens with scope
+        `data-planes:read`
+      tags:
+        - SUPER - Data Planes Management
+      parameters:
+        - name: data_plane_id
+          in: path
+          description: Backend ID
+          required: true
+          schema:
+            type: string
+    patch:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  owner:
+                    type: string
+                  parameters:
+                    type: object
+                    properties:
+                      test:
+                        type: string
+                  created:
+                    type: string
+                    description: The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
+                  creator:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      name:
+                        type: string
+                    required:
+                      - id
+                      - name
+                required:
+                  - id
+                  - owner
+                  - created
+              example:
+                id: 123
+                owner: keboola
+                parameters:
+                  test: value
+                created: '2020-05-11T15:30:00Z'
+                creator:
+                  id: 10
+                  name: keboola
+      summary: Update data plane
+      operationId: Update data plane
+      description: A partial update of a data plane, one of the attributes are required.
+      tags:
+        - SUPER - Data Planes Management
+      parameters:
+        - name: data_plane_id
+          in: path
+          description: Backend ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            example:
+              parameters:
+                test: value
+            schema:
+              $ref: '#/components/schemas/DataPlaneUpdate'
+    delete:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+      summary: Delete data plane
+      operationId: Delete data plane
+      description: ''
+      tags:
+        - SUPER - Data Planes Management
+      parameters:
+        - name: data_plane_id
+          in: path
+          description: Id of data plane
+          required: true
+          schema:
+            type: string
   /manage/commands:
     post:
       responses:
@@ -5450,6 +8208,27 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    version:
+                      type: string
+                    basePath:
+                      type: string
+                    scripts:
+                      type: array
+                      items:
+                        type: string
+                    styles:
+                      type: array
+                      items:
+                        type: string
               example:
                 - id: kbc.manageApps
                   name: kbc.manageApps
@@ -5481,6 +8260,31 @@ paths:
           headers: {}
           content:
             application/json:
+              schema:
+                type: object
+                properties:
+                  app:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      stringId:
+                        type: string
+                      name:
+                        type: string
+                      created:
+                        type: string
+                  verion:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      created:
+                        type: string
+                      version:
+                        type: string
+                      isActive:
+                        type: boolean
               example:
                 app:
                   id: '41'
@@ -5558,7 +8362,7 @@ components:
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
-      in: header
+      in: header     
       name: X-KBC-ManageApiToken
   schemas:
     MaintainerModel:
@@ -5582,6 +8386,10 @@ components:
           type: number
         defaultConnectionTeradataId:
           type: number
+        defaultFileStorageId:
+          type: number
+        dataPlaneId:
+          type: number
         zendeskUrl:
           type: string
     OrganizationModel:
@@ -5597,6 +8405,8 @@ components:
           type: boolean
         crmId:
           type: string
+        activityCenterProjectId:
+          type: number
         mfaRequired:
           type: boolean
         projects:
@@ -5779,6 +8589,10 @@ components:
               type: number
             name:
               type: string
+            crmId:
+              type: string
+            activityCenterProjectId:
+              type: string
             created:
               type: string
             allowAutoJoin:
@@ -5819,11 +8633,188 @@ components:
                   type: string
                 region:
                   type: string
+                owner:
+                  type: string
         payAsYouGo:
           type: object
           properties:
             purchasedCredits:
               type: number
+        dataPlanes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              owner:
+                type: string
+              region:
+                type: string
+              provider:
+                type: string
+              parameters:
+                type: object
+                properties:
+                  test:
+                    type: string
+              created:
+                type: string
+              creator:
+                type: object
+                properties:
+                  id:
+                    type: number
+                  name:
+                    type: string
+    GCPCredentials:
+      type: object
+      required:
+        - type
+        - project_id
+        - private_key_id
+        - private_key
+        - client_email
+        - client_id
+        - auth_uri
+        - token_uri
+        - auth_provider_x509_cert_url
+        - client_x509_cert_url
+      properties:
+        type:
+          type: string
+          example: service_account
+        project_id:
+          type: string
+          example: '123456789'
+        private_key_id:
+          type: string
+          example: xxx
+        private_key:
+          type: string
+          example: '-----BEGIN PRIVATE KEY-----<key contents>-----END PRIVATE KEY-----\n'
+        client_email:
+          type: string
+          example: something@else.iam.gserviceaccount.com
+        client_id:
+          type: string
+          example: '123456789'
+        auth_uri:
+          type: string
+          example: https://accounts.google.com/o/oauth2/auth
+        token_uri:
+          type: string
+          example: https://oauth2.googleapis.com/token
+        auth_provider_x509_cert_url:
+          type: string
+          example: https://www.googleapis.com/oauth2/v1/certs
+        client_x509_cert_url:
+          type: string
+          example: https://www.googleapis.com/robot/v1/metadata/x509/something
+    GCPCredentialsNoPK:
+      type: object
+      required:
+        - type
+        - project_id
+        - private_key_id
+        - client_email
+        - client_id
+        - auth_uri
+        - token_uri
+        - auth_provider_x509_cert_url
+        - client_x509_cert_url
+      properties:
+        type:
+          type: string
+          example: service_account
+        project_id:
+          type: string
+          example: '123456789'
+        private_key_id:
+          type: string
+          example: xxx
+        client_email:
+          type: string
+          example: something@else.iam.gserviceaccount.com
+        client_id:
+          type: string
+          example: '123456789'
+        auth_uri:
+          type: string
+          example: https://accounts.google.com/o/oauth2/auth
+        token_uri:
+          type: string
+          example: https://oauth2.googleapis.com/token
+        auth_provider_x509_cert_url:
+          type: string
+          example: https://www.googleapis.com/oauth2/v1/certs
+        client_x509_cert_url:
+          type: string
+          example: https://www.googleapis.com/robot/v1/metadata/x509/something
+    GCSCreate:
+      type: object
+      required:
+        - filesBucket
+        - owner
+        - region
+      properties:
+        gcsCredentials:
+          $ref: '#/components/schemas/GCPCredentials'
+        filesBucket:
+          type: string
+          example: my-bucket
+          description: name of the bucket
+        owner:
+          type: string
+          enum:
+            - keboola
+            - client
+        region:
+          type: string
+          example: europe-west1
+    GCSCreated:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 123
+        isDefault:
+          type: boolean
+        provider:
+          type: string
+          example: gcp
+        region:
+          type: string
+          example: europe-west1
+        created:
+          type: string
+          example: '2019-06-17T15:07:48+01:00'
+          description: (ISO8601 format) `Y-m-d\TH:i:sO`
+        creator:
+          $ref: '#/components/schemas/AdminIdAndName'
+        gcsCredentials:
+          $ref: '#/components/schemas/GCPCredentialsNoPK'
+        gcsSnowflakeIntegrationName:
+          type: string
+          example: KEBOOLA_123_GCS
+        filesBucket:
+          type: string
+          example: my-bucket
+          description: name of the bucket
+    GCSRotate:
+      type: object
+      properties:
+        credentials:
+          $ref: '#/components/schemas/GCPCredentials'
+    AdminIdAndName:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 123
+        name:
+          type: string
+          example: Joe "The Admin" Doe
     ABSBase:
       type: object
       required:
@@ -5998,6 +8989,50 @@ components:
           description: >-
             Only for backends supporting dynamic sizing (Snowflake). When
             enabled, new projects get dynamic backends assigned automatically.
+    BigQueryStorageBackendCreate:
+      type: object
+      required:
+        - owner
+        - folderId
+        - region
+      properties:
+        owner:
+          type: string
+          example: keboola
+          description: associated GCP account owner
+        folderId:
+          type: string
+          example: '123'
+          description: where is service account created
+        region:
+          type: string
+          example: us-east-1
+        credentials:
+          $ref: '#/components/schemas/GCPCredentials'
+    BigQueryStorageBackendCreated:
+      type: object
+      required:
+        - region
+      properties:
+        id:
+          type: number
+          example: 12
+        region:
+          type: string
+          example: us-east-1
+        backend:
+          type: string
+          example: bigquery
+        credentials:
+          $ref: '#/components/schemas/GCPCredentialsNoPK'
+        folderId:
+          type: number
+          example: 123
+    BigQueryStorageBackendUpdate:
+      type: object
+      properties:
+        credentials:
+          $ref: '#/components/schemas/GCPCredentials'
     StorageBackendUpdate:
       type: object
       properties:
@@ -6012,6 +9047,35 @@ components:
           description: >-
             Only for backends supporting dynamic sizing (Snowflake). When
             enabled, new projects get dynamic backends assigned automatically.
+    DataPlaneCreate:
+      type: object
+      required:
+        - owner
+        - parameters
+      properties:
+        owner:
+          type: string
+          example: keboola
+          description: associated data plane owner
+        parameters:
+          type: object
+          properties:
+            test:
+              type: string
+              example: value
+          description: data plane configuration
+    DataPlaneUpdate:
+      type: object
+      required:
+        - parameters
+      properties:
+        parameters:
+          type: object
+          properties:
+            test:
+              type: string
+              example: value
+          description: data plane configuration
     StorageBackend:
       type: object
       required:
@@ -6170,6 +9234,41 @@ components:
             database:
               type: string
               example: keboola
+    DataPlane:
+      type: object
+      required:
+        - id
+        - owner
+        - created
+      properties:
+        id:
+          type: number
+          example: 123
+        owner:
+          type: string
+          example: keboola
+        parameters:
+          type: object
+          properties:
+            test:
+              type: string
+              example: value
+        created:
+          type: string
+          example: '2020-05-11T15:30:00Z'
+          description: The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
+        creator:
+          type: object
+          required:
+            - id
+            - name
+          properties:
+            id:
+              type: number
+              example: 10
+            name:
+              type: string
+              example: keboola
     CommandExecute:
       type: object
       required:
@@ -6243,6 +9342,7 @@ tags:
 
 
       - Teradata
+  - name: SUPER - Data Planes Management
   - name: SUPER - Commands
   - name: SUPER - UI Management
   - name: Syrup API Integration
