@@ -1325,7 +1325,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1457,7 +1457,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1634,7 +1634,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1826,7 +1826,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1957,7 +1957,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2088,7 +2088,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2212,7 +2212,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2343,7 +2343,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -3222,7 +3222,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -4568,7 +4568,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: ABCDEFGHIJ1234567890
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
