@@ -1339,6 +1339,7 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
       summary: Project detail
@@ -1647,6 +1648,7 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
       summary: Add a project
@@ -1838,6 +1840,7 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
       summary: Move a project
@@ -1968,6 +1971,7 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
       summary: Assign project Storage backend
@@ -2222,6 +2226,7 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
       summary: Assign project file Storage
@@ -2352,6 +2357,7 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
       summary: Set project limits
@@ -4576,6 +4582,7 @@ paths:
                     id: 353
                     host: keboola.snowflakecomputing.com
                     region: us-east-1
+                    owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
       summary: Add a project feature
@@ -5551,7 +5558,7 @@ components:
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
-      in: header     
+      in: header
       name: X-KBC-ManageApiToken
   schemas:
     MaintainerModel:
