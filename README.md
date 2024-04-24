@@ -187,7 +187,7 @@ $ npm install -g apib2swagger
 Then run following commands 
 ```
 $ cat apiary.apib | grep -v "X-KBC-ManageApiToken:" | apib2swagger -o openapi.yml -y --open-api-3 --info-title="Manage API" 
-$ php AdjustApi.php
+$ php AdjustOpenApi.php
 ```
 
 ## License
