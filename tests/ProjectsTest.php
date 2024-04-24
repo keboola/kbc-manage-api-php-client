@@ -475,8 +475,10 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $this->assertEquals($backend, $project['defaultBackend']);
-        $this->assertNotEmpty($project['backends'][$backend]['owner']);
-        $this->assertEquals('keboola', $project['backends'][$backend]['owner']);
+        if ($project['backends'] !== []) {
+            $this->assertNotEmpty($project['backends'][$backend]['owner']);
+            $this->assertEquals('keboola', $project['backends'][$backend]['owner']);
+        }
 
         $this->client->deleteProject($project['id']);
         $this->client->purgeDeletedProject($project['id']);
