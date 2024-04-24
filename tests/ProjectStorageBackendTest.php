@@ -2,11 +2,11 @@
 
 namespace Keboola\ManageApiTest;
 
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\GuzzleException;
 use Keboola\ManageApi\Backend;
-use Keboola\ManageApi\Client as ManageClient;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
-use ReflectionMethod;
 
 class ProjectStorageBackendTest extends ClientTestCase
 {
@@ -104,33 +104,51 @@ class ProjectStorageBackendTest extends ClientTestCase
             'dataRetentionTimeInDays' => 1,
         ]);
 
-        $apiPostMethod = new ReflectionMethod(ManageClient::class, 'apiPost');
-        $apiPostMethod->setAccessible(true);
+        $client = new GuzzleClient([
+            'base_uri' => getenv('KBC_MANAGE_API_URL'),
+        ]);
+
+        $requestOptions = [
+            'headers' => [
+                'X-KBC-ManageApiToken' => getenv('KBC_MANAGE_API_TOKEN'),
+                'Accept-Encoding' => 'gzip',
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'Keboola Manage API PHP Client',
+            ],
+        ];
 
         try {
-            $apiPostMethod->invoke($this->client, '/manage/projects/' . $project['id'] . '/storage-backend', [
-                'storageBackendId' => 'non-numeric',
-            ]);
-            // @phpstan-ignore-next-line calling by `invoke` is not recognized by PHPStan as this is dynamic call by reflection
-        } catch (ClientException $e) {
+            $requestOptions['body'] = '{"storageBackendId": "non-numeric"}';
+            $client->post('/manage/projects/' . $project['id'] . '/storage-backend', $requestOptions);
+            $this->fail('Should fail with 400');
+        } catch (GuzzleException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertEquals('storageBackendId must be an integer.', $e->getMessage());
+            $this->assertStringContainsString('storageBackendId must be an integer.', $e->getMessage());
         }
 
-        try {
-            $apiPostMethod->invoke($this->client, '/manage/projects/' . $project['id'] . '/storage-backend', [
-                'storageBackendId' => '666',
-            ]);
-            // @phpstan-ignore-next-line calling by `invoke` is not recognized by PHPStan as this is dynamic call by reflection
-        } catch (ClientException $e) {
-            // backend storage '666' not found
-            // here we're only testing the format of `storageBackendId` so we don't care about the existence of backend storage
-            $this->assertEquals(500, $e->getCode());
-            $this->assertEquals('Application error.', $e->getMessage());
-        }
+        $this->client->removeProjectStorageBackend($project['id'], $project['backends']['snowflake']['id']);
+        $backend = $this->client->createStorageBackend($this->getBackendCreateOptions());
+
+        // ensure, that backend ID is passed as string into body
+        $requestOptions['body'] = '{"storageBackendId": "'.$backend['id'].'"}';
+        $response = $client->post('/manage/projects/' . $project['id'] . '/storage-backend', $requestOptions);
+        $this->assertEquals(200, $response->getStatusCode());
 
         $this->client->deleteProject($project['id']);
         $this->client->purgeDeletedProject($project['id']);
+    }
+
+    public function getBackendCreateOptions(): array
+    {
+        return [
+            'backend' => 'snowflake',
+            'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
+            'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
+            'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
+            'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
+            'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
+            'owner' => 'keboola',
+        ];
     }
 
     public function testStorageBackendRemove()
