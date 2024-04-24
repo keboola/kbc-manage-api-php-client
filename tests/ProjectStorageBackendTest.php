@@ -96,9 +96,12 @@ class ProjectStorageBackendTest extends ClientTestCase
 
     public function testProjectStorageAssignBackendFailedWithNonNumericBackendId(): void
     {
-        $name = 'My org';
-        $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => $name,
+        $maintainer = $this->client->createMaintainer([
+            'name' => 'My test project storage assign maintainer',
+        ]);
+
+        $organization = $this->client->createOrganization($maintainer['id'], [
+            'name' => 'My project storage assign testing organization',
         ]);
 
         $project = $this->client->createProject($organization['id'], [
@@ -128,7 +131,6 @@ class ProjectStorageBackendTest extends ClientTestCase
             $this->assertStringContainsString('storageBackendId must be an integer.', $e->getMessage());
         }
 
-        $this->client->removeProjectStorageBackend($project['id'], $project['backends']['snowflake']['id']);
         $backend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
 
         // ensure, that backend ID is passed as string into body
