@@ -10,6 +10,8 @@ use Keboola\StorageApi\Client;
 
 class ProjectStorageBackendTest extends ClientTestCase
 {
+    use BackendConfigurationProviderTrait;
+
     public function supportedNonDefaultBackends(): array
     {
         return [
@@ -127,7 +129,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         }
 
         $this->client->removeProjectStorageBackend($project['id'], $project['backends']['snowflake']['id']);
-        $backend = $this->client->createStorageBackend($this->getBackendCreateOptions());
+        $backend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
 
         // ensure, that backend ID is passed as string into body
         $requestOptions['body'] = '{"storageBackendId": "'.$backend['id'].'"}';
@@ -136,19 +138,6 @@ class ProjectStorageBackendTest extends ClientTestCase
 
         $this->client->deleteProject($project['id']);
         $this->client->purgeDeletedProject($project['id']);
-    }
-
-    public function getBackendCreateOptions(): array
-    {
-        return [
-            'backend' => 'snowflake',
-            'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
-            'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
-            'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
-            'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
-            'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
-            'owner' => 'keboola',
-        ];
     }
 
     public function testStorageBackendRemove()
