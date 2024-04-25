@@ -139,7 +139,6 @@ class ProjectStorageBackendTest extends ClientTestCase
         $this->assertEquals(200, $response->getStatusCode());
 
         $this->client->deleteProject($project['id']);
-        $this->client->purgeDeletedProject($project['id']);
         $this->waitForProjectPurge($project['id']);
 
         $this->client->removeStorageBackend($backend['id']);
