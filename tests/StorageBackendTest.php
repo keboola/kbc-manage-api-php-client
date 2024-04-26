@@ -8,14 +8,16 @@ use Keboola\StorageApi\Workspaces;
 
 class StorageBackendTest extends ClientTestCase
 {
+    use BackendConfigurationProviderTrait;
+
     public function testOnlySuperadminCanRegisterStorageBackend(): void
     {
-        $newBackend = $this->client->createStorageBackend($this->getBackendCreateOptions());
+        $newBackend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
         $this->assertSame($newBackend['backend'], 'snowflake');
         $this->assertBackendExist($newBackend['id']);
         $this->client->removeStorageBackend($newBackend['id']);
 
-        $newBackend = $this->normalUserClient->createStorageBackend($this->getBackendCreateOptions());
+        $newBackend = $this->normalUserClient->createStorageBackend($this->getSnowflakeBackendCreateOptions());
         $this->assertSame($newBackend['backend'], 'snowflake');
         $this->assertBackendExist($newBackend['id']);
         $this->client->removeStorageBackend($newBackend['id']);
@@ -127,7 +129,7 @@ class StorageBackendTest extends ClientTestCase
     public function storageBackendOptionsProvider(): iterable
     {
         yield 'snowflake' => [
-            $this->getBackendCreateOptions(),
+            $this->getSnowflakeBackendCreateOptions(),
         ];
         yield 'snowflake with dynamic backends' => [
             $this->getBackendCreateOptionsWithDynamicBackends(),
@@ -136,7 +138,7 @@ class StorageBackendTest extends ClientTestCase
 
     public function storageBackendOptionsProviderForUpdate(): iterable
     {
-        $create = $this->getBackendCreateOptions();
+        $create = $this->getSnowflakeBackendCreateOptions();
         yield 'snowflake update password' => [
             $create,
             [
@@ -271,19 +273,6 @@ class StorageBackendTest extends ClientTestCase
             }
         }
         $this->assertFalse($hasBackend);
-    }
-
-    public function getBackendCreateOptions(): array
-    {
-        return [
-            'backend' => 'snowflake',
-            'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
-            'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
-            'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
-            'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
-            'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
-            'owner' => 'keboola',
-        ];
     }
 
     public function getBackendCreateOptionsWithDynamicBackends(): array

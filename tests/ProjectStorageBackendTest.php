@@ -2,12 +2,16 @@
 
 namespace Keboola\ManageApiTest;
 
+use GuzzleHttp\Client as GuzzleClient;
+use GuzzleHttp\Exception\GuzzleException;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
 
 class ProjectStorageBackendTest extends ClientTestCase
 {
+    use BackendConfigurationProviderTrait;
+
     public function supportedNonDefaultBackends(): array
     {
         return [
@@ -88,6 +92,56 @@ class ProjectStorageBackendTest extends ClientTestCase
 
         $this->client->deleteProject($project['id']);
         $this->client->purgeDeletedProject($project['id']);
+    }
+
+    public function testProjectStorageAssignBackendFailedWithNonNumericBackendId(): void
+    {
+        $maintainer = $this->client->createMaintainer([
+            'name' => 'My test project storage assign maintainer',
+        ]);
+
+        $organization = $this->client->createOrganization($maintainer['id'], [
+            'name' => 'My project storage assign testing organization',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $client = new GuzzleClient([
+            'base_uri' => getenv('KBC_MANAGE_API_URL'),
+        ]);
+
+        $requestOptions = [
+            'headers' => [
+                'X-KBC-ManageApiToken' => getenv('KBC_MANAGE_API_TOKEN'),
+                'Accept-Encoding' => 'gzip',
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'Keboola Manage API PHP Client',
+            ],
+        ];
+
+        try {
+            $requestOptions['body'] = '{"storageBackendId": "non-numeric"}';
+            $client->post('/manage/projects/' . $project['id'] . '/storage-backend', $requestOptions);
+            $this->fail('Should fail with 400');
+        } catch (GuzzleException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertStringContainsString('storageBackendId must be an integer.', $e->getMessage());
+        }
+
+        $backend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
+
+        // ensure, that backend ID is passed as string into body
+        $requestOptions['body'] = '{"storageBackendId": "'.$backend['id'].'"}';
+        $response = $client->post('/manage/projects/' . $project['id'] . '/storage-backend', $requestOptions);
+        $this->assertEquals(200, $response->getStatusCode());
+
+        $this->client->deleteProject($project['id']);
+        $this->waitForProjectPurge($project['id']);
+
+        $this->client->removeStorageBackend($backend['id']);
     }
 
     public function testStorageBackendRemove()
