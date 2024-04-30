@@ -1159,13 +1159,11 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
-        // new token with canManageTokens
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
             'expiresIn' => 60,
             'canManageBuckets' => true,
             'canReadAllFileUploads' => true,
-            'canManageTokens' => true,
         ]);
 
         $client = $this->getStorageClient([
