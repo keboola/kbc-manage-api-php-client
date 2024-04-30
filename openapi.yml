@@ -4248,12 +4248,14 @@ paths:
             example:
               description: Test Token
               canManageBuckets: true
-              canManageTokens: true
               canReadAllFileUploads: true
               canPurgeTrash: true
               expiresIn: 60
               bucketPermissions:
                 in.c: ''
+              componentAccess:
+                - component1
+                - component2
             schema:
               type: object
               required:
@@ -4267,10 +4269,6 @@ paths:
                   type: boolean
                   example: true
                   description: Token has full permissions on tabular storage
-                canManageTokens:
-                  type: boolean
-                  example: true
-                  description: Token has permission to create tokens in project
                 canReadAllFileUploads:
                   type: boolean
                   example: true
@@ -4289,6 +4287,10 @@ paths:
                     in.c:
                       type: string
                       description: 'main: read'
+                componentAccess:
+                  type: array
+                  items: {}
+                  description: Array of strings with component names
   /manage/projects/{project_id}/credits:
     post:
       responses:
