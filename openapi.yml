@@ -4253,9 +4253,6 @@ paths:
               expiresIn: 60
               bucketPermissions:
                 in.c: ''
-              componentAccess:
-                - component1
-                - component2
             schema:
               type: object
               required:
@@ -4287,10 +4284,12 @@ paths:
                     in.c:
                       type: string
                       description: 'main: read'
-                componentAccess:
-                  type: array
-                  items: {}
-                  description: Array of strings with component names
+                componentAccess[]:
+                  type: string
+                  description: >-
+                    Grants access for component configurations. Allowed values
+                    are [valid component
+                    IDs](https://components.keboola.com/components).
   /manage/projects/{project_id}/credits:
     post:
       responses:

@@ -2130,7 +2130,7 @@ can be called with an application token with scope `manage:storage-tokens`.
     + expiresIn: 60 (number) - Token lifetime
     + bucketPermissions (object)
         - in.c-main: read
-    + componentAccess: component1, component2 - Array of strings with component names
+    + componentAccess[] (optional) - Grants access for component configurations. Allowed values are [valid component IDs](https://components.keboola.com/components).
 
 + Request (application/json)
     + Headers
