@@ -2125,12 +2125,12 @@ can be called with an application token with scope `manage:storage-tokens`.
 
     + description: Test Token (required) - Token description
     + canManageBuckets: true (boolean) - Token has full permissions on tabular storage
-    + canManageTokens: true (boolean) - Token has permission to create tokens in project
     + canReadAllFileUploads: true (boolean) - Token has full permissions to files staging
     + canPurgeTrash: true (boolean) - Allows permanently remove deleted configurations.
     + expiresIn: 60 (number) - Token lifetime
     + bucketPermissions (object)
         - in.c-main: read
+    + componentAccess[] (optional) - Grants access for component configurations. Allowed values are [valid component IDs](https://components.keboola.com/components).
 
 + Request (application/json)
     + Headers
