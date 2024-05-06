@@ -149,6 +149,7 @@ class ProjectDeleteTest extends ClientTestCase
         $params = [
             'canManageBuckets' => true,
             'canReadAllFileUploads' => true,
+            'canManageTokens' => true,
             'canPurgeTrash' => true,
             'description' => $this->generateDescriptionForTestObject(),
         ];

@@ -6,7 +6,6 @@ use Generator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
-use Keboola\ManageApi\Exception;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
 use Keboola\StorageApi\Options\ListFilesOptions;
@@ -1150,7 +1149,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals([$newBucketId => 'read'], $verified['bucketPermissions']);
     }
 
-    public function testCreateProjectStorageTokenWithMangeTokensPermissionAndComponentAccess()
+    public function testCreateProjectStorageTokenWithMangeTokensPermission()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1160,29 +1159,13 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
-        try {
-            // new token with canManageTokens
-            $this->client->createProjectStorageToken($project['id'], [
-                'description' => 'test',
-                'expiresIn' => 60,
-                'canManageBuckets' => true,
-                'canReadAllFileUploads' => true,
-                'canManageTokens' => true,
-            ]);
-            $this->fail('Should fail.');
-        } catch (ClientException $e) {
-            $this->assertEquals(400, $e->getCode());
-            $this->assertEquals('CanManageTokens is not allowed.', $e->getMessage());
-        }
-
-        $requestedComponents = ['component1', 'component2', 'component3'];
-
+        // new token with canManageTokens
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
             'expiresIn' => 60,
             'canManageBuckets' => true,
             'canReadAllFileUploads' => true,
-            'componentAccess' => $requestedComponents,
+            'canManageTokens' => true,
         ]);
 
         $client = $this->getStorageClient([
@@ -1193,9 +1176,8 @@ class ProjectsTest extends ClientTestCase
         $verified = $client->verifyToken();
         $this->assertEquals($project['id'], $verified['owner']['id']);
         $this->assertTrue($verified['canManageBuckets']);
-        $this->assertFalse($verified['canManageTokens']);
+        $this->assertTrue($verified['canManageTokens']);
         $this->assertTrue($verified['canReadAllFileUploads']);
-        $this->assertEquals($requestedComponents, $verified['componentAccess']);
     }
 
     public function testSuperAdminCanDisableAndEnableProject()
