@@ -2,6 +2,8 @@
 
 namespace Keboola\ManageApiTest;
 
+use Exception;
+use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
 class OrganizationsTest extends ClientTestCase
@@ -75,6 +77,25 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEquals($initialOrgsCount + 1, count($organizations));
 
         $this->client->deleteOrganization($organization['id']);
+    }
+
+    public function testApplicationTokenWithScopeCanAccessOrganizationDetailAndProjectList(): void
+    {
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'Test org',
+        ]);
+
+        $client = new Client([
+            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_ORGANIZATIONS_READ_SCOPE'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 0,
+        ]);
+
+        $orgFromAppToken = $client->getOrganization($organization['id']);
+        $orgFromAdminToken = $client->getOrganization($organization['id']);
+        $this->assertEquals($orgFromAdminToken, $orgFromAppToken);
+        $projects = $client->listOrganizationProjects($organization['id']);
+        $this->assertEquals($orgFromAdminToken['projects'], $projects);
     }
 
     public function testOrganizationDetail()
