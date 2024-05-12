@@ -4248,7 +4248,6 @@ paths:
             example:
               description: Test Token
               canManageBuckets: true
-              canManageTokens: true
               canReadAllFileUploads: true
               canPurgeTrash: true
               expiresIn: 60
@@ -4267,10 +4266,6 @@ paths:
                   type: boolean
                   example: true
                   description: Token has full permissions on tabular storage
-                canManageTokens:
-                  type: boolean
-                  example: true
-                  description: Token has permission to create tokens in project
                 canReadAllFileUploads:
                   type: boolean
                   example: true
@@ -4289,6 +4284,12 @@ paths:
                     in.c:
                       type: string
                       description: 'main: read'
+                componentAccess[]:
+                  type: string
+                  description: >-
+                    Grants access for component configurations. Allowed values
+                    are [valid component
+                    IDs](https://components.keboola.com/components).
   /manage/projects/{project_id}/credits:
     post:
       responses:
