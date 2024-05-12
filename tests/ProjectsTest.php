@@ -1160,29 +1160,13 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My test',
         ]);
 
-        try {
-            // new token with canManageTokens
-            $this->client->createProjectStorageToken($project['id'], [
-                'description' => 'test',
-                'expiresIn' => 60,
-                'canManageBuckets' => true,
-                'canReadAllFileUploads' => true,
-                'canManageTokens' => true,
-            ]);
-            $this->fail('Should fail.');
-        } catch (ClientException $e) {
-            $this->assertEquals(400, $e->getCode());
-            $this->assertEquals('CanManageTokens is not allowed.', $e->getMessage());
-        }
-
-        $requestedComponents = ['component1', 'component2', 'component3'];
-
+        // new token with canManageTokens
         $token = $this->client->createProjectStorageToken($project['id'], [
             'description' => 'test',
             'expiresIn' => 60,
             'canManageBuckets' => true,
             'canReadAllFileUploads' => true,
-            'componentAccess' => $requestedComponents,
+            'canManageTokens' => true,
         ]);
 
         $client = $this->getStorageClient([
@@ -1193,9 +1177,29 @@ class ProjectsTest extends ClientTestCase
         $verified = $client->verifyToken();
         $this->assertEquals($project['id'], $verified['owner']['id']);
         $this->assertTrue($verified['canManageBuckets']);
-        $this->assertFalse($verified['canManageTokens']);
+        $this->assertFalse($verified['canManageTokens']); // we do not support canManageTokens in storage tokens
         $this->assertTrue($verified['canReadAllFileUploads']);
-        $this->assertEquals($requestedComponents, $verified['componentAccess']);
+
+        $requestedComponents = ['component1', 'component2', 'component3'];
+        $token2 = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+            'canReadAllFileUploads' => true,
+            'componentAccess' => $requestedComponents,
+        ]);
+
+        $client2 = $this->getStorageClient([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token2['token'],
+        ]);
+
+        $verified2 = $client2->verifyToken();
+        $this->assertEquals($project['id'], $verified['owner']['id']);
+        $this->assertTrue($verified2['canManageBuckets']);
+        $this->assertFalse($verified2['canManageTokens']);
+        $this->assertTrue($verified2['canReadAllFileUploads']);
+        $this->assertEquals($requestedComponents, $verified2['componentAccess']);
     }
 
     public function testSuperAdminCanDisableAndEnableProject()

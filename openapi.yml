@@ -854,7 +854,11 @@ paths:
                     created: '2014-11-11T08:40:51.620Z'
       summary: Retrieve an organization
       operationId: Retrieve an organization
-      description: ''
+      description: >-
+        To access token needs to be superuser, member of the organization,
+        member of the maintainer or application token with
+
+        scope `organizations:read`.
       tags:
         - Organizations
       parameters:
@@ -4248,6 +4252,7 @@ paths:
             example:
               description: Test Token
               canManageBuckets: true
+              canManageTokens: false
               canReadAllFileUploads: true
               canPurgeTrash: true
               expiresIn: 60
@@ -4266,6 +4271,11 @@ paths:
                   type: boolean
                   example: true
                   description: Token has full permissions on tabular storage
+                canManageTokens:
+                  type: boolean
+                  description: >-
+                    deprecated & will be ignored - Token has permission to
+                    create tokens in project
                 canReadAllFileUploads:
                   type: boolean
                   example: true
