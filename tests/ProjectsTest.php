@@ -1177,7 +1177,7 @@ class ProjectsTest extends ClientTestCase
         $verified = $client->verifyToken();
         $this->assertEquals($project['id'], $verified['owner']['id']);
         $this->assertTrue($verified['canManageBuckets']);
-        $this->assertFalse($verified['canManageTokens']); // we do not support canManageTokens in storage tokens
+        $this->assertTrue($verified['canManageTokens']);
         $this->assertTrue($verified['canReadAllFileUploads']);
 
         $requestedComponents = ['component1', 'component2', 'component3'];
