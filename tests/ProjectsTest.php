@@ -6,6 +6,7 @@ use Generator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApi\Exception;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
 use Keboola\StorageApi\Options\ListFilesOptions;
@@ -1149,7 +1150,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals([$newBucketId => 'read'], $verified['bucketPermissions']);
     }
 
-    public function testCreateProjectStorageTokenWithMangeTokensPermission()
+    public function testCreateProjectStorageTokenWithMangeTokensPermissionAndComponentAccess()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1178,6 +1179,27 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($verified['canManageBuckets']);
         $this->assertTrue($verified['canManageTokens']);
         $this->assertTrue($verified['canReadAllFileUploads']);
+
+        $requestedComponents = ['component1', 'component2', 'component3'];
+        $token2 = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+            'canReadAllFileUploads' => true,
+            'componentAccess' => $requestedComponents,
+        ]);
+
+        $client2 = $this->getStorageClient([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token2['token'],
+        ]);
+
+        $verified2 = $client2->verifyToken();
+        $this->assertEquals($project['id'], $verified['owner']['id']);
+        $this->assertTrue($verified2['canManageBuckets']);
+        $this->assertFalse($verified2['canManageTokens']);
+        $this->assertTrue($verified2['canReadAllFileUploads']);
+        $this->assertEquals($requestedComponents, $verified2['componentAccess']);
     }
 
     public function testSuperAdminCanDisableAndEnableProject()
