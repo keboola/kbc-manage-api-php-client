@@ -70,6 +70,15 @@ class ProjectStorageBackendTest extends ClientTestCase
 
         $this->assertEquals($backendToAssign['id'], $backends[$backendName]['id']);
 
+        // test assign the same backend twice, should fail
+        try {
+            $this->client->assignProjectStorageBackend($project['id'], $backendToAssign['id']);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertEquals(400, $e->getCode());
+            $this->assertStringContainsString('Project has already assigned backend with id: ', $e->getMessage());
+        }
+
         // let's try to create a bucket in project now
 
         $token = $this->client->createProjectStorageToken($project['id'], [
