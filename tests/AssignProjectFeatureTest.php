@@ -501,31 +501,13 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
-        try {
-            $normalUserClient->addProjectFeature($projectId, $featureName);
-            $this->fail('Should fail, only admin in project can manage project features');
-        } catch (ClientException $exception) {
-            $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
-            $this->assertSame(403, $exception->getCode());
-        }
-
-        $this->client->addProjectFeature($projectId, $featureName);
-
+        $normalUserClient->addProjectFeature($projectId, $featureName);
         $project = $this->client->getProject($projectId);
-
         $this->assertProjectHasFeature($featureName, $project['features']);
 
-        try {
-            $normalUserClient->addProjectFeature($projectId, $featureName);
-            $this->fail('Should fail, only admin in project can manage project features');
-        } catch (ClientException $exception) {
-            $this->assertStringContainsString('You can\'t edit project features', $exception->getMessage());
-            $this->assertSame(403, $exception->getCode());
-        }
-
+        $normalUserClient->removeProjectFeature($projectId, $featureName);
         $project = $this->client->getProject($projectId);
-
-        $this->assertProjectHasFeature($featureName, $project['features']);
+        $this->assertProjectHasNotFeature($featureName, $project['features']);
     }
 
     /**
