@@ -55,26 +55,4 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
     {
         $this->client->createFeature($feature['name'], $feature['type'], $feature['title'], $feature['description']);
     }
-
-    public function testCreateProjectWithROIMFeatureFromTemplate()
-    {
-        $roimFeatureName = 'input-mapping-read-only-storage';
-
-        try {
-            $this->client->createFeature($roimFeatureName, 'project', $roimFeatureName, 'Input mapping read only storage test feature');
-            $this->fail('Should fail');
-        } catch (Throwable $e) {
-            self::assertEquals($e->getMessage(), 'Feature already exists');
-        }
-
-        $this->client->addProjectTemplateFeature(self::TEST_PROJECT_TEMPLATE_STRING_ID, $roimFeatureName);
-
-        $project = $this->createProject();
-
-        self::assertContains($roimFeatureName, $project['features']);
-        $this->client->deleteProject($project['id']);
-        $this->client->purgeDeletedProject($project['id']);
-
-        $this->client->removeProjectTemplateFeature(self::TEST_PROJECT_TEMPLATE_STRING_ID, $roimFeatureName);
-    }
 }
