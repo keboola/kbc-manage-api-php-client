@@ -469,7 +469,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider provideVariousOfTokensClient
      */
-    public function testMaintainerAdminCannotManageFeatures(): void
+    public function testMaintainerAdminCanManageFeatures(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
