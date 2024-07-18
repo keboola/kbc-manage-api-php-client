@@ -3353,7 +3353,7 @@ If the parameter `canBeManageByAdmin` of the feature is `false`, project feature
 If the `canBeManageByAdmin` is `true`, the project features can be set by an admin without super admin privileges.
 But this admin must be in the project to which he wants to assign this features with the role `Admin`.
 
-Maintainers in organization where the project belongs to can assign feature to the project.
+Organization and maintainer admin have no effect and the user needs activated `can-manage-features` feature.
 
 *Note: Features have to exist before they can be added to a project.*
 
@@ -3380,7 +3380,7 @@ If the parameter `canBeManageByAdmin` of the feature is `false`, project feature
 If the `canBeManageByAdmin` is `true`, the project features can be removed by an admin without super admin privileges.
 But this admin must be in the project to which he wants to remove this features with the role `Admin`.
 
-Maintainers in organization where the project belongs to can remove feature from the project.
+Organization and maintainer admin have no effect and the user needs activated `can-manage-features` feature.
 
 + Parameters
     + project_id (required, int) - Project ID
