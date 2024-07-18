@@ -6557,8 +6557,8 @@ paths:
         features with the role `Admin`.
 
 
-        Maintainers in organization where the project belongs to can assign
-        feature to the project.
+        Organization and maintainer admin have no effect and the user needs
+        activated `can-manage-features` feature.
 
 
         *Note: Features have to exist before they can be added to a project.*
@@ -6606,8 +6606,8 @@ paths:
         features with the role `Admin`.
 
 
-        Maintainers in organization where the project belongs to can remove
-        feature from the project.
+        Organization and maintainer admin have no effect and the user needs
+        activated `can-manage-features` feature.
       tags:
         - SUPER - Features
       parameters:
