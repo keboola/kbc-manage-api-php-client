@@ -469,12 +469,11 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider provideVariousOfTokensClient
      */
-    public function testMaintainerAdminCanManageFeatures(): void
+    public function testUserWithCanManageFeaturesCanManageFeatures(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
-
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+        $this->client->removeUserFeature($this->normalUser['email'], 'can-manage-features');
 
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
@@ -501,6 +500,16 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $feature = $normalUserClient->getFeature($newFeature['id']);
         $this->assertSame($featureName, $feature['name']);
 
+        try {
+            $normalUserClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Should fail, only user with can-manage-features can manage project features');
+        } catch (ClientException $exception) {
+            $this->assertStringContainsString(sprintf("You don't have access to project %s", $projectId), $exception->getMessage());
+            $this->assertSame(403, $exception->getCode());
+        }
+
+        $this->client->addUserFeature($this->normalUser['email'], 'can-manage-features');
+
         $normalUserClient->addProjectFeature($projectId, $featureName);
         $project = $this->client->getProject($projectId);
         $this->assertProjectHasFeature($featureName, $project['features']);
@@ -508,6 +517,16 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $normalUserClient->removeProjectFeature($projectId, $featureName);
         $project = $this->client->getProject($projectId);
         $this->assertProjectHasNotFeature($featureName, $project['features']);
+
+        $this->client->removeUserFeature($this->normalUser['email'], 'can-manage-features');
+
+        try {
+            $normalUserClient->addProjectFeature($projectId, $featureName);
+            $this->fail('Should fail, only user with can-manage-features can manage project features');
+        } catch (ClientException $exception) {
+            $this->assertStringContainsString(sprintf("You don't have access to project %s", $projectId), $exception->getMessage());
+            $this->assertSame(403, $exception->getCode());
+        }
     }
 
     /**
