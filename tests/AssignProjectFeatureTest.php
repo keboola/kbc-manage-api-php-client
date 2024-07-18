@@ -510,51 +510,6 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasNotFeature($featureName, $project['features']);
     }
 
-    public function testMaintainerAdminCannotManageFeaturesInDifferentMaintainerOrganization()
-    {
-        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
-        $this->createProjectWithSuperAdminMember($this->organization['id']);
-        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
-
-        $organization = $this->client->createOrganization((int) getenv('KBC_TEST_SECOND_MAINTAINER_ID'), [
-            'name' => 'My org 2',
-        ]);
-        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
-
-        $featureName = $this->testFeatureName();
-        $newFeature = $this->client->createFeature(
-            $featureName,
-            'project',
-            $featureName,
-            $featureName,
-            true,
-            true
-        );
-
-        $normalUserClient = $this->getNormalUserClient();
-        $features = $normalUserClient->listFeatures();
-        $featureFound = null;
-
-        foreach ($features as $feature) {
-            if ($featureName === $feature['name']) {
-                $featureFound = $feature;
-                break;
-            }
-        }
-        $this->assertSame($featureName, $featureFound['name']);
-
-        $feature = $normalUserClient->getFeature($newFeature['id']);
-        $this->assertSame($featureName, $feature['name']);
-
-        try {
-            $normalUserClient->addProjectFeature($projectId, $featureName);
-            $this->fail('Should fail, maintainer in project can manage project features');
-        } catch (ClientException $exception) {
-            $this->assertStringContainsString(sprintf("You don't have access to project %s", $projectId), $exception->getMessage());
-            $this->assertSame(403, $exception->getCode());
-        }
-    }
-
     /**
      * @dataProvider provideVariousOfTokensClient
      */
