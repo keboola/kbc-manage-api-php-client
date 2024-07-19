@@ -171,6 +171,7 @@ class OrganizationJoinTest extends ClientTestCase
         $member = $this->findOrganizationMember($organizationId, $this->normalUser['email']);
         $this->assertNull($member);
 
+        $this->client->addUserFeature($this->normalUser['id'], 'can-manage-features');
         try {
             $this->normalUserClient->joinOrganization($organizationId);
             $this->fail('Organization join should produce error');
