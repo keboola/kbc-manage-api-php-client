@@ -3353,7 +3353,7 @@ If the parameter `canBeManageByAdmin` of the feature is `false`, project feature
 If the `canBeManageByAdmin` is `true`, the project features can be set by an admin without super admin privileges.
 But this admin must be in the project to which he wants to assign this features with the role `Admin`.
 
-Organization and maintainer admin have no effect and the user has to actually join the project.
+Organization and maintainer admin have no effect and the user needs activated `can-manage-features` feature.
 
 *Note: Features have to exist before they can be added to a project.*
 
@@ -3380,7 +3380,7 @@ If the parameter `canBeManageByAdmin` of the feature is `false`, project feature
 If the `canBeManageByAdmin` is `true`, the project features can be removed by an admin without super admin privileges.
 But this admin must be in the project to which he wants to remove this features with the role `Admin`.
 
-Organization and maintainer admin have no effect and the user has to actually join the project.
+Organization and maintainer admin have no effect and the user needs activated `can-manage-features` feature.
 
 + Parameters
     + project_id (required, int) - Project ID
@@ -3807,27 +3807,27 @@ CREATE USER "KEBOOLA_STORAGE"
 GRANT ROLE "KEBOOLA_STORAGE" TO USER "KEBOOLA_STORAGE";
 GRANT ROLE "KEBOOLA_STORAGE" TO ROLE SYSADMIN;
 ```
-If you want to have dynamic backends enabled, please also run the following queries and add `useDynamicBackends: true` in the request. 
+If you want to have dynamic backends enabled, please also run the following queries and add `useDynamicBackends: true` in the request.
 
 ```
-CREATE WAREHOUSE "KEBOOLA_SMALL" WITH 
-    WAREHOUSE_SIZE = 'SMALL' 
-    WAREHOUSE_TYPE = 'STANDARD' 
-    AUTO_SUSPEND = 60 
+CREATE WAREHOUSE "KEBOOLA_SMALL" WITH
+    WAREHOUSE_SIZE = 'SMALL'
+    WAREHOUSE_TYPE = 'STANDARD'
+    AUTO_SUSPEND = 60
     AUTO_RESUME = TRUE
     MIN_CLUSTER_COUNT = 1
     MAX_CLUSTER_COUNT = 10;
-CREATE WAREHOUSE "KEBOOLA_MEDIUM" WITH 
-    WAREHOUSE_SIZE = 'MEDIUM' 
-    WAREHOUSE_TYPE = 'STANDARD' 
-    AUTO_SUSPEND = 60 
+CREATE WAREHOUSE "KEBOOLA_MEDIUM" WITH
+    WAREHOUSE_SIZE = 'MEDIUM'
+    WAREHOUSE_TYPE = 'STANDARD'
+    AUTO_SUSPEND = 60
     AUTO_RESUME = TRUE
     MIN_CLUSTER_COUNT = 1
     MAX_CLUSTER_COUNT = 10;
-CREATE WAREHOUSE "KEBOOLA_LARGE" WITH 
-    WAREHOUSE_SIZE = 'LARGE' 
-    WAREHOUSE_TYPE = 'STANDARD' 
-    AUTO_SUSPEND = 60 
+CREATE WAREHOUSE "KEBOOLA_LARGE" WITH
+    WAREHOUSE_SIZE = 'LARGE'
+    WAREHOUSE_TYPE = 'STANDARD'
+    AUTO_SUSPEND = 60
     AUTO_RESUME = TRUE
     MIN_CLUSTER_COUNT = 1
     MAX_CLUSTER_COUNT = 10;
