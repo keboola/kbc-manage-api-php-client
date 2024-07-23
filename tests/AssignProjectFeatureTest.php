@@ -13,6 +13,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     {
         parent::setUp();
         $this->cleanupFeatures($this->testFeatureName(), 'project');
+        $this->client->removeUserFeature($this->normalUser['email'], 'can-manage-features');
     }
 
     /**
