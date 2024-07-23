@@ -508,6 +508,14 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             $this->assertSame(403, $exception->getCode());
         }
 
+        try {
+            $normalUserClient->removeProjectFeature($projectId, $featureName);
+            $this->fail('Should fail, only user with can-manage-features can manage project features');
+        } catch (ClientException $exception) {
+            $this->assertStringContainsString(sprintf("You don't have access to project %s", $projectId), $exception->getMessage());
+            $this->assertSame(403, $exception->getCode());
+        }
+
         $this->client->addUserFeature($this->normalUser['email'], 'can-manage-features');
 
         $normalUserClient->addProjectFeature($projectId, $featureName);
