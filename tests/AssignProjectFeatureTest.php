@@ -474,7 +474,6 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
-        $this->client->removeUserFeature($this->normalUser['email'], 'can-manage-features');
 
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
