@@ -5,8 +5,116 @@ namespace Keboola\ManageApiTest;
 use Generator;
 use Keboola\ManageApi\ClientException;
 
-class FeaturesTest extends ClientTestCase
+class FeaturesTest extends BaseFeatureTest
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->client->removeUserFeature($this->normalUser['email'], 'can-manage-features');
+    }
+
+    /**
+     * @dataProvider featureProvider
+     */
+    public function testNormalUserCannotSeeTheSameFeatureAsSuperAdmin(array $createFeature, array $expectedFeature)
+    {
+        $createdFeature = $this->client->createFeature(
+            $createFeature['name'],
+            $createFeature['type'],
+            $createFeature['title'],
+            $createFeature['description'],
+            $createFeature['canBeManageByAdmin'],
+            $createFeature['canBeManagedViaAPI'],
+        );
+
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
+
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($expectedFeature['name'] === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+
+        if ($createdFeature['canBeManageByAdmin'] === false || $createdFeature['canBeManagedViaAPI'] === false) {
+            // feature should not be visible for normal user
+            $this->assertNull($featureFound);
+            try {
+                $normalUserClient->getFeature($createdFeature['id']);
+                $this->fail('Normal user should not see the feature');
+            } catch (ClientException $e) {
+                $this->assertEquals(404, $e->getCode());
+            }
+        } else {
+            $this->assertTrue($featureFound !== null);
+            $this->assertSame($expectedFeature['name'], $featureFound['name']);
+            $this->assertSame($expectedFeature['type'], $featureFound['type']);
+            $this->assertSame($expectedFeature['title'], $featureFound['title']);
+            $this->assertSame($expectedFeature['description'], $featureFound['description']);
+            $this->assertSame($expectedFeature['canBeManageByAdmin'], $featureFound['canBeManageByAdmin']);
+            $this->assertSame($expectedFeature['canBeManagedViaAPI'], $featureFound['canBeManagedViaAPI']);
+
+            $feature = $normalUserClient->getFeature($featureFound['id']);
+            $this->assertSame($expectedFeature['name'], $feature['name']);
+            $this->assertSame($expectedFeature['type'], $feature['type']);
+            $this->assertSame($expectedFeature['title'], $feature['title']);
+            $this->assertSame($expectedFeature['description'], $feature['description']);
+            $this->assertSame($expectedFeature['canBeManageByAdmin'], $feature['canBeManageByAdmin']);
+            $this->assertSame($expectedFeature['canBeManagedViaAPI'], $feature['canBeManagedViaAPI']);
+        }
+
+        $this->client->removeFeature($createdFeature['id']);
+    }
+
+    /**
+     * @dataProvider featureProvider
+     */
+    public function testNormalUserWithFeatureCanSeeTheSameFeatureAsSuperAdmin(array $createFeature, array $expectedFeature)
+    {
+        $this->client->addUserFeature($this->normalUser['email'], 'can-manage-features');
+        $this->client->createFeature(
+            $createFeature['name'],
+            $createFeature['type'],
+            $createFeature['title'],
+            $createFeature['description'],
+            $createFeature['canBeManageByAdmin'],
+            $createFeature['canBeManagedViaAPI'],
+        );
+
+        $normalUserClient = $this->getNormalUserClient();
+        $features = $normalUserClient->listFeatures();
+
+        $featureFound = null;
+
+        foreach ($features as $feature) {
+            if ($expectedFeature['name'] === $feature['name']) {
+                $featureFound = $feature;
+                break;
+            }
+        }
+
+        $this->assertTrue($featureFound !== null);
+        $this->assertSame($expectedFeature['name'], $featureFound['name']);
+        $this->assertSame($expectedFeature['type'], $featureFound['type']);
+        $this->assertSame($expectedFeature['title'], $featureFound['title']);
+        $this->assertSame($expectedFeature['description'], $featureFound['description']);
+        $this->assertSame($expectedFeature['canBeManageByAdmin'], $featureFound['canBeManageByAdmin']);
+        $this->assertSame($expectedFeature['canBeManagedViaAPI'], $featureFound['canBeManagedViaAPI']);
+
+        $feature = $normalUserClient->getFeature($featureFound['id']);
+        $this->assertSame($expectedFeature['name'], $feature['name']);
+        $this->assertSame($expectedFeature['type'], $feature['type']);
+        $this->assertSame($expectedFeature['title'], $feature['title']);
+        $this->assertSame($expectedFeature['description'], $feature['description']);
+        $this->assertSame($expectedFeature['canBeManageByAdmin'], $feature['canBeManageByAdmin']);
+        $this->assertSame($expectedFeature['canBeManagedViaAPI'], $feature['canBeManagedViaAPI']);
+
+        $this->client->removeFeature($featureFound['id']);
+    }
+
     /**
      * @dataProvider featureProvider
      */
