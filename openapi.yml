@@ -3577,6 +3577,8 @@ paths:
                       nullable: true
                     hasTryModeOn:
                       type: boolean
+                    defaultBackend:
+                      type: string
                   required:
                     - id
                     - name
@@ -3584,6 +3586,7 @@ paths:
                     - expirationDays
                     - billedMonthlyPrice
                     - hasTryModeOn
+                    - defaultBackend
               example:
                 - id: poc15Days
                   name: POC 15 days
@@ -3591,12 +3594,14 @@ paths:
                   expirationDays: 15
                   billedMonthlyPrice: null
                   hasTryModeOn: false
+                  defaultBackend: snowflake
                 - id: poc15DaysGuideMode
                   name: POC Guide Mode
                   description: Proof of concept. 15 days trial - Guide Mode.
                   expirationDays: 15
                   billedMonthlyPrice: null
                   hasTryModeOn: true
+                  defaultBackend: snowflake
       summary: List templates
       operationId: List templates
       description: ''
@@ -3626,6 +3631,8 @@ paths:
                     nullable: true
                   hasTryModeOn:
                     type: boolean
+                  defaultBackend:
+                    type: string
               example:
                 id: poc15Days
                 name: POC 15 days
@@ -3633,6 +3640,7 @@ paths:
                 expirationDays: 15
                 billedMonthlyPrice: null
                 hasTryModeOn: false
+                defaultBackend: snowflake
       summary: Project template detail
       operationId: Project template detail
       description: ''
@@ -5921,6 +5929,8 @@ paths:
                           nullable: true
                         hasTryModeOn:
                           type: boolean
+                        defaultBackend:
+                          type: string
                   required:
                     - code
                     - expires
@@ -5944,6 +5954,7 @@ paths:
                     expirationDays: 15
                     billedMonthlyPrice: null
                     hasTryModeOn: true
+                    defaultBackend: snowflake
                 - code: test
                   expires: 2019-11-12T14:07:48+0200
                   organization:
@@ -5961,6 +5972,7 @@ paths:
                     expirationDays: 15
                     billedMonthlyPrice: null
                     hasTryModeOn: true
+                    defaultBackend: snowflake
       summary: Retrieve all promo codes
       operationId: Retrieve all promo codes
       description: ''
@@ -6021,6 +6033,8 @@ paths:
                         nullable: true
                       hasTryModeOn:
                         type: boolean
+                      defaultBackend:
+                        type: string
               example:
                 code: TEST
                 expires: '2019-08-23 23:59:59'
@@ -6039,6 +6053,7 @@ paths:
                   expirationDays: 15
                   billedMonthlyPrice: null
                   hasTryModeOn: true
+                  defaultBackend: snowflake
       summary: Create new promo codes
       operationId: Create new promo codes
       description: >-
