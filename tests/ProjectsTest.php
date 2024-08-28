@@ -758,6 +758,150 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals(100000, $project['billedMonthlyPrice']);
     }
 
+    public function testNormalUserCannotEditProjectTypeAndExpirationDays(): void
+    {
+        $adminClient = $this->getClient([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 0,
+        ]);
+
+        $adminUser = $adminClient->verifyToken()['user'];
+        $this->client->removeUserFeature($adminUser['email'], 'can-update-project-settings');
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+        $currentProjectType = $project['type'];
+
+        $templates = $this->client->getProjectTemplates();
+        $differentProjectType = null;
+        foreach ($templates as $template) {
+            if ($template['id'] !== $currentProjectType) {
+                $differentProjectType = $template['id'];
+                break;
+            }
+        }
+        $this->assertNotNull($differentProjectType);
+
+        try {
+            $adminClient->updateProject(
+                $project['id'],
+                [
+                    'type' => $differentProjectType,
+                ],
+            );
+        } catch (ClientException $e) {
+            $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+
+        try {
+            $adminClient->updateProject(
+                $project['id'],
+                [
+                    'expirationDays' => 3,
+                ],
+            );
+        } catch (ClientException $e) {
+            $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+
+        try {
+            $adminClient->updateProject(
+                $project['id'],
+                [
+                    'expirationDays' => 3,
+                    'billedMonthlyPrice' => 10000,
+                    'dataRetentionTimeInDays' => 123,
+                ],
+            );
+        } catch (ClientException $e) {
+            $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+    }
+
+    public function testNormalUserWithFeatureCanEditProjectTypeAndExpirationDays(): void
+    {
+        $adminClient = $this->getClient([
+            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 0,
+        ]);
+
+        $adminUser = $adminClient->verifyToken()['user'];
+        if (!in_array('can-update-project-settings', $adminUser['features'], true)) {
+            $this->client->addUserFeature($adminUser['email'], 'can-update-project-settings');
+        }
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+        ]);
+        $currentProjectType = $project['type'];
+
+        $templates = $this->client->getProjectTemplates();
+        $differentProjectType = null;
+        foreach ($templates as $template) {
+            if ($template['id'] !== $currentProjectType) {
+                $differentProjectType = $template['id'];
+                break;
+            }
+        }
+        $this->assertNotNull($differentProjectType);
+
+        $adminClient->updateProject(
+            $project['id'],
+            [
+                'type' => $differentProjectType,
+            ],
+        );
+
+        $adminClient->updateProject(
+            $project['id'],
+            [
+                'expirationDays' => 3,
+            ],
+        );
+
+        try {
+            $adminClient->updateProject(
+                $project['id'],
+                [
+                    'expirationDays' => 3,
+                    'billedMonthlyPrice' => 10000,
+                    'dataRetentionTimeInDays' => 123,
+                ],
+            );
+        } catch (ClientException $e) {
+            $this->assertSame('Billed monthly price can be changed only by super admin', $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+
+        try {
+            $adminClient->updateProject(
+                $project['id'],
+                [
+                    'name' => 'Super duper Keboola project',
+                ],
+            );
+        } catch (ClientException $e) {
+            $this->assertSame('Name can be changed only by super admin or project member', $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+
+        $this->client->removeUserFeature($adminUser['email'], 'can-update-project-settings');
+    }
+
     public function testProjectUpdatePermissions()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
