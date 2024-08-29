@@ -1251,9 +1251,9 @@ This endpoint can also be accessed using application tokens with scope `projects
     + name: Test - Rename project
     + defaultBackend: snowflake - Change project default backend type
     + type:demo - Change project type (demo, production, poc, ...) - allowed only for a super admin
-    + expirationDays: 7 - Change project expiration - allowed only for a super admin
-    + billedMonthlyPrice: 2000 - Change project monthly fee - allowed only for a super admin
-    + dataRetentionTimeInDays: 20 - (Snowflake only) Change the data retention period for this project - allowed only for a super admin
+    + expirationDays: 7 (number) - Change project expiration - allowed only for a super admin
+    + billedMonthlyPrice: 2000 (number) - Change project monthly fee - allowed only for a super admin
+    + dataRetentionTimeInDays: 20 (number) - (Snowflake only) Change the data retention period for this project - allowed only for a super admin
 
 + Parameters
     + project_id (required, int) - Project ID

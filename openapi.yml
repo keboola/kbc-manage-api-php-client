@@ -1898,9 +1898,9 @@ paths:
               name: Test
               defaultBackend: snowflake
               type: demo
-              expirationDays: '7'
-              billedMonthlyPrice: '2000'
-              dataRetentionTimeInDays: '20'
+              expirationDays: 7
+              billedMonthlyPrice: 2000
+              dataRetentionTimeInDays: 20
             schema:
               type: object
               properties:
@@ -1919,16 +1919,16 @@ paths:
                     Change project type (demo, production, poc, ...) - allowed
                     only for a super admin
                 expirationDays:
-                  type: string
-                  example: '7'
+                  type: number
+                  example: 7
                   description: Change project expiration - allowed only for a super admin
                 billedMonthlyPrice:
-                  type: string
-                  example: '2000'
+                  type: number
+                  example: 2000
                   description: Change project monthly fee - allowed only for a super admin
                 dataRetentionTimeInDays:
-                  type: string
-                  example: '20'
+                  type: number
+                  example: 20
                   description: >-
                     (Snowflake only) Change the data retention period for this
                     project - allowed only for a super admin
