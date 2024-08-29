@@ -110,11 +110,13 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertArrayHasKey('expirationDays', $template);
         $this->assertArrayHasKey('billedMonthlyPrice', $template);
         $this->assertArrayHasKey('hasTryModeOn', $template);
+        $this->assertArrayHasKey('defaultBackend', $template);
 
         $this->assertEquals(15, $template['expirationDays']);
         $this->assertIsInt($template['expirationDays']);
         $this->assertEquals(true, $template['hasTryModeOn']);
         $this->assertIsBool($template['hasTryModeOn']);
+        $this->assertEquals('snowflake', $template['defaultBackend']);
     }
 
     public function testOrganizationAdminCannotViewHiddenProjectTemplate()
