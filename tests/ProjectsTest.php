@@ -775,6 +775,7 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
         $currentProjectType = $project['type'];
 
@@ -846,6 +847,7 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->client->createProject($organization['id'], [
             'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
         ]);
         $currentProjectType = $project['type'];
 
