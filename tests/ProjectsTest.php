@@ -20,6 +20,21 @@ class ProjectsTest extends ClientTestCase
     private const PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME = 'pay-as-you-go-credits-admin';
     private const PAY_AS_YOU_GO_PROJECT_FEATURE_NAME = 'pay-as-you-go';
 
+    private const CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME = 'can-update-project-settings';
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $featuresToRemoveFromUsers = [
+            self::CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME,
+        ];
+
+        foreach ($featuresToRemoveFromUsers as $feature) {
+            $this->client->removeUserFeature($this->normalUser['email'], $feature);
+        }
+    }
+
     public function supportedBackends(): array
     {
         return [
@@ -760,14 +775,7 @@ class ProjectsTest extends ClientTestCase
 
     public function testNormalUserCannotEditProjectTypeAndExpirationDays(): void
     {
-        $adminClient = $this->getClient([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
-            'backoffMaxTries' => 0,
-        ]);
-
-        $adminUser = $adminClient->verifyToken()['user'];
-        $this->client->removeUserFeature($adminUser['email'], 'can-update-project-settings');
+        $this->client->removeUserFeature($this->normalUser['email'], self::CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME);
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -790,7 +798,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotNull($differentProjectType);
 
         try {
-            $adminClient->updateProject(
+            $this->normalUserClient->updateProject(
                 $project['id'],
                 [
                     'type' => $differentProjectType,
@@ -802,7 +810,7 @@ class ProjectsTest extends ClientTestCase
         }
 
         try {
-            $adminClient->updateProject(
+            $this->normalUserClient->updateProject(
                 $project['id'],
                 [
                     'expirationDays' => 3,
@@ -814,7 +822,7 @@ class ProjectsTest extends ClientTestCase
         }
 
         try {
-            $adminClient->updateProject(
+            $this->normalUserClient->updateProject(
                 $project['id'],
                 [
                     'expirationDays' => 3,
@@ -830,16 +838,7 @@ class ProjectsTest extends ClientTestCase
 
     public function testNormalUserWithFeatureCanEditProjectTypeAndExpirationDays(): void
     {
-        $adminClient = $this->getClient([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
-            'backoffMaxTries' => 0,
-        ]);
-
-        $adminUser = $adminClient->verifyToken()['user'];
-        if (!in_array('can-update-project-settings', $adminUser['features'], true)) {
-            $this->client->addUserFeature($adminUser['email'], 'can-update-project-settings');
-        }
+        $this->client->addUserFeature($this->normalUser['email'], self::CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME);
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -861,14 +860,14 @@ class ProjectsTest extends ClientTestCase
         }
         $this->assertNotNull($differentProjectType);
 
-        $adminClient->updateProject(
+        $this->normalUserClient->updateProject(
             $project['id'],
             [
                 'type' => $differentProjectType,
             ],
         );
 
-        $adminClient->updateProject(
+        $this->normalUserClient->updateProject(
             $project['id'],
             [
                 'expirationDays' => 3,
@@ -876,7 +875,7 @@ class ProjectsTest extends ClientTestCase
         );
 
         try {
-            $adminClient->updateProject(
+            $this->normalUserClient->updateProject(
                 $project['id'],
                 [
                     'expirationDays' => 3,
@@ -890,7 +889,7 @@ class ProjectsTest extends ClientTestCase
         }
 
         try {
-            $adminClient->updateProject(
+            $this->normalUserClient->updateProject(
                 $project['id'],
                 [
                     'name' => 'Super duper Keboola project',
@@ -901,7 +900,7 @@ class ProjectsTest extends ClientTestCase
             $this->assertSame(403, $e->getCode());
         }
 
-        $this->client->removeUserFeature($adminUser['email'], 'can-update-project-settings');
+        $this->client->removeUserFeature($this->normalUser['email'], 'can-update-project-settings');
     }
 
     public function testProjectUpdatePermissions()
@@ -932,7 +931,7 @@ class ProjectsTest extends ClientTestCase
         ]);
         $this->assertEquals($newName, $project['name']);
 
-        // change type should not be allowd
+        // change type should not be allowed
         try {
             $client->updateProject($project['id'], [
                 'type' => 'production',
