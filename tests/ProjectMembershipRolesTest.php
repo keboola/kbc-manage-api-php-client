@@ -10,6 +10,8 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
 {
     private const SHARE_ROLE_EXPECTED_ERROR = 'Only member of the project\'s organization can grant "share" role to other users.';
 
+    private const CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME = 'can-update-project-settings';
+
     /** @var array */
     private $organization;
 
@@ -25,6 +27,14 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
     public function setUp(): void
     {
         parent::setUp();
+
+        $featuresToRemoveFromUsers = [
+            self::CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME,
+        ];
+
+        foreach ($featuresToRemoveFromUsers as $feature) {
+            $this->client->removeUserFeature($this->normalUser['email'], $feature);
+        }
 
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUserWithMfa['email']]);
 
