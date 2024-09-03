@@ -137,7 +137,7 @@ class ProjectStorageBackendTest extends ClientTestCase
             $this->fail('Should fail with 400');
         } catch (GuzzleException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertStringContainsString('storageBackendId must be an integer.', $e->getMessage());
+            $this->assertStringContainsString('storageBackendId: \"This value should be of type string|int and whole number.\"', $e->getMessage());
         }
 
         $backend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
