@@ -3,13 +3,12 @@
 namespace Keboola\ManageApiTest;
 
 use Generator;
+use InvalidArgumentException;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
-use Keboola\ManageApi\Exception;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
-use Keboola\StorageApi\Options\ListFilesOptions;
 use Throwable;
 
 class ProjectsTest extends ClientTestCase
@@ -19,8 +18,8 @@ class ProjectsTest extends ClientTestCase
     private const FILE_STORAGE_PROVIDER_GCS = 'gcs';
     private const PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME = 'pay-as-you-go-credits-admin';
     private const PAY_AS_YOU_GO_PROJECT_FEATURE_NAME = 'pay-as-you-go';
-
     private const CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME = 'can-update-project-settings';
+    private const CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME = 'can-manage-deleted-projects';
 
     public function setUp(): void
     {
@@ -28,6 +27,7 @@ class ProjectsTest extends ClientTestCase
 
         $featuresToRemoveFromUsers = [
             self::CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME,
+            self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME,
         ];
 
         foreach ($featuresToRemoveFromUsers as $feature) {
@@ -561,7 +561,7 @@ class ProjectsTest extends ClientTestCase
 
         // begin test of adding / removing user without expiration/reason
         $resp = $this->client->addUserToProject($project['id'], [
-           'email' => 'devel-tests@keboola.com',
+            'email' => 'devel-tests@keboola.com',
         ]);
 
         $admins = $this->client->listProjectUsers($project['id']);
@@ -752,7 +752,7 @@ class ProjectsTest extends ClientTestCase
 
         // update - change backend
         $project = $this->client->updateProject($project['id'], [
-           'defaultBackend' => 'redshift',
+            'defaultBackend' => 'redshift',
         ]);
         $this->assertEquals('redshift', $project['defaultBackend']);
 
@@ -763,9 +763,9 @@ class ProjectsTest extends ClientTestCase
         $this->assertNull($project['expires']);
         // update - project type and expiration
         $project = $this->client->updateProject($project['id'], [
-           'type' => 'demo',
-           'expirationDays' => 22, // reset expiration
-           'billedMonthlyPrice' => 100000,
+            'type' => 'demo',
+            'expirationDays' => 22, // reset expiration
+            'billedMonthlyPrice' => 100000,
         ]);
 
         $this->assertEquals('demo', $project['type']);
@@ -961,7 +961,6 @@ class ProjectsTest extends ClientTestCase
             $this->assertEquals(403, $e->getCode());
         }
     }
-
 
     public function testChangeProjectOrganization()
     {
@@ -1381,7 +1380,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotEmpty($project['disabled']['estimatedEndTime']);
 
         $client = $this->getStorageClient([
-            'url' =>  getenv('KBC_MANAGE_API_URL'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
             'token' => $storageToken['token'],
             'backoffMaxTries' => 1,
         ]);
@@ -1403,11 +1402,46 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotEmpty($storageToken);
     }
 
-    public function testListDeletedProjects()
+    public function testNormalAdminWithoutFeatureCannotListDeletedProjects(): void
     {
+        $user = $this->normalUserClient->verifyToken()['user'];
+        if (in_array(self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME, $user['features'], true)) {
+            $this->client->removeUserFeature($user['email'], self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
+        }
+
+        $this->expectException(ClientException::class);
+        $this->expectExceptionMessage('Only super admin can list deleted project');
+        $this->normalUserClient->listDeletedProjects();
+    }
+
+    public static function deleteProjectsClientProvider(): Generator
+    {
+        yield 'SuperAdmin' => ['SuperAdmin'];
+        yield 'AdminWithFeature' => ['AdminWithFeature'];
+    }
+
+    /**
+     * @dataProvider deleteProjectsClientProvider
+     */
+    public function testListDeletedProjects(string $case): void
+    {
+        switch ($case) {
+            case 'SuperAdmin':
+                $testClient = $this->client;
+                break;
+            case 'AdminWithFeature':
+                $testClient = $this->normalUserClient;
+                $user = $testClient->verifyToken()['user'];
+                if (!in_array(self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME, $user['features'], true)) {
+                    $this->client->addUserFeature($user['email'], self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
+                }
+                break;
+            default:
+                throw new InvalidArgumentException(sprintf('Unknown case "%s"', $case));
+        }
         $organizations = [];
 
-        for ($i=0; $i<2; $i++) {
+        for ($i = 0; $i < 2; $i++) {
             $organization = $this->initTestOrganization();
             $organizations[] = $organization;
             $project = $this->initTestProject($organization['id']);
@@ -1427,7 +1461,7 @@ class ProjectsTest extends ClientTestCase
         }
 
         // all deleted projects
-        $projects = $this->client->listDeletedProjects();
+        $projects = $testClient->listDeletedProjects();
         $this->assertGreaterThan($i + 1, $projects);
 
         // organization deleted projects
@@ -1435,7 +1469,7 @@ class ProjectsTest extends ClientTestCase
             'organizationId' => $organization['id'],
         ];
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertCount(1, $projects);
 
         // name filter test
@@ -1444,7 +1478,7 @@ class ProjectsTest extends ClientTestCase
             'name' => $project['name'],
         ];
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertGreaterThan(0, count($projects));
 
         $params = [
@@ -1452,7 +1486,7 @@ class ProjectsTest extends ClientTestCase
             'name' => $project['name'],
         ];
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertGreaterThan(0, count($projects));
 
         $params = [
@@ -1460,7 +1494,7 @@ class ProjectsTest extends ClientTestCase
             'name' => sha1($project['name']),
         ];
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertCount(0, $projects);
 
         foreach ($organizations as $organization) {
