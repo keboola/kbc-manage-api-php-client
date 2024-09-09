@@ -1575,7 +1575,11 @@ class ProjectsTest extends ClientTestCase
 
             $this->fail('List deleted projects of deleted organization should produce error');
         } catch (ClientException $e) {
-            $this->assertEquals(400, $e->getCode());
+            $this->assertEquals(404, $e->getCode());
+            $this->assertSame(sprintf(
+                'Organization "%d" not found',
+                $organization['id']
+            ), $e->getMessage());
         }
 
         // permission validation
