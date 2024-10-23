@@ -190,10 +190,7 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-    /**
-     * @return array
-     */
-    private function initTestOrganization()
+    private function initTestOrganization(): array
     {
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -212,7 +209,7 @@ class ProjectsTest extends ClientTestCase
      * @param $organizationId
      * @return array
      */
-    private function initTestProject($organizationId)
+    private function initTestProject($organizationId): array
     {
         $project = $this->client->createProject($organizationId, [
             'name' => 'My test',
@@ -294,7 +291,7 @@ class ProjectsTest extends ClientTestCase
         ];
     }
 
-    public function testSuperManageTokenWithScopeCanSeeProjectDetail()
+    public function testSuperManageTokenWithScopeCanSeeProjectDetail(): void
     {
         $organization = $this->initTestOrganization();
         $organizationId = $organization['id'];
@@ -313,7 +310,7 @@ class ProjectsTest extends ClientTestCase
         $clientWithoutScopes->getProject($project['id']);
     }
 
-    public function testSuperAdminCannotCreateProject()
+    public function testSuperAdminCannotCreateProject(): void
     {
         $organization = $this->initTestOrganization();
         $organizationId = $organization['id'];
@@ -350,7 +347,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertCount(0, $projects);
     }
 
-    public function testMaintainerAdminCannotCreateProject()
+    public function testMaintainerAdminCannotCreateProject(): void
     {
         $organization = $this->initTestOrganization();
         $organizationId = $organization['id'];
@@ -384,7 +381,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertCount(0, $projects);
     }
 
-    public function testRandomAdminCannotCreateProject()
+    public function testRandomAdminCannotCreateProject(): void
     {
         $organization = $this->initTestOrganization();
         $organizationId = $organization['id'];
@@ -414,7 +411,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertCount(0, $projects);
     }
 
-    public function testOrganizationAdminCanCreateProject()
+    public function testOrganizationAdminCanCreateProject(): void
     {
         $organization = $this->initTestOrganization();
         $organizationId = $organization['id'];
@@ -441,7 +438,7 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organizationId);
     }
 
-    public function testProductionProjectCreate()
+    public function testProductionProjectCreate(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -458,7 +455,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertNull($project['expires']);
     }
 
-    public function testDemoProjectCreate()
+    public function testDemoProjectCreate(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -500,7 +497,7 @@ class ProjectsTest extends ClientTestCase
         $this->client->purgeDeletedProject($project['id']);
     }
 
-    public function testCreateProjectWithRedshiftBackendFromTemplate()
+    public function testCreateProjectWithRedshiftBackendFromTemplate(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -514,7 +511,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals('redshift', $project['defaultBackend']);
     }
 
-    public function testCreateProjectWithInvalidBackendShouldFail()
+    public function testCreateProjectWithInvalidBackendShouldFail(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -532,7 +529,7 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function testUsersManagement()
+    public function testUsersManagement(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -587,7 +584,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertCount(1, $admins);
     }
 
-    public function testUserManagementInvalidEmail()
+    public function testUserManagementInvalidEmail(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -617,7 +614,7 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function testExpiringUserDeletedProject()
+    public function testExpiringUserDeletedProject(): void
     {
         // normal user in this case will be our maintainer.
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -678,7 +675,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertCount(2, $admins);
     }
 
-    public function testTemporaryAccess()
+    public function testTemporaryAccess(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -727,7 +724,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertCount(1, $admins);
     }
 
-    public function testProjectUpdate()
+    public function testProjectUpdate(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -903,7 +900,7 @@ class ProjectsTest extends ClientTestCase
         $this->client->removeUserFeature($this->normalUser['email'], 'can-update-project-settings');
     }
 
-    public function testProjectUpdatePermissions()
+    public function testProjectUpdatePermissions(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -962,7 +959,7 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function testChangeProjectOrganization()
+    public function testChangeProjectOrganization(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -980,7 +977,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($newOrganization['id'], $changedProject['organization']['id']);
     }
 
-    public function testChangeProjectLimits()
+    public function testChangeProjectLimits(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1009,7 +1006,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($limits[1], $project['limits']['goodData.usersCount']);
     }
 
-    public function testDeleteProjectLimit()
+    public function testDeleteProjectLimit(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1039,7 +1036,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayNotHasKey('goodData.usersCount', $project['limits']);
     }
 
-    public function testChangeProjectLimitsWithSuperToken()
+    public function testChangeProjectLimitsWithSuperToken(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1062,7 +1059,7 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function testAddNonexistentFeature()
+    public function testAddNonexistentFeature(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1082,7 +1079,7 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function testAddProjectFeatureTwice()
+    public function testAddProjectFeatureTwice(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1115,7 +1112,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertSame($initialFeaturesCount + 1, count($project['features']));
     }
 
-    public function testAddRemoveProjectFeatures()
+    public function testAddRemoveProjectFeatures(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1147,7 +1144,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotContains($secondFeatureName, $project['features']);
     }
 
-    public function testCreateProjectStorageTokenWithoutPermissions()
+    public function testCreateProjectStorageTokenWithoutPermissions(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1214,7 +1211,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEmpty($verified['bucketPermissions']);
     }
 
-    public function testCreateProjectStorageTokenWithMorePermissions()
+    public function testCreateProjectStorageTokenWithMorePermissions(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1246,7 +1243,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($verified['canPurgeTrash']);
     }
 
-    public function testCreateProjectStorageTokenWithBucketPermissions()
+    public function testCreateProjectStorageTokenWithBucketPermissions(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1294,7 +1291,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals([$newBucketId => 'read'], $verified['bucketPermissions']);
     }
 
-    public function testCreateProjectStorageTokenWithMangeTokensPermissionAndComponentAccess()
+    public function testCreateProjectStorageTokenWithMangeTokensPermissionAndComponentAccess(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1346,7 +1343,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($requestedComponents, $verified2['componentAccess']);
     }
 
-    public function testSuperAdminCanDisableAndEnableProject()
+    public function testSuperAdminCanDisableAndEnableProject(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1414,6 +1411,25 @@ class ProjectsTest extends ClientTestCase
         $this->normalUserClient->listDeletedProjects();
     }
 
+    private function getTestClientWithFeature(string $case, string $feature): Client
+    {
+        switch ($case) {
+            case 'SuperAdmin':
+                $testClient = $this->client;
+                break;
+            case 'AdminWithFeature':
+                $testClient = $this->normalUserClient;
+                $user = $testClient->verifyToken()['user'];
+                if (!in_array($feature, $user['features'], true)) {
+                    $this->client->addUserFeature($user['email'], $feature);
+                }
+                break;
+            default:
+                throw new InvalidArgumentException(sprintf('Unknown case "%s"', $case));
+        }
+        return $testClient;
+    }
+
     public static function deleteProjectsClientProvider(): Generator
     {
         yield 'SuperAdmin' => ['SuperAdmin'];
@@ -1425,20 +1441,7 @@ class ProjectsTest extends ClientTestCase
      */
     public function testListDeletedProjects(string $case): void
     {
-        switch ($case) {
-            case 'SuperAdmin':
-                $testClient = $this->client;
-                break;
-            case 'AdminWithFeature':
-                $testClient = $this->normalUserClient;
-                $user = $testClient->verifyToken()['user'];
-                if (!in_array(self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME, $user['features'], true)) {
-                    $this->client->addUserFeature($user['email'], self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
-                }
-                break;
-            default:
-                throw new InvalidArgumentException(sprintf('Unknown case "%s"', $case));
-        }
+        $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
         $organizations = [];
 
         for ($i = 0; $i < 2; $i++) {
@@ -1502,7 +1505,7 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function testListDeletedProjectsPaging()
+    public function testListDeletedProjectsPaging(): void
     {
         $organization = $this->initTestOrganization();
 
@@ -1561,7 +1564,7 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testDeletedProjectsErrors()
+    public function testDeletedProjectsErrors(): void
     {
         $organization = $this->initTestOrganization();
         $project = $this->initTestProject($organization['id']);
@@ -1601,8 +1604,12 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function testProjectUnDelete()
+    /**
+     * @dataProvider deleteProjectsClientProvider
+     */
+    public function testProjectUnDelete(string $case): void
     {
+        $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
         $organization = $this->initTestOrganization();
 
         $project = $this->initTestProject($organization['id']);
@@ -1663,7 +1670,7 @@ class ProjectsTest extends ClientTestCase
         $clientWithIncorrectScope->getDeletedProject($project['id']);
     }
 
-    public function testActiveProjectUnDelete()
+    public function testActiveProjectUnDelete(): void
     {
         $organization = $this->initTestOrganization();
 
@@ -1691,7 +1698,7 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testNonExistingProjectUnDelete()
+    public function testNonExistingProjectUnDelete(): void
     {
         $organization = $this->initTestOrganization();
 
@@ -1708,8 +1715,13 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testProjectWithExpirationUnDelete()
+    /**
+     * @dataProvider deleteProjectsClientProvider
+     */
+    public function testProjectWithExpirationUnDelete(string $case): void
     {
+        $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
+
         $organization = $this->initTestOrganization();
 
         $project = $this->client->createProject($organization['id'], [
@@ -1729,12 +1741,12 @@ class ProjectsTest extends ClientTestCase
             'organizationId' => $organization['id'],
         ];
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertCount(1, $projects);
 
-        $this->client->undeleteProject($project['id']);
+        $testClient->undeleteProject($project['id']);
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertCount(0, $projects);
 
         $projects = $this->client->listOrganizationProjects($organization['id']);
@@ -1746,14 +1758,18 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteProject($project['id']);
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertCount(1, $projects);
 
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testProjectUnDeleteWithExpiration()
+    /**
+     * @dataProvider deleteProjectsClientProvider
+     */
+    public function testProjectUnDeleteWithExpiration(string $case): void
     {
+        $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
         $organization = $this->initTestOrganization();
 
         $project = $this->initTestProject($organization['id']);
@@ -1765,12 +1781,12 @@ class ProjectsTest extends ClientTestCase
             'organizationId' => $organization['id'],
         ];
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertCount(1, $projects);
 
-        $this->client->undeleteProject($project['id'], ['expirationDays' => 7]);
+        $testClient->undeleteProject($project['id'], ['expirationDays' => 7]);
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertCount(0, $projects);
 
         $projects = $this->client->listOrganizationProjects($organization['id']);
@@ -1781,13 +1797,13 @@ class ProjectsTest extends ClientTestCase
 
         $this->client->deleteProject($project['id']);
 
-        $projects = $this->client->listDeletedProjects($params);
+        $projects = $testClient->listDeletedProjects($params);
         $this->assertCount(1, $projects);
 
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testProjectDataRetention()
+    public function testProjectDataRetention(): void
     {
         $organization = $this->initTestOrganization();
         $project = $this->initTestProject($organization['id']);
@@ -1806,7 +1822,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals(0, (int) $project['dataRetentionTimeInDays']);
     }
 
-    public function testLastMemberCanLeaveProject()
+    public function testLastMemberCanLeaveProject(): void
     {
         $organization = $this->initTestOrganization();
         $project = $this->initTestProject($organization['id']);
@@ -1820,7 +1836,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertCount(0, $users);
     }
 
-    public function testMaintainerAdminCannotDisableAndEnableProject()
+    public function testMaintainerAdminCannotDisableAndEnableProject(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
@@ -1857,7 +1873,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($project['isDisabled']);
     }
 
-    public function testOrganizationAdminCannotDisableAndEnableProject()
+    public function testOrganizationAdminCannotDisableAndEnableProject(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1894,7 +1910,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($project['isDisabled']);
     }
 
-    public function testProjectAdminCannotDisableAndEnableProject()
+    public function testProjectAdminCannotDisableAndEnableProject(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -1931,7 +1947,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertTrue($project['isDisabled']);
     }
 
-    public function testRandomAdminCannotDisableAndEnableProject()
+    public function testRandomAdminCannotDisableAndEnableProject(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'My org',
@@ -2004,7 +2020,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    public function testMembershipRoleChange()
+    public function testMembershipRoleChange(): void
     {
         $organization = $this->initTestOrganization();
         $project = $this->initTestProject($organization['id']);
@@ -2025,7 +2041,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals('admin', $member['role']);
     }
 
-    public function testPayAsYoGoDetails()
+    public function testPayAsYoGoDetails(): void
     {
         $feature = self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME;
 
