@@ -1407,7 +1407,7 @@ class ProjectsTest extends ClientTestCase
         }
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('Only super admin can list deleted project');
+        $this->expectExceptionMessage('You don\'t have access to the resource. Token must belong to the super admin or admin has to have feature "can-manage-deleted-projects".');
         $this->normalUserClient->listDeletedProjects();
     }
 
@@ -1578,6 +1578,7 @@ class ProjectsTest extends ClientTestCase
 
             $this->fail('List deleted projects of deleted organization should produce error');
         } catch (ClientException $e) {
+            var_export($e->getMessage());
             $this->assertEquals(400, $e->getCode());
         }
 
@@ -1589,7 +1590,6 @@ class ProjectsTest extends ClientTestCase
 
         try {
             $client->listDeletedProjects();
-
             $this->fail('List deleted projects with non super admint oken should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
