@@ -2278,7 +2278,7 @@ Enqueues the command that fully deletes a project and returns its execution ID f
 
 ### List deleted projects [GET]
 
-Listing deleted projects is allowed only for a super admin.
+Listing deleted projects is allowed only for a super admin  or user with feature `can-manage-deleted-projects`.
 
 #### Projects filtering
 
@@ -2375,7 +2375,7 @@ Projects can be filtered by various filters:
 ## Cancel Project Deletion [/manage/deleted-projects/{project_id}{?expirationDays}]
 
 ### Cancel project deletion [DELETE]
-Cancelling project deletion is allowed only for a super admin.
+Cancelling project deletion is allowed only for a super admin or user with feature `can-manage-deleted-projects`.
 If the project has set expiration, the expiration is reset on the project renewal.
 You can also specify new expiration by `expirationDays` parameter.
 
