@@ -1639,19 +1639,19 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testDeletedProjectDetail()
+    /**
+     * @dataProvider deleteProjectsClientProvider
+     */
+    public function testDeletedProjectDetail(string $case): void
     {
+        $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
         $organization = $this->initTestOrganization();
 
         $project = $this->initTestProject($organization['id']);
 
         $this->client->deleteProject($project['id']);
 
-        $params = [
-            'organizationId' => $organization['id'],
-        ];
-
-        $deletedProject = $this->client->getDeletedProject($project['id']);
+        $deletedProject = $testClient->getDeletedProject($project['id']);
         $this->assertTrue($deletedProject['isDeleted']);
         $this->assertFalse($deletedProject['isPurged']);
         $this->assertNull($deletedProject['purgedTime']);

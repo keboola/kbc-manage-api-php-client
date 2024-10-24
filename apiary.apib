@@ -2208,7 +2208,7 @@ Operations on deleted projects are allowed only for a super admin.
 
 ### Deleted project detail [GET]
 
-This endpoint can also be accessed using application tokens with scope `deleted-projects:read`
+This endpoint can also be accessed using application tokens with scope `deleted-projects:read` or user token with feature `can-manage-deleted-projects`.
 
 + Parameters
     + project_id (required, int) - Deleted project ID
