@@ -616,4 +616,9 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
         $this->assertNull($featureFound);
     }
+
+    public function testSuperAdminCanManageFeaturesInSOXProject()
+    {
+        // TODO
+    }
 }
