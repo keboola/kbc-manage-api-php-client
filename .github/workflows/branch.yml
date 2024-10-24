@@ -20,7 +20,7 @@ jobs:
             composer-options: "--ignore-platform-reqs"
             experimental: true
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - run: |
           docker compose build --build-arg PHP_VERSION=${{ matrix.php-version }} release
           docker network create connection_api-tests
