@@ -1407,7 +1407,7 @@ class ProjectsTest extends ClientTestCase
         }
 
         $this->expectException(ClientException::class);
-        $this->expectExceptionMessage('Only super admin can list deleted project');
+        $this->expectExceptionMessage('You don\'t have access to the resource. Token must belong to the super admin or admin has to have feature "can-manage-deleted-projects".');
         $this->normalUserClient->listDeletedProjects();
     }
 
@@ -1578,6 +1578,10 @@ class ProjectsTest extends ClientTestCase
 
             $this->fail('List deleted projects of deleted organization should produce error');
         } catch (ClientException $e) {
+            $this->assertEquals(
+                sprintf('Organization "%s" not found', $organization['id']),
+                $e->getMessage()
+            );
             $this->assertEquals(400, $e->getCode());
         }
 
@@ -1589,7 +1593,6 @@ class ProjectsTest extends ClientTestCase
 
         try {
             $client->listDeletedProjects();
-
             $this->fail('List deleted projects with non super admint oken should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -1639,19 +1642,19 @@ class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testDeletedProjectDetail()
+    /**
+     * @dataProvider deleteProjectsClientProvider
+     */
+    public function testDeletedProjectDetail(string $case): void
     {
+        $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
         $organization = $this->initTestOrganization();
 
         $project = $this->initTestProject($organization['id']);
 
         $this->client->deleteProject($project['id']);
 
-        $params = [
-            'organizationId' => $organization['id'],
-        ];
-
-        $deletedProject = $this->client->getDeletedProject($project['id']);
+        $deletedProject = $testClient->getDeletedProject($project['id']);
         $this->assertTrue($deletedProject['isDeleted']);
         $this->assertFalse($deletedProject['isPurged']);
         $this->assertNull($deletedProject['purgedTime']);
