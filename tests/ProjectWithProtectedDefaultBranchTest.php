@@ -454,15 +454,12 @@ class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
             $this->assertSame(403, $e->getCode());
         }
 
+        // super admin did create project so he is member remove it
+        $this->client->removeUserFromProject($projectId, $this->superAdmin['id']);
+
         // test is super admin can add feature
         $this->client->addProjectFeature($projectId, $featureName);
         $this->client->removeProjectFeature($projectId, $featureName);
-
-        try {
-            $this->client->removeUserFromProject($projectId, $this->superAdmin['id']);
-        } catch (ClientException $e) {
-            // ignore failure
-        }
         // super admin joins project test add feature
         $this->client->joinProject($projectId);
         $this->client->addProjectFeature($projectId, $featureName);
