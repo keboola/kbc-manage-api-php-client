@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Generator;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
@@ -180,10 +181,24 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         }
     }
 
+    public function provideAllowedRoleToManageFeature(): Generator
+    {
+        foreach ($this->provideVariousOfTokensClient() as $token) {
+            yield 'admin ' . $token[0] => [
+                ProjectRole::ADMIN,
+                $token[0],
+            ];
+            yield 'share ' . $token[0] => [
+                ProjectRole::SHARE,
+                $token[0],
+            ];
+        }
+    }
+
     /**
-     * @dataProvider provideVariousOfTokensClient
+     * @dataProvider provideAllowedRoleToManageFeature
      */
-    public function testAdminProjectMemberManageFeatureCanBeManageByAdmin()
+    public function testProjectMemberCanManageFeatureCanBeManageByAdmin(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -192,7 +207,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
             $projectId,
             [
                 'email' => $this->normalUser['email'],
-                'role' => 'admin',
+                'role' => $role,
             ]
         );
 
@@ -444,16 +459,8 @@ class AssignProjectFeatureTest extends BaseFeatureTest
                 ProjectRole::GUEST,
                 self::MANAGE_TOKEN_CLIENT,
             ],
-            'share mange token' => [
-                ProjectRole::SHARE,
-                self::MANAGE_TOKEN_CLIENT,
-            ],
             'guest session token' => [
                 ProjectRole::GUEST,
-                self::SESSION_TOKEN_CLIENT,
-            ],
-            'share session token' => [
-                ProjectRole::SHARE,
                 self::SESSION_TOKEN_CLIENT,
             ],
             'readOnly manage token' => [
