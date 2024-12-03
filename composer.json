@@ -3,7 +3,7 @@
     "description": "Keboola Management API Client",
     "license": "MIT",
     "require": {
-        "php" : "^7.4|^8.0",
+        "php" : ">=8.1",
         "guzzlehttp/guzzle": "^7.0|^6.1"
     },
     "require-dev": {

@@ -5,13 +5,13 @@ parameters:
     tmpDir: cache/.phpstan
     parallel:
         processTimeout: 300.0
-    checkMissingIterableValueType: false
-    checkGenericClassInNonGenericObjectType: false
     ignoreErrors:
         # other
         - '#Method .* has no return type specified#'
         - '#Property .* has no type specified#'
         - '#Method (.*) has parameter (.*) with no type specified.#'
+        -
+            identifier: missingType.iterableValue
 includes:
     - phpstan-baseline.neon
     - vendor/phpstan/phpstan-phpunit/extension.neon

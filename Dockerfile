@@ -1,8 +1,7 @@
-ARG PHP_VERSION=7.4
+ARG PHP_VERSION=8.1
 # the default env bellow is used when build pipeline sends "PHP_VERSION=" - the above default value is ignored in that case
-FROM php:${PHP_VERSION:-7.4} as dev
+FROM php:${PHP_VERSION:-8.1} as dev
 
-ARG XDEBUG_VERSION=2.9.8
 ARG COMPOSER_FLAGS="--prefer-dist --no-interaction --classmap-authoritative --no-scripts"
 
 MAINTAINER Martin Halamicek <martin@keboola.com>

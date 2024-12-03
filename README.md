@@ -20,7 +20,7 @@ mv ./composer.phar ~/bin/composer # or /usr/local/bin/composer
 ```json
 {
     "require": {
-        "php" : ">=5.4.0",
+        "php" : ">=8.1",
         "keboola/kbc-manage-api-php-client": "~0.0"
     }
 }
