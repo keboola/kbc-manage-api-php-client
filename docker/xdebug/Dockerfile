@@ -1,4 +1,4 @@
 FROM keboola/manage-api-tests
 
-RUN pecl install xdebug-2.9.8  \
+RUN pecl install xdebug  \
   && docker-php-ext-enable xdebug
