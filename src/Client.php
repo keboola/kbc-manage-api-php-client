@@ -743,6 +743,11 @@ class Client
         return $this->apiGet('manage/storage-backend');
     }
 
+    public function getStorageBackend(int $id): array
+    {
+        return $this->apiGet(sprintf('manage/storage-backend/%s', $id));
+    }
+
     public function listUiApps()
     {
         return $this->apiGet('manage/ui-apps');

@@ -236,7 +236,7 @@ class StorageBackendTest extends ClientTestCase
         $this->client->removeStorageBackend($backend['id']);
     }
 
-    public function testStorageBackendList()
+    public function testStorageBackendListAndDetail(): void
     {
         $backends = $this->client->listStorageBackend();
 
@@ -247,6 +247,11 @@ class StorageBackendTest extends ClientTestCase
         $this->assertArrayHasKey('host', $backend);
         $this->assertArrayHasKey('username', $backend);
         $this->assertArrayHasKey('backend', $backend);
+
+        $backedDetail = $this->client->getStorageBackend($backend['id']);
+        $this->assertArrayHasKey('host', $backedDetail);
+        $this->assertArrayHasKey('username', $backend);
+        $this->assertArrayHasKey('backend', $backedDetail);
     }
 
     private function assertBackendExist(int $backendId): void
