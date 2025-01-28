@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
+use Keboola\ManageApi\ClientException;
 
 class UiAppsTest extends ClientTestCase
 {
@@ -45,6 +46,33 @@ class UiAppsTest extends ClientTestCase
         $this->assertSame(count($listOfAppsBeforeCreation), (count($listOfAppsAfterCreation) - 1));
         $this->assertNotFalse(array_search($newAppName, $listOfAppsAfterCreation));
         $this->assertEquals($listOfAppsBeforeCreation, $listOfAppsAfterDeletion);
+    }
+
+    public function testAppCreationWithIsCritical()
+    {
+        $client = $this->getClient([
+            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE'),
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'backoffMaxTries' => 1,
+        ]);
+
+        $appName = 'Sample critical KBC Application';
+        try {
+            $client->deleteUiApp($appName);
+        } catch (ClientException) {
+        }
+
+        $created = $client->registerUiApp([
+            'manifestUrl' => 'https://keboola.github.io/kbc-ui-app-manifest-file/sample.critical.json',
+            'activate' => true,
+        ]);
+
+        $this->assertEquals(true, $created['version']['isCritical']);
+
+        $apps = $client->listUiApps();
+        $key = array_search($appName, array_column($apps, 'name'));
+
+        $this->assertEquals(true, $apps[$key]['isCritical']);
     }
 
     public function testPublicList()
