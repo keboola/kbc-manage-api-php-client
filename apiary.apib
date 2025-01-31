@@ -3886,6 +3886,16 @@ CREATE MASTER KEY
 
     + Attributes (array[StorageBackend])
 
+### Backend detail [GET /manage/storage-backend/{backend_id}]
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes (array[StorageBackendListSnowflake])
+
 ### Update backend [PATCH /manage/storage-backend/{backend_id}]
 
 A partial update of a storage backend, one of the attributes are required.
@@ -4108,6 +4118,11 @@ A partial update of a data plane, one of the attributes are required.
 + host: demo.snowflakecomputing.com (required)
 + backend: snowflake (required)
 + warehouse: keboola
++ saml2Configuration: (optional) - available only for Snowflake backend
+  + idpEntityId: https://example-idp.com
+  + spEntityId: https://example-sp.com
+  + spAcsUrl: https://example-sp.com/acs
+  + publicKey: RSA_PUBLIC_KEY
 
 ## StorageBackendListSynapse (StorageBackendListBase)
 + host: demo-synapse.database.windows.net (required)
