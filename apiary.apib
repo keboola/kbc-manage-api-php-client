@@ -3267,6 +3267,8 @@ Gets the users with the specified feature assigned.
 
 ### Create a feature [POST]
 
+**Please, if your feature is intended for all stacks, implement it through migration.**
+
 To create a new feature, provide the following parameters as JSON in the request body:
 
 If the `canBeManageByAdmin` parameter is true, the token of a user without a super admin role can assign the feature.
@@ -3274,6 +3276,8 @@ In the case of the `project` feature, it must be in the project and have the `Ad
 It is not enough to have the maintainer admin or organization admin permission.
 
 In the case of the `admin` role, an admin who does not have super admin privileges can only set the feature for himself.
+
+
 
 + Attributes
 
