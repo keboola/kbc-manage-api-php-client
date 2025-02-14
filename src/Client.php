@@ -828,31 +828,6 @@ class Client
         return $this->apiPost($this->encode('/manage/maintainers/%s/promo-codes/', $maintainerId), $params);
     }
 
-    public function listDataPlanes(): array
-    {
-        return $this->apiGet('manage/data-planes');
-    }
-
-    public function createDataPlane(array $options): array
-    {
-        return $this->apiPost('/manage/data-planes', $options);
-    }
-
-    public function updateDataPlane(int $dataPlaneId, array $options): array
-    {
-        return $this->apiPatch($this->encode('/manage/data-planes/%s', $dataPlaneId), $options);
-    }
-
-    public function getDataPlane(int $dataPlaneId): array
-    {
-        return $this->apiGet($this->encode('/manage/data-planes/%s', $dataPlaneId));
-    }
-
-    public function removeDataPlane(int $dataPlaneId): void
-    {
-        $this->apiDelete($this->encode('/manage/data-planes/%s', $dataPlaneId));
-    }
-
     /**
      * Encode url parameters with `urlencode`. Use `printf` syntax for variables in url (%s, %d, ...).
      */
