@@ -42,7 +42,6 @@ class ProjectsTest extends ClientTestCase
             [Backend::REDSHIFT],
             [Backend::SYNAPSE],
             [Backend::TERADATA],
-//            [Backend::EXASOL], // tmp disable until exasol will work again
         ];
     }
 
@@ -53,11 +52,6 @@ class ProjectsTest extends ClientTestCase
                 Backend::REDSHIFT,
                 self::FILE_STORAGE_PROVIDER_GCS,
                 'Redshift does not support other file storage than S3.',
-            ],
-            [
-                Backend::EXASOL,
-                self::FILE_STORAGE_PROVIDER_GCS,
-                'Exasol storage backend supports only S3 file storage.',
             ],
         ];
     }

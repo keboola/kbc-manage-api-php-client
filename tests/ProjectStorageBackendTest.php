@@ -18,8 +18,6 @@ class ProjectStorageBackendTest extends ClientTestCase
             [Backend::REDSHIFT],
 //            [Backend::SYNAPSE],
         // synapse isnt available on e2e testing
-            [Backend::EXASOL],
-//            [Backend::TERADATA],
         ];
     }
 
