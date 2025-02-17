@@ -295,24 +295,4 @@ class StorageBackendTest extends ClientTestCase
             'useDynamicBackends' => '1',
         ];
     }
-
-    public function testCreateExasolBackendWithInvalidHostname(): void
-    {
-        $options = [
-            'backend' => 'exasol',
-            'host' => 'invalid.example.com',
-            'warehouse' => 'xxx',
-            'username' => 'xxx',
-            'password' => 'xxx',
-            'region' => 'eu-central-1',
-            'owner' => 'keboola',
-        ];
-
-        try {
-            $this->client->createStorageBackend($options);
-            self::fail('Should fail!');
-        } catch (ClientException $e) {
-            self::assertSame('Cannot establish connection with provided Exasol cluster. Is it running and accessible?', $e->getMessage());
-        }
-    }
 }

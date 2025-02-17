@@ -53,18 +53,6 @@ class ProjectDeleteTest extends ClientTestCase
             'backend' => Backend::SYNAPSE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_GCS,
         ];
-        yield 'exasol with GCS file storage' => [
-            'backend' => Backend::EXASOL,
-            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_GCS,
-        ];
-        yield 'exasol with S3 file storage' => [
-            'backend' => Backend::EXASOL,
-            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
-        ];
-        yield 'teradata with S3 file storage' => [
-            'backend' => Backend::TERADATA,
-            'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_S3,
-        ];
         yield 'snowflake with GCS file storage' => [
             'backend' => Backend::SNOWFLAKE,
             'fileStorageProvider' => self::FILE_STORAGE_PROVIDER_GCS,
@@ -195,9 +183,6 @@ class ProjectDeleteTest extends ClientTestCase
         string $backend,
         string $fileStorageProvider
     ): void {
-        if ($backend === Backend::EXASOL) {
-            $this->markTestSkipped('Skip until create table works in Exasol.');
-        }
         $connectionParamName = sprintf('defaultConnection%sId', ucfirst($backend));
         $maintainer = $this->client->getMaintainer($this->testMaintainerId);
 
@@ -222,8 +207,6 @@ class ProjectDeleteTest extends ClientTestCase
 
         if ($backend === Backend::REDSHIFT
             || $backend === Backend::SYNAPSE
-            || $backend === Backend::EXASOL
-            || $backend === Backend::TERADATA
         ) {
             $this->client->assignProjectStorageBackend($project['id'], $maintainer[$connectionParamName]);
         }
