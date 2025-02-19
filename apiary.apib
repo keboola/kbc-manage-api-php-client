@@ -3969,82 +3969,6 @@ Update of the credentials for BigQuery backend.
 
     + Attributes(BigQueryStorageBackendCreated)
 
-# Group SUPER - Data Planes Management
-
-## Data Plane Collection [/manage/data-planes]
-
-### Register a new data plane  [POST]
-
-+ Request (application/json)
-
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-    + Attributes(DataPlaneCreate)
-
-+ Response 201 (application/json)
-
-    + Attributes(DataPlane)
-
-### List data planes [GET]
-
-This endpoint can also be accessed using application tokens with scope `data-planes:read`
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 200 (application/json)
-
-    + Attributes (array[DataPlane])
-
-### Data plane detail [GET /manage/data-planes/{data_plane_id}]
-
-This endpoint can also be accessed using application tokens with scope `data-planes:read`
-
-+ Parameters
-    + data_plane_id (required) - Backend ID
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 200 (application/json)
-
-    + Attributes(DataPlane)
-
-### Update data plane [PATCH /manage/data-planes/{data_plane_id}]
-
-A partial update of a data plane, one of the attributes are required.
-
-+ Parameters
-    + data_plane_id (required) - Backend ID
-+ Attributes (DataPlaneUpdate)
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 200 (application/json)
-
-    + Attributes(DataPlane)
-
-
-### Delete data plane [DELETE /manage/data-planes/{data_plane_id}]
-+ Parameters
-    + data_plane_id (required) - Id of data plane
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 204 (application/json)
-
-
 ## Data Structures
 
 ### StorageBackendCreate
@@ -4081,17 +4005,6 @@ A partial update of a data plane, one of the attributes are required.
 + username: keboola (string)
 + password: 1234 (string)
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
-
-### DataPlaneCreate
-
-+ owner: keboola (required) - associated data plane owner
-+ parameters: [] (required, object) - data plane configuration
-    + test: value
-
-### DataPlaneUpdate
-
-+ parameters: [] (required, object) - data plane configuration
-    + test: value
 
 ## StorageBackend
 + id: 123 (number, required)
@@ -4142,16 +4055,6 @@ A partial update of a data plane, one of the attributes are required.
 + host: database.teradata.com (required)
 + backend: teradata (required)
 + database: keboola
-
-## DataPlane
-+ id: 123 (number, required)
-+ owner: keboola (required)
-+ parameters
-    + test: value
-+ created: `2020-05-11T15:30:00Z` (required, string) - The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
-+ creator
-    + id: 10 (number, required)
-    + name: keboola (required)
 
 # Group SUPER - Commands
 
