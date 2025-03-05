@@ -98,7 +98,34 @@ class Client
         };
     }
 
-    public function verifyToken()
+    /**
+     * @return array{
+     *     id: int,
+     *     description: string,
+     *     created: string,
+     *     lastUsed: string|null,
+     *     expires: string|null,
+     *     isSessionToken: bool,
+     *     isExpired: bool,
+     *     isDisabled: bool,
+     *     scopes: list<string>,
+     *     type: string,
+     *     creator: array{
+     *         id: int|string,
+     *         name: string
+     *     },
+     *     user?: array{
+     *         id: int,
+     *         name: string,
+     *         email: string,
+     *         mfaEnabled: bool,
+     *         features: list<string>,
+     *         canAccessLogs: bool,
+     *         isSuperAdmin: bool
+     *     }
+     * }
+     */
+    public function verifyToken(): array
     {
         return $this->apiGet('/manage/tokens/verify');
     }

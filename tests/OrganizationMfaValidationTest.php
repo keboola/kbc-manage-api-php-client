@@ -314,7 +314,9 @@ class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->assertEquals('manage.mfaRequired', $e->getStringCode());
         }
 
-        if ($userClient->verifyToken()['user']['isSuperAdmin'] !== true) {
+        $tokenInfo = $userClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        if ($tokenInfo['user']['isSuperAdmin'] !== true) {
             try {
                 $userClient->deleteOrganization($this->organization['id']);
                 $this->fail('Admin having MFA disabled should not have access to the organization');
