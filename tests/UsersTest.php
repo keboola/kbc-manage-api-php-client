@@ -10,6 +10,7 @@ class UsersTest extends ClientTestCase
     public function testGetUser()
     {
         $token = $this->client->verifyToken();
+        $this->assertArrayHasKey('user', $token);
         $userEmail = $token['user']['email'];
         $userId = $token['user']['id'];
 
@@ -53,8 +54,8 @@ class UsersTest extends ClientTestCase
     public function testAddNonexistentFeature()
     {
         $token = $this->client->verifyToken();
-        $this->assertTrue(isset($token['user']['id']));
         $featureName = 'random-feature-' . $this->getRandomFeatureSuffix();
+        $this->assertArrayHasKey('user', $token);
 
         try {
             $this->client->addUserFeature($token['user']['id'], $featureName);
@@ -67,7 +68,7 @@ class UsersTest extends ClientTestCase
     public function testAddUserFeatureTwice()
     {
         $token = $this->client->verifyToken();
-        $this->assertTrue(isset($token['user']['id']));
+        $this->assertArrayHasKey('user', $token);
         $userId = $token['user']['id'];
 
         $user = $this->client->getUser($userId);
@@ -97,7 +98,7 @@ class UsersTest extends ClientTestCase
     public function testUpdateUser()
     {
         $token = $this->client->verifyToken();
-        $this->assertTrue(isset($token['user']['id']));
+        $this->assertArrayHasKey('user', $token);
         $userId = $token['user']['id'];
 
         $user = $this->client->getUser($userId);
@@ -114,6 +115,7 @@ class UsersTest extends ClientTestCase
     public function testDisableUserMFA()
     {
         $token = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $token);
         $userId = $token['user']['id'];
 
         $user = $this->client->getUser($userId);
@@ -132,6 +134,7 @@ class UsersTest extends ClientTestCase
     public function testNormalUserShouldNotBeAbleDisableMFA()
     {
         $token = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $token);
         $userId = $token['user']['id'];
 
         $user = $this->client->getUser($userId);
