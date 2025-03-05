@@ -385,7 +385,7 @@ class FeaturesTest extends BaseFeatureTest
         $this->assertSame($newFeature['name'], $fetchedFeature['name']);
 
         $token = $this->client->verifyToken();
-        $this->assertTrue(isset($token['user']['id']));
+        $this->assertArrayHasKey('user', $token);
         $userId = $token['user']['id'];
         $userEmail = $token['user']['email'];
 

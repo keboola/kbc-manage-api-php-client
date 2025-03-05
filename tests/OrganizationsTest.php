@@ -252,8 +252,13 @@ class OrganizationsTest extends ClientTestCase
 
     public function testSuperCannotAddAnybodyToOrganizationWithNoJoin()
     {
-        $normalUser = $this->normalUserClient->verifyToken()['user'];
-        $superAdmin = $this->client->verifyToken()['user'];
+        $tokenInfo = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $normalUser = $tokenInfo['user'];
+
+        $tokenInfo = $this->client->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $superAdmin = $tokenInfo['user'];
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -283,8 +288,13 @@ class OrganizationsTest extends ClientTestCase
 
     public function testSettingAutoJoinFlag()
     {
-        $normalUser = $this->normalUserClient->verifyToken()['user'];
-        $superAdmin = $this->client->verifyToken()['user'];
+        $tokenInfo = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $normalUser = $tokenInfo['user'];
+
+        $tokenInfo = $this->client->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $superAdmin = $tokenInfo['user'];
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -308,8 +318,13 @@ class OrganizationsTest extends ClientTestCase
 
     public function testOrganizationAdminAutoJoin()
     {
-        $normalUser = $this->normalUserClient->verifyToken()['user'];
-        $superAdmin = $this->client->verifyToken()['user'];
+        $tokenInfo = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $normalUser = $tokenInfo['user'];
+
+        $tokenInfo = $this->client->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $superAdmin = $tokenInfo['user'];
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -363,8 +378,13 @@ class OrganizationsTest extends ClientTestCase
 
     public function testSuperAdminAutoJoinError()
     {
-        $normalUser = $this->normalUserClient->verifyToken()['user'];
-        $superAdmin = $this->client->verifyToken()['user'];
+        $tokenInfo = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $normalUser = $tokenInfo['user'];
+
+        $tokenInfo = $this->client->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $superAdmin = $tokenInfo['user'];
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -410,8 +430,13 @@ class OrganizationsTest extends ClientTestCase
 
     public function testInviteSuperAdmin()
     {
-        $normalUser = $this->normalUserClient->verifyToken()['user'];
-        $superAdmin = $this->client->verifyToken()['user'];
+        $tokenInfo = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $normalUser = $tokenInfo['user'];
+
+        $tokenInfo = $this->client->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $superAdmin = $tokenInfo['user'];
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -447,7 +472,9 @@ class OrganizationsTest extends ClientTestCase
 
     public function testActivityCenterId()
     {
-        $normalUser = $this->normalUserClient->verifyToken()['user'];
+        $tokenInfo = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $normalUser = $tokenInfo['user'];
 
         $organizationA = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org A',

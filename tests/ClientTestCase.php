@@ -167,9 +167,17 @@ class ClientTestCase extends TestCase
 
         $this->testMaintainerId = (int) getenv('KBC_TEST_MAINTAINER_ID');
 
-        $this->normalUser = $this->normalUserClient->verifyToken()['user'];
-        $this->superAdmin = $this->client->verifyToken()['user'];
-        $this->normalUserWithMfa = $this->normalUserWithMfaClient->verifyToken()['user'];
+        $tokenInfo = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $this->normalUser = $tokenInfo['user'];
+
+        $tokenInfo = $this->client->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $this->superAdmin = $tokenInfo['user'];
+
+        $tokenInfo = $this->normalUserWithMfaClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $this->normalUserWithMfa = $tokenInfo['user'];
 
         // cleanup maintainers created by tests
         $maintainers = $this->client->listMaintainers();
