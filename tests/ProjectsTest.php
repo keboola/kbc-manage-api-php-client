@@ -1395,7 +1395,9 @@ class ProjectsTest extends ClientTestCase
 
     public function testNormalAdminWithoutFeatureCannotListDeletedProjects(): void
     {
-        $user = $this->normalUserClient->verifyToken()['user'];
+        $tokenInfo = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $user = $tokenInfo['user'];
         if (in_array(self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME, $user['features'], true)) {
             $this->client->removeUserFeature($user['email'], self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
         }
@@ -1413,7 +1415,9 @@ class ProjectsTest extends ClientTestCase
                 break;
             case 'AdminWithFeature':
                 $testClient = $this->normalUserClient;
-                $user = $testClient->verifyToken()['user'];
+                $tokenInfo = $testClient->verifyToken();
+                $this->assertArrayHasKey('user', $tokenInfo);
+                $user = $tokenInfo['user'];
                 if (!in_array($feature, $user['features'], true)) {
                     $this->client->addUserFeature($user['email'], $feature);
                 }
