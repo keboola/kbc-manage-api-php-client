@@ -192,7 +192,6 @@ paths:
                 defaultConnectionExasolId: 236
                 defaultConnectionTeradataId: 236
                 defaultFileStorageId: 456
-                dataPlaneId: 456
                 zendeskUrl: https://some.url.com
       summary: Create a maintainer
       operationId: Create a maintainer
@@ -213,7 +212,6 @@ paths:
               defaultConnectionExasolId: '324'
               defaultConnectionTeradataId: '324'
               defaultFileStorageId: '456'
-              dataPlaneId: '456'
               zendeskUrl: https://keboola.zendesk.com
             schema:
               type: object
@@ -248,10 +246,6 @@ paths:
                   type: string
                   example: '456'
                   description: Default File Storage ID
-                dataPlaneId:
-                  type: string
-                  example: '456'
-                  description: Data Plane ID
                 zendeskUrl:
                   type: string
                   example: https://keboola.zendesk.com
@@ -288,7 +282,6 @@ paths:
                 defaultConnectionExasolId: 236
                 defaultConnectionTeradataId: 236
                 defaultFileStorageId: 456
-                dataPlaneId: 456
                 zendeskUrl: https://some.url.com
       summary: Retrieve a maintainer
       operationId: Retrieve a maintainer
@@ -324,7 +317,6 @@ paths:
                 defaultConnectionExasolId: 236
                 defaultConnectionTeradataId: 236
                 defaultFileStorageId: 456
-                dataPlaneId: 456
                 zendeskUrl: https://some.url.com
       summary: Update a maintainer
       operationId: Update a maintainer
@@ -344,7 +336,6 @@ paths:
               defaultConnectionExasolId: '324'
               defaultConnectionTeradataId: '324'
               defaultFileStorageId: '456'
-              dataPlaneId: '456'
               zendeskUrl: https://keboola.zendesk.com
             schema:
               type: object
@@ -377,10 +368,6 @@ paths:
                   type: string
                   example: '456'
                   description: Default File Storage ID
-                dataPlaneId:
-                  type: string
-                  example: '456'
-                  description: Data Plane ID
                 zendeskUrl:
                   type: string
                   example: https://keboola.zendesk.com
@@ -1723,17 +1710,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Project detail
       operationId: Project detail
       description: >-
@@ -1868,17 +1844,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Update a project
       operationId: Update a project
       description: ''
@@ -2061,17 +2026,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Add a project
       operationId: Add a project
       description: ''
@@ -2326,17 +2280,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Move a project
       operationId: Move a project
       description: ''
@@ -2470,17 +2413,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Assign project Storage backend
       operationId: Assign project Storage backend
       description: ''
@@ -2614,17 +2546,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Remove project Storage backend
       operationId: Remove project Storage backend
       description: ''
@@ -2752,17 +2673,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Assign project file Storage
       operationId: Assign project file Storage
       description: ''
@@ -2896,17 +2806,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Set project limits
       operationId: Set project limits
       description: ''
@@ -4134,17 +4033,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Change project disabled status
       operationId: Change project disabled status
       description: ''
@@ -6547,17 +6435,6 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
-                dataPlanes:
-                  - id: 123
-                    owner: keboola
-                    region: us-east-1
-                    provider: aws
-                    parameters:
-                      test: value
-                    created: '2020-05-11T15:30:00Z'
-                    creator:
-                      id: 10
-                      name: keboola
       summary: Add a project feature
       operationId: Add a project feature
       description: >-
@@ -7978,250 +7855,6 @@ paths:
                 client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
             schema:
               $ref: '#/components/schemas/BigQueryStorageBackendUpdate'
-  /manage/data-planes:
-    post:
-      responses:
-        '201':
-          description: Created
-          headers: {}
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: number
-                  owner:
-                    type: string
-                  parameters:
-                    type: object
-                    properties:
-                      test:
-                        type: string
-                  created:
-                    type: string
-                    description: The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
-                  creator:
-                    type: object
-                    properties:
-                      id:
-                        type: number
-                      name:
-                        type: string
-                    required:
-                      - id
-                      - name
-                required:
-                  - id
-                  - owner
-                  - created
-              example:
-                id: 123
-                owner: keboola
-                parameters:
-                  test: value
-                created: '2020-05-11T15:30:00Z'
-                creator:
-                  id: 10
-                  name: keboola
-      summary: Register a new data plane
-      operationId: Register a new data plane
-      description: ''
-      tags:
-        - SUPER - Data Planes Management
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            example:
-              owner: keboola
-              parameters:
-                test: value
-            schema:
-              type: object
-              properties:
-                owner:
-                  type: string
-                  description: associated data plane owner
-                parameters:
-                  type: object
-                  properties:
-                    test:
-                      type: string
-                  description: data plane configuration
-              required:
-                - owner
-                - parameters
-    get:
-      responses:
-        '200':
-          description: OK
-          headers: {}
-          content:
-            application/json:
-              schema:
-                type: array
-                items: {}
-              example:
-                - id: 123
-                  owner: keboola
-                  parameters:
-                    test: value
-                  created: '2020-05-11T15:30:00Z'
-                  creator:
-                    id: 10
-                    name: keboola
-      summary: List data planes
-      operationId: List data planes
-      description: >-
-        This endpoint can also be accessed using application tokens with scope
-        `data-planes:read`
-      tags:
-        - SUPER - Data Planes Management
-      parameters: []
-  /manage/data-planes/{data_plane_id}:
-    get:
-      responses:
-        '200':
-          description: OK
-          headers: {}
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: number
-                  owner:
-                    type: string
-                  parameters:
-                    type: object
-                    properties:
-                      test:
-                        type: string
-                  created:
-                    type: string
-                    description: The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
-                  creator:
-                    type: object
-                    properties:
-                      id:
-                        type: number
-                      name:
-                        type: string
-                    required:
-                      - id
-                      - name
-                required:
-                  - id
-                  - owner
-                  - created
-              example:
-                id: 123
-                owner: keboola
-                parameters:
-                  test: value
-                created: '2020-05-11T15:30:00Z'
-                creator:
-                  id: 10
-                  name: keboola
-      summary: Data plane detail
-      operationId: Data plane detail
-      description: >-
-        This endpoint can also be accessed using application tokens with scope
-        `data-planes:read`
-      tags:
-        - SUPER - Data Planes Management
-      parameters:
-        - name: data_plane_id
-          in: path
-          description: Backend ID
-          required: true
-          schema:
-            type: string
-    patch:
-      responses:
-        '200':
-          description: OK
-          headers: {}
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: number
-                  owner:
-                    type: string
-                  parameters:
-                    type: object
-                    properties:
-                      test:
-                        type: string
-                  created:
-                    type: string
-                    description: The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
-                  creator:
-                    type: object
-                    properties:
-                      id:
-                        type: number
-                      name:
-                        type: string
-                    required:
-                      - id
-                      - name
-                required:
-                  - id
-                  - owner
-                  - created
-              example:
-                id: 123
-                owner: keboola
-                parameters:
-                  test: value
-                created: '2020-05-11T15:30:00Z'
-                creator:
-                  id: 10
-                  name: keboola
-      summary: Update data plane
-      operationId: Update data plane
-      description: A partial update of a data plane, one of the attributes are required.
-      tags:
-        - SUPER - Data Planes Management
-      parameters:
-        - name: data_plane_id
-          in: path
-          description: Backend ID
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            example:
-              parameters:
-                test: value
-            schema:
-              $ref: '#/components/schemas/DataPlaneUpdate'
-    delete:
-      responses:
-        '204':
-          description: No Content
-          headers: {}
-          content: {}
-      summary: Delete data plane
-      operationId: Delete data plane
-      description: ''
-      tags:
-        - SUPER - Data Planes Management
-      parameters:
-        - name: data_plane_id
-          in: path
-          description: Id of data plane
-          required: true
-          schema:
-            type: string
   /manage/commands:
     post:
       responses:
@@ -8459,8 +8092,6 @@ components:
         defaultConnectionTeradataId:
           type: number
         defaultFileStorageId:
-          type: number
-        dataPlaneId:
           type: number
         zendeskUrl:
           type: string
@@ -8712,33 +8343,6 @@ components:
           properties:
             purchasedCredits:
               type: number
-        dataPlanes:
-          type: array
-          items:
-            type: object
-            properties:
-              id:
-                type: number
-              owner:
-                type: string
-              region:
-                type: string
-              provider:
-                type: string
-              parameters:
-                type: object
-                properties:
-                  test:
-                    type: string
-              created:
-                type: string
-              creator:
-                type: object
-                properties:
-                  id:
-                    type: number
-                  name:
-                    type: string
     GCPCredentials:
       type: object
       required:

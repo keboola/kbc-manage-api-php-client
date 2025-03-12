@@ -255,7 +255,6 @@ class PromoCodesTest extends ClientTestCase
             $detailProject['organization'],
             $detailProject['backends'],
             $detailProject['fileStorage'],
-            $detailProject['dataPlanes'],
         );
 
         $this->assertEquals($detailProject, $newProject);
