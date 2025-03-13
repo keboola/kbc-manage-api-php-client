@@ -4360,7 +4360,8 @@ paths:
       operationId: Deleted project detail
       description: >-
         This endpoint can also be accessed using application tokens with scope
-        `deleted-projects:read`
+        `deleted-projects:read` or user token with feature
+        `can-manage-deleted-projects`.
       tags:
         - Deleted Projects
       parameters:
@@ -4379,7 +4380,8 @@ paths:
       summary: Cancel project deletion
       operationId: Cancel project deletion
       description: >-
-        Cancelling project deletion is allowed only for a super admin.
+        Cancelling project deletion is allowed only for a super admin or user
+        with feature `can-manage-deleted-projects`.
 
         If the project has set expiration, the expiration is reset on the
         project renewal.
@@ -4618,20 +4620,28 @@ paths:
                     allowAutoJoin: true
       summary: List deleted projects
       operationId: List deleted projects
-      description: |-
-        Listing deleted projects is allowed only for a super admin.
+      description: >-
+        Listing deleted projects is allowed only for a super admin  or user with
+        feature `can-manage-deleted-projects`.
+
 
         #### Projects filtering
 
+
         Projects can be filtered by various filters:
+
 
         * *organizationId* - organization ID
 
+
         * *name* - name of the project
+
 
         #### Projects pagination
 
+
         * *limit* - number of returned projects; default value: 100
+
 
         * *offset* - pagination offset
       tags:
@@ -6264,6 +6274,10 @@ paths:
       summary: Create a feature
       operationId: Create a feature
       description: >-
+        **Unless there is a specific reason why the feature MUST NOT be present
+        on some stack, implement it through migration.**
+
+
         To create a new feature, provide the following parameters as JSON in the
         request body:
 
@@ -7367,7 +7381,8 @@ paths:
 
         CREATE USER "KEBOOLA_STORAGE"
             PASSWORD = "YOUR_PASSWORD"
-            DEFAULT_ROLE = "KEBOOLA_STORAGE";
+            DEFAULT_ROLE = "KEBOOLA_STORAGE"
+            TYPE = LEGACY_SERVICE;
 
         GRANT ROLE "KEBOOLA_STORAGE" TO USER "KEBOOLA_STORAGE";
 
@@ -7404,14 +7419,14 @@ paths:
             MIN_CLUSTER_COUNT = 1
             MAX_CLUSTER_COUNT = 10;
 
-        GRANT USAGE ON WAREHOUSE "KEBOOLA_SMALL" TO ROLE "SYSADMIN" WITH GRANT
-        OPTION;
+        GRANT USAGE ON WAREHOUSE "KEBOOLA_SMALL" TO ROLE "KEBOOLA_STORAGE" WITH
+        GRANT OPTION;
 
-        GRANT USAGE ON WAREHOUSE "KEBOOLA_MEDIUM" TO ROLE "SYSADMIN" WITH GRANT
-        OPTION;
+        GRANT USAGE ON WAREHOUSE "KEBOOLA_MEDIUM" TO ROLE "KEBOOLA_STORAGE" WITH
+        GRANT OPTION;
 
-        GRANT USAGE ON WAREHOUSE "KEBOOLA_LARGE" TO ROLE "SYSADMIN" WITH GRANT
-        OPTION;
+        GRANT USAGE ON WAREHOUSE "KEBOOLA_LARGE" TO ROLE "KEBOOLA_STORAGE" WITH
+        GRANT OPTION;
 
         GRANT MONITOR ON WAREHOUSE "KEBOOLA_SMALL" TO ROLE "KEBOOLA_MONITORING"
         WITH GRANT OPTION;
@@ -7530,6 +7545,44 @@ paths:
         - SUPER - Storage Backends Management
       parameters: []
   /manage/storage-backend/{backend_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+              example:
+                - id: 123
+                  region: us
+                  owner: keboola
+                  username: username
+                  stats:
+                    projectsCount: 10
+                    bucketsCount: 100
+                    dataSizeGB: 100
+                    rowsCount: 1000000
+                  created: '2020-05-11T15:30:00Z'
+                  creator:
+                    id: 10
+                    name: keboola
+                  host: demo.snowflakecomputing.com
+                  backend: snowflake
+                  warehouse: keboola
+                  saml2Configuration:
+                    idpEntityId: https://example
+                    spEntityId: https://example
+                    spAcsUrl: https://example
+                    publicKey: RSA_PUBLIC_KEY
+      summary: Backend detail
+      operationId: Backend detail
+      description: ''
+      tags:
+        - SUPER - Storage Backends Management
+      parameters: []
     patch:
       responses:
         '201':
@@ -7934,6 +7987,8 @@ paths:
                       type: array
                       items:
                         type: string
+                    isCritical:
+                      type: boolean
               example:
                 - id: kbc.manageApps
                   name: kbc.manageApps
@@ -7950,6 +8005,7 @@ paths:
                       https://kbc-uis.s3.amazonaws.com/kbc.manageApps/0.0.3-33-ga6bc947/styles/libs.css
                     - >-
                       https://kbc-uis.s3.amazonaws.com/kbc.manageApps/0.0.3-33-ga6bc947/styles/select2.png
+                  isCritical: false
       summary: List Applications
       operationId: List Applications
       description: >-
@@ -7990,6 +8046,8 @@ paths:
                         type: string
                       isActive:
                         type: boolean
+                      isCritical:
+                        type: boolean
               example:
                 app:
                   id: '41'
@@ -8001,6 +8059,7 @@ paths:
                   created: '2015-08-17 17:43:37'
                   version: 0.1.21-17-g3cae4c0
                   isActive: true
+                  isCritical: false
       summary: Register New Application/Version
       operationId: Register New Application/Version
       description: ''
@@ -8830,6 +8889,25 @@ components:
             warehouse:
               type: string
               example: keboola
+            saml2Configuration:
+              type: object
+              properties:
+                idpEntityId:
+                  type: string
+                  example: https://example
+                  description: idp.com
+                spEntityId:
+                  type: string
+                  example: https://example
+                  description: sp.com
+                spAcsUrl:
+                  type: string
+                  example: https://example
+                  description: sp.com/acs
+                publicKey:
+                  type: string
+                  example: RSA_PUBLIC_KEY
+              description: available only for Snowflake backend
     StorageBackendListSynapse:
       allOf:
         - $ref: '#/components/schemas/StorageBackendListBase'
@@ -8954,7 +9032,6 @@ tags:
 
 
       - Teradata
-  - name: SUPER - Data Planes Management
   - name: SUPER - Commands
   - name: SUPER - UI Management
   - name: Syrup API Integration
