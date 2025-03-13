@@ -8723,35 +8723,6 @@ components:
           description: >-
             Only for backends supporting dynamic sizing (Snowflake). When
             enabled, new projects get dynamic backends assigned automatically.
-    DataPlaneCreate:
-      type: object
-      required:
-        - owner
-        - parameters
-      properties:
-        owner:
-          type: string
-          example: keboola
-          description: associated data plane owner
-        parameters:
-          type: object
-          properties:
-            test:
-              type: string
-              example: value
-          description: data plane configuration
-    DataPlaneUpdate:
-      type: object
-      required:
-        - parameters
-      properties:
-        parameters:
-          type: object
-          properties:
-            test:
-              type: string
-              example: value
-          description: data plane configuration
     StorageBackend:
       type: object
       required:
@@ -8908,41 +8879,6 @@ components:
               type: string
               example: teradata
             database:
-              type: string
-              example: keboola
-    DataPlane:
-      type: object
-      required:
-        - id
-        - owner
-        - created
-      properties:
-        id:
-          type: number
-          example: 123
-        owner:
-          type: string
-          example: keboola
-        parameters:
-          type: object
-          properties:
-            test:
-              type: string
-              example: value
-        created:
-          type: string
-          example: '2020-05-11T15:30:00Z'
-          description: The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
-        creator:
-          type: object
-          required:
-            - id
-            - name
-          properties:
-            id:
-              type: number
-              example: 10
-            name:
               type: string
               example: keboola
     CommandExecute:
