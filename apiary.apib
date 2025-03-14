@@ -97,7 +97,6 @@ Creates a new maintainer. The user associated with the token will become an admi
     + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
     + defaultConnectionTeradataId:324 (optional) - Default Teradata Connection ID
     + defaultFileStorageId:456 (optional) - Default File Storage ID
-    + dataPlaneId:456 (optional) - Data Plane ID
     + zendeskUrl:https://keboola.zendesk.com (optional)
 
 
@@ -134,7 +133,6 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionExasolId": 236,
             "defaultConnectionTeradataId": 236,
             "defaultFileStorageId": null,
-            "dataPlaneId": null,
             "zendeskUrl": "https://some.url.com"
         },
         {
@@ -148,7 +146,6 @@ Creates a new maintainer. The user associated with the token will become an admi
             "defaultConnectionExasolId": 236,
             "defaultConnectionTeradataId": 236
             "defaultFileStorageId": 236,
-            "dataPlaneId": 236,
             "zendeskUrl": "https://some.url.com"
         }
     ]
@@ -179,7 +176,6 @@ A maintainer object has the following attributes:
         "defaultConnectionExasolId": 236,
         "defaultConnectionTeradataId": 236,
         "defaultFileStorageId": 456,
-        "dataPlaneId": 456,
         "zendeskUrl": "https://some.url.com"
     }
     ```
@@ -204,7 +200,6 @@ A partial update of a maintainer
     + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
     + defaultConnectionTeradataId:324 (optional) - Default Teradata Connection ID
     + defaultFileStorageId:456 (optional) - Default File Storage ID
-    + dataPlaneId:456 (optional) - Data Plane ID
     + zendeskUrl:https://keboola.zendesk.com (optional)
 
 + Request (application/json)
@@ -1200,23 +1195,7 @@ Only organization members, members of the maintainer and super admins can delete
       },
       "payAsYouGo": {
         "purchasedCredits": 123
-      },
-      "dataPlanes": [
-        {
-          "id": 123,
-          "owner": "keboola",
-          "region": "us-east-1",
-          "provider": "aws",
-          "parameters": {
-            "test": "value"
-          },
-          "created": "2020-05-11T15:30:00Z",
-          "creator": {
-            "id": 10,
-            "name": "keboola"
-          }
-        }
-      ]
+      }
     }
     ```
 
