@@ -3,10 +3,10 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use Keboola\StorageApi\Workspaces;
 
 class ReaderAccountTest extends ClientTestCase
 {
-
     public function testCreateReaderAccount()
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'RemoveMeOrg']);
@@ -14,12 +14,30 @@ class ReaderAccountTest extends ClientTestCase
         $orgDetail = $this->client->getOrganization($organization['id']);
         $maintainer = $this->client->getMaintainer($orgDetail['maintainer']['id']);
         $this->client->createReaderAccount($organization['id'], $maintainer['defaultConnectionSnowflakeId']);
-
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
+        ]);
         try {
             $this->client->createReaderAccount($organization['id'], $maintainer['defaultConnectionSnowflakeId']);
             $this->fail('Cannot create reader account twice');
         } catch (ClientException $e) {
             $this->assertEquals(sprintf('Reader account for organization with ID "%s" already exists', $organization['id']), $e->getMessage());
         }
+
+        $projectId = 118;
+        // token without permissions
+        $token = $this->client->createProjectStorageToken($projectId, [
+            'description' => 'test',
+            'expiresIn' => 36000,
+        ]);
+
+        $client = $this->getStorageClient([
+            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => $token['token'],
+        ]);
+        $wsClient = new Workspaces($client);
+//        $ws = $wsClient->createWorkspace(['async' => false]);
+        $ws = $wsClient->createWorkspace(['async' => false, 'useCase' => 'reader']);
     }
 }
