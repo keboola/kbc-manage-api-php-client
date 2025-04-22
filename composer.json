@@ -13,7 +13,11 @@
         "keboola/storage-api-client": "^17.0",
         "phpstan/phpstan": "^1.10",
         "phpstan/phpstan-phpunit": "^1",
-        "phpunit/phpunit": "^7.0|^8.0"
+        "phpunit/phpunit": "^7.0|^8.0",
+        "keboola/php-csv-db-import": "^6",
+        "ext-pdo": "*",
+        "ext-pdo_pgsql": "*",
+        "ext-curl": "*"
     },
     "autoload": {
         "psr-4": {
@@ -22,7 +26,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Keboola\\ManageApiTest\\": "tests/"
+            "Keboola\\ManageApiTest\\": "tests/",
+            "Keboola\\Test\\": "vendor/keboola/storage-api-client/tests/"
         }
     },
     "scripts": {
