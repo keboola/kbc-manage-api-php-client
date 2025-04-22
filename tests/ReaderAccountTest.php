@@ -2,8 +2,8 @@
 
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Workspaces;
+use Keboola\Test\Backend\Workspaces\Backend\WorkspaceBackendFactory;
 
 class ReaderAccountTest extends ClientTestCase
 {
@@ -25,7 +25,8 @@ class ReaderAccountTest extends ClientTestCase
             $this->assertEquals(sprintf('Reader account for organization with ID "%s" already exists', $organization['id']), $e->getMessage());
         }
 
-        $projectId = 118;
+        $projectId = $project['id'];
+//        $projectId = 120;
         // token without permissions
         $token = $this->client->createProjectStorageToken($projectId, [
             'description' => 'test',
@@ -37,7 +38,10 @@ class ReaderAccountTest extends ClientTestCase
             'token' => $token['token'],
         ]);
         $wsClient = new Workspaces($client);
-//        $ws = $wsClient->createWorkspace(['async' => false]);
-        $ws = $wsClient->createWorkspace(['async' => false, 'useCase' => 'reader']);
+        $workspace = $wsClient->createWorkspace(['async' => false, 'useCase' => 'reader']);
+
+
+        $db = WorkspaceBackendFactory::createWorkspaceBackend($workspace);
+        $db->executeQuery('select 1');
     }
 }
