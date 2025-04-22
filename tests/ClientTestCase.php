@@ -60,13 +60,13 @@ class ClientTestCase extends TestCase
             'url' => $manageApiUrl,
             'backoffMaxTries' => 0,
         ]);
-        $organizations = $client->listMaintainerOrganizations(getenv('KBC_TEST_MAINTAINER_ID'));
-        foreach ($organizations as $organization) {
-            foreach ($client->listOrganizationProjects($organization['id']) as $project) {
-                $client->deleteProject($project['id']);
-            }
-            $client->deleteOrganization($organization['id']);
-        }
+//        $organizations = $client->listMaintainerOrganizations(getenv('KBC_TEST_MAINTAINER_ID'));
+//        foreach ($organizations as $organization) {
+//            foreach ($client->listOrganizationProjects($organization['id']) as $project) {
+//                $client->deleteProject($project['id']);
+//            }
+//            $client->deleteOrganization($organization['id']);
+//        }
     }
 
     protected function getClient(array $options): Client
