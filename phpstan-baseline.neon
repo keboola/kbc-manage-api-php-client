@@ -16,11 +16,6 @@ parameters:
 			path: tests/ClientTestCase.php
 
 		-
-			message: "#^Parameter \\#1 \\$url of function parse_url expects string, string\\|false given\\.$#"
-			count: 1
-			path: tests/ClientTestCase.php
-
-		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: tests/FileStorageAbsTest.php

@@ -6,6 +6,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\Client;
 
 class ProjectStorageBackendTest extends ClientTestCase
@@ -86,7 +87,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         ]);
 
         $sapiClient = new Client([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $token['token'],
         ]);
         $bucketId = $sapiClient->createBucket('test', 'in');
@@ -117,12 +118,12 @@ class ProjectStorageBackendTest extends ClientTestCase
         ]);
 
         $client = new GuzzleClient([
-            'base_uri' => getenv('KBC_MANAGE_API_URL'),
+            'base_uri' => EnvVariableHelper::getKbcManageApiUrl(),
         ]);
 
         $requestOptions = [
             'headers' => [
-                'X-KBC-ManageApiToken' => getenv('KBC_MANAGE_API_TOKEN'),
+                'X-KBC-ManageApiToken' => EnvVariableHelper::getKbcManageApiToken(),
                 'Accept-Encoding' => 'gzip',
                 'Content-Type' => 'application/json',
                 'User-Agent' => 'Keboola Manage API PHP Client',
@@ -194,7 +195,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         ]);
 
         $sapiClient = new Client([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $token['token'],
         ]);
         $sapiClient->createBucket('test', 'in');

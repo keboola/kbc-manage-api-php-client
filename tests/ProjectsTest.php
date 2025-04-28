@@ -8,6 +8,7 @@ use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
 use Throwable;
 
@@ -906,12 +907,12 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $this->client->addUserToProject($project['id'], [
-            'email' => getenv('KBC_TEST_ADMIN_EMAIL'),
+            'email' => EnvVariableHelper::getKbcTestAdminEmail(),
         ]);
 
         $client = $this->getClient([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcTestAdminToken(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 1,
         ]);
 
@@ -1042,8 +1043,8 @@ class ProjectsTest extends ClientTestCase
 
         try {
             $clientWithSuperApiToken = $this->getClient([
-                'token' => getenv('KBC_SUPER_API_TOKEN'),
-                'url' => getenv('KBC_MANAGE_API_URL'),
+                'token' => EnvVariableHelper::getKbcSuperApiToken(),
+                'url' => EnvVariableHelper::getKbcManageApiUrl(),
                 'backoffMaxTries' => 0,
             ]);
 
@@ -1155,7 +1156,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $client = $this->getStorageClient([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $token['token'],
         ]);
 
@@ -1179,8 +1180,8 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $manageClient = new Client([
-            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_STORAGE_TOKENS_SCOPE'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithStorageTokensScope(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 0,
         ]);
         $storageToken = $manageClient->createProjectStorageToken($project['id'], [
@@ -1192,7 +1193,7 @@ class ProjectsTest extends ClientTestCase
         ]);
         $storageClient = $this->getStorageClient(
             [
-                'url' => getenv('KBC_MANAGE_API_URL'),
+                'url' => EnvVariableHelper::getKbcManageApiUrl(),
                 'token' => $storageToken['token'],
             ]
         );
@@ -1225,7 +1226,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $client = $this->getStorageClient([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $token['token'],
         ]);
 
@@ -1256,7 +1257,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $client = $this->getStorageClient([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $tokenWithManageBucketsPermission['token'],
         ]);
 
@@ -1273,7 +1274,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $clientWithReadBucketPermission = $this->getStorageClient([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $tokenWithReadPermissionToOneBucket['token'],
         ]);
 
@@ -1305,7 +1306,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $client = $this->getStorageClient([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $token['token'],
         ]);
 
@@ -1325,7 +1326,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $client2 = $this->getStorageClient([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $token2['token'],
         ]);
 
@@ -1371,7 +1372,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertNotEmpty($project['disabled']['estimatedEndTime']);
 
         $client = $this->getStorageClient([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $storageToken['token'],
             'backoffMaxTries' => 1,
         ]);
@@ -1585,8 +1586,8 @@ class ProjectsTest extends ClientTestCase
 
         // permission validation
         $client = $this->getClient([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcTestAdminToken(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
         ]);
 
         try {
@@ -2343,8 +2344,8 @@ class ProjectsTest extends ClientTestCase
     private function createSuperManageTokenWithProjectsReadScopeClient(): Client
     {
         $client = $this->getClient([
-            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_PROJECTS_READ_SCOPE'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithProjectsReadScope(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
         ]);
         $token = $client->verifyToken();
         $this->assertContains(
@@ -2358,8 +2359,8 @@ class ProjectsTest extends ClientTestCase
     private function createSuperManageTokenWithoutScopesClient(): Client
     {
         $client = $this->getClient([
-            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITHOUT_SCOPES'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithoutScopes(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
         ]);
         $token = $client->verifyToken();
         $this->assertEquals(
@@ -2373,8 +2374,8 @@ class ProjectsTest extends ClientTestCase
     private function createSuperManageTokenWithDeletedProjectsReadScopeClient(): Client
     {
         $client = $this->getClient([
-            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_DELETED_PROJECTS_READ_SCOPE'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithDeletedProjectsReadScope(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
         ]);
         $token = $client->verifyToken();
         $this->assertContains(

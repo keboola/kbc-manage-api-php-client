@@ -5,7 +5,7 @@ namespace Keboola\ManageApiTest;
 use Exception;
 use Keboola\Csv\CsvFile;
 use Keboola\ManageApi\Backend;
-use Keboola\ManageApi\ClientException;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\BranchAwareClient;
 use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Components;
@@ -144,7 +144,7 @@ class ProjectDeleteTest extends ClientTestCase
 
         // create sapi client
         $config = [
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $token['token'],
         ];
 
@@ -221,7 +221,7 @@ class ProjectDeleteTest extends ClientTestCase
         ]);
 
         $sapiClient = new Client([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $token['token'],
         ]);
 

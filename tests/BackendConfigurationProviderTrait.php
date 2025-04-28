@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
+
 trait BackendConfigurationProviderTrait
 {
     public function getSnowflakeBackendCreateOptions(): array
     {
         return [
             'backend' => 'snowflake',
-            'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
-            'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
-            'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
-            'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
-            'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
+            'host' => EnvVariableHelper::getKbcTestSnowflakeHost(),
+            'warehouse' => EnvVariableHelper::getKbcTestSnowflakeWarehouse(),
+            'username' => EnvVariableHelper::getKbcTestSnowflakeBackendName(),
+            'password' => EnvVariableHelper::getKbcTestSnowflakeBackendPassword(),
+            'region' => EnvVariableHelper::getKbcTestSnowflakeBackendRegion(),
             'owner' => 'keboola',
         ];
     }
