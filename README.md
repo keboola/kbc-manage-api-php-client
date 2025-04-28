@@ -95,6 +95,8 @@ KBC_TEST_SNOWFLAKE_WAREHOUSE=
 KBC_TEST_SNOWFLAKE_BACKEND_REGION=
 ```
 
+If any of the environment variables are not set, the tests will fail with an error message explaining which variable is missing.
+
 Run tests
 ```bash
 docker-compose run --rm dev composer tests

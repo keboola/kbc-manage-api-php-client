@@ -4,6 +4,7 @@ namespace Keboola\ManageApiTest;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Psr\Http\Message\ResponseInterface;
 
 class CommonTest extends ClientTestCase
@@ -32,8 +33,8 @@ class CommonTest extends ClientTestCase
     public function testVerifySuperToken()
     {
         $client = $this->getClient([
-            'token' => getenv('KBC_SUPER_API_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcSuperApiToken(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 1,
         ]);
         $token = $client->verifyToken();
@@ -51,12 +52,12 @@ class CommonTest extends ClientTestCase
     public function testInvalidRequestBody()
     {
         $client = new Client([
-            'base_uri' => getenv('KBC_MANAGE_API_URL'),
+            'base_uri' => EnvVariableHelper::getKbcManageApiUrl(),
         ]);
 
         $requestOptions = [
             'headers' => [
-                'X-KBC-ManageApiToken' => getenv('KBC_MANAGE_API_TOKEN'),
+                'X-KBC-ManageApiToken' => EnvVariableHelper::getKbcManageApiToken(),
                 'Accept-Encoding' => 'gzip',
                 'Content-Type' => 'application/json',
                 'User-Agent' => 'Keboola Manage API PHP Client',

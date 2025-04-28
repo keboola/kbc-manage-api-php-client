@@ -2,16 +2,16 @@
 
 namespace Keboola\ManageApiTest;
 
-use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
 class UiAppsTest extends ClientTestCase
 {
     public function testAppCreationAndDeletion()
     {
         $client = $this->getClient([
-            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithUiManageScope(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 1,
         ]);
 
@@ -51,8 +51,8 @@ class UiAppsTest extends ClientTestCase
     public function testAppCreationWithIsCritical()
     {
         $client = $this->getClient([
-            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_UI_MANAGE_SCOPE'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithUiManageScope(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 1,
         ]);
 
@@ -79,7 +79,7 @@ class UiAppsTest extends ClientTestCase
     {
         $client = $this->getClient([
             'token' => 'token is not required for this api all',
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 1,
         ]);
         $apps = $client->listUiApps();

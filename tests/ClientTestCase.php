@@ -6,6 +6,7 @@ use Exception;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\Client as StorageClient;
 use PHPUnit\Framework\TestCase;
 use PHPUnitRetry\RetryTrait;
@@ -48,7 +49,7 @@ class ClientTestCase extends TestCase
 
     public static function setUpBeforeClass(): void
     {
-        $manageApiUrl = getenv('KBC_MANAGE_API_URL');
+        $manageApiUrl = EnvVariableHelper::getKbcManageApiUrl();
 
         if (in_array(parse_url($manageApiUrl, PHP_URL_HOST), self::PRODUCTION_HOSTS)) {
             throw new Exception('Tests cannot be executed against production host - ' . $manageApiUrl);
@@ -56,11 +57,11 @@ class ClientTestCase extends TestCase
 
         // cleanup organizations and projects created in testing maintainer
         $client = new Client([
-            'token' => getenv('KBC_MANAGE_API_TOKEN'),
+            'token' => EnvVariableHelper::getKbcManageApiToken(),
             'url' => $manageApiUrl,
             'backoffMaxTries' => 0,
         ]);
-        $organizations = $client->listMaintainerOrganizations(getenv('KBC_TEST_MAINTAINER_ID'));
+        $organizations = $client->listMaintainerOrganizations(EnvVariableHelper::getKbcTestMaintainerId());
         foreach ($organizations as $organization) {
             foreach ($client->listOrganizationProjects($organization['id']) as $project) {
                 $client->deleteProject($project['id']);
@@ -134,7 +135,7 @@ class ClientTestCase extends TestCase
     {
         return $this->getClient([
             'token' => $client->createSessionToken()['token'],
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 0,
         ]);
     }
@@ -151,21 +152,21 @@ class ClientTestCase extends TestCase
     public function setUp(): void
     {
         $this->client = $this->getClient([
-            'token' => getenv('KBC_MANAGE_API_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcManageApiToken(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 0,
         ]);
         $this->normalUserClient = $this->getClient([
-            'token' => getenv('KBC_TEST_ADMIN_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcTestAdminToken(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 0,
         ]);
-        $this->normalUserWithMfaClient = $this->getClient([
-            'token' => getenv('KBC_TEST_ADMIN_WITH_MFA_TOKEN'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
-        ]);
 
-        $this->testMaintainerId = (int) getenv('KBC_TEST_MAINTAINER_ID');
+        $this->normalUserWithMfaClient = $this->getClient([
+            'token' => EnvVariableHelper::getKbcTestAdminWithMfaToken(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
+        ]);
+        $this->testMaintainerId = (int) EnvVariableHelper::getKbcTestMaintainerId();
 
         $tokenInfo = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $tokenInfo);

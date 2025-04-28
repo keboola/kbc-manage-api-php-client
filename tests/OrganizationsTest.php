@@ -2,9 +2,9 @@
 
 namespace Keboola\ManageApiTest;
 
-use Exception;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
 class OrganizationsTest extends ClientTestCase
 {
@@ -86,8 +86,8 @@ class OrganizationsTest extends ClientTestCase
         ]);
 
         $client = new Client([
-            'token' => getenv('KBC_MANAGE_API_SUPER_TOKEN_WITH_ORGANIZATIONS_READ_SCOPE'),
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithOrganizationsReadScope(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 0,
         ]);
 
