@@ -79,7 +79,7 @@ class OrganizationsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testApplicationTokenWithScopeCanAccessOrganizationDetailAndProjectList(): void
+    public function testApplicationTokenWithScopeCanAccessOrganizationListAndDetailAndProjectList(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -96,6 +96,26 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEquals($orgFromAdminToken, $orgFromAppToken);
         $projects = $client->listOrganizationProjects($organization['id']);
         $this->assertEquals($orgFromAdminToken['projects'], $projects);
+        $orgsFromTokenFull = $client->listOrganizations();
+        $orgFromAdminFull = $this->client->listOrganizations();
+        // filter out the orgs and find the one we just created
+        $orgsFromToken = array_values(array_filter($orgsFromTokenFull, function ($org) use ($organization) {
+            return $org['id'] === $organization['id'];
+        }));
+        $orgsFromAdmin = array_values(array_filter($orgFromAdminFull, function ($org) use ($organization) {
+            return $org['id'] === $organization['id'];
+        }));
+
+        // we can't assert much more, because the token sees every organization (even those created outside of this test)
+        $this->assertSame(
+            $orgsFromAdmin[0],
+            $orgsFromToken[0],
+            'Organization from list does not match the one we created',
+        );
+        $this->assertNotEmpty(
+            $orgsFromToken,
+            'There was no organization returned from the list',
+        );
     }
 
     public function testOrganizationDetail()
