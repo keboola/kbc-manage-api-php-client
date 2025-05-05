@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Workspaces;
 
@@ -79,7 +80,7 @@ class StorageBackendTest extends ClientTestCase
         ]);
 
         $sapiClient = new Client([
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'token' => $token['token'],
         ]);
 
@@ -142,13 +143,13 @@ class StorageBackendTest extends ClientTestCase
         yield 'snowflake update password' => [
             $create,
             [
-                'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
+                'password' => EnvVariableHelper::getKbcTestSnowflakeBackendPassword(),
             ],
         ];
         yield 'snowflake update username' => [
             $create,
             [
-                'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
+                'username' => EnvVariableHelper::getKbcTestSnowflakeBackendName(),
             ],
         ];
         yield 'snowflake update enable dynamic backends' => [
@@ -161,7 +162,7 @@ class StorageBackendTest extends ClientTestCase
         yield 'snowflake with dynamic backends update password' => [
             $createOptionsWithDynamicBackends,
             [
-                'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
+                'password' => EnvVariableHelper::getKbcTestSnowflakeBackendPassword(),
             ],
         ];
         yield 'snowflake disable dynamic backends' => [
@@ -286,11 +287,11 @@ class StorageBackendTest extends ClientTestCase
     {
         return [
             'backend' => 'snowflake',
-            'host' => getenv('KBC_TEST_SNOWFLAKE_HOST'),
-            'warehouse' => getenv('KBC_TEST_SNOWFLAKE_WAREHOUSE'),
-            'username' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_NAME'),
-            'password' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD'),
-            'region' => getenv('KBC_TEST_SNOWFLAKE_BACKEND_REGION'),
+            'host' => EnvVariableHelper::getKbcTestSnowflakeHost(),
+            'warehouse' => EnvVariableHelper::getKbcTestSnowflakeWarehouse(),
+            'username' => EnvVariableHelper::getKbcTestSnowflakeBackendName(),
+            'password' => EnvVariableHelper::getKbcTestSnowflakeBackendPassword(),
+            'region' => EnvVariableHelper::getKbcTestSnowflakeBackendRegion(),
             'owner' => 'keboola',
             'useDynamicBackends' => '1',
         ];

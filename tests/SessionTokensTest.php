@@ -3,6 +3,7 @@
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
 class SessionTokensTest extends ClientTestCase
 {
@@ -20,7 +21,7 @@ class SessionTokensTest extends ClientTestCase
 
         $this->sessionTokenClient = $this->getClient([
             'token' => $this->sessionToken['token'],
-            'url' => getenv('KBC_MANAGE_API_URL'),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
             'backoffMaxTries' => 0,
         ]);
     }
