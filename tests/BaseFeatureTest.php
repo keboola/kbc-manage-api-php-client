@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
 class BaseFeatureTest extends ClientTestCase
 {
@@ -51,7 +52,7 @@ class BaseFeatureTest extends ClientTestCase
                 $sessionToken = $this->normalUserClient->createSessionToken();
                 return $this->getClient([
                     'token' => $sessionToken['token'],
-                    'url' => getenv('KBC_MANAGE_API_URL'),
+                    'url' => EnvVariableHelper::getKbcManageApiUrl(),
                     'backoffMaxTries' => 0,
                 ]);
             }
@@ -67,7 +68,7 @@ class BaseFeatureTest extends ClientTestCase
                 $sessionToken = $this->client->createSessionToken();
                 return $this->getClient([
                     'token' => $sessionToken['token'],
-                    'url' => getenv('KBC_MANAGE_API_URL'),
+                    'url' => EnvVariableHelper::getKbcManageApiUrl(),
                     'backoffMaxTries' => 0,
                 ]);
             }

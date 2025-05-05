@@ -7,6 +7,7 @@ use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
+use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
 class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
 {
@@ -412,7 +413,7 @@ class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
             $sessionToken = $client->createSessionToken();
             return $this->getClient([
                 'token' => $sessionToken['token'],
-                'url' => getenv('KBC_MANAGE_API_URL'),
+                'url' => EnvVariableHelper::getKbcManageApiUrl(),
                 'backoffMaxTries' => 0,
             ]);
         };
