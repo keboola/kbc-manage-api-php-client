@@ -97,7 +97,7 @@ class OrganizationsTest extends ClientTestCase
         ]);
 
         $orgFromAppToken = $client->getOrganization($organization['id']);
-        $orgFromAdminToken = $client->getOrganization($organization['id']);
+        $orgFromAdminToken = $this->client->getOrganization($organization['id']);
         $this->assertEquals($orgFromAdminToken, $orgFromAppToken);
         $projects = $client->listOrganizationProjects($organization['id']);
         $this->assertEquals($orgFromAdminToken['projects'], $projects);
