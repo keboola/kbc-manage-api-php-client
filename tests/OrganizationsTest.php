@@ -79,11 +79,16 @@ class OrganizationsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    public function testApplicationTokenWithScopeCanAccessOrganizationDetailAndProjectList(): void
+    public function testApplicationTokenWithScopeCanAccessOrganizationListAndDetailAndProjectList(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
         ]);
+
+        $deletedOrganization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => sha1($this->getTestName()) . ' deleted',
+        ]);
+        $this->client->deleteOrganization($deletedOrganization['id']);
 
         $client = new Client([
             'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithOrganizationsReadScope(),
@@ -92,10 +97,49 @@ class OrganizationsTest extends ClientTestCase
         ]);
 
         $orgFromAppToken = $client->getOrganization($organization['id']);
-        $orgFromAdminToken = $client->getOrganization($organization['id']);
+        $orgFromAdminToken = $this->client->getOrganization($organization['id']);
         $this->assertEquals($orgFromAdminToken, $orgFromAppToken);
         $projects = $client->listOrganizationProjects($organization['id']);
         $this->assertEquals($orgFromAdminToken['projects'], $projects);
+        $orgsFromTokenFull = $client->listOrganizations();
+        $orgFromAdminFull = $this->client->listOrganizations();
+        // filter out the orgs and find the one we just created
+        $orgsFromToken = array_values(array_filter($orgsFromTokenFull, function ($org) use ($organization) {
+            return $org['id'] === $organization['id'];
+        }));
+        $orgsFromAdmin = array_values(array_filter($orgFromAdminFull, function ($org) use ($organization) {
+            return $org['id'] === $organization['id'];
+        }));
+
+        // we can't assert much more, because the token sees every organization (even those created outside of this test)
+        $this->assertSame(
+            $orgsFromAdmin[0],
+            $orgsFromToken[0],
+            'Organization from list does not match the one we created',
+        );
+        $this->assertNotEmpty(
+            $orgsFromToken,
+            'There was no organization returned from the list',
+        );
+
+        // test that deleted organization are not accessible in detail nor list
+        // you need to use try/catch to check multiple scenarios
+        try {
+            $client->getOrganization($deletedOrganization['id']);
+            $this->fail('Deleted organization should not be accessible');
+        } catch (ClientException $e) {
+            $this->assertEquals(404, $e->getCode());
+        }
+
+        $deletedOrganizationFromAdmin = array_values(array_filter($orgFromAdminFull, function ($org) use ($deletedOrganization) {
+            return $org['id'] === $deletedOrganization['id'];
+        }));
+        $deletedOrganizationFromToken = array_values(array_filter($orgsFromTokenFull, function ($org) use ($deletedOrganization) {
+            return $org['id'] === $deletedOrganization['id'];
+        }));
+
+        $this->assertEmpty($deletedOrganizationFromAdmin);
+        $this->assertEmpty($deletedOrganizationFromToken);
     }
 
     public function testOrganizationDetail()
