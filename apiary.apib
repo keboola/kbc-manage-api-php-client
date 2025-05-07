@@ -525,6 +525,48 @@ Only maintainer members and super admins can delete metadata.
 
 # Group Organizations
 
+## Organizations [/manage/organizations/]
+
+### List organizations [GET]
+
+Lists all organizations the user is part of. If authorized with application token with scope `organizations:read`, all organizations are listed.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```json
+    [
+        {
+            "id": 123,
+            "name": "Some Organization",
+            "created": "2014-11-11T08:40:51.620Z",
+            "allowAutoJoin": true,
+            "crmId": "6232456",
+            "activityCenterProjectId": 123,
+            "mfaRequired": false.
+            "maintainer": {
+                "id": 4,
+                "name": "Some Maintainer",
+                "created": "2025-04-28T09:43:21+0200",
+                "defaultConnectionMysqlId": null,
+                "defaultConnectionRedshiftId": null,
+                "defaultConnectionSnowflakeId": 1,
+                "defaultConnectionSynapseId": null,
+                "defaultConnectionExasolId": null,
+                "defaultConnectionBigqueryId": null,
+                "defaultConnectionTeradataId": null,
+                "defaultFileStorageId": 1,
+                "zendeskUrl": null
+            }
+        }
+    ]
+    ```
+
+
 ## Organization [/manage/organizations/{organization_id}]
 
 An organization object has the following attributes:
@@ -588,6 +630,20 @@ scope `organizations:read`.
                 "created": "2014-11-11T08:40:51.620Z"
             }
         ]
+        "maintainer": {
+            "id": 4,
+            "name": "MAPI",
+            "created": "2025-04-28T09:43:21+0200",
+            "defaultConnectionMysqlId": null,
+            "defaultConnectionRedshiftId": null,
+            "defaultConnectionSnowflakeId": 1,
+            "defaultConnectionSynapseId": null,
+            "defaultConnectionExasolId": null,
+            "defaultConnectionBigqueryId": null,
+            "defaultConnectionTeradataId": null,
+            "defaultFileStorageId": 1,
+            "zendeskUrl": null
+        }
     }
     ```
 
