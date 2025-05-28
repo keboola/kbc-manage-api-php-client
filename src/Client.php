@@ -15,6 +15,8 @@ class Client
     private $apiUrl;
 
     private $tokenString = '';
+    
+    private $jwtToken = '';
 
     private $backoffMaxTries = 10;
 
@@ -31,16 +33,24 @@ class Client
      * Client configuration settings include the following options:
      *  - url - API URL
      *  - token - Keboola Manage api token
+     *  - jwtToken - JWT token for Bearer authentication
      *  - backoffMaxTries - backoff maximum retries count
      *
      * @param array $config
      */
     public function __construct(array $config)
     {
-        if (!isset($config['token'])) {
-            throw new InvalidArgumentException('token must be set');
+        if (!isset($config['token']) && !isset($config['jwtToken'])) {
+            throw new InvalidArgumentException('Either token or jwtToken must be set');
         }
-        $this->tokenString = $config['token'];
+        
+        if (isset($config['token'])) {
+            $this->tokenString = $config['token'];
+        }
+        
+        if (isset($config['jwtToken'])) {
+            $this->jwtToken = $config['jwtToken'];
+        }
 
         if (isset($config['userAgent'])) {
             $this->userAgent .= ' ' . $config['userAgent'];
@@ -899,12 +909,19 @@ class Client
 
     private function request($method, $url, array $options = [])
     {
+        $headers = [
+            'Accept-Encoding' => 'gzip',
+            'User-Agent' => $this->userAgent,
+        ];
+        
+        if ($this->jwtToken) {
+            $headers['X-Kubernetes-Authorization'] = 'Bearer ' . $this->jwtToken;
+        } else {
+            $headers['X-KBC-ManageApiToken'] = $this->tokenString;
+        }
+        
         $requestOptions = array_merge($options, [
-            'headers' => [
-                'X-KBC-ManageApiToken' => $this->tokenString,
-                'Accept-Encoding' => 'gzip',
-                'User-Agent' => $this->userAgent,
-            ],
+            'headers' => $headers,
         ]);
 
         try {
