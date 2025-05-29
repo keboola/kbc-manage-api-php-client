@@ -5,16 +5,24 @@
         <testsuite name="manage-part-1">
             <directory>tests</directory>
 <!--            exclude file storage tests-->
-            <exclude>tests/FileStorageAbsTest.php</exclude>
-            <exclude>tests/FileStorageS3Test.php</exclude>
-            <exclude>tests/FileStorageGcsTest.php</exclude>
+            <exclude>tests/tests/FileStorageAbsTest.php</exclude>
+            <exclude>tests/tests/FileStorageS3Test.php</exclude>
+            <exclude>tests/tests/FileStorageGcsTest.php</exclude>
 
-<!--            exclude tests which are covered in `manage-part-2`-->
+            <exclude>tests/AssignAdminFeatureTest.php</exclude>
+            <exclude>tests/AssignProjectFeatureTest.php</exclude>
+            <exclude>tests/FeaturesTest.php</exclude>
+            <exclude>tests/MaintainerInvitationsTest.php</exclude>
+            <exclude>tests/MaintainerJoinTest.php</exclude>
+            <exclude>tests/MaintainersTest.php</exclude>
             <exclude>tests/MaintainersMetadataTest.php</exclude>
-            <exclude>tests/OrganizationsMetadataTest.php</exclude>
-            <exclude>tests/ProjectsMetadataTest.php</exclude>
             <exclude>tests/UsersMetadataTest.php</exclude>
-            <exclude>tests/PromoCodesTest.php</exclude>
+            <exclude>tests/UsersTest.php</exclude>
+<!--            exclude tests which are covered in `manage-part-2`-->
+            <exclude>tests/tests/OrganizationsMetadataTest.php</exclude>
+            <exclude>tests/tests/ProjectsMetadataTest.php</exclude>
+            <exclude>tests/tests/UsersMetadataTest.php</exclude>
+            <exclude>tests/tests/PromoCodesTest.php</exclude>
         </testsuite>
         <testsuite name="File Storage">
             <file>tests/FileStorageAbsTest.php</file>
@@ -22,17 +30,26 @@
             <file>tests/FileStorageGcsTest.php</file>
         </testsuite>
         <testsuite name="manage-part-2">
-            <file>tests/MaintainersMetadataTest.php</file>
             <file>tests/OrganizationsMetadataTest.php</file>
             <file>tests/ProjectsMetadataTest.php</file>
             <file>tests/UsersMetadataTest.php</file>
             <file>tests/PromoCodesTest.php</file>
+
+            <file>tests/AssignAdminFeatureTest.php</file>
+            <file>tests/AssignProjectFeatureTest.php</file>
+            <file>tests/FeaturesTest.php</file>
+            <file>tests/MaintainerInvitationsTest.php</file>
+            <file>tests/MaintainerJoinTest.php</file>
+            <file>tests/MaintainersTest.php</file>
+            <file>tests/MaintainersMetadataTest.php</file>
+            <file>tests/UsersMetadataTest.php</file>
+            <file>tests/UsersTest.php</file>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist>
             <directory suffix=".php">src</directory>
-            <exclude>
+            <exclude>tests/
                 <directory suffix="Interface.php">src/</directory>
             </exclude>
         </whitelist>
