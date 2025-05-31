@@ -19,26 +19,25 @@
             <exclude>tests/UsersMetadataTest.php</exclude>
             <exclude>tests/UsersTest.php</exclude>
 <!--            exclude tests which are covered in `manage-part-2`-->
-            <exclude>tests/tests/OrganizationsMetadataTest.php</exclude>
             <exclude>tests/tests/UsersMetadataTest.php</exclude>
             <exclude>tests/tests/PromoCodesTest.php</exclude>
 
-            <exclude>ProjectDeleteTest.php</exclude>
-            <exclude>ProjectInvitationsMfaValidationTest.php</exclude>
-            <exclude>ProjectInvitationsTest.php</exclude>
-            <exclude>ProjectJoinMfaValidationTest.php</exclude>
-            <exclude>ProjectJoinRequestsMfaValidationTest.php</exclude>
-            <exclude>ProjectJoinRequestsTest.php</exclude>
-            <exclude>ProjectJoinTest.php</exclude>
-            <exclude>ProjectMembershipRolesTest.php</exclude>
-            <exclude>ProjectMfaValidationTest.php</exclude>
-            <exclude>ProjectsMetadataTest.php</exclude>
-            <exclude>ProjectsTest.php</exclude>
-            <exclude>ProjectStorageBackendTest.php</exclude>
-            <exclude>ProjectTemplateFeaturesAssigningTest.php</exclude>
-            <exclude>ProjectTemplateFeaturesTest.php</exclude>
-            <exclude>ProjectTemplatesTest.php</exclude>
-            <exclude>ProjectWithProtectedDefaultBranchTest.php</exclude>
+            <exclude>tests/ProjectDeleteTest.php</exclude>
+            <exclude>tests/ProjectInvitationsMfaValidationTest.php</exclude>
+            <exclude>tests/ProjectInvitationsTest.php</exclude>
+            <exclude>tests/ProjectJoinMfaValidationTest.php</exclude>
+            <exclude>tests/ProjectJoinRequestsMfaValidationTest.php</exclude>
+            <exclude>tests/ProjectJoinRequestsTest.php</exclude>
+            <exclude>tests/ProjectJoinTest.php</exclude>
+            <exclude>tests/ProjectMembershipRolesTest.php</exclude>
+            <exclude>tests/ProjectMfaValidationTest.php</exclude>
+            <exclude>tests/ProjectsMetadataTest.php</exclude>
+            <exclude>tests/ProjectsTest.php</exclude>
+            <exclude>tests/ProjectStorageBackendTest.php</exclude>
+            <exclude>tests/ProjectTemplateFeaturesAssigningTest.php</exclude>
+            <exclude>tests/ProjectTemplateFeaturesTest.php</exclude>
+            <exclude>tests/ProjectTemplatesTest.php</exclude>
+            <exclude>tests/ProjectWithProtectedDefaultBranchTest.php</exclude>
         </testsuite>
         <testsuite name="File Storage">
             <file>tests/FileStorageAbsTest.php</file>
@@ -46,7 +45,6 @@
             <file>tests/FileStorageGcsTest.php</file>
         </testsuite>
         <testsuite name="manage-part-2">
-            <file>tests/OrganizationsMetadataTest.php</file>
             <file>tests/UsersMetadataTest.php</file>
             <file>tests/PromoCodesTest.php</file>
 
@@ -61,22 +59,23 @@
             <file>tests/UsersTest.php</file>
 
 
-            <file>ProjectDeleteTest.php</file>
-            <file>ProjectInvitationsMfaValidationTest.php</file>
-            <file>ProjectInvitationsTest.php</file>
-            <file>ProjectJoinMfaValidationTest.php</file>
-            <file>ProjectJoinRequestsMfaValidationTest.php</file>
-            <file>ProjectJoinRequestsTest.php</file>
-            <file>ProjectJoinTest.php</file>
-            <file>ProjectMembershipRolesTest.php</file>
-            <file>ProjectMfaValidationTest.php</file>
-            <file>ProjectsMetadataTest.php</file>
-            <file>ProjectsTest.php</file>
-            <file>ProjectStorageBackendTest.php</file>
-            <file>ProjectTemplateFeaturesAssigningTest.php</file>
-            <file>ProjectTemplateFeaturesTest.php</file>
-            <file>ProjectTemplatesTest.php</file>
-            <file>ProjectWithProtectedDefaultBranchTest.php</file>
+
+            <file>tests/ProjectDeleteTest.php</file>
+            <file>tests/ProjectInvitationsMfaValidationTest.php</file>
+            <file>tests/ProjectInvitationsTest.php</file>
+            <file>tests/ProjectJoinMfaValidationTest.php</file>
+            <file>tests/ProjectJoinRequestsMfaValidationTest.php</file>
+            <file>tests/ProjectJoinRequestsTest.php</file>
+            <file>tests/ProjectJoinTest.php</file>
+            <file>tests/ProjectMembershipRolesTest.php</file>
+            <file>tests/ProjectMfaValidationTest.php</file>
+            <file>tests/ProjectsMetadataTest.php</file>
+            <file>tests/ProjectsTest.php</file>
+            <file>tests/ProjectStorageBackendTest.php</file>
+            <file>tests/ProjectTemplateFeaturesAssigningTest.php</file>
+            <file>tests/ProjectTemplateFeaturesTest.php</file>
+            <file>tests/ProjectTemplatesTest.php</file>
+            <file>tests/ProjectWithProtectedDefaultBranchTest.php</file>
         </testsuite>
     </testsuites>
     <filter>
