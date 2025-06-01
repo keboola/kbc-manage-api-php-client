@@ -5,9 +5,9 @@
         <testsuite name="manage-part-1">
             <directory>tests</directory>
 <!--            exclude file storage tests-->
-            <exclude>tests/tests/FileStorageAbsTest.php</exclude>
-            <exclude>tests/tests/FileStorageS3Test.php</exclude>
-            <exclude>tests/tests/FileStorageGcsTest.php</exclude>
+            <exclude>tests/FileStorageAbsTest.php</exclude>
+            <exclude>tests/FileStorageS3Test.php</exclude>
+            <exclude>tests/FileStorageGcsTest.php</exclude>
 
             <exclude>tests/AssignAdminFeatureTest.php</exclude>
             <exclude>tests/AssignProjectFeatureTest.php</exclude>
@@ -20,7 +20,7 @@
             <exclude>tests/UsersTest.php</exclude>
 <!--            exclude tests which are covered in `manage-part-2`-->
             <exclude>tests/tests/UsersMetadataTest.php</exclude>
-            <exclude>tests/tests/PromoCodesTest.php</exclude>
+<!--            <exclude>tests/tests/PromoCodesTest.php</exclude>-->
 
             <exclude>tests/ProjectDeleteTest.php</exclude>
             <exclude>tests/ProjectInvitationsMfaValidationTest.php</exclude>
@@ -31,13 +31,20 @@
             <exclude>tests/ProjectJoinTest.php</exclude>
             <exclude>tests/ProjectMembershipRolesTest.php</exclude>
             <exclude>tests/ProjectMfaValidationTest.php</exclude>
-            <exclude>tests/ProjectsMetadataTest.php</exclude>
-            <exclude>tests/ProjectsTest.php</exclude>
-            <exclude>tests/ProjectStorageBackendTest.php</exclude>
+<!--            <exclude>tests/ProjectsMetadataTest.php</exclude>-->
+<!--            <exclude>tests/ProjectsTest.php</exclude>-->
+<!--            <exclude>tests/ProjectStorageBackendTest.php</exclude>-->
             <exclude>tests/ProjectTemplateFeaturesAssigningTest.php</exclude>
             <exclude>tests/ProjectTemplateFeaturesTest.php</exclude>
             <exclude>tests/ProjectTemplatesTest.php</exclude>
             <exclude>tests/ProjectWithProtectedDefaultBranchTest.php</exclude>
+
+            <exclude>tests/OrganizationInvitationsTest.php</exclude>
+            <exclude>tests/OrganizationJoinMfaValidationTest.php</exclude>
+            <exclude>tests/OrganizationJoinTest.php</exclude>
+            <exclude>tests/OrganizationMfaValidationTest.php</exclude>
+            <exclude>tests/OrganizationsMetadataTest.php</exclude>
+            <exclude>tests/OrganizationsTest.php</exclude>
         </testsuite>
         <testsuite name="File Storage">
             <file>tests/FileStorageAbsTest.php</file>
@@ -46,7 +53,7 @@
         </testsuite>
         <testsuite name="manage-part-2">
             <file>tests/UsersMetadataTest.php</file>
-            <file>tests/PromoCodesTest.php</file>
+<!--            <file>tests/PromoCodesTest.php</file>-->
 
             <file>tests/AssignAdminFeatureTest.php</file>
             <file>tests/AssignProjectFeatureTest.php</file>
@@ -69,13 +76,20 @@
             <file>tests/ProjectJoinTest.php</file>
             <file>tests/ProjectMembershipRolesTest.php</file>
             <file>tests/ProjectMfaValidationTest.php</file>
-            <file>tests/ProjectsMetadataTest.php</file>
-            <file>tests/ProjectsTest.php</file>
-            <file>tests/ProjectStorageBackendTest.php</file>
+<!--            <file>tests/ProjectsMetadataTest.php</file>-->
+<!--            <file>tests/ProjectsTest.php</file>-->
+<!--            <file>tests/ProjectStorageBackendTest.php</file>-->
             <file>tests/ProjectTemplateFeaturesAssigningTest.php</file>
             <file>tests/ProjectTemplateFeaturesTest.php</file>
             <file>tests/ProjectTemplatesTest.php</file>
             <file>tests/ProjectWithProtectedDefaultBranchTest.php</file>
+
+            <file>tests/OrganizationInvitationsTest.php</file>
+            <file>tests/OrganizationJoinMfaValidationTest.php</file>
+            <file>tests/OrganizationJoinTest.php</file>
+            <file>tests/OrganizationMfaValidationTest.php</file>
+            <file>tests/OrganizationsMetadataTest.php</file>
+            <file>tests/OrganizationsTest.php</file>
         </testsuite>
     </testsuites>
     <filter>
