@@ -326,7 +326,7 @@ class FeaturesTest extends BaseFeatureTest
         $this->assertSame($newFeature['type'], $fetchedFeature['type']);
         $this->assertSame($newFeature['title'], $fetchedFeature['title']);
         $this->assertSame($newFeature['description'], $fetchedFeature['description']);
-        $this->client->removeFeature($newFeature['id']);
+        $this->client->removeFeature($insertedFeature['id']);
     }
 
 
@@ -424,7 +424,7 @@ class FeaturesTest extends BaseFeatureTest
 
         $newFeature = $this->prepareRandomFeature('admin');
 
-        $this->client->createFeature(
+        $newFeatureCreated = $this->client->createFeature(
             $newFeature['name'],
             $newFeature['type'],
             $newFeature['title'],
@@ -446,7 +446,7 @@ class FeaturesTest extends BaseFeatureTest
         }
 
         $this->assertSame($initialFeaturesCount + 1, count($this->client->listFeatures()));
-        $this->client->removeFeature($newFeature['id']);
+        $this->client->removeFeature($newFeatureCreated['id']);
     }
 
     public function testCreateFeatureWithWrongType()
