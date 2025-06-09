@@ -170,7 +170,7 @@ class FeaturesTest extends BaseFeatureTest
 
         $secondFeature = $this->prepareRandomFeature('admin');
 
-        $this->client->createFeature(
+        $secondFeatureCreated = $this->client->createFeature(
             $secondFeature['name'],
             $secondFeature['type'],
             $secondFeature['title'],
@@ -180,6 +180,7 @@ class FeaturesTest extends BaseFeatureTest
         $this->client->removeFeature($featureFound['id']);
 
         $this->assertSame(count($features), count($this->client->listFeatures()));
+        $this->client->removeFeature($secondFeatureCreated['id']);
     }
 
     public function featureProvider(): Generator
@@ -269,7 +270,7 @@ class FeaturesTest extends BaseFeatureTest
     {
         $expectedFeature = $this->prepareRandomFeature('project');
 
-        $this->client->createFeature(
+        $createdFeature = $this->client->createFeature(
             $expectedFeature['name'],
             $expectedFeature['type'],
             $expectedFeature['title'],
@@ -304,6 +305,8 @@ class FeaturesTest extends BaseFeatureTest
         $this->assertSame($expectedFeature['type'], $foundFeature['type']);
         $this->assertSame($expectedFeature['title'], $foundFeature['title']);
         $this->assertSame($expectedFeature['description'], $foundFeature['description']);
+
+        $this->client->removeFeature($createdFeature['id']);
     }
 
     public function testFeatureDetail()
@@ -323,6 +326,7 @@ class FeaturesTest extends BaseFeatureTest
         $this->assertSame($newFeature['type'], $fetchedFeature['type']);
         $this->assertSame($newFeature['title'], $fetchedFeature['title']);
         $this->assertSame($newFeature['description'], $fetchedFeature['description']);
+        $this->client->removeFeature($newFeature['id']);
     }
 
 
@@ -367,6 +371,8 @@ class FeaturesTest extends BaseFeatureTest
         $this->assertTrue($projectFound !== null);
         $this->assertSame($project['id'], $projectFound['id']);
         $this->assertSame($project['name'], $projectFound['name']);
+
+        $this->client->removeFeature($insertedFeature['id']);
     }
 
     public function testFeatureDetailAdmins()
@@ -408,6 +414,7 @@ class FeaturesTest extends BaseFeatureTest
         $this->assertTrue($adminFound !== null);
         $this->assertSame($userId, $adminFound['id']);
         $this->assertSame($userEmail, $adminFound['email']);
+        $this->client->removeFeature($insertedFeature['id']);
     }
 
 
@@ -439,6 +446,7 @@ class FeaturesTest extends BaseFeatureTest
         }
 
         $this->assertSame($initialFeaturesCount + 1, count($this->client->listFeatures()));
+        $this->client->removeFeature($newFeature['id']);
     }
 
     public function testCreateFeatureWithWrongType()
