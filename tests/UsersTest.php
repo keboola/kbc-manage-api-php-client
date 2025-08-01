@@ -277,4 +277,45 @@ class UsersTest extends ClientTestCase
         $this->expectException(ClientException::class);
         $this->client->removeUser($email);
     }
+
+    public function testNormalUserCanDeleteUserWhenHavingFeature()
+    {
+        $featureName = 'can-manage-users';
+
+        $token = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $token);
+        $userId = $token['user']['id'];
+
+        $this->client->removeUserFeature($userId, $featureName);
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'ToRemoveProj-1',
+            'dataRetentionTimeInDays' => 1,
+        ]);
+        $email = 'devel-tests+remove' . uniqid() . '@keboola.com';
+
+        $this->client->addUserToProject($project['id'], ['email' => $email]);
+        $newUser = $this->client->getUser($email);
+
+        try {
+            // Remove user by normal user without feature
+            $this->normalUserClient->removeUser($newUser['id']);
+            $this->fail('Normal user cannot delete user');
+        } catch (ClientException $e) {
+            $this->assertEquals(403, $e->getCode());
+            $this->assertEquals('accessDenied', $e->getStringCode());
+        }
+
+        // Add feature to normal user
+        $this->client->addUserFeature($userId, $featureName);
+
+        // now normal user should be able to delete user
+        $this->normalUserClient->removeUser($newUser['id']);
+        $deletedUser = $this->client->getUser($newUser['id']);
+
+        $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
+        $this->assertSame(false, $deletedUser['mfaEnabled'], 'User mfa has not been disabled');
+        $this->assertSame('DELETED', $deletedUser['name'], 'User name has not been deleted');
+    }
 }
