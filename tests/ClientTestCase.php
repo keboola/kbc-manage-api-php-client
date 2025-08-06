@@ -13,6 +13,8 @@ use PHPUnitRetry\RetryTrait;
 
 class ClientTestCase extends TestCase
 {
+    protected const CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME = 'can-update-project-settings';
+
     use RetryTrait;
 
     public const PRODUCTION_HOSTS = [

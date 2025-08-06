@@ -38,6 +38,7 @@
             <exclude>tests/OrganizationMfaValidationTest.php</exclude>
             <exclude>tests/OrganizationsMetadataTest.php</exclude>
             <exclude>tests/OrganizationsTest.php</exclude>
+            <exclude>tests/BigqueryProjectsTest.php</exclude>
         </testsuite>
         <testsuite name="File Storage">
             <file>tests/FileStorageAbsTest.php</file>
@@ -75,6 +76,7 @@
             <file>tests/OrganizationMfaValidationTest.php</file>
             <file>tests/OrganizationsMetadataTest.php</file>
             <file>tests/OrganizationsTest.php</file>
+            <file>tests/BigqueryProjectsTest.php</file>
         </testsuite>
     </testsuites>
     <filter>
