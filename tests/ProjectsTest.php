@@ -925,6 +925,20 @@ class ProjectsTest extends ClientTestCase
         }
         $this->assertNotNull($differentProjectType);
 
+        try {
+            $this->normalUserClient->updateProject(
+                $project['id'],
+                [
+                    'timezone' => 'America/Detroit',
+                ],
+            );
+            // I test the timezone setting in BigqueryProjectsTest
+            $this->fail('This should fail, timezone is not supported for snowflake.');
+        } catch (ClientException $e) {
+            $this->assertSame(400, $e->getCode());
+            $this->assertSame('The timezone parameter is only supported for the BigQuery backend. The selected backend ‘snowflake’ does not support it.', $e->getMessage());
+        }
+
         $updatedProject = $this->normalUserClient->updateProject(
             $project['id'],
             [
