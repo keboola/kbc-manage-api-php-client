@@ -59,6 +59,7 @@ class BigqueryProjectsTest extends ClientTestCase
             $backendToAssign['id']
         );
 
+        // After creating a new project, GCP takes some time to propagate permissions, so the update may return a 403 error for a while.
         $retryPolicy = new SimpleRetryPolicy(10);
         $backOffPolicy = new ExponentialRandomBackOffPolicy(
             1_000, // initial interval: 1s
