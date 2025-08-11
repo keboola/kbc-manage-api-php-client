@@ -1256,7 +1256,8 @@ Only organization members, members of the maintainer and super admins can delete
       },
       "payAsYouGo": {
         "purchasedCredits": 123
-      }
+      },
+      "timezone": "Europe/Bratislava"
     }
     ```
 
@@ -1294,6 +1295,7 @@ This endpoint can also be accessed using application tokens with scope `projects
     + expirationDays: 7 (number) - Change project expiration - allowed only for a super admin
     + billedMonthlyPrice: 2000 (number) - Change project monthly fee - allowed only for a super admin
     + dataRetentionTimeInDays: 20 (number) - (Snowflake only) Change the data retention period for this project - allowed only for a super admin
+    + timezone: Europe/Bratislava (string) -(Bigquery only) Change default time zone to use in time zone-dependent SQL functions. [Allowed values](https://cloud.google.com/looker/docs/reference/param-view-timezone-values). Immediately after creating the project, it may take a while for the necessary permissions to be propagated in GCP. If you receive a 403 response, please try again several times.
 
 + Parameters
     + project_id (required, int) - Project ID
