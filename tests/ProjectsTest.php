@@ -19,7 +19,6 @@ class ProjectsTest extends ClientTestCase
     private const FILE_STORAGE_PROVIDER_GCS = 'gcs';
     private const PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME = 'pay-as-you-go-credits-admin';
     private const PAY_AS_YOU_GO_PROJECT_FEATURE_NAME = 'pay-as-you-go';
-    private const CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME = 'can-update-project-settings';
     private const CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME = 'can-manage-deleted-projects';
 
     public function setUp(): void
@@ -925,6 +924,20 @@ class ProjectsTest extends ClientTestCase
             }
         }
         $this->assertNotNull($differentProjectType);
+
+        try {
+            $this->normalUserClient->updateProject(
+                $project['id'],
+                [
+                    'timezone' => 'America/Detroit',
+                ],
+            );
+            // I test the timezone setting in BigqueryProjectsTest
+            $this->fail('This should fail, timezone is not supported for snowflake.');
+        } catch (ClientException $e) {
+            $this->assertSame(400, $e->getCode());
+            $this->assertSame('The timezone parameter is only supported for the BigQuery backend. The selected backend "snowflake" does not support it.', $e->getMessage());
+        }
 
         $updatedProject = $this->normalUserClient->updateProject(
             $project['id'],
