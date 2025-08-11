@@ -765,7 +765,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals(100000, $project['billedMonthlyPrice']);
     }
 
-    public function testNormalUserCannotEditProjectTypeAndExpirationDays(): void
+    public function testNormalUserCannotUpdateProject(): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME);
 
@@ -793,9 +793,49 @@ class ProjectsTest extends ClientTestCase
             $this->normalUserClient->updateProject(
                 $project['id'],
                 [
+                    'name' => 'Super duper Keboola project',
+                ],
+            );
+            $this->fail('This should fail.');
+        } catch (ClientException $e) {
+            $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->updateProject(
+                $project['id'],
+                [
+                    'defaultBackend' => 'bigquery',
+                ],
+            );
+            $this->fail('This should fail.');
+        } catch (ClientException $e) {
+            $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->updateProject(
+                $project['id'],
+                [
+                    'hasTryModeOn' => true,
+                ],
+            );
+            $this->fail('This should fail.');
+        } catch (ClientException $e) {
+            $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->updateProject(
+                $project['id'],
+                [
                     'type' => $differentProjectType,
                 ],
             );
+            $this->fail('This should fail.');
         } catch (ClientException $e) {
             $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
             $this->assertSame(403, $e->getCode());
@@ -808,6 +848,7 @@ class ProjectsTest extends ClientTestCase
                     'expirationDays' => 3,
                 ],
             );
+            $this->fail('This should fail.');
         } catch (ClientException $e) {
             $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
             $this->assertSame(403, $e->getCode());
@@ -818,17 +859,42 @@ class ProjectsTest extends ClientTestCase
                 $project['id'],
                 [
                     'expirationDays' => 3,
+                ],
+            );
+            $this->fail('This should fail.');
+        } catch (ClientException $e) {
+            $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->updateProject(
+                $project['id'],
+                [
                     'billedMonthlyPrice' => 10000,
+                ],
+            );
+            $this->fail('This should fail.');
+        } catch (ClientException $e) {
+            $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
+            $this->assertSame(403, $e->getCode());
+        }
+
+        try {
+            $this->normalUserClient->updateProject(
+                $project['id'],
+                [
                     'dataRetentionTimeInDays' => 123,
                 ],
             );
+            $this->fail('This should fail.');
         } catch (ClientException $e) {
             $this->assertSame(sprintf("You don't have access to project %d", $project['id']), $e->getMessage());
             $this->assertSame(403, $e->getCode());
         }
     }
 
-    public function testNormalUserWithFeatureCanEditProjectTypeAndExpirationDays(): void
+    public function testNormalUserWithFeatureCanUpdateProject(): void
     {
         $this->client->addUserFeature($this->normalUser['email'], self::CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME);
 
@@ -840,6 +906,14 @@ class ProjectsTest extends ClientTestCase
             'name' => 'My test',
             'dataRetentionTimeInDays' => 1,
         ]);
+
+        $this->assertSame('My test', $project['name']);
+        $this->assertSame('snowflake', $project['defaultBackend']);
+        $this->assertSame('0', $project['hasTryModeOn']);
+        $this->assertSame('production', $project['type']);
+        $this->assertSame(null, $project['billedMonthlyPrice']);
+        $this->assertSame(1, $project['dataRetentionTimeInDays']);
+
         $currentProjectType = $project['type'];
 
         $templates = $this->client->getProjectTemplates();
@@ -852,45 +926,25 @@ class ProjectsTest extends ClientTestCase
         }
         $this->assertNotNull($differentProjectType);
 
-        $this->normalUserClient->updateProject(
+        $updatedProject = $this->normalUserClient->updateProject(
             $project['id'],
             [
+                'name' => 'Super duper Keboola project',
+                'defaultBackend' => 'bigquery',
+                'hasTryModeOn' => true,
                 'type' => $differentProjectType,
-            ],
-        );
-
-        $this->normalUserClient->updateProject(
-            $project['id'],
-            [
                 'expirationDays' => 3,
+                'billedMonthlyPrice' => 10000,
+                'dataRetentionTimeInDays' => 1,
             ],
         );
 
-        try {
-            $this->normalUserClient->updateProject(
-                $project['id'],
-                [
-                    'expirationDays' => 3,
-                    'billedMonthlyPrice' => 10000,
-                    'dataRetentionTimeInDays' => 123,
-                ],
-            );
-        } catch (ClientException $e) {
-            $this->assertSame('Billed monthly price can be changed only by super admin', $e->getMessage());
-            $this->assertSame(403, $e->getCode());
-        }
-
-        try {
-            $this->normalUserClient->updateProject(
-                $project['id'],
-                [
-                    'name' => 'Super duper Keboola project',
-                ],
-            );
-        } catch (ClientException $e) {
-            $this->assertSame('Name can be changed only by super admin or project member', $e->getMessage());
-            $this->assertSame(403, $e->getCode());
-        }
+        $this->assertSame('Super duper Keboola project', $updatedProject['name']);
+        $this->assertSame('bigquery', $updatedProject['defaultBackend']);
+        $this->assertSame('1', $updatedProject['hasTryModeOn']);
+        $this->assertSame($differentProjectType, $updatedProject['type']);
+        $this->assertSame(10000, $updatedProject['billedMonthlyPrice']);
+        $this->assertSame(1, $updatedProject['dataRetentionTimeInDays']);
 
         $this->client->removeUserFeature($this->normalUser['email'], 'can-update-project-settings');
     }
@@ -1049,6 +1103,7 @@ class ProjectsTest extends ClientTestCase
             ]);
 
             $clientWithSuperApiToken->setProjectLimits($projectAfterCreation['id'], []);
+            $this->fail('This should fail.');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
         }
