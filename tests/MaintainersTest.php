@@ -18,6 +18,7 @@ class MaintainersTest extends ClientTestCase
 
         try {
             $this->client->createMaintainer([]);
+            $this->fail('Should fail');
         } catch (Throwable $e) {
             $this->assertEquals('A name must be set', $e->getMessage());
         }

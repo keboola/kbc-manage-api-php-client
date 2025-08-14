@@ -167,6 +167,7 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         try {
             $this->client->deleteOrganizationMetadata($this->organization['id'], $userMetadata[0]['id']);
+            $this->fail('Should fail');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
@@ -244,6 +245,7 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         try {
             $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $userMetadata[0]['id']);
+            $this->fail('Should fail');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
@@ -334,6 +336,7 @@ class OrganizationsMetadataTest extends ClientTestCase
 
         try {
             $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $userMetadata[0]['id']);
+            $this->fail('Should fail');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertSame('This organization requires users to have multi-factor authentication enabled', $e->getMessage());
