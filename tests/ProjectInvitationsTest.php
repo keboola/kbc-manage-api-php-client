@@ -237,6 +237,33 @@ class ProjectInvitationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
+    public function testNonVerifyProjectMemberCannotInviteXXXXX(): void
+    {
+        $inviteeEmail = 'devel-tests@keboola.com';
+
+        $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
+        $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
+
+        $this->normalUserClient->addUserToProject($projectId, ['email' => $this->unverifiedUser['email']]);
+
+        try {
+            $this->unverifiedUserClient->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertSame('Only activated user can invite other users.', $e->getMessage());
+        }
+
+        $invitationId = $this->normalUserClient->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
+
+        try {
+            $this->normalUserClient->cancelProjectInvitation($projectId, $invitationId);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertSame('Only activated user can invite other users.', $e->getMessage());
+        }
+
+    }
+
     /**
      * @dataProvider autoJoinProvider
      * @param bool $allowAutoJoin
