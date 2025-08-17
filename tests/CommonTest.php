@@ -71,6 +71,7 @@ class CommonTest extends ClientTestCase
                 '/manage/maintainers/' . $this->testMaintainerId . '/organizations',
                 $requestOptions
             );
+            $this->fail('Should fail');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             /** @var ResponseInterface $response */
