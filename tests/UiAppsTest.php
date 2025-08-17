@@ -59,6 +59,7 @@ class UiAppsTest extends ClientTestCase
         $appName = 'Sample critical KBC Application';
         try {
             $client->deleteUiApp($appName);
+            $this->fail('Should fail');
         } catch (ClientException) {
         }
 
