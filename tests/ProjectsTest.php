@@ -2409,6 +2409,86 @@ class ProjectsTest extends ClientTestCase
         $this->assertSame($purchasedCredits, $project['payAsYouGo']['purchasedCredits']);
     }
 
+    public function testNonVerifyProjectMemberRestrictions(): void
+    {
+        $inviteeEmail = 'devel-tests@keboola.com';
+
+        $organization = $this->client->createOrganization($this->testMaintainerId, [
+            'name' => 'My org',
+        ]);
+
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
+
+        $this->client->updateOrganization($organization['id'], [
+            'allowAutoJoin' => 0,
+        ]);
+        $projectId = $this->createProjectWithSuperAdminMember($organization['id']);
+
+        $this->client->addUserToProject($projectId, ['email' => $this->unverifiedUser['email']]);
+
+        try {
+            $this->unverifiedUserClient->inviteUserToProject($projectId, ['email' => $inviteeEmail]);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertSame('Only active users can perform this action.', $e->getMessage());
+        }
+
+        $joinRequest = $this->normalUserClient->requestAccessToProject($projectId);
+
+        try {
+            $this->unverifiedUserClient->approveProjectJoinRequest($projectId, $joinRequest['id']);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertSame('Only active users can perform this action.', $e->getMessage());
+        }
+
+        $invitation = $this->client->inviteUserToProject(
+            $projectId,
+            [
+                'email' => $this->normalUserWithMfa['email'],
+                'role' => ProjectRole::GUEST,
+            ]
+        );
+        try {
+            $this->unverifiedUserClient->cancelProjectInvitation($projectId, $invitation['id']);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertSame('Only active users can perform this action.', $e->getMessage());
+        }
+
+        try {
+            $this->unverifiedUserClient->addUserToProject($projectId, ['email' => $this->normalUserWithMfa['email']]);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertSame('Only active users can perform this action.', $e->getMessage());
+        }
+
+        try {
+            $this->unverifiedUserClient->updateUserProjectMembership($projectId, $this->normalUser['id'], ['role' => ProjectRole::GUEST]);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertSame('Only active users can perform this action.', $e->getMessage());
+        }
+
+        $this->client->removeUserFromProject($projectId, $this->unverifiedUser['id']);
+        $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->unverifiedUser['email']]);
+
+        try {
+            $this->unverifiedUserClient->requestAccessToProject($projectId);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertSame('Only active users can perform this action.', $e->getMessage());
+        }
+
+        $this->client->addUserToOrganization($organization['id'], ['email' => $this->unverifiedUser['email']]);
+        try {
+            $this->unverifiedUserClient->joinProject($projectId);
+            $this->fail('Should fail');
+        } catch (ClientException $e) {
+            $this->assertSame('Only active users can perform this action.', $e->getMessage());
+        }
+    }
+
     private function createSuperManageTokenWithProjectsReadScopeClient(): Client
     {
         $client = $this->getClient([

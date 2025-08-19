@@ -37,12 +37,16 @@ class ClientTestCase extends TestCase
      */
     protected $normalUserClient;
 
+    protected Client $unverifiedUserClient;
+
     /** @var Client */
     protected $normalUserWithMfaClient;
 
     protected $testMaintainerId;
 
     protected $normalUser;
+
+    protected $unverifiedUser;
 
     protected $superAdmin;
 
@@ -164,6 +168,12 @@ class ClientTestCase extends TestCase
             'backoffMaxTries' => 0,
         ]);
 
+        $this->unverifiedUserClient = $this->getClient([
+            'token' => EnvVariableHelper::getKbcTestUnverifiedAdminToken(),
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
+            'backoffMaxTries' => 0,
+        ]);
+
         $this->normalUserWithMfaClient = $this->getClient([
             'token' => EnvVariableHelper::getKbcTestAdminWithMfaToken(),
             'url' => EnvVariableHelper::getKbcManageApiUrl(),
@@ -173,6 +183,10 @@ class ClientTestCase extends TestCase
         $tokenInfo = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $tokenInfo);
         $this->normalUser = $tokenInfo['user'];
+
+        $tokenInfo = $this->unverifiedUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $this->unverifiedUser = $tokenInfo['user'];
 
         $tokenInfo = $this->client->verifyToken();
         $this->assertArrayHasKey('user', $tokenInfo);
