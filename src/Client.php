@@ -971,4 +971,16 @@ class Client
     {
         return $this->apiPost($this->encode('manage/file-storage-gcs/%s/default', $fileStorageId));
     }
+
+    public function createReaderAccount(int $orgId, int $backendId): array
+    {
+        return $this->apiPost($this->encode('manage/organizations/%s/reader-accounts', $orgId), [
+            'backendId' => $backendId,
+        ]);
+    }
+
+    public function deleteReaderAccount(int $orgId, int $readerAccount): void
+    {
+        $this->apiDelete($this->encode('manage/organizations/%s/reader-accounts/%s', $orgId, $readerAccount));
+    }
 }
