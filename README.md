@@ -87,7 +87,6 @@ KBC_TEST_ADMIN_EMAIL=email_of_another_admin_having_mfa_disabled # email address 
 KBC_TEST_ADMIN_TOKEN=token_of_another_admin_having_mfa_disabled # is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN`. User must have Multi-Factor Authentication disabled.
 KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled # email address of another user without any organizations and having Multi-Factor Authentication enabled
 KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled # is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` or `KBC_TEST_ADMIN_TOKEN`
-KBC_TEST_UNVERIFIED_ADMIN_TOKEN=token_of_unverified_admin_having_mfa_disabled # is a Personal Access Token of user with **isActivated=false** and **without** **superadmin** privileges, but for a different user than that which has `KBC_MANAGE_API_TOKEN`.
 
 # OPTIONAL - required only for running testCreateStorageBackend, you have to have new snowflake backend and fill credentials into following environment variables
 KBC_TEST_SNOWFLAKE_BACKEND_NAME=
