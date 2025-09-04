@@ -181,6 +181,22 @@ class EnvVariableHelper
         return $value;
     }
 
+    public static function getKbcTestUnverifiedAdminToken(): string
+    {
+        $variableName = 'KBC_TEST_UNVERIFIED_ADMIN_TOKEN';
+        $value = getenv($variableName);
+        if ($value === false || $value === '') {
+            throw new MissingEnvVariableException(
+                sprintf(
+                    "Missing required environment variable '%s'. Description: %s\nPlease set it according to the instructions in README.md.",
+                    $variableName,
+                    'is a Personal Access Token of an **unverified** user **without** **superadmin** privileges, but for a different user than that which has KBC_MANAGE_API_TOKEN. User must have Multi-Factor Authentication disabled.'
+                )
+            );
+        }
+        return $value;
+    }
+
     public static function getKbcTestAdminWithMfaEmail(): string
     {
         $variableName = 'KBC_TEST_ADMIN_WITH_MFA_EMAIL';
