@@ -1235,7 +1235,7 @@ Only organization members, members of the maintainer and super admins can delete
       },
       "fileStorage": {
         "id": 2,
-        "awsKey": "AKIAJ2N244XSWYVVYVLQ",
+        "awsKey": "AKIAXXXXXXXXXXXXXXXXX",
         "region": "us-east-1",
         "filesBucket": "kbc-sapi-files",
         "owner": "keboola",
@@ -1413,7 +1413,7 @@ If project was listed as `activityCenterProjectId` in it's organization and it w
 ## Assign Project Storage Backend [/manage/projects/{project_id}/storage-backend]
 This action can be performed only by a super admin.
 
-One backend connection of each type (Snowflake, Redshift, Synapse, Exasol, Teradata) can be assigned to a project.
+One backend connection of each type (Snowflake, BigQuery) can be assigned to a project.
 Connection type is automatically detected from the passed connection identifier.
 
 + Parameters
@@ -3802,7 +3802,7 @@ Only storage owned by **keboola** can be set as default.
 
 ### S3FileStorageBase
 
-+ awsKey: SFASDF (required)
++ awsKey: AKIAXXXXXXXXXXXXXXXXX (required)
 + filesBucket: `kbc-sapi-files` (required)
 + region: `us-east-1` (required)
 + owner: keboola (required) - Associated AWS account owner
@@ -3825,11 +3825,8 @@ Only storage owned by **keboola** can be set as default.
 Storage backends power Keboola Connection buckets and the main tabular data storage.
 Currently supported backends are:
 
-- Redshift
 - Snowflake
-- Synapse
-- Exasol
-- Teradata
+- BigQuery
 
 ## Storage Backend Collection [/manage/storage-backend]
 
@@ -3861,6 +3858,7 @@ CREATE USER "KEBOOLA_STORAGE"
 
 GRANT ROLE "KEBOOLA_STORAGE" TO USER "KEBOOLA_STORAGE";
 GRANT ROLE "KEBOOLA_STORAGE" TO ROLE SYSADMIN;
+GRANT OWNERSHIP ON USER "KEBOOLA_STORAGE" TO ROLE "KEBOOLA_STORAGE";
 ```
 If you want to have dynamic backends enabled, please also run the following queries and add `useDynamicBackends: true` in the request.
 
@@ -3901,15 +3899,6 @@ According to the previous example, the parameters for creating Storage will be:
 - `warehouse` - `YOUR_WAREHOUSE`
 - `password` - `YOUR_PASSWORD`
 
-
-#### Synapse
-
-Credentials for sql server admin must be provided with database name.
-
-Master key for exports must be created on SQL pool
-```
-CREATE MASTER KEY
-```
 
 + Request (application/json)
 
@@ -4042,13 +4031,15 @@ Update of the credentials for BigQuery backend.
 + folderId: 123 (number)
 
 ### BigQueryStorageBackendUpdate
-+ credentials(GCPCredentials)
++ credentials(GCPCredentials, optional)
++ owner: keboola (string, optional)
 
 ### StorageBackendUpdate
 
 + username: keboola (string)
 + password: 1234 (string)
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
++ owner: keboola (string, optional)
 
 ## StorageBackend
 + id: 123 (number, required)
@@ -4085,20 +4076,6 @@ Update of the credentials for BigQuery backend.
   + spAcsUrl: https://example-sp.com/acs
   + publicKey: RSA_PUBLIC_KEY
 
-## StorageBackendListSynapse (StorageBackendListBase)
-+ host: demo-synapse.database.windows.net (required)
-+ backend: synapse (required)
-+ database: keboola
-+ useSynapseManagedIdentity: false
-
-## StorageBackendListExasol (StorageBackendListBase)
-+ host: database.exasol.com (required)
-+ backend: exasol (required)
-
-## StorageBackendListTeradata (StorageBackendListBase)
-+ host: database.teradata.com (required)
-+ backend: teradata (required)
-+ database: keboola
 
 # Group SUPER - Commands
 
