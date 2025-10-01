@@ -8195,7 +8195,7 @@ components:
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
-      in: header     
+      in: header
       name: X-KBC-ManageApiToken
   schemas:
     MaintainerModel:
