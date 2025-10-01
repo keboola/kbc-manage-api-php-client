@@ -145,18 +145,28 @@ class StorageBackendTest extends ClientTestCase
             [
                 'password' => EnvVariableHelper::getKbcTestSnowflakeBackendPassword(),
             ],
+            false,
         ];
         yield 'snowflake update username' => [
             $create,
             [
                 'username' => EnvVariableHelper::getKbcTestSnowflakeBackendName(),
             ],
+            false,
         ];
         yield 'snowflake update enable dynamic backends' => [
             $create,
             [
-                'useDynamicBackends' => 1,
+                'useDynamicBackends' => true,
             ],
+            true,
+        ];
+        yield 'snowflake update owner' => [
+            $create,
+            [
+                'owner' => 'client123',
+            ],
+            true,
         ];
         $createOptionsWithDynamicBackends = $this->getBackendCreateOptionsWithDynamicBackends();
         yield 'snowflake with dynamic backends update password' => [
@@ -164,12 +174,14 @@ class StorageBackendTest extends ClientTestCase
             [
                 'password' => EnvVariableHelper::getKbcTestSnowflakeBackendPassword(),
             ],
+            false,
         ];
         yield 'snowflake disable dynamic backends' => [
             $createOptionsWithDynamicBackends,
             [
-                'useDynamicBackends' => 0,
+                'useDynamicBackends' => false,
             ],
+            true,
         ];
     }
 
@@ -197,7 +209,7 @@ class StorageBackendTest extends ClientTestCase
     /**
      * @dataProvider storageBackendOptionsProviderForUpdate
      */
-    public function testUpdateStorageBackend(array $options, array $updateOptions)
+    public function testUpdateStorageBackend(array $options, array $updateOptions, bool $checkResponse)
     {
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
         $backend = $this->client->createStorageBackend($options);
@@ -208,10 +220,17 @@ class StorageBackendTest extends ClientTestCase
         $this->assertArrayHasKey('host', $updatedBackend);
         $this->assertArrayHasKey('backend', $updatedBackend);
         $this->assertArrayHasKey('region', $updatedBackend);
+        $this->assertArrayHasKey('owner', $updatedBackend);
         $this->assertArrayHasKey('useDynamicBackends', $updatedBackend);
         if (array_key_exists('useDynamicBackends', $updateOptions)) {
             $this->assertNotSame($backend['useDynamicBackends'], $updatedBackend['useDynamicBackends']);
         }
+        if ($checkResponse) {
+            foreach ($updateOptions as $key => $value) {
+                $this->assertSame($value, $updatedBackend[$key]);
+            }
+        }
+
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
         $newMaintainer = $this->client->createMaintainer([
@@ -293,7 +312,7 @@ class StorageBackendTest extends ClientTestCase
             'password' => EnvVariableHelper::getKbcTestSnowflakeBackendPassword(),
             'region' => EnvVariableHelper::getKbcTestSnowflakeBackendRegion(),
             'owner' => 'keboola',
-            'useDynamicBackends' => '1',
+            'useDynamicBackends' => true,
         ];
     }
 }
