@@ -10,10 +10,12 @@ class StorageBackendBigqueryTest extends ClientTestCase
         foreach ($backends as $backend) {
             if ($backend['backend'] === 'bigquery') {
                 $oldOwner = $backend['owner'];
+                $oldTechOwner = $backend['technicalOwner'];
                 $updatedBackend = $this->client->updateStorageBackendBigquery(
                     $backend['id'],
                     [
                         'owner' => 'new-owner',
+                        'technicalOwner' => 'kbdb',
                     ],
                 );
 
@@ -22,9 +24,11 @@ class StorageBackendBigqueryTest extends ClientTestCase
                     $backend['id'],
                     [
                         'owner' => $oldOwner,
+                        'technicalOwner' => $oldTechOwner,
                     ],
                 );
                 $this->assertSame($oldOwner, $updatedBackend['owner']);
+                $this->assertSame($oldTechOwner, $updatedBackend['technicalOwner']);
                 return;
             }
         }
