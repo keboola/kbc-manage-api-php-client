@@ -767,7 +767,7 @@ class Client
 
     public function updateStorageBackendBigquery(int $storageBackendId, array $options)
     {
-        return $this->apiPatch($this->encode('/manage/storage-backend/bigquery/%s', $storageBackendId), $options);
+        return $this->apiPatch($this->encode('/manage/storage-backend/%s/bigquery', $storageBackendId), $options);
     }
 
     public function removeStorageBackend(int $storageBackendId): void
