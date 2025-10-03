@@ -18,6 +18,7 @@ trait BackendConfigurationProviderTrait
             'password' => EnvVariableHelper::getKbcTestSnowflakeBackendPassword(),
             'region' => EnvVariableHelper::getKbcTestSnowflakeBackendRegion(),
             'owner' => 'keboola',
+            'technicalOwner' => 'internal',
         ];
     }
 }
