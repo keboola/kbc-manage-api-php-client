@@ -18,7 +18,7 @@ class StorageBackendBigqueryTest extends ClientTestCase
                 );
 
                 $this->assertSame('new-owner', $updatedBackend['owner']);
-                $this->client->updateStorageBackendBigquery(
+                $updatedBackend = $this->client->updateStorageBackendBigquery(
                     $backend['id'],
                     [
                         'owner' => $oldOwner,
