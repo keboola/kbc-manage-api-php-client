@@ -97,6 +97,62 @@ KBC_TEST_SNOWFLAKE_WAREHOUSE=
 KBC_TEST_SNOWFLAKE_BACKEND_REGION=
 ```
 
+# OPTIONAL - required only for running StorageBackendTest::testCreateStorageBackendWithCert, you have to have new snowflake backend and fill credentials into following environment variables
+Prepare credentials for Snowflake access
+Create RSA key pair for Snowflake user, you can use the following command to generate it:
+
+```bash
+openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
+openssl rsa -in rsa_key.p8 -pubout -out rsa_key.pub
+```
+
+Then you can use the public key in the Snowflake user creation script below.
+
+To get the public key in one line (without header and footer) you can use:
+```bash
+PUBLIC_KEY=$(sed '1d;$d' rsa_key.pub | tr -d '\n')
+# add this to CREATE USER statement
+echo "RSA_PUBLIC_KEY='${PUBLIC_KEY}'"
+```
+
+```snowflake
+CREATE ROLE "CI_MANAGE_TEST_USER";
+CREATE DATABASE "CI_MANAGE_TEST_USER";
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE "CI_MANAGE_TEST_USER";
+GRANT CREATE ROLE ON ACCOUNT TO ROLE "CI_MANAGE_TEST_USER" WITH GRANT OPTION;
+GRANT CREATE USER ON ACCOUNT TO ROLE "CI_MANAGE_TEST_USER" WITH GRANT OPTION;
+
+CREATE WAREHOUSE "CI_MANAGE_TEST_USER" WITH WAREHOUSE_SIZE = 'XSMALL' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE;
+GRANT USAGE ON WAREHOUSE "CI_MANAGE_TEST_USER" TO ROLE "CI_MANAGE_TEST_USER" WITH GRANT OPTION;
+
+
+CREATE USER "CI_MANAGE_TEST_USER"
+  DEFAULT_ROLE = "CI_MANAGE_TEST_USER"
+  RSA_PUBLIC_KEY = '<your_public_key>'
+;
+
+GRANT ROLE ACCOUNTADMIN TO USER CI_MANAGE_TEST_USER;
+GRANT ROLE "CI_MANAGE_TEST_USER" TO USER "CI_MANAGE_TEST_USER";
+GRANT ROLE "CI_MANAGE_TEST_USER" TO ROLE SYSADMIN;
+```
+
+set up env variables:
+
+For local tests and CI we need to edit the private key to one line and trim `-----BEGIN PRIVATE KEY----- -----END PRIVATE KEY-----` We can do this with `cat rsa_key.p8 | sed '1d;$d' | tr -d '\n'`
+```bash
+# set private key in your local .env file
+PRIVATE_KEY=$(sed '1d;$d' rsa_key.p8 | tr -d '\n'); if [ -f .env ]; then awk -v v="KBC_TEST_MAIN_SNOWFLAKE_BACKEND_PRIVATE_KEY=\"$PRIVATE_KEY\"" 'BEGIN{r=0} /^KBC_TEST_MAIN_SNOWFLAKE_BACKEND_PRIVATE_KEY=/{print v; r=1; next} {print} END{if(!r) print v}' .env > .env.tmp && mv .env.tmp .env; else printf '%s\n' "KBC_TEST_MAIN_SNOWFLAKE_BACKEND_PRIVATE_KEY=\"$PRIVATE_KEY\"" > .env; fi
+```
+
+```bash
+# user must be on the same host as KBC_TEST_SNOWFLAKE_HOST
+KBC_TEST_MAIN_SNOWFLAKE_BACKEND_NAME=CI_MANAGE_TEST_USER
+KBC_TEST_MAIN_SNOWFLAKE_BACKEND_PRIVATE_KEY= # note: it has to be full private key in PEM format, including the header and footer
+KBC_TEST_MAIN_SNOWFLAKE_BACKEND_DATABASE=CI_MANAGE_TEST_USER
+KBC_TEST_MAIN_SNOWFLAKE_BACKEND_WAREHOUSE=CI_MANAGE_TEST_USER
+KBC_TEST_SNOWFLAKE_BACKEND_STACK_PREFIX= same as value `KEBOOLA_STORAGE_API__CLIENT_DB_PREFIX` in connection
+```
+
 If any of the environment variables are not set, the tests will fail with an error message explaining which variable is missing.
 
 Run tests
