@@ -3830,7 +3830,7 @@ Currently supported backends are:
 
 ## Storage Backend Collection [/manage/storage-backend]
 
-### Create a new backend [POST]
+### Create a new backend (Deprecated) [POST]
 
 Superuser credentials are *not required* for backend registration
 
@@ -4002,6 +4002,63 @@ Update of the credentials for BigQuery backend.
 
     + Attributes(BigQueryStorageBackendCreated)
 
+## Snowflake - Storage Backend Collection [/manage/storage-backend/snowflake]
+
+### Create a new Snowflake backend with certificate authentication [POST]
+
+Create a new Snowflake storage backend with RSA certificate authentication. The backend is created as disabled and returns an SQL template for setting up Snowflake roles and users. After running the generated query, you can activate the backend using the [Activate Snowflake Storage Backend](#reference/super-storage-backends-management/activate-snowflake-storage-backend/activate-snowflake-backend) endpoint.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(CreateSnowflakeBackendWithCertRequest)
+
++ Response 200 (application/json)
+
+    + Attributes(CreateSnowflakeStorageBackendResponse)
+
++ Response 400 (application/json)
+
+    Returned when the request validation fails.
+
++ Response 403 (application/json)
+
+    Returned when the user does not have permission to create storage backends.
+
+## Activate Snowflake Storage Backend [/manage/storage-backend/{backendId}/activate]
+
+### Activate Snowflake backend [POST]
+
+Activate a Snowflake storage backend after the SQL template created via [Create a new Snowflake backend with certificate authentication](#reference/super-storage-backends-management/snowflake-storage-backend-collection/create-a-new-snowflake-backend-with-certificate-authentication) has been executed in Snowflake. This validates the backend configuration and enables it for use.
+
++ Parameters
+    + backendId (required) - Backend ID
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(ActivateSnowflakeStorageBackendResponse)
+
++ Response 400 (application/json)
+
+    Returned when the backend cannot be activated or validation fails.
+
++ Response 404 (application/json)
+
+    Returned when the backend does not exist.
+
++ Response 403 (application/json)
+
+    Returned when the user does not have permission to activate storage backends.
+
 ## Data Structures
 
 ### StorageBackendCreate
@@ -4081,6 +4138,52 @@ Update of the credentials for BigQuery backend.
   + spAcsUrl: https://example-sp.com/acs
   + publicKey: RSA_PUBLIC_KEY
 
+
+### CreateSnowflakeBackendWithCertRequest
++ host: `demo.snowflakecomputing.com` (required) - Snowflake host name
++ warehouse: `KEBOOLA` (required) - Snowflake warehouse name
++ username: `KEBOOLA_STORAGE` (optional) - Snowflake username
++ region: `us-east-1` (required) - Backend region
++ owner: `keboola` (required) - Owner identifier
++ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ useDynamicBackends: false (optional) - Enable dynamic backends
++ useNetworkPolicies: false (optional) - Enable network policies
++ useSso: false (optional) - Enable SSO
+
+### CreateSnowflakeStorageBackendResponse
++ id: 123 - Snowflake storage backend ID
++ host: `demo.snowflakecomputing.com` - Snowflake host
++ warehouse: `KEBOOLA` - Snowflake warehouse
++ username: `KEBOOLA_STORAGE` - Snowflake username
++ owner: `keboola` - Owner identifier
++ technicalOwner: `keboola` - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ region: `us-east-1` - Backend region
++ created: `2024-01-15T10:30:00Z` - Creation timestamp
++ creatorName: `John Doe` - Creator name
++ creatorId: 123 - Creator ID
++ isMaintenance: false - Whether backend is in maintenance mode
++ useDynamicBackends: false - Whether dynamic backends are enabled
++ useNetworkPolicies: false - Whether network policies are enabled
++ useSso: false - Whether SSO is enabled
++ sqlTemplate: `CREATE ROLE "KEBOOLA_STORAGE";...` - SQL template for setting up Snowflake roles and users
++ isEnabled: false - Whether backend is validated and can be used
+
+### ActivateSnowflakeStorageBackendResponse
++ id: 123 - Snowflake storage backend ID
++ host: `demo.snowflakecomputing.com` - Snowflake host
++ warehouse: `KEBOOLA` - Snowflake warehouse
++ username: `KEBOOLA_STORAGE` - Snowflake username
++ owner: `keboola` - Owner identifier
++ technicalOwner: `keboola` - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ region: `us-east-1` - Backend region
++ created: `2024-01-15T10:30:00Z` - Creation timestamp
++ creatorName: `John Doe` - Creator name
++ creatorId: 123 - Creator ID
++ isMaintenance: false - Whether backend is in maintenance mode
++ useDynamicBackends: false - Whether dynamic backends are enabled
++ useNetworkPolicies: false - Whether network policies are enabled
++ useSso: false - Whether SSO is enabled
++ isEnabled: true - Whether backend is validated and can be used
 
 # Group SUPER - Commands
 
