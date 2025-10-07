@@ -6,6 +6,7 @@ services:
     command: composer ci
 
   dev: &dev-config
+    platform: linux/amd64
     build: .
     volumes:
       - ./:/code
@@ -51,7 +52,10 @@ services:
 
   dev-xdebug:
     <<: *dev-config
-    build: docker/xdebug
+    build:
+      context: docker/xdebug
+      args:
+        IMAGE: kbc-manage-api-php-client-dev
     volumes:
       - ./:/code/
       - ./docker/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
