@@ -1,6 +1,6 @@
 <?php
 
-use Keboola\ManageApiTest\ClientTestCase;
+namespace Keboola\ManageApiTest;
 
 class StorageBackendBigqueryTest extends ClientTestCase
 {
