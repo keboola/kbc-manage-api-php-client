@@ -42,7 +42,7 @@ class StorageBackendTest extends ClientTestCase
             'owner' => 'keboola',
             'technicalOwner' => 'keboola',
             'useDynamicBackends' => false,
-            'useNetworkPolicies' => true,
+            'useNetworkPolicies' => false,
             'useSso' => true,
         ]);
 
