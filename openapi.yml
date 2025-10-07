@@ -191,6 +191,7 @@ paths:
                 defaultConnectionSynapseId: 235
                 defaultConnectionExasolId: 236
                 defaultConnectionTeradataId: 236
+                defaultConnectionBigqueryId: 236
                 defaultFileStorageId: 456
                 zendeskUrl: https://some.url.com
       summary: Create a maintainer
@@ -211,6 +212,7 @@ paths:
               defaultConnectionSynapseId: '324'
               defaultConnectionExasolId: '324'
               defaultConnectionTeradataId: '324'
+              defaultConnectionBigqueryId: '324'
               defaultFileStorageId: '456'
               zendeskUrl: https://keboola.zendesk.com
             schema:
@@ -242,6 +244,10 @@ paths:
                   type: string
                   example: '324'
                   description: Default Teradata Connection ID
+                defaultConnectionBigqueryId:
+                  type: string
+                  example: '324'
+                  description: Default Bigquery Connection ID
                 defaultFileStorageId:
                   type: string
                   example: '456'
@@ -254,7 +260,77 @@ paths:
         '200':
           description: OK
           headers: {}
-          content: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    created:
+                      type: string
+                    defaultConnectionMysqlId:
+                      type: number
+                    defaultConnectionRedshiftId:
+                      type: number
+                    defaultConnectionSnowflakeId:
+                      type: number
+                    defaultConnectionSynapseId:
+                      type: number
+                    defaultConnectionExasolId:
+                      type: number
+                    defaultConnectionTeradataId:
+                      type: number
+                    defaultConnectionBigqueryId:
+                      type: number
+                    defaultFileStorageId:
+                      type: number
+                      nullable: true
+                    zendeskUrl:
+                      type: string
+                    crated:
+                      type: string
+                  required:
+                    - id
+                    - name
+                    - defaultConnectionMysqlId
+                    - defaultConnectionRedshiftId
+                    - defaultConnectionSnowflakeId
+                    - defaultConnectionSynapseId
+                    - defaultConnectionExasolId
+                    - defaultConnectionTeradataId
+                    - defaultConnectionBigqueryId
+                    - defaultFileStorageId
+                    - zendeskUrl
+              example:
+                - id: 123
+                  name: Keboola CZ
+                  created: '2014-11-11T08:40:51.620Z'
+                  defaultConnectionMysqlId: 234
+                  defaultConnectionRedshiftId: 232
+                  defaultConnectionSnowflakeId: 242
+                  defaultConnectionSynapseId: 235
+                  defaultConnectionExasolId: 236
+                  defaultConnectionTeradataId: 236
+                  defaultConnectionBigqueryId: 236
+                  defaultFileStorageId: null
+                  zendeskUrl: https://some.url.com
+                - id: 124
+                  name: abc
+                  crated: '2014-11-11T08:40:51.620Z'
+                  defaultConnectionMysqlId: 234
+                  defaultConnectionRedshiftId: 232
+                  defaultConnectionSnowflakeId: 242
+                  defaultConnectionSynapseId: 235
+                  defaultConnectionExasolId: 236
+                  defaultConnectionTeradataId: 236
+                  defaultConnectionBigqueryId: 236
+                  defaultFileStorageId: 236
+                  zendeskUrl: https://some.url.com
       summary: List maintainers
       operationId: List maintainers
       description: ''
@@ -281,6 +357,7 @@ paths:
                 defaultConnectionSynapseId: 235
                 defaultConnectionExasolId: 236
                 defaultConnectionTeradataId: 236
+                defaultConnectionBigqueryId: 236
                 defaultFileStorageId: 456
                 zendeskUrl: https://some.url.com
       summary: Retrieve a maintainer
@@ -316,6 +393,7 @@ paths:
                 defaultConnectionSynapseId: 235
                 defaultConnectionExasolId: 236
                 defaultConnectionTeradataId: 236
+                defaultConnectionBigqueryId: 236
                 defaultFileStorageId: 456
                 zendeskUrl: https://some.url.com
       summary: Update a maintainer
@@ -335,6 +413,7 @@ paths:
               defaultConnectionSynapseId: '324'
               defaultConnectionExasolId: '324'
               defaultConnectionTeradataId: '324'
+              defaultConnectionBigqueryId: '324'
               defaultFileStorageId: '456'
               zendeskUrl: https://keboola.zendesk.com
             schema:
@@ -361,6 +440,10 @@ paths:
                   example: '324'
                   description: Default Exasol Connection ID
                 defaultConnectionTeradataId:
+                  type: string
+                  example: '324'
+                  description: Default Teradata Connection ID
+                defaultConnectionBigqueryId:
                   type: string
                   example: '324'
                   description: Default Teradata Connection ID
@@ -791,54 +874,29 @@ paths:
           required: true
           schema:
             type: string
+  /manage/organizations/:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content: {}
+      summary: List organizations
+      operationId: List organizations
+      description: >-
+        Lists all organizations the user is part of. If authorized with
+        application token with scope `organizations:read`, all organizations are
+        listed.
+      tags:
+        - Organizations
+      parameters: []
   /manage/organizations/{organization_id}:
     get:
       responses:
         '200':
           description: OK
           headers: {}
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: number
-                  name:
-                    type: string
-                  created:
-                    type: string
-                  allowAutoJoin:
-                    type: boolean
-                  crmId:
-                    type: string
-                  activityCenterProjectId:
-                    type: number
-                  mfaRequired:
-                    type: boolean
-                  projects:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: number
-                        name:
-                          type: string
-                        created:
-                          type: string
-              example:
-                id: 123
-                name: sample org
-                created: 2015-10-02T11:03:44+0200
-                allowAutoJoin: true
-                crmId: '6232456'
-                activityCenterProjectId: 123
-                mfaRequired: false
-                projects:
-                  - id: 123
-                    name: Demo
-                    created: '2014-11-11T08:40:51.620Z'
+          content: {}
       summary: Retrieve an organization
       operationId: Retrieve an organization
       description: >-
@@ -1693,7 +1751,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1710,6 +1768,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Project detail
       operationId: Project detail
       description: >-
@@ -1827,7 +1886,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -1844,6 +1903,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Update a project
       operationId: Update a project
       description: ''
@@ -1866,6 +1926,7 @@ paths:
               expirationDays: 7
               billedMonthlyPrice: 2000
               dataRetentionTimeInDays: 20
+              timezone: Europe/Bratislava
             schema:
               type: object
               properties:
@@ -1897,6 +1958,16 @@ paths:
                   description: >-
                     (Snowflake only) Change the data retention period for this
                     project - allowed only for a super admin
+                timezone:
+                  type: string
+                  example: Europe/Bratislava
+                  description: >-
+                    (Bigquery only) Change default time zone to use in time
+                    zone-dependent SQL functions. [Allowed
+                    values](https://cloud.google.com/looker/docs/reference/param-view-timezone-values).
+                    Immediately after creating the project, it may take a while
+                    for the necessary permissions to be propagated in GCP. If
+                    you receive a 403 response, please try again several times.
     delete:
       responses:
         '204':
@@ -2009,7 +2080,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2026,6 +2097,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Add a project
       operationId: Add a project
       description: ''
@@ -2263,7 +2335,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2280,6 +2352,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Move a project
       operationId: Move a project
       description: ''
@@ -2396,7 +2469,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2413,6 +2486,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Assign project Storage backend
       operationId: Assign project Storage backend
       description: ''
@@ -2529,7 +2603,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2546,6 +2620,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Remove project Storage backend
       operationId: Remove project Storage backend
       description: ''
@@ -2656,7 +2731,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2673,6 +2748,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Assign project file Storage
       operationId: Assign project file Storage
       description: ''
@@ -2789,7 +2865,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -2806,6 +2882,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Set project limits
       operationId: Set project limits
       description: ''
@@ -4016,7 +4093,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -4033,6 +4110,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Change project disabled status
       operationId: Change project disabled status
       description: ''
@@ -4785,7 +4863,9 @@ paths:
           content: {}
       summary: Disable MFA for User
       operationId: Disable MFA for User
-      description: ''
+      description: >-
+        This endpoint can also be accessed using user token with feature
+        `can-manage-users`.
       tags:
         - Users
       parameters:
@@ -6432,7 +6512,7 @@ paths:
                   allowAutoJoin: true
                 fileStorage:
                   id: 2
-                  awsKey: AKIAJ2N244XSWYVVYVLQ
+                  awsKey: AKIAXXXXXXXXXXXXXXXXX
                   region: us-east-1
                   filesBucket: kbc-sapi-files
                   owner: keboola
@@ -6449,6 +6529,7 @@ paths:
                     owner: keboola
                 payAsYouGo:
                   purchasedCredits: 123
+                timezone: Europe/Bratislava
       summary: Add a project feature
       operationId: Add a project feature
       description: >-
@@ -6800,7 +6881,7 @@ paths:
                   - owner
                   - id
               example:
-                awsKey: SFASDF
+                awsKey: AKIAXXXXXXXXXXXXXXXXX
                 filesBucket: kbc-sapi-files
                 region: us-east-1
                 owner: keboola
@@ -6828,7 +6909,7 @@ paths:
         content:
           application/json:
             example:
-              awsKey: SFASDF
+              awsKey: AKIAXXXXXXXXXXXXXXXXX
               filesBucket: kbc-sapi-files
               region: us-east-1
               owner: keboola
@@ -6864,7 +6945,7 @@ paths:
                 type: array
                 items: {}
               example:
-                - awsKey: SFASDF
+                - awsKey: AKIAXXXXXXXXXXXXXXXXX
                   filesBucket: kbc-sapi-files
                   region: us-east-1
                   owner: keboola
@@ -6925,7 +7006,7 @@ paths:
                   - owner
                   - id
               example:
-                awsKey: SFASDF
+                awsKey: AKIAXXXXXXXXXXXXXXXXX
                 filesBucket: kbc-sapi-files
                 region: us-east-1
                 owner: keboola
@@ -7388,6 +7469,8 @@ paths:
 
         GRANT ROLE "KEBOOLA_STORAGE" TO ROLE SYSADMIN;
 
+        GRANT OWNERSHIP ON USER "KEBOOLA_STORAGE" TO ROLE "KEBOOLA_STORAGE";
+
         ```
 
 
@@ -7451,22 +7534,6 @@ paths:
 
 
         - `password` - `YOUR_PASSWORD`
-
-
-        #### Synapse
-
-
-        Credentials for sql server admin must be provided with database name.
-
-
-        Master key for exports must be created on SQL pool
-
-
-        ```
-
-        CREATE MASTER KEY
-
-        ```
       tags:
         - SUPER - Storage Backends Management
       parameters: []
@@ -7634,6 +7701,7 @@ paths:
               username: keboola
               password: '1234'
               useDynamicBackends: false
+              owner: keboola
             schema:
               $ref: '#/components/schemas/StorageBackendUpdate'
     delete:
@@ -7766,7 +7834,7 @@ paths:
               properties:
                 owner:
                   type: string
-                  description: associated GCP account owner
+                  description: associated GCP account owner, can be (keboola,client)
                 folderId:
                   type: string
                   description: where is service account created
@@ -7906,6 +7974,7 @@ paths:
                 token_uri: https://oauth2.googleapis.com/token
                 auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
                 client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
+              owner: keboola
             schema:
               $ref: '#/components/schemas/BigQueryStorageBackendUpdate'
   /manage/commands:
@@ -8149,6 +8218,8 @@ components:
         defaultConnectionExasolId:
           type: number
         defaultConnectionTeradataId:
+          type: number
+        defaultConnectionBigqueryId:
           type: number
         defaultFileStorageId:
           type: number
@@ -8402,6 +8473,8 @@ components:
           properties:
             purchasedCredits:
               type: number
+        timezone:
+          type: string
     GCPCredentials:
       type: object
       required:
@@ -8626,7 +8699,7 @@ components:
       properties:
         awsKey:
           type: string
-          example: SFASDF
+          example: AKIAXXXXXXXXXXXXXXXXX
         filesBucket:
           type: string
           example: kbc-sapi-files
@@ -8734,7 +8807,7 @@ components:
         owner:
           type: string
           example: keboola
-          description: associated GCP account owner
+          description: associated GCP account owner, can be (keboola,client)
         folderId:
           type: string
           example: '123'
@@ -8768,6 +8841,9 @@ components:
       properties:
         credentials:
           $ref: '#/components/schemas/GCPCredentials'
+        owner:
+          type: string
+          example: keboola
     StorageBackendUpdate:
       type: object
       properties:
@@ -8782,6 +8858,9 @@ components:
           description: >-
             Only for backends supporting dynamic sizing (Snowflake). When
             enabled, new projects get dynamic backends assigned automatically.
+        owner:
+          type: string
+          example: keboola
     StorageBackend:
       type: object
       required:
@@ -8908,57 +8987,6 @@ components:
                   type: string
                   example: RSA_PUBLIC_KEY
               description: available only for Snowflake backend
-    StorageBackendListSynapse:
-      allOf:
-        - $ref: '#/components/schemas/StorageBackendListBase'
-        - type: object
-          required:
-            - backend
-          properties:
-            host:
-              type: string
-              example: demo
-              description: synapse.database.windows.net (required)
-            backend:
-              type: string
-              example: synapse
-            database:
-              type: string
-              example: keboola
-            useSynapseManagedIdentity:
-              type: string
-              example: 'false'
-    StorageBackendListExasol:
-      allOf:
-        - $ref: '#/components/schemas/StorageBackendListBase'
-        - type: object
-          required:
-            - host
-            - backend
-          properties:
-            host:
-              type: string
-              example: database.exasol.com
-            backend:
-              type: string
-              example: exasol
-    StorageBackendListTeradata:
-      allOf:
-        - $ref: '#/components/schemas/StorageBackendListBase'
-        - type: object
-          required:
-            - host
-            - backend
-          properties:
-            host:
-              type: string
-              example: database.teradata.com
-            backend:
-              type: string
-              example: teradata
-            database:
-              type: string
-              example: keboola
     CommandExecute:
       type: object
       required:
@@ -9019,19 +9047,10 @@ tags:
       Currently supported backends are:
 
 
-      - Redshift
-
-
       - Snowflake
 
 
-      - Synapse
-
-
-      - Exasol
-
-
-      - Teradata
+      - BigQuery
   - name: SUPER - Commands
   - name: SUPER - UI Management
   - name: Syrup API Integration
