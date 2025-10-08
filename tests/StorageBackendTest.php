@@ -156,7 +156,7 @@ class StorageBackendTest extends ClientTestCase
             'dataRetentionTimeInDays' => 1,
         ]);
 
-        $this->createTestProjectAndValidate($project['id'], $options['useDynamicBackends'], $newBackend['id'], $newMaintainer['id']);
+        $this->createTestProjectAndValidate($project['id'], $newBackend['useDynamicBackends'], $newBackend['id'], $newMaintainer['id']);
     }
 
     public function storageBackendOptionsProvider(): iterable
