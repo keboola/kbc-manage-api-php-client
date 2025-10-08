@@ -457,11 +457,12 @@ class StorageBackendTest extends ClientTestCase
 
     private function cleanupRegisteredBackend(string $testUser, Connection $db): void
     {
-        $dbName = $testUser . '_INTERNAL';
-        $schemaName = $testUser . '_SCHEMA';
-        $ruleName = $dbName . '_NETWORK_RULE';
+        $prefix = strtoupper(EnvVariableHelper::getKbcTestSnowflakeBackendClientDbPrefix());
+        $dbName = $prefix . '_INTERNAL';
+        $schemaName = 'NETWORK_RULES';
+        $ruleName = $prefix . '_NETWORK_RULE';
         $roleName = $testUser . '_ROLE';
-        $policyName = $dbName . '_NETWORK_POLICY';
+        $policyName = $prefix . '_SYSTEM_IPS_ONLY';
         $ssoIntegrationName = strtoupper(EnvVariableHelper::getKbcTestSnowflakeBackendClientDbPrefix()) . '_SAML_INTEGRATION';
         $cleanupStatements = [
             'USE ROLE ACCOUNTADMIN;',
