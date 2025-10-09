@@ -5,6 +5,7 @@ namespace Keboola\ManageApiTest;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Keboola\ManageApi\ClientException;
+use Keboola\ManageApi\SnowflakeNameHelper;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Workspaces;
@@ -458,12 +459,13 @@ class StorageBackendTest extends ClientTestCase
     private function cleanupRegisteredBackend(string $testUser, Connection $db): void
     {
         $prefix = strtoupper(EnvVariableHelper::getKbcTestSnowflakeBackendClientDbPrefix());
-        $dbName = $prefix . '_INTERNAL';
-        $schemaName = 'NETWORK_RULES';
-        $ruleName = $prefix . '_NETWORK_RULE';
-        $roleName = $testUser . '_ROLE';
-        $policyName = $prefix . '_SYSTEM_IPS_ONLY';
-        $ssoIntegrationName = strtoupper(EnvVariableHelper::getKbcTestSnowflakeBackendClientDbPrefix()) . '_SAML_INTEGRATION';
+        $nameHelper = new SnowflakeNameHelper($prefix);
+        $dbName = $nameHelper->getInternalDatabaseName();
+        $schemaName = $nameHelper->getNetworkRulesSchemaName();
+        $ruleName = $nameHelper->getNetworkRuleName();
+        $roleName = $nameHelper->getUserRoleName($testUser);
+        $policyName = $nameHelper->getSystemIpsOnlyPolicyName();
+        $ssoIntegrationName = $nameHelper->getSamlIntegrationName();
         $cleanupStatements = [
             'USE ROLE ACCOUNTADMIN;',
             sprintf('USE DATABASE %s;', SnowflakeQuote::quoteSingleIdentifier($dbName)),
