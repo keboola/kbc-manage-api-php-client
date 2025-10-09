@@ -34,6 +34,15 @@ class StorageBackendTest extends ClientTestCase
 
         $newBackend = $this->client->createStorageBackend($options);
 
+        $this->assertSame($options['backend'], $newBackend['backend']);
+        $this->assertSame($options['region'], $newBackend['region']);
+        $this->assertSame($options['owner'], $newBackend['owner']);
+        $this->assertSame($options['technicalOwner'], $newBackend['technicalOwner']);
+        $this->assertSame($options['host'], $newBackend['host']);
+        if (array_key_exists('useDynamicBackends', $options)) {
+            $this->assertSame($options['useDynamicBackends'], $newBackend['useDynamicBackends']);
+        }
+
         $this->assertSame($newBackend['backend'], 'snowflake');
         $this->assertBackendExist($newBackend['id']);
 
@@ -168,6 +177,13 @@ class StorageBackendTest extends ClientTestCase
             ],
             true,
         ];
+        yield 'snowflake update tech owner' => [
+            $create,
+            [
+                'technicalOwner' => 'kbdb',
+            ],
+            true,
+        ];
         $createOptionsWithDynamicBackends = $this->getBackendCreateOptionsWithDynamicBackends();
         yield 'snowflake with dynamic backends update password' => [
             $createOptionsWithDynamicBackends,
@@ -269,11 +285,15 @@ class StorageBackendTest extends ClientTestCase
         $this->assertArrayHasKey('host', $backend);
         $this->assertArrayHasKey('username', $backend);
         $this->assertArrayHasKey('backend', $backend);
+        $this->assertArrayHasKey('owner', $backend);
+        $this->assertArrayHasKey('technicalOwner', $backend);
 
         $backedDetail = $this->client->getStorageBackend($backend['id']);
         $this->assertArrayHasKey('host', $backedDetail);
         $this->assertArrayHasKey('username', $backend);
         $this->assertArrayHasKey('backend', $backedDetail);
+        $this->assertArrayHasKey('owner', $backedDetail);
+        $this->assertArrayHasKey('technicalOwner', $backedDetail);
     }
 
     private function assertBackendExist(int $backendId): void
@@ -312,6 +332,7 @@ class StorageBackendTest extends ClientTestCase
             'password' => EnvVariableHelper::getKbcTestSnowflakeBackendPassword(),
             'region' => EnvVariableHelper::getKbcTestSnowflakeBackendRegion(),
             'owner' => 'keboola',
+            'technicalOwner' => 'keboola',
             'useDynamicBackends' => true,
         ];
     }
