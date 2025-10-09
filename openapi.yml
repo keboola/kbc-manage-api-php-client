@@ -7548,6 +7548,7 @@ paths:
               password: '1234'
               region: us-east-1
               owner: keboola
+              technicalOwner: keboola
               database: MyDataWarehouse
               useSynapseManagedIdentity: 'true'
               useDynamicBackends: false
@@ -7570,7 +7571,12 @@ paths:
                   type: string
                 owner:
                   type: string
-                  description: associated AWS account owner
+                  description: associated legal owner (keboola,client)
+                technicalOwner:
+                  type: string
+                  description: >-
+                    associated technical owner (who technically manages the
+                    account). Enum: keboola, internal, kbdb, byodb
                 database:
                   type: string
                   description: required for Synapse and Teradata
@@ -7590,6 +7596,7 @@ paths:
                 - password
                 - region
                 - owner
+                - technicalOwner
     get:
       responses:
         '200':
@@ -7626,6 +7633,7 @@ paths:
                 - id: 123
                   region: us
                   owner: keboola
+                  technicalOwner: keboola
                   username: username
                   stats:
                     projectsCount: 10
@@ -7701,7 +7709,7 @@ paths:
               username: keboola
               password: '1234'
               useDynamicBackends: false
-              owner: keboola
+              technicalOwner: keboola
             schema:
               $ref: '#/components/schemas/StorageBackendUpdate'
     delete:
@@ -7814,6 +7822,7 @@ paths:
           application/json:
             example:
               owner: keboola
+              technicalOwner: keboola
               folderId: '123'
               region: us-east-1
               credentials:
@@ -7835,6 +7844,11 @@ paths:
                 owner:
                   type: string
                   description: associated GCP account owner, can be (keboola,client)
+                technicalOwner:
+                  type: string
+                  description: >-
+                    associated technical owner (who technically manages the
+                    account). Enum: keboola, internal, kbdb, byodb
                 folderId:
                   type: string
                   description: where is service account created
@@ -7876,6 +7890,7 @@ paths:
                     - client_x509_cert_url
               required:
                 - owner
+                - technicalOwner
                 - folderId
                 - region
   /manage/storage-backend/bigquery/{backend_id}:
@@ -7975,6 +7990,7 @@ paths:
                 auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
                 client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
               owner: keboola
+              technicalOwner: keboola
             schema:
               $ref: '#/components/schemas/BigQueryStorageBackendUpdate'
   /manage/commands:
@@ -8759,6 +8775,7 @@ components:
         - password
         - region
         - owner
+        - technicalOwner
       properties:
         backend:
           type: string
@@ -8783,7 +8800,13 @@ components:
         owner:
           type: string
           example: keboola
-          description: associated AWS account owner
+          description: associated legal owner (keboola,client)
+        technicalOwner:
+          type: string
+          example: keboola
+          description: >-
+            associated technical owner (who technically manages the account).
+            Enum: keboola, internal, kbdb, byodb
         database:
           type: string
           example: MyDataWarehouse
@@ -8801,6 +8824,7 @@ components:
       type: object
       required:
         - owner
+        - technicalOwner
         - folderId
         - region
       properties:
@@ -8808,6 +8832,12 @@ components:
           type: string
           example: keboola
           description: associated GCP account owner, can be (keboola,client)
+        technicalOwner:
+          type: string
+          example: keboola
+          description: >-
+            associated technical owner (who technically manages the account).
+            Enum: keboola, internal, kbdb, byodb
         folderId:
           type: string
           example: '123'
@@ -8838,14 +8868,24 @@ components:
           example: 123
     BigQueryStorageBackendUpdate:
       type: object
+      required:
+        - technicalOwner
       properties:
         credentials:
           $ref: '#/components/schemas/GCPCredentials'
         owner:
           type: string
           example: keboola
+        technicalOwner:
+          type: string
+          example: keboola
+          description: >-
+            associated technical owner (who technically manages the account).
+            Enum: keboola, internal, kbdb, byodb
     StorageBackendUpdate:
       type: object
+      required:
+        - technicalOwner
       properties:
         username:
           type: string
@@ -8858,9 +8898,12 @@ components:
           description: >-
             Only for backends supporting dynamic sizing (Snowflake). When
             enabled, new projects get dynamic backends assigned automatically.
-        owner:
+        technicalOwner:
           type: string
           example: keboola
+          description: >-
+            associated technical owner (who technically manages the account).
+            Enum: keboola, internal, kbdb, byodb
     StorageBackend:
       type: object
       required:
@@ -8886,6 +8929,7 @@ components:
       required:
         - id
         - owner
+        - technicalOwner
         - created
       properties:
         id:
@@ -8896,6 +8940,9 @@ components:
           example: us
           description: east-1 (required)
         owner:
+          type: string
+          example: keboola
+        technicalOwner:
           type: string
           example: keboola
         username:

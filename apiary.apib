@@ -4012,13 +4012,15 @@ Update of the credentials for BigQuery backend.
 + username: keboola (required)
 + password: 1234 (required)
 + region: `us-east-1` (required)
-+ owner: keboola (required) - associated AWS account owner
++ owner: keboola (required) - associated legal owner (keboola,client)
++ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + database: MyDataWarehouse - required for Synapse and Teradata
 + useSynapseManagedIdentity: true - optional for Synapse
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
 
 ### BigQueryStorageBackendCreate
 + owner: keboola (required) - associated GCP account owner, can be (keboola,client)
++ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + folderId: 123(required) - where is service account created
 + region: `us-east-1` (required)
 + credentials(GCPCredentials)
@@ -4033,13 +4035,14 @@ Update of the credentials for BigQuery backend.
 ### BigQueryStorageBackendUpdate
 + credentials(GCPCredentials, optional)
 + owner: keboola (string, optional)
++ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 
 ### StorageBackendUpdate
 
 + username: keboola (string)
 + password: 1234 (string)
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
-+ owner: keboola (string, optional)
++ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 
 ## StorageBackend
 + id: 123 (number, required)
@@ -4051,6 +4054,7 @@ Update of the credentials for BigQuery backend.
 + id: 123 (number, required)
 + region: us-east-1 (required)
 + owner: keboola (required)
++ technicalOwner: keboola (required)
 + username: username
 + stats
     + projectsCount: 10 (number, required)
