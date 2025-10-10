@@ -69,7 +69,7 @@ class SnowflakeNameHelperTest extends TestCase
     {
         $helper = new SnowflakeNameHelper('my-complex_test.prefix123');
         $expectedPrefix = 'MY-COMPLEX_TEST.PREFIX123';
-        
+
         $this->assertSame($expectedPrefix, $helper->getPrefix());
         $this->assertSame($expectedPrefix . '_INTERNAL', $helper->getInternalDatabaseName());
         $this->assertSame('NETWORK_RULES', $helper->getNetworkRulesSchemaName());
@@ -83,7 +83,7 @@ class SnowflakeNameHelperTest extends TestCase
     {
         $helper1 = new SnowflakeNameHelper('test_prefix');
         $helper2 = new SnowflakeNameHelper('test_prefix');
-        
+
         $this->assertSame($helper1->getInternalDatabaseName(), $helper2->getInternalDatabaseName());
         $this->assertSame($helper1->getNetworkRuleName(), $helper2->getNetworkRuleName());
         $this->assertSame($helper1->getSystemIpsOnlyPolicyName(), $helper2->getSystemIpsOnlyPolicyName());
@@ -93,7 +93,7 @@ class SnowflakeNameHelperTest extends TestCase
     public function testUserRoleNameWithSpecialCharacters(): void
     {
         $helper = new SnowflakeNameHelper('test_prefix');
-        
+
         $this->assertSame('user-name_ROLE', $helper->getUserRoleName('user-name'));
         $this->assertSame('user.name_ROLE', $helper->getUserRoleName('user.name'));
         $this->assertSame('user_name_ROLE', $helper->getUserRoleName('user_name'));
