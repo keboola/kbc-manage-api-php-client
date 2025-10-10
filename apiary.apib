@@ -4042,7 +4042,8 @@ Update of the credentials for BigQuery backend.
 + username: keboola (string)
 + password: 1234 (string)
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
-+ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ owner: keboola (string) - associated legal owner (keboola,client)
++ technicalOwner: keboola (string) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 
 ## StorageBackend
 + id: 123 (number, required)
