@@ -361,11 +361,19 @@ class StorageBackendTest extends ClientTestCase
         ];
     }
 
+    private function normalizePrivateKey(string $privateKey): string
+    {
+        $privateKey = trim($privateKey);
+        $privateKey = str_replace(["\r", "\n"], '', $privateKey);
+        $privateKey = wordwrap($privateKey, 64, "\n", true);
+        return "-----BEGIN PRIVATE KEY-----\n" . $privateKey . "\n-----END PRIVATE KEY-----\n";
+    }
+
     public function prepareConnection(): Connection
     {
         $host = EnvVariableHelper::getKbcTestSnowflakeHost();
         $user = EnvVariableHelper::getKbcTestMainSnowflakeBackendName();
-        $privateKey = EnvVariableHelper::getKbcTestMainSnowflakeBackendPrivateKey();
+        $privateKey = $this->normalizePrivateKey(EnvVariableHelper::getKbcTestMainSnowflakeBackendPrivateKey());
         $params = [
             'database' => EnvVariableHelper::getKbcTestMainSnowflakeBackendDatabase(),
             'warehouse' => EnvVariableHelper::getKbcTestMainSnowflakeBackendWarehouse(),
