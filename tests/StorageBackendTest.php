@@ -34,6 +34,7 @@ class StorageBackendTest extends ClientTestCase
         $db = $this->prepareConnection();
         $kbcTestSnowflakeBackendName = EnvVariableHelper::getKbcTestSnowflakeBackendName();
         $this->cleanupRegisteredBackend($kbcTestSnowflakeBackendName, $db);
+        $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
         $newBackend = $this->client->createSnowflakeStorageBackend([
             'host' => EnvVariableHelper::getKbcTestSnowflakeHost(),
@@ -43,8 +44,8 @@ class StorageBackendTest extends ClientTestCase
             'owner' => 'keboola',
             'technicalOwner' => 'keboola',
             'useDynamicBackends' => false,
-            'useNetworkPolicies' => true,
-            'useSso' => true,
+            'useNetworkPolicies' => false,
+            'useSso' => false,
         ]);
 
         $this->assertBackendExist($newBackend['id']);
@@ -57,7 +58,7 @@ class StorageBackendTest extends ClientTestCase
         $newMaintainer = $this->client->createMaintainer([
             'name' => self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', 'snowflake'),
             'defaultConnectionSnowflakeId' => $newBackend['id'],
-            'defaultFileStorageId' => 1,
+            'defaultFileStorageId' => $testMaintainer['defaultFileStorageId'],
         ]);
 
         $name = 'My org';
