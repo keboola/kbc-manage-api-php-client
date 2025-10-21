@@ -363,6 +363,60 @@ class StorageBackendTest extends ClientTestCase
         ];
     }
 
+    public function testTokenVerifyIsBYODBFlag(): void
+    {
+        $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
+        $maintainerName = self::TESTS_MAINTAINER_PREFIX . ' - test isBYODB flag';
+
+        $backend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
+
+        $newMaintainer = $this->client->createMaintainer([
+            'name' => $maintainerName,
+            'defaultConnectionSnowflakeId' => $backend['id'],
+            'defaultFileStorageId' => $testMaintainer['defaultFileStorageId'],
+        ]);
+
+        $organization = $this->client->createOrganization($newMaintainer['id'], [
+            'name' => 'My org',
+        ]);
+
+        $project = $this->client->createProject($organization['id'], [
+            'name' => 'My test',
+            'dataRetentionTimeInDays' => 1,
+        ]);
+
+        $token = $this->client->createProjectStorageToken($project['id'], [
+            'description' => 'test',
+            'expiresIn' => 60,
+            'canManageBuckets' => true,
+        ]);
+
+        $sapiClient = new Client([
+            'url' => EnvVariableHelper::getKbcManageApiUrl(),
+            'token' => $token['token'],
+        ]);
+
+        $verified = $sapiClient->verifyToken();
+        $this->assertArrayHasKey('isBYODB', $verified);
+        $this->assertFalse($verified['isBYODB'], 'isBYODB should be false for technicalOwner=keboola');
+
+        $this->client->updateStorageBackend($backend['id'], [
+            'technicalOwner' => 'kbdb',
+        ]);
+
+        $verified = $sapiClient->verifyToken();
+        $this->assertArrayHasKey('isBYODB', $verified);
+        $this->assertTrue($verified['isBYODB'], 'isBYODB should be true for technicalOwner=kbdb');
+
+        $this->client->deleteProject($project['id']);
+        $this->waitForProjectPurge($project['id']);
+
+        $this->client->deleteOrganization($organization['id']);
+        $this->client->deleteMaintainer($newMaintainer['id']);
+
+        $this->client->removeStorageBackend($backend['id']);
+    }
+
     private function normalizePrivateKey(string $privateKey): string
     {
         $privateKey = trim($privateKey);
