@@ -398,15 +398,15 @@ class StorageBackendTest extends ClientTestCase
 
         $verified = $sapiClient->verifyToken();
         $this->assertArrayHasKey('isBYODB', $verified);
-        $this->assertFalse($verified['isBYODB'], 'isBYODB should be false for technicalOwner=keboola');
+        $this->assertTrue($verified['isBYODB'], 'isBYODB should be true for technicalOwner=internal');
 
         $this->client->updateStorageBackend($backend['id'], [
-            'technicalOwner' => 'kbdb',
+            'technicalOwner' => 'keboola',
         ]);
 
         $verified = $sapiClient->verifyToken();
         $this->assertArrayHasKey('isBYODB', $verified);
-        $this->assertTrue($verified['isBYODB'], 'isBYODB should be true for technicalOwner=kbdb');
+        $this->assertFalse($verified['isBYODB'], 'isBYODB should be false for technicalOwner=keboola');
 
         $this->client->deleteProject($project['id']);
         $this->waitForProjectPurge($project['id']);
