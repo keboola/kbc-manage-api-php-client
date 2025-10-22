@@ -343,8 +343,11 @@ class ClientTestCase extends TestCase
         return $client->createProject($organizationId, $params);
     }
 
-    protected function waitForProjectPurge($projectId)
+    protected function waitForProjectPurge($projectId, ?Client $client = null): void
     {
+        if ($client === null) {
+            $client = $this->client;
+        }
         $startTime = time();
         $maxWaitTimeSeconds = 120;
 
@@ -352,7 +355,7 @@ class ClientTestCase extends TestCase
         do {
             $isProjectDeleted = false;
             try {
-                $this->client->getProject($projectId);
+                $client->getProject($projectId);
             } catch (ClientException $e) {
                 $isProjectDeleted = true;
             }
@@ -366,11 +369,11 @@ class ClientTestCase extends TestCase
         $startTime = time();
 
         // purge all data async
-        $purgeResponse = $this->client->purgeDeletedProject($projectId);
+        $purgeResponse = $client->purgeDeletedProject($projectId);
         $this->assertArrayHasKey('commandExecutionId', $purgeResponse);
         $this->assertNotNull($purgeResponse['commandExecutionId']);
         do {
-            $deletedProject = $this->client->getDeletedProject($projectId);
+            $deletedProject = $client->getDeletedProject($projectId);
             if (time() - $startTime > $maxWaitTimeSeconds) {
                 throw new Exception('Project purge timed out.');
             }

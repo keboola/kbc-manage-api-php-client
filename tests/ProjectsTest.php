@@ -1740,6 +1740,40 @@ class ProjectsTest extends ClientTestCase
         $clientWithIncorrectScope->getDeletedProject($project['id']);
     }
 
+    public function testDeleteAndPurgeProjectWithAndWithoutFeature(): void
+    {
+        $organization = $this->initTestOrganization();
+
+        $project = $this->initTestProject($organization['id']);
+
+        $tokenInfo = $this->normalUserClient->verifyToken();
+        $this->assertArrayHasKey('user', $tokenInfo);
+        $user = $tokenInfo['user'];
+        if (in_array(self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME, $user['features'], true)) {
+            $this->client->removeUserFeature($user['email'], self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
+        }
+
+        try {
+            $this->normalUserClient->deleteProject($project['id']);
+            $this->fail('Normal user without feature should not delete project');
+        } catch (ClientException $e) {
+        }
+
+        $this->client->addUserFeature($user['email'], self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
+        $this->client->deleteProject($project['id']);
+
+        $this->client->removeUserFeature($user['email'], self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
+
+        try {
+            $this->normalUserClient->purgeDeletedProject($project['id']);
+            $this->fail('Normal user without feature should not purge project');
+        } catch (ClientException $e) {
+        }
+
+        $this->client->addUserFeature($user['email'], self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
+        $this->waitForProjectPurge($project['id']);
+    }
+
     public function testActiveProjectUnDelete(): void
     {
         $organization = $this->initTestOrganization();
