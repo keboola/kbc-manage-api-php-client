@@ -33,19 +33,20 @@ class StorageBackendTest extends ClientTestCase
     {
         $db = $this->prepareConnection();
         $kbcTestSnowflakeBackendName = 'CI_CREATE_WITH_ENDPOINT';
-        $this->cleanupRegisteredBackend($kbcTestSnowflakeBackendName, $db);
+        $warehouse = 'CI_CREATE_WITH_ENDPOINT_WH';
+        $this->cleanupRegisteredBackend($kbcTestSnowflakeBackendName, $warehouse, $db);
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
         $newBackend = $this->client->createSnowflakeStorageBackend([
             'host' => EnvVariableHelper::getKbcTestSnowflakeHost(),
-            'warehouse' => 'CI_CREATE_WITH_ENDPOINT_WH',
+            'warehouse' => $warehouse,
             'username' => $kbcTestSnowflakeBackendName,
             'region' => EnvVariableHelper::getKbcTestSnowflakeBackendRegion(),
             'owner' => 'keboola',
             'technicalOwner' => 'keboola',
             'useDynamicBackends' => false,
             'useNetworkPolicies' => false,
-            'useSso' => false,
+            'useSso' => true,
         ]);
 
         $this->assertBackendExist($newBackend['id']);
@@ -465,26 +466,16 @@ class StorageBackendTest extends ClientTestCase
         $this->assertNull($maintainer['defaultConnectionSnowflakeId']);
     }
 
-    private function cleanupRegisteredBackend(string $testUser, Connection $db): void
+    private function cleanupRegisteredBackend(string $testUser, string $warehouse, Connection $db): void
     {
         $prefix = strtoupper(EnvVariableHelper::getKbcTestSnowflakeBackendClientDbPrefix());
         $nameHelper = new SnowflakeNameHelper($prefix);
-        $dbName = $nameHelper->getInternalDatabaseName();
-        $schemaName = $nameHelper->getNetworkRulesSchemaName();
-        $ruleName = $nameHelper->getNetworkRuleName();
         $roleName = $nameHelper->getUserRoleName($testUser);
-        $policyName = $nameHelper->getSystemIpsOnlyPolicyName();
         $ssoIntegrationName = $nameHelper->getSamlIntegrationName();
         $cleanupStatements = [
             'USE ROLE ACCOUNTADMIN;',
-//            sprintf('USE DATABASE %s;', SnowflakeQuote::quoteSingleIdentifier($dbName)),
-//            sprintf('USE SCHEMA %s.%s;', SnowflakeQuote::quoteSingleIdentifier($dbName), SnowflakeQuote::quoteSingleIdentifier($schemaName)),
-//            sprintf('ALTER USER %s UNSET NETWORK_POLICY;', SnowflakeQuote::quoteSingleIdentifier($testUser)),
-//            sprintf('DROP NETWORK POLICY IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($policyName)),
-//            sprintf('DROP NETWORK RULE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($ruleName)),
-//            sprintf('DROP SECURITY INTEGRATION IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($ssoIntegrationName)),
-//            sprintf('DROP DATABASE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier(strtoupper($dbName))),
-//            sprintf('DROP WAREHOUSE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier(EnvVariableHelper::getKbcTestSnowflakeWarehouse())),
+            sprintf('DROP SECURITY INTEGRATION IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($ssoIntegrationName)),
+            sprintf('DROP WAREHOUSE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($warehouse)),
             sprintf('DROP USER IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($testUser)),
             sprintf('REVOKE ROLE %s FROM ROLE %s;', SnowflakeQuote::quoteSingleIdentifier($roleName), SnowflakeQuote::quoteSingleIdentifier('SYSADMIN')),
             sprintf('DROP ROLE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($roleName)),

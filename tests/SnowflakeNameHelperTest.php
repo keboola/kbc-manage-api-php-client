@@ -27,35 +27,11 @@ class SnowflakeNameHelperTest extends TestCase
         $this->assertSame('TEST_PREFIX', $helper->getPrefix());
     }
 
-    public function testGetInternalDatabaseName(): void
-    {
-        $helper = new SnowflakeNameHelper('test_prefix');
-        $this->assertSame('TEST_PREFIX_INTERNAL', $helper->getInternalDatabaseName());
-    }
-
-    public function testGetNetworkRulesSchemaName(): void
-    {
-        $helper = new SnowflakeNameHelper('test_prefix');
-        $this->assertSame('NETWORK_RULES', $helper->getNetworkRulesSchemaName());
-    }
-
-    public function testGetNetworkRuleName(): void
-    {
-        $helper = new SnowflakeNameHelper('test_prefix');
-        $this->assertSame('TEST_PREFIX_NETWORK_RULE', $helper->getNetworkRuleName());
-    }
-
     public function testGetUserRoleName(): void
     {
         $helper = new SnowflakeNameHelper('test_prefix');
         $this->assertSame('testuser_ROLE', $helper->getUserRoleName('testuser'));
         $this->assertSame('TEST_USER_ROLE', $helper->getUserRoleName('TEST_USER'));
-    }
-
-    public function testGetSystemIpsOnlyPolicyName(): void
-    {
-        $helper = new SnowflakeNameHelper('test_prefix');
-        $this->assertSame('TEST_PREFIX_SYSTEM_IPS_ONLY', $helper->getSystemIpsOnlyPolicyName());
     }
 
     public function testGetSamlIntegrationName(): void
@@ -71,11 +47,7 @@ class SnowflakeNameHelperTest extends TestCase
         $expectedPrefix = 'MY-COMPLEX_TEST.PREFIX123';
 
         $this->assertSame($expectedPrefix, $helper->getPrefix());
-        $this->assertSame($expectedPrefix . '_INTERNAL', $helper->getInternalDatabaseName());
-        $this->assertSame('NETWORK_RULES', $helper->getNetworkRulesSchemaName());
-        $this->assertSame($expectedPrefix . '_NETWORK_RULE', $helper->getNetworkRuleName());
         $this->assertSame('user123_ROLE', $helper->getUserRoleName('user123'));
-        $this->assertSame($expectedPrefix . '_SYSTEM_IPS_ONLY', $helper->getSystemIpsOnlyPolicyName());
         $this->assertSame($expectedPrefix . '_SAML_INTEGRATION', $helper->getSamlIntegrationName());
     }
 
@@ -84,9 +56,6 @@ class SnowflakeNameHelperTest extends TestCase
         $helper1 = new SnowflakeNameHelper('test_prefix');
         $helper2 = new SnowflakeNameHelper('test_prefix');
 
-        $this->assertSame($helper1->getInternalDatabaseName(), $helper2->getInternalDatabaseName());
-        $this->assertSame($helper1->getNetworkRuleName(), $helper2->getNetworkRuleName());
-        $this->assertSame($helper1->getSystemIpsOnlyPolicyName(), $helper2->getSystemIpsOnlyPolicyName());
         $this->assertSame($helper1->getSamlIntegrationName(), $helper2->getSamlIntegrationName());
     }
 
