@@ -13,29 +13,9 @@ class SnowflakeNameHelper
         $this->prefix = strtoupper($prefix);
     }
 
-    public function getInternalDatabaseName(): string
-    {
-        return $this->prefix . '_INTERNAL';
-    }
-
-    public function getNetworkRulesSchemaName(): string
-    {
-        return 'NETWORK_RULES';
-    }
-
-    public function getNetworkRuleName(): string
-    {
-        return $this->prefix . '_NETWORK_RULE';
-    }
-
     public function getUserRoleName(string $username): string
     {
         return $username . '_ROLE';
-    }
-
-    public function getSystemIpsOnlyPolicyName(): string
-    {
-        return $this->prefix . '_SYSTEM_IPS_ONLY';
     }
 
     public function getSamlIntegrationName(): string
