@@ -32,13 +32,13 @@ class StorageBackendTest extends ClientTestCase
     public function testCreateStorageBackendWithCert()
     {
         $db = $this->prepareConnection();
-        $kbcTestSnowflakeBackendName = EnvVariableHelper::getKbcTestSnowflakeBackendName();
+        $kbcTestSnowflakeBackendName = 'CI_CREATE_WITH_ENDPOINT';
         $this->cleanupRegisteredBackend($kbcTestSnowflakeBackendName, $db);
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
         $newBackend = $this->client->createSnowflakeStorageBackend([
             'host' => EnvVariableHelper::getKbcTestSnowflakeHost(),
-            'warehouse' => EnvVariableHelper::getKbcTestSnowflakeWarehouse(),
+            'warehouse' => 'CI_CREATE_WITH_ENDPOINT_WH',
             'username' => $kbcTestSnowflakeBackendName,
             'region' => EnvVariableHelper::getKbcTestSnowflakeBackendRegion(),
             'owner' => 'keboola',
@@ -477,14 +477,14 @@ class StorageBackendTest extends ClientTestCase
         $ssoIntegrationName = $nameHelper->getSamlIntegrationName();
         $cleanupStatements = [
             'USE ROLE ACCOUNTADMIN;',
-            sprintf('USE DATABASE %s;', SnowflakeQuote::quoteSingleIdentifier($dbName)),
-            sprintf('USE SCHEMA %s.%s;', SnowflakeQuote::quoteSingleIdentifier($dbName), SnowflakeQuote::quoteSingleIdentifier($schemaName)),
-            sprintf('ALTER USER %s UNSET NETWORK_POLICY;', SnowflakeQuote::quoteSingleIdentifier($testUser)),
-            sprintf('DROP NETWORK POLICY IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($policyName)),
-            sprintf('DROP NETWORK RULE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($ruleName)),
-            sprintf('DROP SECURITY INTEGRATION IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($ssoIntegrationName)),
-            sprintf('DROP DATABASE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier(strtoupper($dbName))),
-            sprintf('DROP WAREHOUSE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier(EnvVariableHelper::getKbcTestSnowflakeWarehouse())),
+//            sprintf('USE DATABASE %s;', SnowflakeQuote::quoteSingleIdentifier($dbName)),
+//            sprintf('USE SCHEMA %s.%s;', SnowflakeQuote::quoteSingleIdentifier($dbName), SnowflakeQuote::quoteSingleIdentifier($schemaName)),
+//            sprintf('ALTER USER %s UNSET NETWORK_POLICY;', SnowflakeQuote::quoteSingleIdentifier($testUser)),
+//            sprintf('DROP NETWORK POLICY IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($policyName)),
+//            sprintf('DROP NETWORK RULE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($ruleName)),
+//            sprintf('DROP SECURITY INTEGRATION IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($ssoIntegrationName)),
+//            sprintf('DROP DATABASE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier(strtoupper($dbName))),
+//            sprintf('DROP WAREHOUSE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier(EnvVariableHelper::getKbcTestSnowflakeWarehouse())),
             sprintf('DROP USER IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($testUser)),
             sprintf('REVOKE ROLE %s FROM ROLE %s;', SnowflakeQuote::quoteSingleIdentifier($roleName), SnowflakeQuote::quoteSingleIdentifier('SYSADMIN')),
             sprintf('DROP ROLE IF EXISTS %s;', SnowflakeQuote::quoteSingleIdentifier($roleName)),
