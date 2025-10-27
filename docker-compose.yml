@@ -6,6 +6,7 @@ services:
     command: composer ci
 
   dev: &dev-config
+    platform: linux/amd64
     build: .
     volumes:
       - ./:/code
@@ -48,10 +49,18 @@ services:
       - KBC_TEST_SNOWFLAKE_BACKEND_REGION
       - KBC_TEST_SNOWFLAKE_BACKEND_NAME
       - KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD
+      - KBC_TEST_MAIN_SNOWFLAKE_BACKEND_NAME
+      - KBC_TEST_MAIN_SNOWFLAKE_BACKEND_PRIVATE_KEY
+      - KBC_TEST_MAIN_SNOWFLAKE_BACKEND_DATABASE
+      - KBC_TEST_MAIN_SNOWFLAKE_BACKEND_WAREHOUSE
+      - KBC_TEST_SNOWFLAKE_BACKEND_CLIENT_DB_PREFIX
 
   dev-xdebug:
     <<: *dev-config
-    build: docker/xdebug
+    build:
+      context: docker/xdebug
+      args:
+        IMAGE: kbc-manage-api-php-client-dev
     volumes:
       - ./:/code/
       - ./docker/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini

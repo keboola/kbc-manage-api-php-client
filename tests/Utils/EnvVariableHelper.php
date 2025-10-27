@@ -568,4 +568,84 @@ class EnvVariableHelper
         }
         return $value;
     }
+
+    public static function getKbcTestMainSnowflakeBackendName(): string
+    {
+        $variableName = 'KBC_TEST_MAIN_SNOWFLAKE_BACKEND_NAME';
+        $value = getenv($variableName);
+        if ($value === false || $value === '') {
+            throw new MissingEnvVariableException(
+                sprintf(
+                    "Missing required environment variable '%s'. Description: %s\nPlease set it according to the instructions in README.md.",
+                    $variableName,
+                    'Required for running testCreateStorageBackend: Snowflake backend region'
+                )
+            );
+        }
+        return $value;
+    }
+
+    public static function getKbcTestMainSnowflakeBackendPrivateKey(): string
+    {
+        $variableName = 'KBC_TEST_MAIN_SNOWFLAKE_BACKEND_PRIVATE_KEY';
+        $value = getenv($variableName);
+        if ($value === false || $value === '') {
+            throw new MissingEnvVariableException(
+                sprintf(
+                    "Missing required environment variable '%s'. Description: %s\nPlease set it according to the instructions in README.md.",
+                    $variableName,
+                    'Required for running testCreateStorageBackend: Snowflake backend region'
+                )
+            );
+        }
+        return $value;
+    }
+
+    public static function getKbcTestMainSnowflakeBackendDatabase(): string
+    {
+        $variableName = 'KBC_TEST_MAIN_SNOWFLAKE_BACKEND_DATABASE';
+        $value = getenv($variableName);
+        if ($value === false || $value === '') {
+            throw new MissingEnvVariableException(
+                sprintf(
+                    "Missing required environment variable '%s'. Description: %s\nPlease set it according to the instructions in README.md.",
+                    $variableName,
+                    'Required for running testCreateStorageBackend: Snowflake backend region'
+                )
+            );
+        }
+        return $value;
+    }
+
+    public static function getKbcTestMainSnowflakeBackendWarehouse(): string
+    {
+        $variableName = 'KBC_TEST_MAIN_SNOWFLAKE_BACKEND_WAREHOUSE';
+        $value = getenv($variableName);
+        if ($value === false || $value === '') {
+            throw new MissingEnvVariableException(
+                sprintf(
+                    "Missing required environment variable '%s'. Description: %s\nPlease set it according to the instructions in README.md.",
+                    $variableName,
+                    'Required for running testCreateStorageBackend: Snowflake backend region'
+                )
+            );
+        }
+        return $value;
+    }
+
+    public static function getKbcTestSnowflakeBackendClientDbPrefix(): string
+    {
+        $variableName = 'KBC_TEST_SNOWFLAKE_BACKEND_CLIENT_DB_PREFIX';
+        $value = getenv($variableName);
+        if ($value === false || $value === '') {
+            throw new MissingEnvVariableException(
+                sprintf(
+                    "Missing required environment variable '%s'. Description: %s\nPlease set it according to the instructions in README.md.",
+                    $variableName,
+                    'Required for running testCreateStorageBackend: Snowflake backend region'
+                )
+            );
+        }
+        return $value;
+    }
 }
