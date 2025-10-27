@@ -750,6 +750,9 @@ class Client
         return $this->apiPost($this->encode('manage/file-storage-abs/%s/credentials', $fileStorageId), $options);
     }
 
+    /**
+     * @deprecated Use createSnowflakeStorageBackend or createStorageBackendBigquery
+     */
     public function createStorageBackend(array $options)
     {
         return $this->apiPost('/manage/storage-backend', $options);
@@ -783,6 +786,16 @@ class Client
     public function getStorageBackend(int $id): array
     {
         return $this->apiGet(sprintf('manage/storage-backend/%s', $id));
+    }
+
+    public function createSnowflakeStorageBackend(array $options)
+    {
+        return $this->apiPost('/manage/storage-backend/snowflake', $options);
+    }
+
+    public function activateStorageBackend(int $backendId)
+    {
+        return $this->apiPost($this->encode('/manage/storage-backend/%s/activate', $backendId), []);
     }
 
     public function listUiApps()

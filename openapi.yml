@@ -7421,8 +7421,8 @@ paths:
                 host: sapi
                 backend: redshift
                 region: us
-      summary: Create a new backend
-      operationId: Create a new backend
+      summary: Create a new backend (Deprecated)
+      operationId: Create a new backend (Deprecated)
       description: >-
         Superuser credentials are *not required* for backend registration
 
@@ -7993,6 +7993,259 @@ paths:
               technicalOwner: keboola
             schema:
               $ref: '#/components/schemas/BigQueryStorageBackendUpdate'
+  /manage/storage-backend/snowflake:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Snowflake storage backend ID
+                  host:
+                    type: string
+                    description: Snowflake host
+                  warehouse:
+                    type: string
+                    description: Snowflake warehouse
+                  username:
+                    type: string
+                    description: Snowflake username
+                  owner:
+                    type: string
+                    description: Owner identifier
+                  technicalOwner:
+                    type: string
+                    description: >-
+                      associated technical owner (who technically manages the
+                      account). Enum: keboola, internal, kbdb, byodb
+                  region:
+                    type: string
+                    description: Backend region
+                  created:
+                    type: string
+                    description: Creation timestamp
+                  creatorName:
+                    type: string
+                    description: Creator name
+                  creatorId:
+                    type: string
+                    description: Creator ID
+                  isMaintenance:
+                    type: string
+                    description: Whether backend is in maintenance mode
+                  useDynamicBackends:
+                    type: string
+                    description: Whether dynamic backends are enabled
+                  useNetworkPolicies:
+                    type: string
+                    description: Whether network policies are enabled
+                  useSso:
+                    type: string
+                    description: Whether SSO is enabled
+                  sqlTemplate:
+                    type: string
+                    description: SQL template for setting up Snowflake roles and users
+                  isEnabled:
+                    type: string
+                    description: Whether backend is validated and can be used
+              example:
+                id: '123'
+                host: demo.snowflakecomputing.com
+                warehouse: KEBOOLA
+                username: KEBOOLA_STORAGE
+                owner: keboola
+                technicalOwner: keboola
+                region: us-east-1
+                created: '2024-01-15T10:30:00Z'
+                creatorName: John Doe
+                creatorId: '123'
+                isMaintenance: 'false'
+                useDynamicBackends: 'false'
+                useNetworkPolicies: 'false'
+                useSso: 'false'
+                sqlTemplate: CREATE ROLE "KEBOOLA_STORAGE";...
+                isEnabled: 'false'
+        '400':
+          description: Bad Request
+          headers: {}
+          content: {}
+        '403':
+          description: Forbidden
+          headers: {}
+          content: {}
+      summary: Create a new Snowflake backend with certificate authentication
+      operationId: Create a new Snowflake backend with certificate authentication
+      description: >-
+        Create a new Snowflake storage backend with RSA certificate
+        authentication. The backend is created as disabled and returns an SQL
+        template for setting up Snowflake roles and users. After running the
+        generated query, you can activate the backend using the [Activate
+        Snowflake Storage
+        Backend](#reference/super-storage-backends-management/activate-snowflake-storage-backend/activate-snowflake-backend)
+        endpoint.
+      tags:
+        - SUPER - Storage Backends Management
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              host: demo.snowflakecomputing.com
+              warehouse: KEBOOLA
+              username: KEBOOLA_STORAGE
+              region: us-east-1
+              owner: keboola
+              technicalOwner: keboola
+              useDynamicBackends: 'false'
+              useNetworkPolicies: 'false'
+              useSso: 'false'
+            schema:
+              type: object
+              properties:
+                host:
+                  type: string
+                  description: Snowflake host name
+                warehouse:
+                  type: string
+                  description: Snowflake warehouse name
+                username:
+                  type: string
+                  description: Snowflake username
+                region:
+                  type: string
+                  description: Backend region
+                owner:
+                  type: string
+                  description: Owner identifier
+                technicalOwner:
+                  type: string
+                  description: >-
+                    associated technical owner (who technically manages the
+                    account). Enum: keboola, internal, kbdb, byodb
+                useDynamicBackends:
+                  type: string
+                  description: Enable dynamic backends
+                useNetworkPolicies:
+                  type: string
+                  description: Enable network policies
+                useSso:
+                  type: string
+                  description: Enable SSO
+              required:
+                - host
+                - warehouse
+                - region
+                - owner
+                - technicalOwner
+  /manage/storage-backend/{backendId}/activate:
+    post:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Snowflake storage backend ID
+                  host:
+                    type: string
+                    description: Snowflake host
+                  warehouse:
+                    type: string
+                    description: Snowflake warehouse
+                  username:
+                    type: string
+                    description: Snowflake username
+                  owner:
+                    type: string
+                    description: Owner identifier
+                  technicalOwner:
+                    type: string
+                    description: >-
+                      associated technical owner (who technically manages the
+                      account). Enum: keboola, internal, kbdb, byodb
+                  region:
+                    type: string
+                    description: Backend region
+                  created:
+                    type: string
+                    description: Creation timestamp
+                  creatorName:
+                    type: string
+                    description: Creator name
+                  creatorId:
+                    type: string
+                    description: Creator ID
+                  isMaintenance:
+                    type: string
+                    description: Whether backend is in maintenance mode
+                  useDynamicBackends:
+                    type: string
+                    description: Whether dynamic backends are enabled
+                  useNetworkPolicies:
+                    type: string
+                    description: Whether network policies are enabled
+                  useSso:
+                    type: string
+                    description: Whether SSO is enabled
+                  isEnabled:
+                    type: string
+                    description: Whether backend is validated and can be used
+              example:
+                id: '123'
+                host: demo.snowflakecomputing.com
+                warehouse: KEBOOLA
+                username: KEBOOLA_STORAGE
+                owner: keboola
+                technicalOwner: keboola
+                region: us-east-1
+                created: '2024-01-15T10:30:00Z'
+                creatorName: John Doe
+                creatorId: '123'
+                isMaintenance: 'false'
+                useDynamicBackends: 'false'
+                useNetworkPolicies: 'false'
+                useSso: 'false'
+                isEnabled: 'true'
+        '400':
+          description: Bad Request
+          headers: {}
+          content: {}
+        '403':
+          description: Forbidden
+          headers: {}
+          content: {}
+        '404':
+          description: Not Found
+          headers: {}
+          content: {}
+      summary: Activate Snowflake backend
+      operationId: Activate Snowflake backend
+      description: >-
+        Activate a Snowflake storage backend after the SQL template created via
+        [Create a new Snowflake backend with certificate
+        authentication](#reference/super-storage-backends-management/snowflake-storage-backend-collection/create-a-new-snowflake-backend-with-certificate-authentication)
+        has been executed in Snowflake. This validates the backend configuration
+        and enables it for use.
+      tags:
+        - SUPER - Storage Backends Management
+      parameters:
+        - name: backendId
+          in: path
+          description: Backend ID
+          required: true
+          schema:
+            type: string
   /manage/commands:
     post:
       responses:
@@ -9034,6 +9287,187 @@ components:
                   type: string
                   example: RSA_PUBLIC_KEY
               description: available only for Snowflake backend
+    CreateSnowflakeBackendWithCertRequest:
+      type: object
+      required:
+        - host
+        - warehouse
+        - region
+        - owner
+        - technicalOwner
+      properties:
+        host:
+          type: string
+          example: demo.snowflakecomputing.com
+          description: Snowflake host name
+        warehouse:
+          type: string
+          example: KEBOOLA
+          description: Snowflake warehouse name
+        username:
+          type: string
+          example: KEBOOLA_STORAGE
+          description: Snowflake username
+        region:
+          type: string
+          example: us-east-1
+          description: Backend region
+        owner:
+          type: string
+          example: keboola
+          description: Owner identifier
+        technicalOwner:
+          type: string
+          example: keboola
+          description: >-
+            associated technical owner (who technically manages the account).
+            Enum: keboola, internal, kbdb, byodb
+        useDynamicBackends:
+          type: string
+          example: 'false'
+          description: Enable dynamic backends
+        useNetworkPolicies:
+          type: string
+          example: 'false'
+          description: Enable network policies
+        useSso:
+          type: string
+          example: 'false'
+          description: Enable SSO
+    CreateSnowflakeStorageBackendResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '123'
+          description: Snowflake storage backend ID
+        host:
+          type: string
+          example: demo.snowflakecomputing.com
+          description: Snowflake host
+        warehouse:
+          type: string
+          example: KEBOOLA
+          description: Snowflake warehouse
+        username:
+          type: string
+          example: KEBOOLA_STORAGE
+          description: Snowflake username
+        owner:
+          type: string
+          example: keboola
+          description: Owner identifier
+        technicalOwner:
+          type: string
+          example: keboola
+          description: >-
+            associated technical owner (who technically manages the account).
+            Enum: keboola, internal, kbdb, byodb
+        region:
+          type: string
+          example: us-east-1
+          description: Backend region
+        created:
+          type: string
+          example: '2024-01-15T10:30:00Z'
+          description: Creation timestamp
+        creatorName:
+          type: string
+          example: John Doe
+          description: Creator name
+        creatorId:
+          type: string
+          example: '123'
+          description: Creator ID
+        isMaintenance:
+          type: string
+          example: 'false'
+          description: Whether backend is in maintenance mode
+        useDynamicBackends:
+          type: string
+          example: 'false'
+          description: Whether dynamic backends are enabled
+        useNetworkPolicies:
+          type: string
+          example: 'false'
+          description: Whether network policies are enabled
+        useSso:
+          type: string
+          example: 'false'
+          description: Whether SSO is enabled
+        sqlTemplate:
+          type: string
+          example: CREATE ROLE "KEBOOLA_STORAGE";...
+          description: SQL template for setting up Snowflake roles and users
+        isEnabled:
+          type: string
+          example: 'false'
+          description: Whether backend is validated and can be used
+    ActivateSnowflakeStorageBackendResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '123'
+          description: Snowflake storage backend ID
+        host:
+          type: string
+          example: demo.snowflakecomputing.com
+          description: Snowflake host
+        warehouse:
+          type: string
+          example: KEBOOLA
+          description: Snowflake warehouse
+        username:
+          type: string
+          example: KEBOOLA_STORAGE
+          description: Snowflake username
+        owner:
+          type: string
+          example: keboola
+          description: Owner identifier
+        technicalOwner:
+          type: string
+          example: keboola
+          description: >-
+            associated technical owner (who technically manages the account).
+            Enum: keboola, internal, kbdb, byodb
+        region:
+          type: string
+          example: us-east-1
+          description: Backend region
+        created:
+          type: string
+          example: '2024-01-15T10:30:00Z'
+          description: Creation timestamp
+        creatorName:
+          type: string
+          example: John Doe
+          description: Creator name
+        creatorId:
+          type: string
+          example: '123'
+          description: Creator ID
+        isMaintenance:
+          type: string
+          example: 'false'
+          description: Whether backend is in maintenance mode
+        useDynamicBackends:
+          type: string
+          example: 'false'
+          description: Whether dynamic backends are enabled
+        useNetworkPolicies:
+          type: string
+          example: 'false'
+          description: Whether network policies are enabled
+        useSso:
+          type: string
+          example: 'false'
+          description: Whether SSO is enabled
+        isEnabled:
+          type: string
+          example: 'true'
+          description: Whether backend is validated and can be used
     CommandExecute:
       type: object
       required:
