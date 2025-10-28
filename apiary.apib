@@ -3819,7 +3819,10 @@ GRANT ROLE "KEBOOLA_STORAGE" TO USER "KEBOOLA_STORAGE";
 GRANT ROLE "KEBOOLA_STORAGE" TO ROLE SYSADMIN;
 GRANT OWNERSHIP ON USER KEBOOLA_STORAGE TO ROLE KEBOOLA_STORAGE;
 ```
-If you want to have dynamic backends enabled, please also run the following queries and add `useDynamicBackends: true` in the request. For enablement of Single Sign-On, please contact Keboola support.
+If you want to have dynamic backends enabled, please also run the following queries and add `useDynamicBackends: true` in the request.
+
+For enablement of Single Sign-On, please contact Keboola support.
+
 
 ```
 CREATE WAREHOUSE "KEBOOLA_SMALL" WITH
