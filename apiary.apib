@@ -21,7 +21,6 @@ for controlling and monitoring Keboola Connection.
 
  * UI release and deployment
  * Components management
- * Storage and Syrup jobs monitoring (will be provided by Syrup utilizing new tokens for authorization)
  * Final project delete
  * Workers start/shutdown, etc.
 
@@ -4300,54 +4299,3 @@ Deletes application and its versions
             X-KBC-ManageApiToken: your_token
 
 + Response 204
-
-# Group Syrup API Integration
-
-This is an example of an API call returning all running worker processes and their state. This resource is accessible for tokens of the type `super` with `super_monitoring` scope.
-`Super` tokens can be created only by super admins.
-
-
-## Authentication
-Syrup API will receive a management token in its header and will use it to call the `Verify token` API call.
-Details about the token will be returned, scopes associated to the token are present in the response.
-If the scope is `super_monitoring` and the token type is `super`, Syrup will return the workers in the response, otherwise `403` is returned.
-
-# Get Workers [GET /queue/workers]
-Endpoint should be: https://syrup.keboola.com/queue/workers
-
-This API resource can be used, for example, by Hubot script for listing running workers.
-
-+ Request (application/json)
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-+ Response 200 (application/json)
-
-    ```js
-    [
-        {
-            "id": 1,
-            "host": "kbc-vpc-syrup-tapi-worker-a-01",
-            "queue": "tapi",
-            "instance": "1",
-            "pid": 2516,
-            "lastChanged": "2015-08-12 11:59:04",
-            "status": "processing",
-            "jobId": 234234,
-            "project": {
-                "id": 234,
-                "name": "Shared Config"
-            }
-        },
-        {
-            "id": 1,
-            "host": "kbc-vpc-syrup-tapi-worker-a-01",
-            "queue": "tapi",
-            "instance": "1",
-            "pid": 2516,
-            "lastChanged": "2015-08-12 11:59:04",
-            "status"": "idle"
-        },
-    ]
-    ````
