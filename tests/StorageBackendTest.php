@@ -461,8 +461,7 @@ class StorageBackendTest extends ClientTestCase
         int $backendId,
         int $maintainerId,
         bool $expectedBYODB = false,
-    ): void
-    {
+    ): void {
         $projectDetail = $this->client->getProject($projectId);
         $this->assertSame($expectedBYODB, $projectDetail['isBYODB']);
 
