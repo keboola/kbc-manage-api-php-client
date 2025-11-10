@@ -216,6 +216,8 @@ class ProjectsTest extends ClientTestCase
         $this->assertEquals($project['id'], $foundProject['id']);
         $this->assertEquals($project['name'], $foundProject['name']);
         $this->assertArrayHasKey('organization', $foundProject);
+        $this->assertArrayHasKey('isBYODB', $foundProject);
+        $this->assertFalse($foundProject['isBYODB']);
         $this->assertEquals($organizationId, $foundProject['organization']['id']);
         $this->assertArrayHasKey('limits', $foundProject);
         $this->assertTrue(count($foundProject['limits']) > 1);
@@ -447,6 +449,9 @@ class ProjectsTest extends ClientTestCase
         $project = $this->client->getProject($project['id']);
         $this->assertEquals('production', $project['type']);
         $this->assertNull($project['expires']);
+
+        $this->assertArrayHasKey('isBYODB', $project);
+        $this->assertFalse($project['isBYODB']);
     }
 
     public function testDemoProjectCreate(): void
@@ -958,6 +963,9 @@ class ProjectsTest extends ClientTestCase
         $this->assertSame($differentProjectType, $updatedProject['type']);
         $this->assertSame(10000, $updatedProject['billedMonthlyPrice']);
         $this->assertSame(1, $updatedProject['dataRetentionTimeInDays']);
+
+        $this->assertArrayHasKey('isBYODB', $updatedProject);
+        $this->assertFalse($updatedProject['isBYODB']);
 
         $this->client->removeUserFeature($this->normalUser['email'], 'can-update-project-settings');
     }
