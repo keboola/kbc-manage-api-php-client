@@ -159,7 +159,19 @@ class StorageBackendTest extends ClientTestCase
             'dataRetentionTimeInDays' => 1,
         ]);
 
-        $this->createTestProjectAndValidate($project['id'], $newBackend['useDynamicBackends'], $newBackend['id'], $newMaintainer['id']);
+        $expectedBYODB = false;
+
+        if ($newBackend['technicalOwner'] !== 'keboola') {
+            $expectedBYODB = true;
+        }
+
+        $this->createTestProjectAndValidate(
+            $project['id'],
+            $newBackend['useDynamicBackends'],
+            $newBackend['id'],
+            $newMaintainer['id'],
+            $expectedBYODB,
+        );
     }
 
     public function storageBackendOptionsProvider(): iterable
@@ -443,9 +455,15 @@ class StorageBackendTest extends ClientTestCase
         return $connection;
     }
 
-    private function createTestProjectAndValidate(int $projectId, bool $useDynamicBackends, int $backendId, int $maintainerId): void
-    {
+    private function createTestProjectAndValidate(
+        int $projectId,
+        bool $useDynamicBackends,
+        int $backendId,
+        int $maintainerId,
+        bool $expectedBYODB = false,
+    ): void {
         $projectDetail = $this->client->getProject($projectId);
+        $this->assertSame($expectedBYODB, $projectDetail['isBYODB']);
 
         if ($useDynamicBackends) {
             $this->assertContains('workspace-snowflake-dynamic-backend-size', $projectDetail['features']);
