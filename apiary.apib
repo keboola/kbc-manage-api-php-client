@@ -1224,6 +1224,7 @@ Only organization members, members of the maintainer and super admins can delete
       "isDisabled": false,
       "billedMonthlyPrice": null,
       "dataRetentionTimeInDays": 7,
+      "isBYODB": false,
       "organization": {
         "id": 5,
         "name": "Martinovo",
@@ -1384,7 +1385,8 @@ A project will be created from a default template which defines its limits. Only
             "isDisabled": false,
             "billedMonthlyPrice": null,
             "dataRetentionTimeInDays": 1,
-            "fileStorageProvider": "aws"
+            "fileStorageProvider": "aws",
+            "isBYODB": false
     }
     ```
 
@@ -2288,7 +2290,8 @@ This endpoint can also be accessed using application tokens with scope `deleted-
             "isPurged": false,
             "isDeleted": true,
             "deletedTime": "2018-02-11T14:25:15+0100",
-            "purgedTime": null
+            "purgedTime": null,
+            "isBYODB": false
     }
     ```
 
@@ -2365,6 +2368,7 @@ Projects can be filtered by various filters:
             "isDisabled": false,
             "billedMonthlyPrice": null,
             "dataRetentionTimeInDays": 7,
+            "isBYODB": false,
             "isPurged": false,
             "isDeleted": true,
             "deletedTime": "2018-02-11T14:25:15+0100",
@@ -2399,6 +2403,7 @@ Projects can be filtered by various filters:
             "isDisabled": false,
             "billedMonthlyPrice": null,
             "dataRetentionTimeInDays": 7,
+            "isBYODB": false,
             "isPurged": false,
             "isDeleted": true,
             "deletedTime": "2018-02-11T14:25:15+0100",
@@ -3058,7 +3063,8 @@ Create a new project from given promo code
         "metrics": {},
         "isDisabled": false,
         "billedMonthlyPrice": null,
-        "dataRetentionTimeInDays": 1
+        "dataRetentionTimeInDays": 1,
+        "isBYODB": false
     }
     ```
 
