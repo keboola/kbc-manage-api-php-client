@@ -4106,6 +4106,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
 + owner: keboola (string) - associated legal owner (keboola,client)
 + technicalOwner: keboola (string) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ skipValidation: false (boolean) - If true, the backend validation step is skipped during the update. Only possible to use with owner and technicalOwner not with other options.
 
 ## StorageBackend
 + id: 123 (number, required)
