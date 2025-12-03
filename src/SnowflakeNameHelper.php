@@ -15,7 +15,7 @@ class SnowflakeNameHelper
 
     public function getUserRoleName(string $username): string
     {
-        return $username . '_ROLE';
+        return $username;
     }
 
     public function getSamlIntegrationName(): string
