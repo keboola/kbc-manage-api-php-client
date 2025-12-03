@@ -30,8 +30,8 @@ class SnowflakeNameHelperTest extends TestCase
     public function testGetUserRoleName(): void
     {
         $helper = new SnowflakeNameHelper('test_prefix');
-        $this->assertSame('testuser_ROLE', $helper->getUserRoleName('testuser'));
-        $this->assertSame('TEST_USER_ROLE', $helper->getUserRoleName('TEST_USER'));
+        $this->assertSame('testuser', $helper->getUserRoleName('testuser'));
+        $this->assertSame('TEST_USER', $helper->getUserRoleName('TEST_USER'));
     }
 
     public function testGetSamlIntegrationName(): void
@@ -47,7 +47,7 @@ class SnowflakeNameHelperTest extends TestCase
         $expectedPrefix = 'MY-COMPLEX_TEST.PREFIX123';
 
         $this->assertSame($expectedPrefix, $helper->getPrefix());
-        $this->assertSame('user123_ROLE', $helper->getUserRoleName('user123'));
+        $this->assertSame('user123', $helper->getUserRoleName('user123'));
         $this->assertSame($expectedPrefix . '_SAML_INTEGRATION', $helper->getSamlIntegrationName());
     }
 
@@ -63,9 +63,9 @@ class SnowflakeNameHelperTest extends TestCase
     {
         $helper = new SnowflakeNameHelper('test_prefix');
 
-        $this->assertSame('user-name_ROLE', $helper->getUserRoleName('user-name'));
-        $this->assertSame('user.name_ROLE', $helper->getUserRoleName('user.name'));
-        $this->assertSame('user_name_ROLE', $helper->getUserRoleName('user_name'));
-        $this->assertSame('user123_ROLE', $helper->getUserRoleName('user123'));
+        $this->assertSame('user-name', $helper->getUserRoleName('user-name'));
+        $this->assertSame('user.name', $helper->getUserRoleName('user.name'));
+        $this->assertSame('user_name', $helper->getUserRoleName('user_name'));
+        $this->assertSame('user123', $helper->getUserRoleName('user123'));
     }
 }
