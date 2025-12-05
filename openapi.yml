@@ -42,10 +42,6 @@ info:
     * Components management
 
 
-    * Storage and Syrup jobs monitoring (will be provided by Syrup utilizing new
-    tokens for authorization)
-
-
     * Final project delete
 
 
@@ -7391,212 +7387,6 @@ paths:
           schema:
             type: string
   /manage/storage-backend:
-    post:
-      responses:
-        '201':
-          description: Created
-          headers: {}
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: number
-                  host:
-                    type: string
-                    description: >-
-                      37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com
-                      (required)
-                  backend:
-                    type: string
-                  region:
-                    type: string
-                    description: east-1
-                required:
-                  - id
-                  - backend
-              example:
-                id: 123
-                host: sapi
-                backend: redshift
-                region: us
-      summary: Create a new backend (Deprecated)
-      operationId: Create a new backend (Deprecated)
-      description: >-
-        Superuser credentials are *not required* for backend registration
-
-
-        #### Redshift
-
-
-        Credentials with superuser access to the database must be provided for
-        Redshift.
-
-
-        #### Snowflake
-
-
-        Credentials and storage warehouse are required. You can generate a user,
-        role and warehouse with the following queries:
-
-
-        ```
-
-        CREATE ROLE "KEBOOLA_STORAGE";
-
-        GRANT CREATE DATABASE ON ACCOUNT TO ROLE "KEBOOLA_STORAGE";
-
-        GRANT CREATE ROLE ON ACCOUNT TO ROLE "KEBOOLA_STORAGE" WITH GRANT
-        OPTION;
-
-        GRANT CREATE USER ON ACCOUNT TO ROLE "KEBOOLA_STORAGE" WITH GRANT
-        OPTION;
-
-        CREATE WAREHOUSE "KEBOOLA" WITH WAREHOUSE_SIZE = 'XSMALL' WAREHOUSE_TYPE
-        = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE;
-
-        GRANT USAGE ON WAREHOUSE "KEBOOLA" TO ROLE "KEBOOLA_STORAGE" WITH GRANT
-        OPTION;
-
-
-        CREATE USER "KEBOOLA_STORAGE"
-            PASSWORD = "YOUR_PASSWORD"
-            DEFAULT_ROLE = "KEBOOLA_STORAGE"
-            TYPE = LEGACY_SERVICE;
-
-        GRANT ROLE "KEBOOLA_STORAGE" TO USER "KEBOOLA_STORAGE";
-
-        GRANT ROLE "KEBOOLA_STORAGE" TO ROLE SYSADMIN;
-
-        GRANT OWNERSHIP ON USER "KEBOOLA_STORAGE" TO ROLE "KEBOOLA_STORAGE";
-
-        ```
-
-
-        If you want to have dynamic backends enabled, please also run the
-        following queries and add `useDynamicBackends: true` in the request.
-
-
-        ```
-
-        CREATE WAREHOUSE "KEBOOLA_SMALL" WITH
-            WAREHOUSE_SIZE = 'SMALL'
-            WAREHOUSE_TYPE = 'STANDARD'
-            AUTO_SUSPEND = 60
-            AUTO_RESUME = TRUE
-            MIN_CLUSTER_COUNT = 1
-            MAX_CLUSTER_COUNT = 10;
-        CREATE WAREHOUSE "KEBOOLA_MEDIUM" WITH
-            WAREHOUSE_SIZE = 'MEDIUM'
-            WAREHOUSE_TYPE = 'STANDARD'
-            AUTO_SUSPEND = 60
-            AUTO_RESUME = TRUE
-            MIN_CLUSTER_COUNT = 1
-            MAX_CLUSTER_COUNT = 10;
-        CREATE WAREHOUSE "KEBOOLA_LARGE" WITH
-            WAREHOUSE_SIZE = 'LARGE'
-            WAREHOUSE_TYPE = 'STANDARD'
-            AUTO_SUSPEND = 60
-            AUTO_RESUME = TRUE
-            MIN_CLUSTER_COUNT = 1
-            MAX_CLUSTER_COUNT = 10;
-
-        GRANT USAGE ON WAREHOUSE "KEBOOLA_SMALL" TO ROLE "KEBOOLA_STORAGE" WITH
-        GRANT OPTION;
-
-        GRANT USAGE ON WAREHOUSE "KEBOOLA_MEDIUM" TO ROLE "KEBOOLA_STORAGE" WITH
-        GRANT OPTION;
-
-        GRANT USAGE ON WAREHOUSE "KEBOOLA_LARGE" TO ROLE "KEBOOLA_STORAGE" WITH
-        GRANT OPTION;
-
-        GRANT MONITOR ON WAREHOUSE "KEBOOLA_SMALL" TO ROLE "KEBOOLA_MONITORING"
-        WITH GRANT OPTION;
-
-        GRANT MONITOR ON WAREHOUSE "KEBOOLA_MEDIUM" TO ROLE "KEBOOLA_MONITORING"
-        WITH GRANT OPTION;
-
-        GRANT MONITOR ON WAREHOUSE "KEBOOLA_LARGE" TO ROLE "KEBOOLA_MONITORING"
-        WITH GRANT OPTION;
-
-        ```
-
-
-        According to the previous example, the parameters for creating Storage
-        will be:
-
-
-        - `user` - `KEBOOLA_STORAGE`
-
-
-        - `warehouse` - `YOUR_WAREHOUSE`
-
-
-        - `password` - `YOUR_PASSWORD`
-      tags:
-        - SUPER - Storage Backends Management
-      parameters: []
-      requestBody:
-        content:
-          application/json:
-            example:
-              backend: snowflake
-              host: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com
-              warehouse: production
-              username: keboola
-              password: '1234'
-              region: us-east-1
-              owner: keboola
-              technicalOwner: keboola
-              database: MyDataWarehouse
-              useSynapseManagedIdentity: 'true'
-              useDynamicBackends: false
-            schema:
-              type: object
-              properties:
-                backend:
-                  type: string
-                  description: can be redshift, snowflake ,synapse, exasol, teradata
-                host:
-                  type: string
-                warehouse:
-                  type: string
-                  description: required only for Snowflake
-                username:
-                  type: string
-                password:
-                  type: string
-                region:
-                  type: string
-                owner:
-                  type: string
-                  description: associated legal owner (keboola,client)
-                technicalOwner:
-                  type: string
-                  description: >-
-                    associated technical owner (who technically manages the
-                    account). Enum: keboola, internal, kbdb, byodb
-                database:
-                  type: string
-                  description: required for Synapse and Teradata
-                useSynapseManagedIdentity:
-                  type: string
-                  description: optional for Synapse
-                useDynamicBackends:
-                  type: boolean
-                  description: >-
-                    Only for backends supporting dynamic sizing (Snowflake).
-                    When enabled, new projects get dynamic backends assigned
-                    automatically.
-              required:
-                - backend
-                - host
-                - username
-                - password
-                - region
-                - owner
-                - technicalOwner
     get:
       responses:
         '200':
@@ -7709,6 +7499,7 @@ paths:
               username: keboola
               password: '1234'
               useDynamicBackends: false
+              owner: keboola
               technicalOwner: keboola
             schema:
               $ref: '#/components/schemas/StorageBackendUpdate'
@@ -7843,7 +7634,9 @@ paths:
               properties:
                 owner:
                   type: string
-                  description: associated GCP account owner, can be (keboola,client)
+                  description: >-
+                    associated GCP account owner, can be (string, mostly:
+                    keboola,client-<name>)
                 technicalOwner:
                   type: string
                   description: >-
@@ -8018,7 +7811,9 @@ paths:
                     description: Snowflake username
                   owner:
                     type: string
-                    description: Owner identifier
+                    description: >-
+                      associated legal owner (string, mostly:
+                      keboola,client-<name>)
                   technicalOwner:
                     type: string
                     description: >-
@@ -8089,6 +7884,120 @@ paths:
         Snowflake Storage
         Backend](#reference/super-storage-backends-management/activate-snowflake-storage-backend/activate-snowflake-backend)
         endpoint.
+
+
+        Registration will provide personalized queries based on this template
+
+
+        ```
+
+        // base
+
+        CREATE ROLE "KBC_STORAGE";
+
+        GRANT CREATE DATABASE ON ACCOUNT TO ROLE "KBC_STORAGE";
+
+        GRANT CREATE ROLE ON ACCOUNT TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+
+        GRANT CREATE USER ON ACCOUNT TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+
+        CREATE WAREHOUSE "WH_SMALL" WITH WAREHOUSE_SIZE = 'SMALL' WAREHOUSE_TYPE
+        = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1
+        MAX_CLUSTER_COUNT = 10 RESOURCE_CONSTRAINT = 'STANDARD_GEN_2';
+
+        GRANT USAGE ON WAREHOUSE "WH_SMALL" TO ROLE "KBC_STORAGE" WITH GRANT
+        OPTION;
+
+        CREATE USER "KBC_STORAGE" DEFAULT_ROLE = "KBC_STORAGE" RSA_PUBLIC_KEY =
+        'PUBLICKEY';
+
+        GRANT OWNERSHIP ON USER "KBC_STORAGE" TO ROLE "KBC_STORAGE";
+
+        GRANT ROLE "KBC_STORAGE" TO USER "KBC_STORAGE";
+
+        GRANT ROLE "KBC_STORAGE" TO ROLE SYSADMIN;
+
+
+        // dynamic backends
+
+        CREATE WAREHOUSE "WH_MEDIUM" WITH WAREHOUSE_SIZE = 'MEDIUM'
+        WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE
+        MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 10 RESOURCE_CONSTRAINT =
+        'STANDARD_GEN_2';
+
+        CREATE WAREHOUSE "WH_LARGE" WITH WAREHOUSE_SIZE = 'LARGE' WAREHOUSE_TYPE
+        = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1
+        MAX_CLUSTER_COUNT = 10 RESOURCE_CONSTRAINT = 'STANDARD_GEN_2';
+
+        GRANT USAGE ON WAREHOUSE "WH_MEDIUM" TO ROLE "KBC_STORAGE" WITH GRANT
+        OPTION;
+
+        GRANT USAGE ON WAREHOUSE "WH_LARGE" TO ROLE "KBC_STORAGE" WITH GRANT
+        OPTION;
+
+
+        // network policies
+
+        -- BEGIN_OPTIONAL_RESOURCES: These SQL statements are optional as the
+        resources may already exist. In case of query failures due to existence
+        of resources, you can skip this part.',
+
+        CREATE DATABASE "STACK_INTERNAL";
+
+        CREATE SCHEMA "STACK_INTERNAL"."NETWORK_RULES";
+
+        USE SCHEMA "STACK_INTERNAL"."NETWORK_RULES";
+
+        CREATE NETWORK RULE STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS TYPE =
+        IPV4 MODE = INGRESS VALUE_LIST = ('1.1.1.1/32','2.2.2.2/32');
+
+        CREATE NETWORK POLICY "STACK_SYSTEM_IPS_ONLY" allowed_network_rule_list
+        = (STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS);
+
+        ALTER USER "KBC_STORAGE" SET NETWORK_POLICY = "STACK_SYSTEM_IPS_ONLY";
+
+        GRANT OWNERSHIP ON NETWORK POLICY "STACK_SYSTEM_IPS_ONLY" TO ROLE
+        "KBC_STORAGE";
+
+        GRANT OWNERSHIP ON DATABASE "STACK_INTERNAL" TO ROLE "KBC_STORAGE";
+
+        GRANT OWNERSHIP ON SCHEMA "STACK_INTERNAL"."NETWORK_RULES" TO ROLE
+        "KBC_STORAGE";
+
+        GRANT OWNERSHIP ON NETWORK RULE
+        STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS TO ROLE "KBC_STORAGE";
+
+        -- END_OPTIONAL_RESOURCES
+
+
+        // sso
+
+        CREATE SECURITY INTEGRATION "STACK_SAML_INTEGRATION"',
+
+        TYPE = SAML2',
+
+        ENABLED = TRUE',
+
+        SAML2_PROVIDER = 'CUSTOM'",
+
+        SAML2_ISSUER = 'issuer'",
+
+        SAML2_SSO_URL = 'https://sso'",
+
+        SAML2_X509_CERT = 'ABC'",
+
+        SAML2_SNOWFLAKE_ACS_URL ='https://host/fed/login'",
+
+        SAML2_ENABLE_SP_INITIATED = FALSE',
+
+        SAML2_FORCE_AUTHN = FALSE',
+
+        SAML2_SIGN_REQUEST = TRUE',
+
+        SAML2_REQUESTED_NAMEID_FORMAT =
+        'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress';,
+
+        ```
       tags:
         - SUPER - Storage Backends Management
       parameters: []
@@ -8122,7 +8031,9 @@ paths:
                   description: Backend region
                 owner:
                   type: string
-                  description: Owner identifier
+                  description: >-
+                    associated legal owner (string, mostly:
+                    keboola,client-<name>)
                 technicalOwner:
                   type: string
                   description: >-
@@ -8168,7 +8079,9 @@ paths:
                     description: Snowflake username
                   owner:
                     type: string
-                    description: Owner identifier
+                    description: >-
+                      associated legal owner (string, mostly:
+                      keboola,client-<name>)
                   technicalOwner:
                     type: string
                     description: >-
@@ -8439,24 +8352,6 @@ paths:
           required: true
           schema:
             type: string
-  /queue/workers:
-    get:
-      responses:
-        '200':
-          description: OK
-          headers: {}
-          content: {}
-      summary: Get Workers
-      operationId: Get Workers
-      description: >-
-        Endpoint should be: https://syrup.keboola.com/queue/workers
-
-
-        This API resource can be used, for example, by Hubot script for listing
-        running workers.
-      tags:
-        - Syrup API Integration
-      parameters: []
 
 security:
   - ApiKeyAuth: []
@@ -9053,7 +8948,7 @@ components:
         owner:
           type: string
           example: keboola
-          description: associated legal owner (keboola,client)
+          description: 'associated legal owner (string, mostly: keboola,client-<name>)'
         technicalOwner:
           type: string
           example: keboola
@@ -9084,7 +8979,9 @@ components:
         owner:
           type: string
           example: keboola
-          description: associated GCP account owner, can be (keboola,client)
+          description: >-
+            associated GCP account owner, can be (string, mostly:
+            keboola,client-<name>)
         technicalOwner:
           type: string
           example: keboola
@@ -9122,6 +9019,7 @@ components:
     BigQueryStorageBackendUpdate:
       type: object
       required:
+        - owner
         - technicalOwner
       properties:
         credentials:
@@ -9129,6 +9027,9 @@ components:
         owner:
           type: string
           example: keboola
+          description: >-
+            associated GCP account owner, can be (string, mostly:
+            keboola,client-<name>)
         technicalOwner:
           type: string
           example: keboola
@@ -9138,7 +9039,7 @@ components:
     StorageBackendUpdate:
       type: object
       required:
-        - technicalOwner
+        - owner
       properties:
         username:
           type: string
@@ -9151,6 +9052,10 @@ components:
           description: >-
             Only for backends supporting dynamic sizing (Snowflake). When
             enabled, new projects get dynamic backends assigned automatically.
+        owner:
+          type: string
+          example: keboola
+          description: 'associated legal owner (string, mostly: keboola,client-<name>)'
         technicalOwner:
           type: string
           example: keboola
@@ -9315,7 +9220,7 @@ components:
         owner:
           type: string
           example: keboola
-          description: Owner identifier
+          description: 'associated legal owner (string, mostly: keboola,client-<name>)'
         technicalOwner:
           type: string
           example: keboola
@@ -9356,7 +9261,7 @@ components:
         owner:
           type: string
           example: keboola
-          description: Owner identifier
+          description: 'associated legal owner (string, mostly: keboola,client-<name>)'
         technicalOwner:
           type: string
           example: keboola
@@ -9425,7 +9330,7 @@ components:
         owner:
           type: string
           example: keboola
-          description: Owner identifier
+          description: 'associated legal owner (string, mostly: keboola,client-<name>)'
         technicalOwner:
           type: string
           example: keboola
@@ -9534,23 +9439,3 @@ tags:
       - BigQuery
   - name: SUPER - Commands
   - name: SUPER - UI Management
-  - name: Syrup API Integration
-    description: >-
-      This is an example of an API call returning all running worker processes
-      and their state. This resource is accessible for tokens of the type
-      `super` with `super_monitoring` scope.
-
-      `Super` tokens can be created only by super admins.
-
-
-      ## Authentication
-
-
-      Syrup API will receive a management token in its header and will use it to
-      call the `Verify token` API call.
-
-      Details about the token will be returned, scopes associated to the token
-      are present in the response.
-
-      If the scope is `super_monitoring` and the token type is `super`, Syrup
-      will return the workers in the response, otherwise `403` is returned.

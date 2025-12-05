@@ -3835,88 +3835,6 @@ Currently supported backends are:
 
 ## Storage Backend Collection [/manage/storage-backend]
 
-### Create a new backend (Deprecated) [POST]
-
-Superuser credentials are *not required* for backend registration
-
-#### Redshift
-
-Credentials with superuser access to the database must be provided for Redshift.
-
-
-#### Snowflake
-
-Credentials and storage warehouse are required. You can generate a user, role and warehouse with the following queries:
-
-```
-CREATE ROLE "KEBOOLA_STORAGE";
-GRANT CREATE DATABASE ON ACCOUNT TO ROLE "KEBOOLA_STORAGE";
-GRANT CREATE ROLE ON ACCOUNT TO ROLE "KEBOOLA_STORAGE" WITH GRANT OPTION;
-GRANT CREATE USER ON ACCOUNT TO ROLE "KEBOOLA_STORAGE" WITH GRANT OPTION;
-CREATE WAREHOUSE "KEBOOLA" WITH WAREHOUSE_SIZE = 'XSMALL' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE;
-GRANT USAGE ON WAREHOUSE "KEBOOLA" TO ROLE "KEBOOLA_STORAGE" WITH GRANT OPTION;
-
-CREATE USER "KEBOOLA_STORAGE"
-    PASSWORD = "YOUR_PASSWORD"
-    DEFAULT_ROLE = "KEBOOLA_STORAGE"
-    TYPE = LEGACY_SERVICE;
-
-GRANT ROLE "KEBOOLA_STORAGE" TO USER "KEBOOLA_STORAGE";
-GRANT ROLE "KEBOOLA_STORAGE" TO ROLE SYSADMIN;
-GRANT OWNERSHIP ON USER "KEBOOLA_STORAGE" TO ROLE "KEBOOLA_STORAGE";
-```
-If you want to have dynamic backends enabled, please also run the following queries and add `useDynamicBackends: true` in the request.
-
-```
-CREATE WAREHOUSE "KEBOOLA_SMALL" WITH
-    WAREHOUSE_SIZE = 'SMALL'
-    WAREHOUSE_TYPE = 'STANDARD'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    MIN_CLUSTER_COUNT = 1
-    MAX_CLUSTER_COUNT = 10;
-CREATE WAREHOUSE "KEBOOLA_MEDIUM" WITH
-    WAREHOUSE_SIZE = 'MEDIUM'
-    WAREHOUSE_TYPE = 'STANDARD'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    MIN_CLUSTER_COUNT = 1
-    MAX_CLUSTER_COUNT = 10;
-CREATE WAREHOUSE "KEBOOLA_LARGE" WITH
-    WAREHOUSE_SIZE = 'LARGE'
-    WAREHOUSE_TYPE = 'STANDARD'
-    AUTO_SUSPEND = 60
-    AUTO_RESUME = TRUE
-    MIN_CLUSTER_COUNT = 1
-    MAX_CLUSTER_COUNT = 10;
-
-GRANT USAGE ON WAREHOUSE "KEBOOLA_SMALL" TO ROLE "KEBOOLA_STORAGE" WITH GRANT OPTION;
-GRANT USAGE ON WAREHOUSE "KEBOOLA_MEDIUM" TO ROLE "KEBOOLA_STORAGE" WITH GRANT OPTION;
-GRANT USAGE ON WAREHOUSE "KEBOOLA_LARGE" TO ROLE "KEBOOLA_STORAGE" WITH GRANT OPTION;
-GRANT MONITOR ON WAREHOUSE "KEBOOLA_SMALL" TO ROLE "KEBOOLA_MONITORING" WITH GRANT OPTION;
-GRANT MONITOR ON WAREHOUSE "KEBOOLA_MEDIUM" TO ROLE "KEBOOLA_MONITORING" WITH GRANT OPTION;
-GRANT MONITOR ON WAREHOUSE "KEBOOLA_LARGE" TO ROLE "KEBOOLA_MONITORING" WITH GRANT OPTION;
-```
-
-According to the previous example, the parameters for creating Storage will be:
-
-- `user` - `KEBOOLA_STORAGE`
-- `warehouse` - `YOUR_WAREHOUSE`
-- `password` - `YOUR_PASSWORD`
-
-
-+ Request (application/json)
-
-    + Headers
-
-            X-KBC-ManageApiToken: your_token
-
-    + Attributes(StorageBackendCreate)
-
-+ Response 201 (application/json)
-
-    + Attributes(StorageBackend)
-
 ### List backends [GET]
 + Request (application/json)
     + Headers
@@ -4013,6 +3931,55 @@ Update of the credentials for BigQuery backend.
 
 Create a new Snowflake storage backend with RSA certificate authentication. The backend is created as disabled and returns an SQL template for setting up Snowflake roles and users. After running the generated query, you can activate the backend using the [Activate Snowflake Storage Backend](#reference/super-storage-backends-management/activate-snowflake-storage-backend/activate-snowflake-backend) endpoint.
 
+Registration will provide personalized queries based on this template
+```
+// base
+CREATE ROLE "KBC_STORAGE";
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE "KBC_STORAGE";
+GRANT CREATE ROLE ON ACCOUNT TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+GRANT CREATE USER ON ACCOUNT TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+CREATE WAREHOUSE "WH_SMALL" WITH WAREHOUSE_SIZE = 'SMALL' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 10 RESOURCE_CONSTRAINT = 'STANDARD_GEN_2';
+GRANT USAGE ON WAREHOUSE "WH_SMALL" TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+CREATE USER "KBC_STORAGE" DEFAULT_ROLE = "KBC_STORAGE" RSA_PUBLIC_KEY = 'PUBLICKEY';
+GRANT OWNERSHIP ON USER "KBC_STORAGE" TO ROLE "KBC_STORAGE";
+GRANT ROLE "KBC_STORAGE" TO USER "KBC_STORAGE";
+GRANT ROLE "KBC_STORAGE" TO ROLE SYSADMIN;
+
+// dynamic backends
+CREATE WAREHOUSE "WH_MEDIUM" WITH WAREHOUSE_SIZE = 'MEDIUM' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 10 RESOURCE_CONSTRAINT = 'STANDARD_GEN_2';
+CREATE WAREHOUSE "WH_LARGE" WITH WAREHOUSE_SIZE = 'LARGE' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 10 RESOURCE_CONSTRAINT = 'STANDARD_GEN_2';
+GRANT USAGE ON WAREHOUSE "WH_MEDIUM" TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+GRANT USAGE ON WAREHOUSE "WH_LARGE" TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+
+// network policies
+-- BEGIN_OPTIONAL_RESOURCES: These SQL statements are optional as the resources may already exist. In case of query failures due to existence of resources, you can skip this part.',
+CREATE DATABASE "STACK_INTERNAL";
+CREATE SCHEMA "STACK_INTERNAL"."NETWORK_RULES";
+USE SCHEMA "STACK_INTERNAL"."NETWORK_RULES";
+CREATE NETWORK RULE STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS TYPE = IPV4 MODE = INGRESS VALUE_LIST = ('1.1.1.1/32','2.2.2.2/32');
+CREATE NETWORK POLICY "STACK_SYSTEM_IPS_ONLY" allowed_network_rule_list = (STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS);
+ALTER USER "KBC_STORAGE" SET NETWORK_POLICY = "STACK_SYSTEM_IPS_ONLY";
+GRANT OWNERSHIP ON NETWORK POLICY "STACK_SYSTEM_IPS_ONLY" TO ROLE "KBC_STORAGE";
+GRANT OWNERSHIP ON DATABASE "STACK_INTERNAL" TO ROLE "KBC_STORAGE";
+GRANT OWNERSHIP ON SCHEMA "STACK_INTERNAL"."NETWORK_RULES" TO ROLE "KBC_STORAGE";
+GRANT OWNERSHIP ON NETWORK RULE STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS TO ROLE "KBC_STORAGE";
+-- END_OPTIONAL_RESOURCES
+
+// sso
+CREATE SECURITY INTEGRATION "STACK_SAML_INTEGRATION"',
+TYPE = SAML2',
+ENABLED = TRUE',
+SAML2_PROVIDER = 'CUSTOM'",
+SAML2_ISSUER = 'issuer'",
+SAML2_SSO_URL = 'https://sso'",
+SAML2_X509_CERT = 'ABC'",
+SAML2_SNOWFLAKE_ACS_URL ='https://host/fed/login'",
+SAML2_ENABLE_SP_INITIATED = FALSE',
+SAML2_FORCE_AUTHN = FALSE',
+SAML2_SIGN_REQUEST = TRUE',
+SAML2_REQUESTED_NAMEID_FORMAT = 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress';,
+```
+
 + Request (application/json)
 
     + Headers
@@ -4074,14 +4041,14 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + username: keboola (required)
 + password: 1234 (required)
 + region: `us-east-1` (required)
-+ owner: keboola (required) - associated legal owner (keboola,client)
++ owner: keboola (required) - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + database: MyDataWarehouse - required for Synapse and Teradata
 + useSynapseManagedIdentity: true - optional for Synapse
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
 
 ### BigQueryStorageBackendCreate
-+ owner: keboola (required) - associated GCP account owner, can be (keboola,client)
++ owner: keboola (required) - associated GCP account owner, can be (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + folderId: 123(required) - where is service account created
 + region: `us-east-1` (required)
@@ -4096,7 +4063,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 
 ### BigQueryStorageBackendUpdate
 + credentials(GCPCredentials, optional)
-+ owner: keboola (string, optional)
++ owner: keboola (required) - associated GCP account owner, can be (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 
 ### StorageBackendUpdate
@@ -4104,7 +4071,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + username: keboola (string)
 + password: 1234 (string)
 + useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
-+ owner: keboola (string) - associated legal owner (keboola,client)
++ owner: keboola (required) - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (string) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + skipValidation: false (boolean) - If true, the backend validation step is skipped during the update. Only possible to use with owner and technicalOwner not with other options.
 
@@ -4150,7 +4117,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + warehouse: `KEBOOLA` (required) - Snowflake warehouse name
 + username: `KEBOOLA_STORAGE` (optional) - Snowflake username
 + region: `us-east-1` (required) - Backend region
-+ owner: `keboola` (required) - Owner identifier
++ owner: `keboola` (required) - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + useDynamicBackends: false (optional) - Enable dynamic backends
 + useNetworkPolicies: false (optional) - Enable network policies
@@ -4161,7 +4128,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + host: `demo.snowflakecomputing.com` - Snowflake host
 + warehouse: `KEBOOLA` - Snowflake warehouse
 + username: `KEBOOLA_STORAGE` - Snowflake username
-+ owner: `keboola` - Owner identifier
++ owner: `keboola`  - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: `keboola` - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + region: `us-east-1` - Backend region
 + created: `2024-01-15T10:30:00Z` - Creation timestamp
@@ -4179,7 +4146,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + host: `demo.snowflakecomputing.com` - Snowflake host
 + warehouse: `KEBOOLA` - Snowflake warehouse
 + username: `KEBOOLA_STORAGE` - Snowflake username
-+ owner: `keboola` - Owner identifier
++ owner: `keboola` - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: `keboola` - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + region: `us-east-1` - Backend region
 + created: `2024-01-15T10:30:00Z` - Creation timestamp
