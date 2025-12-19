@@ -50,9 +50,7 @@ final class ProjectTemplatesTest extends ClientTestCase
         $templates = $this->client->getProjectTemplates();
         $this->assertGreaterThan(2, count($templates));
 
-        $filteredTemplates = array_filter($templates, function (array $item): bool {
-            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(1, $filteredTemplates);
 
@@ -60,9 +58,7 @@ final class ProjectTemplatesTest extends ClientTestCase
         $this->assertEquals($templateDetail, current($filteredTemplates));
 
         // system templates
-        $filteredTemplates = array_filter($templates, function (array $item): bool {
-            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(1, $filteredTemplates);
 
@@ -76,9 +72,7 @@ final class ProjectTemplatesTest extends ClientTestCase
 
         $templates = $this->normalUserClient->getProjectTemplates();
 
-        $filteredTemplates = array_filter($templates, function (array $item): bool {
-            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(1, $filteredTemplates);
 
@@ -92,9 +86,7 @@ final class ProjectTemplatesTest extends ClientTestCase
 
         $templates = $this->normalUserClient->getProjectTemplates();
 
-        $filteredTemplates = array_filter($templates, function (array $item): bool {
-            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(1, $filteredTemplates);
 
@@ -127,9 +119,7 @@ final class ProjectTemplatesTest extends ClientTestCase
 
         $templates = $this->normalUserClient->getProjectTemplates();
 
-        $filteredTemplates = array_filter($templates, function (array $item): bool {
-            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(0, $filteredTemplates);
 
@@ -145,9 +135,7 @@ final class ProjectTemplatesTest extends ClientTestCase
 
         $templates = $this->normalUserClient->getProjectTemplates();
 
-        $filteredTemplates = array_filter($templates, function (array $item): bool {
-            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(0, $filteredTemplates);
 

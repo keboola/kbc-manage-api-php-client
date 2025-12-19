@@ -65,9 +65,7 @@ final class OrganizationsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $fromList = array_values(array_filter($this->client->listOrganizations(), function (array $org) use ($organization): bool {
-            return $org['id'] === $organization['id'];
-        }));
+        $fromList = array_values(array_filter($this->client->listOrganizations(), fn(array $org): bool => $org['id'] === $organization['id']));
         $this->assertNotEmpty($fromList);
         $this->assertCount(1, $fromList);
         $this->assertEquals($organization['id'], $fromList[0]['id']);
@@ -106,12 +104,8 @@ final class OrganizationsTest extends ClientTestCase
         $orgsFromTokenFull = $client->listOrganizations();
         $orgFromAdminFull = $this->client->listOrganizations();
         // filter out the orgs and find the one we just created
-        $orgsFromToken = array_values(array_filter($orgsFromTokenFull, function (array $org) use ($organization): bool {
-            return $org['id'] === $organization['id'];
-        }));
-        $orgsFromAdmin = array_values(array_filter($orgFromAdminFull, function (array $org) use ($organization): bool {
-            return $org['id'] === $organization['id'];
-        }));
+        $orgsFromToken = array_values(array_filter($orgsFromTokenFull, fn(array $org): bool => $org['id'] === $organization['id']));
+        $orgsFromAdmin = array_values(array_filter($orgFromAdminFull, fn(array $org): bool => $org['id'] === $organization['id']));
 
         // we can't assert much more, because the token sees every organization (even those created outside of this test)
         $this->assertNotEmpty(
@@ -133,12 +127,8 @@ final class OrganizationsTest extends ClientTestCase
             $this->assertEquals(404, $e->getCode());
         }
 
-        $deletedOrganizationFromAdmin = array_values(array_filter($orgFromAdminFull, function (array $org) use ($deletedOrganization): bool {
-            return $org['id'] === $deletedOrganization['id'];
-        }));
-        $deletedOrganizationFromToken = array_values(array_filter($orgsFromTokenFull, function (array $org) use ($deletedOrganization): bool {
-            return $org['id'] === $deletedOrganization['id'];
-        }));
+        $deletedOrganizationFromAdmin = array_values(array_filter($orgFromAdminFull, fn(array $org): bool => $org['id'] === $deletedOrganization['id']));
+        $deletedOrganizationFromToken = array_values(array_filter($orgsFromTokenFull, fn(array $org): bool => $org['id'] === $deletedOrganization['id']));
 
         $this->assertEmpty($deletedOrganizationFromAdmin);
         $this->assertEmpty($deletedOrganizationFromToken);

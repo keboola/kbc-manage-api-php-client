@@ -6,7 +6,7 @@ namespace Keboola\ManageApi;
 
 class SnowflakeNameHelper
 {
-    private string $prefix;
+    private readonly string $prefix;
 
     public function __construct(string $prefix)
     {

@@ -319,23 +319,17 @@ final class ProjectDeleteTest extends ClientTestCase
         if ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_ABS) {
             $fileStorages = array_filter(
                 $this->client->listAbsFileStorage(),
-                function (array $fileStorage): bool {
-                    return $fileStorage['owner'] === 'keboola';
-                }
+                fn(array $fileStorage): bool => $fileStorage['owner'] === 'keboola'
             );
         } elseif ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_GCS) {
             $fileStorages = array_filter(
                 $this->client->listGcsFileStorage(),
-                function (array $fileStorage): bool {
-                    return $fileStorage['owner'] === 'keboola';
-                }
+                fn(array $fileStorage): bool => $fileStorage['owner'] === 'keboola'
             );
         } else {
             $fileStorages = array_filter(
                 $this->client->listS3FileStorage(),
-                function (array $fileStorage): bool {
-                    return $fileStorage['owner'] === 'keboola';
-                }
+                fn(array $fileStorage): bool => $fileStorage['owner'] === 'keboola'
             );
         }
 
