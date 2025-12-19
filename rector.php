@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use Rector\Config\RectorConfig;
+use Rector\PHPUnit\Set\PHPUnitSetList;
+use Rector\Privatization\Rector\Class_\FinalizeTestCaseClassRector;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -22,8 +24,16 @@ return RectorConfig::configure()
     ->withImportNames(true)
 //    ->withAttributesSets()
     ->withPhpSets()
+    ->withSets([
+        PHPUnitSetList::PHPUNIT_70,
+        PHPUnitSetList::PHPUNIT_80,
+        PHPUnitSetList::PHPUNIT_90,
+//        PHPUnitSetList::PHPUNIT_100,
+//        PHPUnitSetList::PHPUNIT_110,
+//        PHPUnitSetList::PHPUNIT_120,
+    ])
     ->withSkip([
-        \Rector\Privatization\Rector\Class_\FinalizeTestCaseClassRector::class => [
+        FinalizeTestCaseClassRector::class => [
             'tests/BaseFeatureTest.php'
         ],
     ])
