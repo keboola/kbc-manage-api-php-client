@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class CommonTest extends ClientTestCase
 {
-    public function testVerifyAdminToken()
+    public function testVerifyAdminToken(): void
     {
         $token = $this->client->verifyToken();
 
@@ -28,7 +28,7 @@ class CommonTest extends ClientTestCase
         $this->assertNotEquals($lastUsed, $token['lastUsed']);
     }
 
-    public function testVerifySuperToken()
+    public function testVerifySuperToken(): void
     {
         $client = $this->getClient([
             'token' => EnvVariableHelper::getKbcSuperApiToken(),
@@ -45,7 +45,7 @@ class CommonTest extends ClientTestCase
         $this->assertFalse($token['isSessionToken']);
     }
 
-    public function testInvalidRequestBody()
+    public function testInvalidRequestBody(): void
     {
         $client = new Client([
             'base_uri' => EnvVariableHelper::getKbcManageApiUrl(),

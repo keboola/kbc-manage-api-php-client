@@ -93,7 +93,7 @@ class OrganizationInvitationsTest extends ClientTestCase
      * @dataProvider autoJoinProvider
      * @param bool $allowAutoJoin
      */
-    public function testMaintainerCannotInviteRegardlessOfAllowAutoJoin($allowAutoJoin): void
+    public function testMaintainerCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
         $organizationId = $this->organization['id'];

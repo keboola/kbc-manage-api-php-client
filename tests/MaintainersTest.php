@@ -9,7 +9,7 @@ use Throwable;
 class MaintainersTest extends ClientTestCase
 {
 
-    public function testCreateDeleteMaintainer()
+    public function testCreateDeleteMaintainer(): void
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
@@ -61,7 +61,7 @@ class MaintainersTest extends ClientTestCase
         }
     }
 
-    public function testUpdateMaintainer()
+    public function testUpdateMaintainer(): void
     {
         $fileStorages = array_merge(
             $this->client->listS3FileStorage(),
@@ -169,7 +169,7 @@ class MaintainersTest extends ClientTestCase
     }
 
 
-    public function testNormalUserMaintainerPermissions()
+    public function testNormalUserMaintainerPermissions(): void
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
         try {
@@ -207,7 +207,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertNotEmpty($testMaintainer['name']);
     }
 
-    public function testCrossMaintainerOrganizationAccess()
+    public function testCrossMaintainerOrganizationAccess(): void
     {
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . ' - secondary maintainer';
         $secondMaintainer = $this->client->createMaintainer([
@@ -249,7 +249,7 @@ class MaintainersTest extends ClientTestCase
         }
     }
 
-    public function testListMaintainers()
+    public function testListMaintainers(): void
     {
         $maintainers = $this->client->listMaintainers();
 
@@ -270,7 +270,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertNull($maintainer['zendeskUrl']);
     }
 
-    public function testAtLeastOneMemberLimit()
+    public function testAtLeastOneMemberLimit(): void
     {
         $maintainer = $this->client->createMaintainer([
             'name' => self::TESTS_MAINTAINER_PREFIX . ' - test least one member',
@@ -300,7 +300,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertCount(1, $members);
     }
 
-    public function testUserMaintainerUsers()
+    public function testUserMaintainerUsers(): void
     {
         $maintainerMembers = $this->client->listMaintainerMembers($this->testMaintainerId);
         $this->assertCount(1, $maintainerMembers);
@@ -322,7 +322,7 @@ class MaintainersTest extends ClientTestCase
     // 1) confirm maintainer users cannot update autoJoin flag for organization
     // 2) confirm project joining requirements.
     // 3) confirm invited maintainer is active
-    public function testSettingAutoJoinFlag()
+    public function testSettingAutoJoinFlag(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -343,7 +343,7 @@ class MaintainersTest extends ClientTestCase
         $this->assertEquals(false, $org['allowAutoJoin']);
     }
 
-    public function testInviteMaintainer()
+    public function testInviteMaintainer(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -376,7 +376,7 @@ class MaintainersTest extends ClientTestCase
         }
     }
 
-    private function addNormalMaintainer()
+    private function addNormalMaintainer(): void
     {
         // make sure normalUser a maintainer
         $maintainers = $this->client->listMaintainerMembers($this->testMaintainerId);

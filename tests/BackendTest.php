@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class BackendTest extends TestCase
 {
-    public function testDefaultBackend()
+    public function testDefaultBackend(): void
     {
         $this->assertEquals('snowflake', Backend::getDefaultBackend());
     }

@@ -113,7 +113,7 @@ class ClientTestCase extends TestCase
      * @param array $token
      * @return StorageClient
      */
-    protected function getStorageClient($options)
+    protected function getStorageClient(array $options): \Keboola\StorageApi\Client
     {
         $tokenParts = explode('-', $options['token']);
         $tokenAgentString = '';
@@ -149,7 +149,7 @@ class ClientTestCase extends TestCase
     /**
      * @return string
      */
-    protected function getTestName()
+    protected function getTestName(): string
     {
         return get_class($this) . '::' . $this->getName();
     }
@@ -233,7 +233,7 @@ class ClientTestCase extends TestCase
         }
     }
 
-    public function getRandomFeatureSuffix()
+    public function getRandomFeatureSuffix(): string
     {
         return uniqid('', true);
     }
@@ -280,7 +280,7 @@ class ClientTestCase extends TestCase
     /**
      * @return string
      */
-    protected function getBuildId()
+    protected function getBuildId(): string
     {
         $buildId = '';
         if (getenv('TRAVIS_BUILD_ID')) {
@@ -292,7 +292,7 @@ class ClientTestCase extends TestCase
     /**
      * @return string
      */
-    protected function getSuiteName()
+    protected function getSuiteName(): string
     {
         $testSuiteName = '';
         if (getenv('SUITE_NAME')) {
@@ -337,7 +337,7 @@ class ClientTestCase extends TestCase
      * @param array<mixed> $params
      * @return array
      */
-    protected function createRedshiftProjectForClient($client, int $organizationId, $params = [])
+    protected function createRedshiftProjectForClient($client, int $organizationId, array $params = [])
     {
         $params['defaultBackend'] = Backend::REDSHIFT;
         return $client->createProject($organizationId, $params);
@@ -393,7 +393,7 @@ class ClientTestCase extends TestCase
 
     public function sortByKey($data, $sortKey): array
     {
-        $comparsion = function ($attrLeft, $attrRight) use ($sortKey) {
+        $comparsion = function (array $attrLeft, array $attrRight) use ($sortKey): int {
             return strcmp($attrLeft[$sortKey], $attrRight[$sortKey]);
         };
         usort($data, $comparsion);

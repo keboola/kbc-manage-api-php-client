@@ -42,7 +42,7 @@ class ProjectJoinRequestsMfaValidationTest extends ClientMfaTestCase
         }
     }
 
-    public function testSuperAdminWithoutMfaCannotRequestAccess()
+    public function testSuperAdminWithoutMfaCannotRequestAccess(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -69,7 +69,7 @@ class ProjectJoinRequestsMfaValidationTest extends ClientMfaTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testJoinRequestOfUserWithoutMfaCannotBeApproved()
+    public function testJoinRequestOfUserWithoutMfaCannotBeApproved(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -112,7 +112,7 @@ class ProjectJoinRequestsMfaValidationTest extends ClientMfaTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testJoinRequestReject()
+    public function testJoinRequestReject(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 

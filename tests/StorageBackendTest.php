@@ -29,7 +29,7 @@ class StorageBackendTest extends ClientTestCase
         $this->client->removeStorageBackend($newBackend['id']);
     }
 
-    public function testCreateStorageBackendWithCert()
+    public function testCreateStorageBackendWithCert(): void
     {
         $db = $this->prepareConnection();
         $kbcTestSnowflakeBackendName = 'CI_CREATE_WITH_ENDPOINT';
@@ -95,7 +95,7 @@ class StorageBackendTest extends ClientTestCase
         $this->createTestProjectAndValidate($project['id'], $newBackend['useDynamicBackends'], $newBackend['id'], $newMaintainer['id']);
     }
 
-    public function testCreateStorageBackendWithCertWithoutUserOnBackend()
+    public function testCreateStorageBackendWithCertWithoutUserOnBackend(): void
     {
         $newBackend = $this->client->createSnowflakeStorageBackend([
             'host' => EnvVariableHelper::getKbcTestSnowflakeHost(),
@@ -124,7 +124,7 @@ class StorageBackendTest extends ClientTestCase
     /**
      * @dataProvider storageBackendOptionsProvider
      */
-    public function testCreateStorageBackend(array $options)
+    public function testCreateStorageBackend(array $options): void
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
@@ -242,7 +242,7 @@ class StorageBackendTest extends ClientTestCase
     /**
      * @dataProvider storageBackendOptionsProvider
      */
-    public function testUpdateStorageBackendWithWrongPassword(array $options)
+    public function testUpdateStorageBackendWithWrongPassword(array $options): void
     {
         $backend = $this->client->createStorageBackend($options);
 
@@ -263,7 +263,7 @@ class StorageBackendTest extends ClientTestCase
     /**
      * @dataProvider storageBackendOptionsProviderForUpdate
      */
-    public function testUpdateStorageBackend(array $options, array $updateOptions, bool $checkResponse)
+    public function testUpdateStorageBackend(array $options, array $updateOptions, bool $checkResponse): void
     {
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
         $backend = $this->client->createStorageBackend($options);

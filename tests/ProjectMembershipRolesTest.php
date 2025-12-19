@@ -10,17 +10,13 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
 {
     private const SHARE_ROLE_EXPECTED_ERROR = 'Only member of the project\'s organization can grant "share" role to other users.';
 
-    /** @var array */
-    private $organization;
+    private array $organization;
 
-    /** @var array */
-    private $project;
+    private array $project;
 
-    /** @var Client */
-    private $guestRoleMemberClient;
+    private \Keboola\ManageApi\Client $guestRoleMemberClient;
 
-    /** @var array */
-    private $guestUser;
+    private array $guestUser;
 
     public function setUp(): void
     {
@@ -479,7 +475,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($this->organization['id'], $project['organization']['id']);
     }
 
-    private function restrictedActionTest(ClientException $e)
+    private function restrictedActionTest(ClientException $e): void
     {
         $this->assertEquals(403, $e->getCode());
         $this->assertStringContainsString('Action is restricted for your role', $e->getMessage());

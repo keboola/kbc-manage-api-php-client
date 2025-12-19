@@ -882,7 +882,7 @@ class ProjectsMetadataTest extends ClientTestCase
     /**
      * @dataProvider allowedListMetadataRoles
      */
-    public function testProjectMemberWithoutMfaCannotListUserMetadata(string $role)
+    public function testProjectMemberWithoutMfaCannotListUserMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -1002,7 +1002,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
     }
 
-    public function testOrgAdminWithoutMfaCannotManageMetadata()
+    public function testOrgAdminWithoutMfaCannotManageMetadata(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -1089,7 +1089,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
     }
 
-    public function testUpdateProjectMetadata()
+    public function testUpdateProjectMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);

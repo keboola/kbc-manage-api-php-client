@@ -8,7 +8,7 @@ use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
 class OrganizationsTest extends ClientTestCase
 {
-    public function testListOrganizations()
+    public function testListOrganizations(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -25,7 +25,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertArrayHasKey('maintainer', $organization);
     }
 
-    public function testLeastOneMemberLimit()
+    public function testLeastOneMemberLimit(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -55,7 +55,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertCount(1, $members);
     }
 
-    public function testOrganizationCreateAndDelete()
+    public function testOrganizationCreateAndDelete(): void
     {
         $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
         $initialOrgsCount = count($organizations);
@@ -63,7 +63,7 @@ class OrganizationsTest extends ClientTestCase
             'name' => 'My org',
         ]);
 
-        $fromList = array_values(array_filter($this->client->listOrganizations(), function ($org) use ($organization) {
+        $fromList = array_values(array_filter($this->client->listOrganizations(), function (array $org) use ($organization): bool {
             return $org['id'] === $organization['id'];
         }));
         $this->assertNotEmpty($fromList);
@@ -104,10 +104,10 @@ class OrganizationsTest extends ClientTestCase
         $orgsFromTokenFull = $client->listOrganizations();
         $orgFromAdminFull = $this->client->listOrganizations();
         // filter out the orgs and find the one we just created
-        $orgsFromToken = array_values(array_filter($orgsFromTokenFull, function ($org) use ($organization) {
+        $orgsFromToken = array_values(array_filter($orgsFromTokenFull, function (array $org) use ($organization): bool {
             return $org['id'] === $organization['id'];
         }));
-        $orgsFromAdmin = array_values(array_filter($orgFromAdminFull, function ($org) use ($organization) {
+        $orgsFromAdmin = array_values(array_filter($orgFromAdminFull, function (array $org) use ($organization): bool {
             return $org['id'] === $organization['id'];
         }));
 
@@ -131,10 +131,10 @@ class OrganizationsTest extends ClientTestCase
             $this->assertEquals(404, $e->getCode());
         }
 
-        $deletedOrganizationFromAdmin = array_values(array_filter($orgFromAdminFull, function ($org) use ($deletedOrganization) {
+        $deletedOrganizationFromAdmin = array_values(array_filter($orgFromAdminFull, function (array $org) use ($deletedOrganization): bool {
             return $org['id'] === $deletedOrganization['id'];
         }));
-        $deletedOrganizationFromToken = array_values(array_filter($orgsFromTokenFull, function ($org) use ($deletedOrganization) {
+        $deletedOrganizationFromToken = array_values(array_filter($orgsFromTokenFull, function (array $org) use ($deletedOrganization): bool {
             return $org['id'] === $deletedOrganization['id'];
         }));
 
@@ -142,7 +142,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEmpty($deletedOrganizationFromToken);
     }
 
-    public function testOrganizationDetail()
+    public function testOrganizationDetail(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -181,7 +181,7 @@ class OrganizationsTest extends ClientTestCase
         }
     }
 
-    public function testUpdateOrganization()
+    public function testUpdateOrganization(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -209,7 +209,7 @@ class OrganizationsTest extends ClientTestCase
         }
     }
 
-    public function testOrganizationCreateWithCrmId()
+    public function testOrganizationCreateWithCrmId(): void
     {
         $crmId = '1243';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -221,7 +221,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEquals($crmId, $organization['crmId']);
     }
 
-    public function testMaintainerMemberCanUpdateCrmId()
+    public function testMaintainerMemberCanUpdateCrmId(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -234,7 +234,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEquals($crmId, $organization['crmId']);
     }
 
-    public function testOrganizationMemberCannotUpdateCrmId()
+    public function testOrganizationMemberCannotUpdateCrmId(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -248,7 +248,7 @@ class OrganizationsTest extends ClientTestCase
         ]);
     }
 
-    public function testOrganizationUsers()
+    public function testOrganizationUsers(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Test org',
@@ -294,7 +294,7 @@ class OrganizationsTest extends ClientTestCase
         }
     }
 
-    public function testSuperCannotAddAnybodyToOrganizationWithNoJoin()
+    public function testSuperCannotAddAnybodyToOrganizationWithNoJoin(): void
     {
         $tokenInfo = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $tokenInfo);
@@ -330,7 +330,7 @@ class OrganizationsTest extends ClientTestCase
         }
     }
 
-    public function testSettingAutoJoinFlag()
+    public function testSettingAutoJoinFlag(): void
     {
         $tokenInfo = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $tokenInfo);
@@ -360,7 +360,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEquals(false, $org['allowAutoJoin']);
     }
 
-    public function testOrganizationAdminAutoJoin()
+    public function testOrganizationAdminAutoJoin(): void
     {
         $tokenInfo = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $tokenInfo);
@@ -420,7 +420,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertEquals($superAdmin['name'], $projectUser['approver']['name']);
     }
 
-    public function testSuperAdminAutoJoinError()
+    public function testSuperAdminAutoJoinError(): void
     {
         $tokenInfo = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $tokenInfo);
@@ -472,7 +472,7 @@ class OrganizationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testInviteSuperAdmin()
+    public function testInviteSuperAdmin(): void
     {
         $tokenInfo = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $tokenInfo);
@@ -514,7 +514,7 @@ class OrganizationsTest extends ClientTestCase
         }
     }
 
-    public function testActivityCenterId()
+    public function testActivityCenterId(): void
     {
         $tokenInfo = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $tokenInfo);

@@ -453,7 +453,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         );
     }
 
-    private function createMetadata(Client $client, int $organizationId, $provider, array $metadata = self::TEST_METADATA): array
+    private function createMetadata(Client $client, int $organizationId, string $provider, array $metadata = self::TEST_METADATA): array
     {
         return $client->setOrganizationMetadata(
             $organizationId,
@@ -472,12 +472,12 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->assertArrayHasKey('timestamp', $actual);
     }
 
-    private function validateMetadataAsSortedArray(array $expected, array $actual, string $provider)
+    private function validateMetadataAsSortedArray(array $expected, array $actual, string $provider): void
     {
-        usort($expected, function ($a, $b) {
+        usort($expected, function (array $a, array $b): int {
             return strcmp($a['key'], $b['key']);
         });
-        usort($actual, function ($a, $b) {
+        usort($actual, function (array $a, array $b): int {
             return strcmp($a['key'], $b['key']);
         });
 
@@ -486,7 +486,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         }
     }
 
-    private function cannotManageUserMetadata(Client $client, $metadataId, array $metadata = self::TEST_METADATA)
+    private function cannotManageUserMetadata(Client $client, $metadataId, array $metadata = self::TEST_METADATA): void
     {
         // note there is no cannotManageSYSTEMMetadata because LIST operation is the same and SET/DELETE operations are tested explicitly
         try {
@@ -506,7 +506,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->cannotDeleteMetadata($client, $metadataId);
     }
 
-    private function cannotManageMetadataBecauseOfMissingMFA($client, array $metadata = self::TEST_METADATA)
+    private function cannotManageMetadataBecauseOfMissingMFA($client, array $metadata = self::TEST_METADATA): void
     {
         try {
             $client->listOrganizationMetadata($this->organization['id']);
@@ -533,7 +533,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         }
     }
 
-    private function cannotSetSystemMetadata($client, array $metadata = self::TEST_METADATA)
+    private function cannotSetSystemMetadata($client, array $metadata = self::TEST_METADATA): void
     {
         try {
             $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, $metadata);
@@ -548,14 +548,14 @@ class OrganizationsMetadataTest extends ClientTestCase
      * @param Client $client
      * @param int $metadataId
      */
-    private function deleteAndCheckMetadata(Client $client, int $metadataId)
+    private function deleteAndCheckMetadata(Client $client, int $metadataId): void
     {
         $client->deleteOrganizationMetadata($this->organization['id'], $metadataId);
         $metadataArray = $this->client->listOrganizationMetadata($this->organization['id']);
         $this->assertCount(1, $metadataArray);
     }
 
-    private function cannotDeleteMetadata($client, $metadataId)
+    private function cannotDeleteMetadata($client, $metadataId): void
     {
         try {
             $client->deleteOrganizationMetadata($this->organization['id'], $metadataId);

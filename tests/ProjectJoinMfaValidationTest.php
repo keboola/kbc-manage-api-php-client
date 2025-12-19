@@ -33,7 +33,7 @@ class ProjectJoinMfaValidationTest extends ClientMfaTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testSuperAdminWithoutMfaCannotJoinProject()
+    public function testSuperAdminWithoutMfaCannotJoinProject(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -56,7 +56,7 @@ class ProjectJoinMfaValidationTest extends ClientMfaTestCase
         $this->assertNull($projectUser);
     }
 
-    public function testOrganizationAdminWithMfaCanJoinProject()
+    public function testOrganizationAdminWithMfaCanJoinProject(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 

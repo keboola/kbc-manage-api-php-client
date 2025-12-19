@@ -17,7 +17,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider canBeManageByAdminProvider
      */
-    public function testSuperAdminCanManageAdminFeatureForAnybody(bool $canBeManageByAdmin)
+    public function testSuperAdminCanManageAdminFeatureForAnybody(bool $canBeManageByAdmin): void
     {
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
@@ -57,7 +57,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider provideVariousOfTokensClient
      */
-    public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI()
+    public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI(): void
     {
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
@@ -119,7 +119,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider provideVariousOfTokensClient
      */
-    public function testUserCanManageOwnFeatures()
+    public function testUserCanManageOwnFeatures(): void
     {
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
@@ -160,7 +160,7 @@ class AssignAdminFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider provideVariousOfTokensClient
      */
-    public function testUserCanNotManageOtherUserFeatures()
+    public function testUserCanNotManageOtherUserFeatures(): void
     {
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
