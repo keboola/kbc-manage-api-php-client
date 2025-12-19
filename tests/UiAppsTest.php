@@ -7,7 +7,7 @@ use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
 class UiAppsTest extends ClientTestCase
 {
-    public function testAppCreationAndDeletion()
+    public function testAppCreationAndDeletion(): void
     {
         $client = $this->getClient([
             'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithUiManageScope(),
@@ -17,7 +17,7 @@ class UiAppsTest extends ClientTestCase
 
         $newAppName = 'Sample KBC Application';
 
-        $listOfAppsBeforeCreation = array_map(function ($app) {
+        $listOfAppsBeforeCreation = array_map(function (array $app) {
             return $app['name'];
         }, $client->listUiApps());
         sort($listOfAppsBeforeCreation);
@@ -31,14 +31,14 @@ class UiAppsTest extends ClientTestCase
             'activate' => true,
         ]);
 
-        $listOfAppsAfterCreation = array_map(function ($app) {
+        $listOfAppsAfterCreation = array_map(function (array $app) {
             return $app['name'];
         }, $client->listUiApps());
         sort($listOfAppsAfterCreation);
 
         $client->deleteUiApp($newAppName);
 
-        $listOfAppsAfterDeletion = array_map(function ($app) {
+        $listOfAppsAfterDeletion = array_map(function (array $app) {
             return $app['name'];
         }, $client->listUiApps());
         sort($listOfAppsAfterDeletion);
@@ -48,7 +48,7 @@ class UiAppsTest extends ClientTestCase
         $this->assertEquals($listOfAppsBeforeCreation, $listOfAppsAfterDeletion);
     }
 
-    public function testAppCreationWithIsCritical()
+    public function testAppCreationWithIsCritical(): void
     {
         $client = $this->getClient([
             'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithUiManageScope(),
@@ -76,7 +76,7 @@ class UiAppsTest extends ClientTestCase
         $this->assertEquals(true, $apps[$key]['isCritical']);
     }
 
-    public function testPublicList()
+    public function testPublicList(): void
     {
         $client = $this->getClient([
             'token' => 'token is not required for this api all',

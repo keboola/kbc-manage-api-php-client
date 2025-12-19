@@ -32,7 +32,7 @@ class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testSuperAdminWithoutMfaCannotJoinOrganization()
+    public function testSuperAdminWithoutMfaCannotJoinOrganization(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
 
@@ -54,7 +54,7 @@ class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
         $this->assertNull($member);
     }
 
-    public function testMaintainerAdminWithoutMfaCannotJoinOrganization()
+    public function testMaintainerAdminWithoutMfaCannotJoinOrganization(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 

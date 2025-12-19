@@ -7,11 +7,10 @@ use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
 class SessionTokensTest extends ClientTestCase
 {
-    /** @var array */
-    private $sessionToken;
+    private array $sessionToken;
 
     /** @var \Keboola\ManageApi\Client */
-    private $sessionTokenClient;
+    private \Keboola\ManageApi\Client $sessionTokenClient;
 
     public function setUp(): void
     {
@@ -26,7 +25,7 @@ class SessionTokensTest extends ClientTestCase
         ]);
     }
 
-    public function testSessionTokenProperties()
+    public function testSessionTokenProperties(): void
     {
         $this->assertEquals($this->normalUser['id'], $this->sessionToken['user']['id']);
         $this->assertEquals($this->normalUser['email'], $this->sessionToken['user']['email']);
@@ -36,7 +35,7 @@ class SessionTokensTest extends ClientTestCase
         $this->assertTrue(strtotime($this->sessionToken['expires']) <= strtotime($this->sessionToken['created']) + 3600);
     }
 
-    public function testMaintainersManipulation()
+    public function testMaintainersManipulation(): void
     {
         // get maintainers
         $maintainers = $this->sessionTokenClient->listMaintainers();
@@ -70,7 +69,7 @@ class SessionTokensTest extends ClientTestCase
         }
     }
 
-    public function testOrganizationsManipulation()
+    public function testOrganizationsManipulation(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
@@ -92,7 +91,7 @@ class SessionTokensTest extends ClientTestCase
         }
     }
 
-    public function testProjectManipulation()
+    public function testProjectManipulation(): void
     {
         $organization1 = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - project manipulation 1',
@@ -132,7 +131,7 @@ class SessionTokensTest extends ClientTestCase
         }
     }
 
-    public function testProjectUsersManipulation()
+    public function testProjectUsersManipulation(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - users manipulation',
@@ -162,7 +161,7 @@ class SessionTokensTest extends ClientTestCase
         }
     }
 
-    public function testProjectInvitationsManipulation()
+    public function testProjectInvitationsManipulation(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - invitations manipulation',
@@ -187,7 +186,7 @@ class SessionTokensTest extends ClientTestCase
         $this->assertEquals(0, count($invitationsAfterCancel));
     }
 
-    public function testProjectJoinRequestsManipulation()
+    public function testProjectJoinRequestsManipulation(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - join requests manipulation',

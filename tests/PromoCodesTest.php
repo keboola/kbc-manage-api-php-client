@@ -41,7 +41,7 @@ class PromoCodesTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testMaintainerAdminCanListAndCreatePromoCodes()
+    public function testMaintainerAdminCanListAndCreatePromoCodes(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['id' => $this->normalUser['id']]);
 
@@ -60,7 +60,7 @@ class PromoCodesTest extends ClientTestCase
         $this->assertEquals($promoCode, end($promoCodesAfterCreate));
     }
 
-    public function testCannotListPromoCodesFromRemovedOrganization()
+    public function testCannotListPromoCodesFromRemovedOrganization(): void
     {
         $promoCodeCode = 'TEST-' . time();
         $this->client->createPromoCode($this->testMaintainerId, [
@@ -71,19 +71,19 @@ class PromoCodesTest extends ClientTestCase
         ]);
 
         $listBeforeRemoveOrganization = $this->client->listPromoCodes($this->testMaintainerId);
-        $this->assertCount(1, array_filter($listBeforeRemoveOrganization, function ($item) use ($promoCodeCode) {
+        $this->assertCount(1, array_filter($listBeforeRemoveOrganization, function (array $item) use ($promoCodeCode): bool {
             return $item['code'] === $promoCodeCode;
         }));
 
         $this->client->deleteOrganization($this->organization['id']);
 
         $listAfterRemoveOrganization = $this->client->listPromoCodes($this->testMaintainerId);
-        $this->assertCount(0, array_filter($listAfterRemoveOrganization, function ($item) use ($promoCodeCode) {
+        $this->assertCount(0, array_filter($listAfterRemoveOrganization, function (array $item) use ($promoCodeCode): bool {
             return $item['code'] === $promoCodeCode;
         }));
     }
 
-    public function testDifferentOrganizationMaintainerCannotCreatePromoCodes()
+    public function testDifferentOrganizationMaintainerCannotCreatePromoCodes(): void
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
 
@@ -108,7 +108,7 @@ class PromoCodesTest extends ClientTestCase
         ]);
     }
 
-    public function testListUsedPromoCodesCreateProjectRemoveProject()
+    public function testListUsedPromoCodesCreateProjectRemoveProject(): void
     {
         $promoCodeCode = 'TEST-' . time();
         $this->client->createPromoCode($this->testMaintainerId, [
@@ -119,20 +119,20 @@ class PromoCodesTest extends ClientTestCase
         ]);
         $project = $this->normalUserClient->createProjectFromPromoCode($promoCodeCode);
 
-        $usedPromoCodesAfterCreateProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function ($val) use ($promoCodeCode) {
+        $usedPromoCodesAfterCreateProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function (array $val) use ($promoCodeCode): bool {
             return $val['code'] === $promoCodeCode;
         });
         $this->assertEquals(1, count($usedPromoCodesAfterCreateProject));
 
         $this->normalUserClient->deleteProject($project['id']);
 
-        $usedPromoCodesAfterRemoveProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function ($val) use ($promoCodeCode) {
+        $usedPromoCodesAfterRemoveProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function (array $val) use ($promoCodeCode): bool {
             return $val['code'] === $promoCodeCode;
         });
         $this->assertEquals(0, count($usedPromoCodesAfterRemoveProject));
     }
 
-    public function testSuperAdminCanListAndCreatePromoCodes()
+    public function testSuperAdminCanListAndCreatePromoCodes(): void
     {
         $promoCodesBeforeCreate = $this->client->listPromoCodes($this->testMaintainerId);
         $promoCode = $this->client->createPromoCode($this->testMaintainerId, [
@@ -148,7 +148,7 @@ class PromoCodesTest extends ClientTestCase
         $this->assertEquals($promoCode, end($promoCodesAfterCreate));
     }
 
-    public function testCannotCreateDuplicatePromoCode()
+    public function testCannotCreateDuplicatePromoCode(): void
     {
         $promoCodeCode = 'TEST-' . time();
         $promoCode = [
@@ -168,7 +168,7 @@ class PromoCodesTest extends ClientTestCase
         $this->client->createPromoCode($this->testMaintainerId, $promoCode);
     }
 
-    public function testOrganizationAdminCannotListPromoCode()
+    public function testOrganizationAdminCannotListPromoCode(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
@@ -179,7 +179,7 @@ class PromoCodesTest extends ClientTestCase
         $this->normalUserClient->listPromoCodes($this->testMaintainerId);
     }
 
-    public function testOrganizationAdminCannotCreatePromoCode()
+    public function testOrganizationAdminCannotCreatePromoCode(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
@@ -194,7 +194,7 @@ class PromoCodesTest extends ClientTestCase
         ]);
     }
 
-    public function testRandomAdminCannotCreatePromoCode()
+    public function testRandomAdminCannotCreatePromoCode(): void
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(403);
@@ -207,7 +207,7 @@ class PromoCodesTest extends ClientTestCase
         ]);
     }
 
-    public function testInvalidOrganization()
+    public function testInvalidOrganization(): void
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(404);
@@ -220,7 +220,7 @@ class PromoCodesTest extends ClientTestCase
         ]);
     }
 
-    public function testNonexistsProjectTemplate()
+    public function testNonexistsProjectTemplate(): void
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(404);
@@ -233,7 +233,7 @@ class PromoCodesTest extends ClientTestCase
         ]);
     }
 
-    public function testRandomAdminCreateProjectFromPromoCodes()
+    public function testRandomAdminCreateProjectFromPromoCodes(): void
     {
         $testingPromoCode = 'TEST-' . time();
         $this->client->createPromoCode($this->testMaintainerId, [
@@ -254,7 +254,7 @@ class PromoCodesTest extends ClientTestCase
         $this->assertEquals($detailProject, $newProject);
     }
 
-    public function testCannotCreateDuplicateProjectFromPromoCode()
+    public function testCannotCreateDuplicateProjectFromPromoCode(): void
     {
         $testingPromoCode = 'TEST-' . time();
 
@@ -272,7 +272,7 @@ class PromoCodesTest extends ClientTestCase
         $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
     }
 
-    public function testCreateProjectFromNonexistsPromoCode()
+    public function testCreateProjectFromNonexistsPromoCode(): void
     {
         $testingPromoCode = 'TEST-' . time();
 
@@ -282,7 +282,7 @@ class PromoCodesTest extends ClientTestCase
         $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
     }
 
-    public function testCannotCreateProjectFromPromoCodeDeletedOrganization()
+    public function testCannotCreateProjectFromPromoCodeDeletedOrganization(): void
     {
         $testingPromoCode = 'TEST-' . time();
 

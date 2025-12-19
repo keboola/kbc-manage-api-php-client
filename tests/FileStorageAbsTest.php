@@ -27,7 +27,7 @@ class FileStorageAbsTest extends ClientTestCase
         'awsSecret' => TEST_S3_ROTATE_SECRET,
     ];
 
-    public function testFileStorageAbsCreate()
+    public function testFileStorageAbsCreate(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
@@ -39,7 +39,7 @@ class FileStorageAbsTest extends ClientTestCase
         $this->assertArrayNotHasKey('gcsSnowflakeIntegrationName', $storage);
     }
 
-    public function testRotateAbsKey()
+    public function testRotateAbsKey(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
@@ -51,7 +51,7 @@ class FileStorageAbsTest extends ClientTestCase
         $this->assertFalse($rotatedStorage['isDefault']);
     }
 
-    public function testListAbsStorages()
+    public function testListAbsStorages(): void
     {
         $initCount = count($this->client->listAbsFileStorage());
         $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
@@ -66,7 +66,7 @@ class FileStorageAbsTest extends ClientTestCase
         }
     }
 
-    public function testSetAbsStorageAsDefault()
+    public function testSetAbsStorageAsDefault(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
@@ -93,7 +93,7 @@ class FileStorageAbsTest extends ClientTestCase
         }
     }
 
-    public function testCrossProviderStorageDefaultAbsS3()
+    public function testCrossProviderStorageDefaultAbsS3(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
@@ -102,7 +102,7 @@ class FileStorageAbsTest extends ClientTestCase
         $this->client->setS3FileStorageAsDefault($storage['id']);
     }
 
-    public function testCreateAbsStorageWithoutRequiredParam()
+    public function testCreateAbsStorageWithoutRequiredParam(): void
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage('Invalid request:
@@ -121,7 +121,7 @@ Errors:
         $this->client->createAbsFileStorage([]);
     }
 
-    public function testRotateAbsCredentialsWithoutRequiredParams()
+    public function testRotateAbsCredentialsWithoutRequiredParams(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
@@ -135,7 +135,7 @@ Errors:
         $this->client->rotateAbsFileStorageCredentials($storage['id'], []);
     }
 
-    public function testProjectAssignAbsFileStorage()
+    public function testProjectAssignAbsFileStorage(): void
     {
         $this->markTestSkipped('Will be enabled after Azure FS will be fully working');
 
@@ -156,7 +156,7 @@ Errors:
         $this->assertEquals($storage['id'], $project['fileStorage']['id']);
     }
 
-    public function testCrossProviderStorageCredentialsRotateAbsS3()
+    public function testCrossProviderStorageCredentialsRotateAbsS3(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 

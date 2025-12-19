@@ -12,13 +12,13 @@ class CommandsTest extends ClientTestCase
      * @dataProvider  validParameters
      * @param $parameters
      */
-    public function testSuperAdminShouldBeAllowedToRunCommand($parameters)
+    public function testSuperAdminShouldBeAllowedToRunCommand(array $parameters): void
     {
         $response = $this->client->runCommand($parameters);
         $this->assertArrayHasKey('commandExecutionId', $response);
     }
 
-    public function testNormalUserShouldNotBeAllowedToRunCommand()
+    public function testNormalUserShouldNotBeAllowedToRunCommand(): void
     {
         try {
             $this->normalUserClient->runCommand([
@@ -37,7 +37,7 @@ class CommandsTest extends ClientTestCase
      * @dataProvider  invalidParameters
      * @param $parameters
      */
-    public function testInvalidParameters($parameters)
+    public function testInvalidParameters(array $parameters): void
     {
         try {
             $this->client->runCommand($parameters);
@@ -47,7 +47,7 @@ class CommandsTest extends ClientTestCase
         }
     }
 
-    public function validParameters()
+    public function validParameters(): array
     {
         return [
             [
@@ -66,7 +66,7 @@ class CommandsTest extends ClientTestCase
         ];
     }
 
-    public function invalidParameters()
+    public function invalidParameters(): array
     {
         return [
             [

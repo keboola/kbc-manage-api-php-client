@@ -16,7 +16,7 @@ class FeaturesTest extends BaseFeatureTest
     /**
      * @dataProvider featureProvider
      */
-    public function testNormalUserCannotSeeTheSameFeatureAsSuperAdmin(array $createFeature, array $expectedFeature)
+    public function testNormalUserCannotSeeTheSameFeatureAsSuperAdmin(array $createFeature, array $expectedFeature): void
     {
         $createdFeature = $this->client->createFeature(
             $createFeature['name'],
@@ -72,7 +72,7 @@ class FeaturesTest extends BaseFeatureTest
     /**
      * @dataProvider featureProvider
      */
-    public function testNormalUserWithFeatureCanSeeTheSameFeatureAsSuperAdmin(array $createFeature, array $expectedFeature)
+    public function testNormalUserWithFeatureCanSeeTheSameFeatureAsSuperAdmin(array $createFeature, array $expectedFeature): void
     {
         $this->client->addUserFeature($this->normalUser['email'], 'can-manage-features');
         $this->client->createFeature(
@@ -118,7 +118,7 @@ class FeaturesTest extends BaseFeatureTest
     /**
      * @dataProvider featureProvider
      */
-    public function testCreateListAndDeleteFeature(array $createFeature, array $expectedFeature)
+    public function testCreateListAndDeleteFeature(array $createFeature, array $expectedFeature): void
     {
         $this->client->createFeature(
             $createFeature['name'],
@@ -266,7 +266,7 @@ class FeaturesTest extends BaseFeatureTest
         ];
     }
 
-    public function testFilterFeatures()
+    public function testFilterFeatures(): void
     {
         $expectedFeature = $this->prepareRandomFeature('project');
 
@@ -309,7 +309,7 @@ class FeaturesTest extends BaseFeatureTest
         $this->client->removeFeature($createdFeature['id']);
     }
 
-    public function testFeatureDetail()
+    public function testFeatureDetail(): void
     {
         $newFeature = $this->prepareRandomFeature('admin');
 
@@ -330,7 +330,7 @@ class FeaturesTest extends BaseFeatureTest
     }
 
 
-    public function testFeatureDetailProjects()
+    public function testFeatureDetailProjects(): void
     {
         $newFeature = $this->prepareRandomFeature('project');
 
@@ -375,7 +375,7 @@ class FeaturesTest extends BaseFeatureTest
         $this->client->removeFeature($insertedFeature['id']);
     }
 
-    public function testFeatureDetailAdmins()
+    public function testFeatureDetailAdmins(): void
     {
         $newFeature = $this->prepareRandomFeature('admin');
 
@@ -418,7 +418,7 @@ class FeaturesTest extends BaseFeatureTest
     }
 
 
-    public function testCreateSameFeatureTwice()
+    public function testCreateSameFeatureTwice(): void
     {
         $initialFeaturesCount = count($this->client->listFeatures());
 
@@ -449,7 +449,7 @@ class FeaturesTest extends BaseFeatureTest
         $this->client->removeFeature($newFeatureCreated['id']);
     }
 
-    public function testCreateFeatureWithWrongType()
+    public function testCreateFeatureWithWrongType(): void
     {
         $newFeature = $this->prepareRandomFeature('random-feature-type');
 
@@ -466,7 +466,7 @@ class FeaturesTest extends BaseFeatureTest
         }
     }
 
-    public function testRemoveNonexistentFeature()
+    public function testRemoveNonexistentFeature(): void
     {
         $features = $this->client->listFeatures();
         $lastFeature = end($features);

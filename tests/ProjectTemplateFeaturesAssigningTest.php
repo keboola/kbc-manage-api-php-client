@@ -9,7 +9,7 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
 {
     public const TEST_PROJECT_TEMPLATE_STRING_ID = 'demo';
 
-    public function testAutomatedFeatureAssigning()
+    public function testAutomatedFeatureAssigning(): void
     {
         $randomFeature = $this->prepareRandomFeature();
         $this->createFeature($randomFeature);
@@ -51,7 +51,7 @@ class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
         ];
     }
 
-    private function createFeature($feature): void
+    private function createFeature(array $feature): void
     {
         $this->client->createFeature($feature['name'], $feature['type'], $feature['title'], $feature['description']);
     }

@@ -252,7 +252,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider provideVariousOfTokensClient
      */
-    public function testAdminProjectMemberCannotManageFeatureCannotBeManageByAdmin()
+    public function testAdminProjectMemberCannotManageFeatureCannotBeManageByAdmin(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -317,7 +317,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider provideVariousOfTokensClient
      */
-    public function testProjectMemberCannotManageFeatureCannotBeManagedViaAPI()
+    public function testProjectMemberCannotManageFeatureCannotBeManagedViaAPI(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);

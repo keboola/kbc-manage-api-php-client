@@ -57,7 +57,7 @@ class FileStorageGcsTest extends ClientTestCase
         return $credentials;
     }
 
-    public function testFileStorageGcsCreate()
+    public function testFileStorageGcsCreate(): void
     {
         $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
@@ -71,7 +71,7 @@ class FileStorageGcsTest extends ClientTestCase
         $this->assertStringEndsWith('_' . $storage['id'] . '_GCS', $storage['gcsSnowflakeIntegrationName']);
     }
 
-    public function testRotateGcsKey()
+    public function testRotateGcsKey(): void
     {
         $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
         $rotateOptions = $this->getGcsRotateOptions();
@@ -86,7 +86,7 @@ class FileStorageGcsTest extends ClientTestCase
         $this->assertSame($rotatedGcsCredentials['private_key_id'], $rotatedGcsCredentials['private_key_id']);
     }
 
-    public function testListGcsStorages()
+    public function testListGcsStorages(): void
     {
         $initCount = count($this->client->listGcsFileStorage());
         $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
@@ -101,7 +101,7 @@ class FileStorageGcsTest extends ClientTestCase
         }
     }
 
-    public function testSetGcsStorageAsDefault()
+    public function testSetGcsStorageAsDefault(): void
     {
         $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
@@ -128,7 +128,7 @@ class FileStorageGcsTest extends ClientTestCase
         }
     }
 
-    public function testCrossProviderStorageDefaultGcsS3()
+    public function testCrossProviderStorageDefaultGcsS3(): void
     {
         $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
@@ -137,7 +137,7 @@ class FileStorageGcsTest extends ClientTestCase
         $this->client->setS3FileStorageAsDefault($storage['id']);
     }
 
-    public function testCreateGcsStorageWithoutRequiredParam()
+    public function testCreateGcsStorageWithoutRequiredParam(): void
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage('Invalid request:
@@ -172,7 +172,7 @@ Errors:
         $this->client->createGcsFileStorage(['gcsCredentials'=>[]]);
     }
 
-    public function testRotateGcsCredentialsWithoutRequiredParams()
+    public function testRotateGcsCredentialsWithoutRequiredParams(): void
     {
         $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 
@@ -204,7 +204,7 @@ Errors:
         $this->client->rotateGcsFileStorageCredentials($storage['id'], ['gcsCredentials'=>[]]);
     }
 
-    public function testProjectAssignGcsFileStorage()
+    public function testProjectAssignGcsFileStorage(): void
     {
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -223,7 +223,7 @@ Errors:
         $this->assertEquals($storage['id'], $project['fileStorage']['id']);
     }
 
-    public function testCrossProviderStorageCredentialsRotateGcsS3()
+    public function testCrossProviderStorageCredentialsRotateGcsS3(): void
     {
         $storage = $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
 

@@ -2191,7 +2191,7 @@ class ProjectsTest extends ClientTestCase
      * @dataProvider provideProjectCredits
      * @param int|float $givenCredits
      */
-    public function testSuperAdminCanGiveProjectCredits($givenCredits): void
+    public function testSuperAdminCanGiveProjectCredits(int|float $givenCredits): void
     {
         $this->client->removeUserFeature($this->superAdmin['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
 
@@ -2236,7 +2236,7 @@ class ProjectsTest extends ClientTestCase
      * @dataProvider provideProjectCredits
      * @param int|float $givenCredits
      */
-    public function testAdminWithFeatureCanGiveProjectCredits($givenCredits): void
+    public function testAdminWithFeatureCanGiveProjectCredits(int|float $givenCredits): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
         $this->client->addUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);

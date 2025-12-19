@@ -154,7 +154,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         $this->client->deleteMaintainer($maintainer['id']);
     }
 
-    public function testStorageBackendRemove()
+    public function testStorageBackendRemove(): void
     {
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -176,7 +176,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         $this->assertEmpty($project['backends']);
     }
 
-    public function testStorageBackendShouldNotBeRemovedIfThereAreBuckets()
+    public function testStorageBackendShouldNotBeRemovedIfThereAreBuckets(): void
     {
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
