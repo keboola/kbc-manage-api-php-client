@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
 
@@ -49,7 +50,7 @@ final class CommandsTest extends ClientTestCase
         }
     }
 
-    public function validParameters(): \Iterator
+    public function validParameters(): Iterator
     {
         yield [
             [
@@ -66,7 +67,7 @@ final class CommandsTest extends ClientTestCase
         ];
     }
 
-    public function invalidParameters(): \Iterator
+    public function invalidParameters(): Iterator
     {
         yield [
             [

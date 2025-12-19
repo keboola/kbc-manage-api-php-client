@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
@@ -555,7 +556,7 @@ final class ProjectsMetadataTest extends ClientTestCase
     }
 
     // project member
-    public function allowedAddMetadataRoles(): \Iterator
+    public function allowedAddMetadataRoles(): Iterator
     {
         yield 'admin' => [
             ProjectRole::ADMIN,
@@ -782,7 +783,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
-    public function notAllowedAddMetadataRoles(): \Iterator
+    public function notAllowedAddMetadataRoles(): Iterator
     {
         yield 'guest' => [
             ProjectRole::GUEST,
@@ -836,7 +837,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
-    public function allowedListMetadataRoles(): \Iterator
+    public function allowedListMetadataRoles(): Iterator
     {
         yield 'admin' => [
             ProjectRole::ADMIN,

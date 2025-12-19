@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Generator;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
@@ -453,7 +454,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
-    public function notAllowedAddFeaturesRoles(): \Iterator
+    public function notAllowedAddFeaturesRoles(): Iterator
     {
         yield 'guest manage token' => [
             ProjectRole::GUEST,

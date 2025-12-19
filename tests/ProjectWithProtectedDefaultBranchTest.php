@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Generator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
@@ -53,7 +54,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
 
     private function createProject(string $userEmail, ?Client $client = null): array
     {
-        if (!$client instanceof \Keboola\ManageApi\Client) {
+        if (!$client instanceof Client) {
             $client = $this->client;
         }
         $this->client->addUserToOrganization(
@@ -86,7 +87,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         ];
     }
 
-    public function inviteUserToProjectWithRoleData(): \Iterator
+    public function inviteUserToProjectWithRoleData(): Iterator
     {
         yield [
             ProjectRole::PRODUCTION_MANAGER,
@@ -102,7 +103,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         ];
     }
 
-    public function inviteUserToProjectInvalidRoleData(): \Iterator
+    public function inviteUserToProjectInvalidRoleData(): Iterator
     {
         yield [
             ProjectRole::ADMIN,

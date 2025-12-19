@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
@@ -16,7 +17,7 @@ final class ProjectMembershipRolesTest extends ClientMfaTestCase
 
     private array $project;
 
-    private \Keboola\ManageApi\Client $guestRoleMemberClient;
+    private Client $guestRoleMemberClient;
 
     private array $guestUser;
 
@@ -44,7 +45,7 @@ final class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->guestUser = $this->normalUser;
     }
 
-    public function limitedRolesData(): \Iterator
+    public function limitedRolesData(): Iterator
     {
         yield [
             ProjectRole::GUEST,
@@ -54,7 +55,7 @@ final class ProjectMembershipRolesTest extends ClientMfaTestCase
         ];
     }
 
-    public function adminRolesData(): \Iterator
+    public function adminRolesData(): Iterator
     {
         yield [
             ProjectRole::SHARE,

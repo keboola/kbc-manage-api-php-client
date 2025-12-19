@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
@@ -46,7 +47,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): \Iterator
+    public function autoJoinProvider(): Iterator
     {
         yield [
             true,
@@ -56,7 +57,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         ];
     }
 
-    public function inviteUserToProjectWithRoleData(): \Iterator
+    public function inviteUserToProjectWithRoleData(): Iterator
     {
         yield [
             ProjectRole::ADMIN,

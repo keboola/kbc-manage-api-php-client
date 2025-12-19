@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
@@ -11,8 +12,8 @@ final class SessionTokensTest extends ClientTestCase
 {
     private array $sessionToken;
 
-    /** @var \Keboola\ManageApi\Client */
-    private \Keboola\ManageApi\Client $sessionTokenClient;
+    /** @var Client */
+    private Client $sessionTokenClient;
 
     public function setUp(): void
     {

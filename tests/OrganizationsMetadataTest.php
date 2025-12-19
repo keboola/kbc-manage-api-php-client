@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\Exception;
@@ -83,7 +84,7 @@ final class OrganizationsMetadataTest extends ClientTestCase
         $this->client->removeUserFeature($this->normalUser['id'], self::FEATURE_SAML_METADATA_ACCESS);
     }
 
-    public function allProjectRoles(): \Iterator
+    public function allProjectRoles(): Iterator
     {
         yield 'admin' => [
             ProjectRole::ADMIN,
@@ -99,7 +100,7 @@ final class OrganizationsMetadataTest extends ClientTestCase
         ];
     }
 
-    public function providers(): \Iterator
+    public function providers(): Iterator
     {
         yield 'system provider' => [
             self::PROVIDER_SYSTEM,
