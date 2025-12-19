@@ -119,7 +119,7 @@ class FileStorageGcsTest extends ClientTestCase
             }
 
             if ($item['isDefault']) {
-                array_push($regions, $item['region']);
+                $regions[] = $item['region'];
             }
 
             if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === $this->getGcsDefaultOptions()['region']) {

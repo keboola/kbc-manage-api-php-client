@@ -360,7 +360,7 @@ class ClientTestCase extends TestCase
                 throw new Exception('Project delete timed out.');
             }
             sleep(1);
-        } while ($isProjectDeleted !== true);
+        } while (!$isProjectDeleted);
 
         // reset the clock
         $startTime = time();

@@ -61,8 +61,8 @@ class Client
     {
         $handlerStack = HandlerStack::create();
         $handlerStack->push(Middleware::retry(
-            self::createDefaultDecider($this->backoffMaxTries),
-            self::createExponentialDelay()
+            $this->createDefaultDecider($this->backoffMaxTries),
+            $this->createExponentialDelay()
         ));
 
         $this->client = new GuzzleClient([
@@ -71,7 +71,7 @@ class Client
         ]);
     }
 
-    private static function createDefaultDecider($maxRetries = 3)
+    private function createDefaultDecider($maxRetries = 3)
     {
         return function (
             $retries,
@@ -91,7 +91,7 @@ class Client
         };
     }
 
-    private static function createExponentialDelay()
+    private function createExponentialDelay()
     {
         return function ($retries) {
             return (int) pow(2, $retries - 1) * 1000;
@@ -937,7 +937,7 @@ class Client
             $response = $this->client->request($method, $url, $requestOptions);
         } catch (RequestException $e) {
             $response = $e->getResponse();
-            $body = $response ? json_decode((string) $response->getBody(), true) : [];
+            $body = $response instanceof \Psr\Http\Message\ResponseInterface ? json_decode((string) $response->getBody(), true) : [];
 
             if ($response && $response->getStatusCode() === 503) {
                 throw new MaintenanceException(isset($body['reason']) ? $body['reason'] : 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
@@ -945,7 +945,7 @@ class Client
 
             throw new ClientException(
                 $this->composeErrorMessage($e, $body),
-                $response ? $response->getStatusCode() : $e->getCode(),
+                $response instanceof \Psr\Http\Message\ResponseInterface ? $response->getStatusCode() : $e->getCode(),
                 $e,
                 isset($body['code']) ? $body['code'] : '',
                 $body

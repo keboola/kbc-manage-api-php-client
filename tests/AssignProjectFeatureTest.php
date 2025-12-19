@@ -609,7 +609,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     private function assertProjectHasFeature(string $featureName, array $features): void
     {
         $featureFound = null;
-        if (array_search($featureName, $features) !== false) {
+        if (in_array($featureName, $features)) {
             $featureFound = $featureName;
         }
         $this->assertNotNull($featureFound);
@@ -618,7 +618,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     private function assertProjectHasNotFeature(string $featureName, array $features): void
     {
         $featureFound = null;
-        if (array_search($featureName, $features) !== false) {
+        if (in_array($featureName, $features)) {
             $featureFound = $featureName;
         }
         $this->assertNull($featureFound);

@@ -120,20 +120,14 @@ class PromoCodesTest extends ClientTestCase
         $project = $this->normalUserClient->createProjectFromPromoCode($promoCodeCode);
 
         $usedPromoCodesAfterCreateProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function ($val) use ($promoCodeCode) {
-            if ($val['code'] === $promoCodeCode) {
-                return true;
-            }
-            return false;
+            return $val['code'] === $promoCodeCode;
         });
         $this->assertEquals(1, count($usedPromoCodesAfterCreateProject));
 
         $this->normalUserClient->deleteProject($project['id']);
 
         $usedPromoCodesAfterRemoveProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function ($val) use ($promoCodeCode) {
-            if ($val['code'] === $promoCodeCode) {
-                return true;
-            }
-            return false;
+            return $val['code'] === $promoCodeCode;
         });
         $this->assertEquals(0, count($usedPromoCodesAfterRemoveProject));
     }
@@ -284,7 +278,7 @@ class PromoCodesTest extends ClientTestCase
 
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
-        $this->expectExceptionMessage(sprintf('Specified code was not found or is no longer valid.'));
+        $this->expectExceptionMessage('Specified code was not found or is no longer valid.');
         $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
     }
 
@@ -302,7 +296,7 @@ class PromoCodesTest extends ClientTestCase
         $this->client->deleteOrganization($this->organization['id']);
         $this->expectException(ClientException::class);
         $this->expectExceptionCode(400);
-        $this->expectExceptionMessage(sprintf('Specified code was not found or is no longer valid.'));
+        $this->expectExceptionMessage('Specified code was not found or is no longer valid.');
         $this->normalUserClient->createProjectFromPromoCode($testingPromoCode);
     }
 }

@@ -47,15 +47,13 @@ class BaseFeatureTest extends ClientTestCase
 
     protected function getNormalUserClient(): CLient
     {
-        if ($this->usesDataProvider()) {
-            if (in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
-                $sessionToken = $this->normalUserClient->createSessionToken();
-                return $this->getClient([
-                    'token' => $sessionToken['token'],
-                    'url' => EnvVariableHelper::getKbcManageApiUrl(),
-                    'backoffMaxTries' => 0,
-                ]);
-            }
+        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+            $sessionToken = $this->normalUserClient->createSessionToken();
+            return $this->getClient([
+                'token' => $sessionToken['token'],
+                'url' => EnvVariableHelper::getKbcManageApiUrl(),
+                'backoffMaxTries' => 0,
+            ]);
         }
 
         return $this->normalUserClient;
@@ -63,15 +61,13 @@ class BaseFeatureTest extends ClientTestCase
 
     protected function getSuperAdminClient(): Client
     {
-        if ($this->usesDataProvider()) {
-            if (in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
-                $sessionToken = $this->client->createSessionToken();
-                return $this->getClient([
-                    'token' => $sessionToken['token'],
-                    'url' => EnvVariableHelper::getKbcManageApiUrl(),
-                    'backoffMaxTries' => 0,
-                ]);
-            }
+        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+            $sessionToken = $this->client->createSessionToken();
+            return $this->getClient([
+                'token' => $sessionToken['token'],
+                'url' => EnvVariableHelper::getKbcManageApiUrl(),
+                'backoffMaxTries' => 0,
+            ]);
         }
 
         return $this->client;
