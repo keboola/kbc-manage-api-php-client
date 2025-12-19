@@ -256,7 +256,7 @@ final class StorageBackendTest extends ClientTestCase
             $this->client->updateStorageBackend($backend['id'], $wrongOptions);
             $this->fail('Should fail!');
         } catch (ClientException $e) {
-            $this->assertContains('Supplied credentials cannot use the supplied warehouse', $e->getMessage());
+            $this->assertStringContainsString('Supplied credentials cannot use the supplied warehouse', $e->getMessage());
         } finally {
             $this->client->removeStorageBackend($backend['id']);
         }
