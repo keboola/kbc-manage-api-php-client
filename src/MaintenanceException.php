@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApi;
 
 class MaintenanceException extends ClientException
@@ -15,7 +18,7 @@ class MaintenanceException extends ClientException
     /**
      * @return int
      */
-    public function getRetryAfter()
+    public function getRetryAfter(): int
     {
         return $this->retryAfter;
     }

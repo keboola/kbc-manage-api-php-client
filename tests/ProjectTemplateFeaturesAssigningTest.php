@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Backend;
 use Throwable;
 
-class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
+final class ProjectTemplateFeaturesAssigningTest extends ClientTestCase
 {
     public const TEST_PROJECT_TEMPLATE_STRING_ID = 'demo';
 

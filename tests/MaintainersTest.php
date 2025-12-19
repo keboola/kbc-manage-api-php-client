@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Throwable;
 
-class MaintainersTest extends ClientTestCase
+final class MaintainersTest extends ClientTestCase
 {
 
     public function testCreateDeleteMaintainer(): void

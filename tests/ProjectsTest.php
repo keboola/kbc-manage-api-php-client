@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Generator;
@@ -12,7 +14,7 @@ use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
 use Throwable;
 
-class ProjectsTest extends ClientTestCase
+final class ProjectsTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';
@@ -1519,7 +1521,7 @@ class ProjectsTest extends ClientTestCase
         $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
         $organizations = [];
 
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 2; ++$i) {
             $organization = $this->initTestOrganization();
             $organizations[] = $organization;
             $project = $this->initTestProject($organization['id']);

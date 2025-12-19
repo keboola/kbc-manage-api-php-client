@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApi;
 
 use GuzzleHttp\Client as GuzzleClient;
@@ -71,7 +73,7 @@ class Client
         ]);
     }
 
-    private function createDefaultDecider($maxRetries = 3)
+    private function createDefaultDecider(int $maxRetries = 3)
     {
         return function (
             $retries,

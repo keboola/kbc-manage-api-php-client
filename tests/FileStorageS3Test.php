@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
@@ -9,7 +10,7 @@ use function GuzzleHttp\json_encode;
 /**
  * @group FileStorage
  */
-class FileStorageS3Test extends ClientTestCase
+final class FileStorageS3Test extends ClientTestCase
 {
 
     private const ROTATE_ABS_OPTIONS = [

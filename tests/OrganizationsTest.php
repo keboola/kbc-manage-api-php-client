@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class OrganizationsTest extends ClientTestCase
+final class OrganizationsTest extends ClientTestCase
 {
     public function testListOrganizations(): void
     {

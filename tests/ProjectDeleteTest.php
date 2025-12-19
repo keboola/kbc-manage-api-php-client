@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Exception;
@@ -18,7 +20,7 @@ use Keboola\StorageApi\Workspaces;
 /**
  * @retryAttempts 0
  */
-class ProjectDeleteTest extends ClientTestCase
+final class ProjectDeleteTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';

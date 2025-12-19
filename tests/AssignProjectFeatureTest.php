@@ -8,7 +8,7 @@ use Generator;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
-class AssignProjectFeatureTest extends BaseFeatureTest
+final class AssignProjectFeatureTest extends BaseFeatureTest
 {
     public function setUp(): void
     {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Generator;
@@ -9,7 +11,7 @@ use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
+final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
 {
     private $organization;
 

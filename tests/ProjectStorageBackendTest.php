@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use GuzzleHttp\Client as GuzzleClient;
@@ -9,7 +11,7 @@ use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\Client;
 
-class ProjectStorageBackendTest extends ClientTestCase
+final class ProjectStorageBackendTest extends ClientTestCase
 {
     use BackendConfigurationProviderTrait;
 

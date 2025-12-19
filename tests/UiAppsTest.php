@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class UiAppsTest extends ClientTestCase
+final class UiAppsTest extends ClientTestCase
 {
     public function testAppCreationAndDeletion(): void
     {

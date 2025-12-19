@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use GuzzleHttp\Client;
@@ -7,7 +9,7 @@ use GuzzleHttp\Exception\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Psr\Http\Message\ResponseInterface;
 
-class CommonTest extends ClientTestCase
+final class CommonTest extends ClientTestCase
 {
     public function testVerifyAdminToken(): void
     {

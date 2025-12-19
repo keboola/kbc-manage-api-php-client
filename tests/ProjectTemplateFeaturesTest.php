@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class ProjectTemplateFeaturesTest extends ClientTestCase
+final class ProjectTemplateFeaturesTest extends ClientTestCase
 {
     public const TEST_PROJECT_TEMPLATE_STRING_ID = 'productionRedshift';
 

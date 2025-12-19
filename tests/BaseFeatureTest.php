@@ -7,12 +7,12 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class BaseFeatureTest extends ClientTestCase
+final class BaseFeatureTest extends ClientTestCase
 {
     public const MANAGE_TOKEN_CLIENT = 'manageTokenClient';
     public const SESSION_TOKEN_CLIENT = 'sessionTokenClient';
-    protected string $sessionToken;
-    protected array $organization;
+    private string $sessionToken;
+    private array $organization;
 
     public function setUp(): void
     {

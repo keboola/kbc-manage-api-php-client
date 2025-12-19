@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class SessionTokensTest extends ClientTestCase
+final class SessionTokensTest extends ClientTestCase
 {
     private array $sessionToken;
 
