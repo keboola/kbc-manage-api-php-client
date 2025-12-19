@@ -34,7 +34,7 @@ final class SessionTokensTest extends ClientTestCase
 
         $this->assertEquals('session', $this->sessionToken['type']);
         $this->assertTrue($this->sessionToken['isSessionToken']);
-        $this->assertTrue(strtotime($this->sessionToken['expires']) <= strtotime($this->sessionToken['created']) + 3600);
+        $this->assertLessThanOrEqual(strtotime($this->sessionToken['created']) + 3600, strtotime($this->sessionToken['expires']));
     }
 
     public function testMaintainersManipulation(): void
@@ -146,12 +146,12 @@ final class SessionTokensTest extends ClientTestCase
 
         // list project users
         $projectUsers = $this->sessionTokenClient->listProjectUsers($project['id']);
-        $this->assertEquals(2, count($projectUsers));
+        $this->assertCount(2, $projectUsers);
 
         // delete project user
         $this->sessionTokenClient->removeUserFromProject($project['id'], $this->superAdmin['id']);
         $projectUsers = $this->sessionTokenClient->listProjectUsers($project['id']);
-        $this->assertEquals(1, count($projectUsers));
+        $this->assertCount(1, $projectUsers);
 
         // add user to project
         try {
@@ -180,12 +180,12 @@ final class SessionTokensTest extends ClientTestCase
 
         // list invitations via session token
         $invitationsAfterInvite = $this->sessionTokenClient->listProjectInvitations($project['id']);
-        $this->assertEquals(1, count($invitationsAfterInvite));
+        $this->assertCount(1, $invitationsAfterInvite);
 
         // delete invitation via session token
         $this->sessionTokenClient->cancelProjectInvitation($project['id'], $invitationsAfterInvite[0]['id']);
         $invitationsAfterCancel = $this->sessionTokenClient->listProjectInvitations($project['id']);
-        $this->assertEquals(0, count($invitationsAfterCancel));
+        $this->assertCount(0, $invitationsAfterCancel);
     }
 
     public function testProjectJoinRequestsManipulation(): void
@@ -207,27 +207,27 @@ final class SessionTokensTest extends ClientTestCase
 
         // list join requests
         $joinRequests = $this->sessionTokenClient->listProjectJoinRequests($project['id']);
-        $this->assertEquals(1, count($joinRequests));
+        $this->assertCount(1, $joinRequests);
 
         // approve join request
         $this->sessionTokenClient->approveProjectJoinRequest($project['id'], $joinRequests[0]['id']);
 
         // list join requests
         $joinRequestsAfterApproval = $this->sessionTokenClient->listProjectJoinRequests($project['id']);
-        $this->assertEquals(0, count($joinRequestsAfterApproval));
+        $this->assertCount(0, $joinRequestsAfterApproval);
 
         $this->client->removeUserFromProject($project['id'], $this->normalUserWithMfa['id']);
         $this->normalUserWithMfaClient->requestAccessToProject($project['id']);
 
         // list join requests
         $joinRequestsAfter2ndRequest = $this->sessionTokenClient->listProjectJoinRequests($project['id']);
-        $this->assertEquals(1, count($joinRequestsAfter2ndRequest));
+        $this->assertCount(1, $joinRequestsAfter2ndRequest);
 
         // reject join request
         $this->sessionTokenClient->rejectProjectJoinRequest($project['id'], $joinRequestsAfter2ndRequest[0]['id']);
 
         // list join requests
         $joinRequestsAfterRejection = $this->sessionTokenClient->listProjectJoinRequests($project['id']);
-        $this->assertEquals(0, count($joinRequestsAfterRejection));
+        $this->assertCount(0, $joinRequestsAfterRejection);
     }
 }

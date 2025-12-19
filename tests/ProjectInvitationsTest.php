@@ -46,33 +46,29 @@ final class ProjectInvitationsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): array
+    public function autoJoinProvider(): \Iterator
     {
-        return [
-            [
-                true,
-            ],
-            [
-                false,
-            ],
+        yield [
+            true,
+        ];
+        yield [
+            false,
         ];
     }
 
-    public function inviteUserToProjectWithRoleData(): array
+    public function inviteUserToProjectWithRoleData(): \Iterator
     {
-        return [
-            [
-                ProjectRole::ADMIN,
-            ],
-            [
-                ProjectRole::GUEST,
-            ],
-            [
-                ProjectRole::READ_ONLY,
-            ],
-            [
-                ProjectRole::SHARE,
-            ],
+        yield [
+            ProjectRole::ADMIN,
+        ];
+        yield [
+            ProjectRole::GUEST,
+        ];
+        yield [
+            ProjectRole::READ_ONLY,
+        ];
+        yield [
+            ProjectRole::SHARE,
         ];
     }
 
@@ -692,7 +688,7 @@ final class ProjectInvitationsTest extends ClientTestCase
             ]);
             $this->fail('Create project membership with invalid email should produce error');
         } catch (ClientException $e) {
-            $this->assertEquals('Email address is not valid.', $e->getMessage());
+            $this->assertSame('Email address is not valid.', $e->getMessage());
             $this->assertEquals(422, $e->getCode());
         }
 

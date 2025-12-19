@@ -51,33 +51,29 @@ final class MaintainersMetadataTest extends ClientTestCase
         $this->client->removeUserFromMaintainer($this->maintainer['id'], $this->superAdmin['id']);
     }
 
-    public function providers(): array
+    public function providers(): \Iterator
     {
-        return [
-            'system provider' => [
-                self::PROVIDER_SYSTEM,
-            ],
-            'user provider' => [
-                self::PROVIDER_USER,
-            ],
+        yield 'system provider' => [
+            self::PROVIDER_SYSTEM,
+        ];
+        yield 'user provider' => [
+            self::PROVIDER_USER,
         ];
     }
 
-    public function allProjectRoles(): array
+    public function allProjectRoles(): \Iterator
     {
-        return [
-            'admin' => [
-                ProjectRole::ADMIN,
-            ],
-            'share' => [
-                ProjectRole::SHARE,
-            ],
-            'guest' => [
-                ProjectRole::GUEST,
-            ],
-            'read only' => [
-                ProjectRole::READ_ONLY,
-            ],
+        yield 'admin' => [
+            ProjectRole::ADMIN,
+        ];
+        yield 'share' => [
+            ProjectRole::SHARE,
+        ];
+        yield 'guest' => [
+            ProjectRole::GUEST,
+        ];
+        yield 'read only' => [
+            ProjectRole::READ_ONLY,
         ];
     }
 

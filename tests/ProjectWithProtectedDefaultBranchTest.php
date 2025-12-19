@@ -86,36 +86,32 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         ];
     }
 
-    public function inviteUserToProjectWithRoleData(): array
+    public function inviteUserToProjectWithRoleData(): \Iterator
     {
-        return [
-            [
-                ProjectRole::PRODUCTION_MANAGER,
-            ],
-            [
-                ProjectRole::DEVELOPER,
-            ],
-            [
-                ProjectRole::READ_ONLY,
-            ],
-            [
-                ProjectRole::REVIEWER,
-            ],
+        yield [
+            ProjectRole::PRODUCTION_MANAGER,
+        ];
+        yield [
+            ProjectRole::DEVELOPER,
+        ];
+        yield [
+            ProjectRole::READ_ONLY,
+        ];
+        yield [
+            ProjectRole::REVIEWER,
         ];
     }
 
-    public function inviteUserToProjectInvalidRoleData(): array
+    public function inviteUserToProjectInvalidRoleData(): \Iterator
     {
-        return [
-            [
-                ProjectRole::ADMIN,
-            ],
-            [
-                ProjectRole::SHARE,
-            ],
-            [
-                ProjectRole::GUEST,
-            ],
+        yield [
+            ProjectRole::ADMIN,
+        ];
+        yield [
+            ProjectRole::SHARE,
+        ];
+        yield [
+            ProjectRole::GUEST,
         ];
     }
 
@@ -388,7 +384,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
         $this->assertNotNull($projectUser);
-        $this->assertSame($projectUser['role'], 'developer');
+        $this->assertSame('developer', $projectUser['role']);
 
         $this->assertArrayHasKey('approver', $projectUser);
 

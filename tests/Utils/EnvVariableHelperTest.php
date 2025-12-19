@@ -33,7 +33,7 @@ final class EnvVariableHelperTest extends TestCase
     {
         $expectedUrl = 'https://example.com';
         putenv('KBC_MANAGE_API_URL=' . $expectedUrl);
-        self::assertSame($expectedUrl, EnvVariableHelper::getKbcManageApiUrl());
+        $this->assertSame($expectedUrl, EnvVariableHelper::getKbcManageApiUrl());
     }
 
     public function testGetKbcManageApiUrlMissing(): void
@@ -64,7 +64,7 @@ final class EnvVariableHelperTest extends TestCase
     {
         $expectedKey = 'someAbsKey123';
         putenv('TEST_ABS_ACCOUNT_KEY=' . $expectedKey);
-        self::assertSame($expectedKey, EnvVariableHelper::getTestAbsAccountKey());
+        $this->assertSame($expectedKey, EnvVariableHelper::getTestAbsAccountKey());
     }
 
     public function testGetTestAbsAccountKeyMissing(): void

@@ -51,7 +51,7 @@ final class FeaturesTest extends BaseFeatureTest
                 $this->assertEquals(404, $e->getCode());
             }
         } else {
-            $this->assertTrue($featureFound !== null);
+            $this->assertNotNull($featureFound);
             $this->assertSame($expectedFeature['name'], $featureFound['name']);
             $this->assertSame($expectedFeature['type'], $featureFound['type']);
             $this->assertSame($expectedFeature['title'], $featureFound['title']);
@@ -98,7 +98,7 @@ final class FeaturesTest extends BaseFeatureTest
             }
         }
 
-        $this->assertTrue($featureFound !== null);
+        $this->assertNotNull($featureFound);
         $this->assertSame($expectedFeature['name'], $featureFound['name']);
         $this->assertSame($expectedFeature['type'], $featureFound['type']);
         $this->assertSame($expectedFeature['title'], $featureFound['title']);
@@ -142,7 +142,7 @@ final class FeaturesTest extends BaseFeatureTest
             }
         }
 
-        $this->assertTrue($featureFound !== null);
+        $this->assertNotNull($featureFound);
         $this->assertSame($expectedFeature['name'], $featureFound['name']);
         $this->assertSame($expectedFeature['type'], $featureFound['type']);
         $this->assertSame($expectedFeature['title'], $featureFound['title']);
@@ -181,7 +181,7 @@ final class FeaturesTest extends BaseFeatureTest
 
         $this->client->removeFeature($featureFound['id']);
 
-        $this->assertSame(count($features), count($this->client->listFeatures()));
+        $this->assertCount(count($features), $this->client->listFeatures());
         $this->client->removeFeature($secondFeatureCreated['id']);
     }
 
@@ -302,7 +302,7 @@ final class FeaturesTest extends BaseFeatureTest
             }
         }
 
-        $this->assertTrue($foundFeature !== null);
+        $this->assertNotNull($foundFeature);
         $this->assertSame($expectedFeature['name'], $foundFeature['name']);
         $this->assertSame($expectedFeature['type'], $foundFeature['type']);
         $this->assertSame($expectedFeature['title'], $foundFeature['title']);
@@ -370,7 +370,7 @@ final class FeaturesTest extends BaseFeatureTest
             }
         }
 
-        $this->assertTrue($projectFound !== null);
+        $this->assertNotNull($projectFound);
         $this->assertSame($project['id'], $projectFound['id']);
         $this->assertSame($project['name'], $projectFound['name']);
 
@@ -413,7 +413,7 @@ final class FeaturesTest extends BaseFeatureTest
             }
         }
 
-        $this->assertTrue($adminFound !== null);
+        $this->assertNotNull($adminFound);
         $this->assertSame($userId, $adminFound['id']);
         $this->assertSame($userEmail, $adminFound['email']);
         $this->client->removeFeature($insertedFeature['id']);
@@ -433,7 +433,7 @@ final class FeaturesTest extends BaseFeatureTest
             $newFeature['description']
         );
 
-        $this->assertSame($initialFeaturesCount + 1, count($this->client->listFeatures()));
+        $this->assertCount($initialFeaturesCount + 1, $this->client->listFeatures());
 
         try {
             $this->client->createFeature(
@@ -447,7 +447,7 @@ final class FeaturesTest extends BaseFeatureTest
             $this->assertEquals(422, $e->getCode());
         }
 
-        $this->assertSame($initialFeaturesCount + 1, count($this->client->listFeatures()));
+        $this->assertCount($initialFeaturesCount + 1, $this->client->listFeatures());
         $this->client->removeFeature($newFeatureCreated['id']);
     }
 

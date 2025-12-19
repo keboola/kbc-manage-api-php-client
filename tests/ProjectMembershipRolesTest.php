@@ -44,27 +44,23 @@ final class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->guestUser = $this->normalUser;
     }
 
-    public function limitedRolesData(): array
+    public function limitedRolesData(): \Iterator
     {
-        return [
-            [
-                ProjectRole::GUEST,
-            ],
-            [
-                ProjectRole::READ_ONLY,
-            ],
+        yield [
+            ProjectRole::GUEST,
+        ];
+        yield [
+            ProjectRole::READ_ONLY,
         ];
     }
 
-    public function adminRolesData(): array
+    public function adminRolesData(): \Iterator
     {
-        return [
-            [
-                ProjectRole::SHARE,
-            ],
-            [
-                ProjectRole::ADMIN,
-            ],
+        yield [
+            ProjectRole::SHARE,
+        ];
+        yield [
+            ProjectRole::ADMIN,
         ];
     }
 

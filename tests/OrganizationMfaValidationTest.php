@@ -38,7 +38,7 @@ final class OrganizationMfaValidationTest extends ClientMfaTestCase
 
     public function testSuperAdminCannotChangeMfaAttribute(): void
     {
-        $this->assertSame(false, $this->organization['mfaRequired']);
+        $this->assertFalse($this->organization['mfaRequired']);
 
         try {
             $this->client->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
@@ -48,14 +48,14 @@ final class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->assertStringContainsString('Only organization members can change the \'mfaRequired\' parameter', $e->getMessage());
         }
 
-        $this->assertSame(false, $this->organization['mfaRequired']);
+        $this->assertFalse($this->organization['mfaRequired']);
     }
 
     public function testMaintainerAdminCannotChangeMfaAttribute(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
-        $this->assertSame(false, $this->organization['mfaRequired']);
+        $this->assertFalse($this->organization['mfaRequired']);
 
         try {
             $this->normalUserClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
@@ -65,7 +65,7 @@ final class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->assertStringContainsString('Only organization members can change the \'mfaRequired\' parameter', $e->getMessage());
         }
 
-        $this->assertSame(false, $this->organization['mfaRequired']);
+        $this->assertFalse($this->organization['mfaRequired']);
     }
 
     public function testOrganizationAdminCanChangeMfaAttribute(): void
@@ -76,19 +76,19 @@ final class OrganizationMfaValidationTest extends ClientMfaTestCase
         $this->assertIsArray($member);
         $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
 
-        $this->assertSame(false, $this->organization['mfaRequired']);
+        $this->assertFalse($this->organization['mfaRequired']);
 
         $this->createRedshiftProjectForClient($this->normalUserWithMfaClient, $this->organization['id'], ['name' => 'Test']);
 
         $organization = $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
-        $this->assertSame(true, $organization['mfaRequired']);
+        $this->assertTrue($organization['mfaRequired']);
     }
 
     public function testAllOrganizationMembersHaveMfaEnabledValidation(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
-        $this->assertSame(false, $this->organization['mfaRequired']);
+        $this->assertFalse($this->organization['mfaRequired']);
 
         try {
             $this->normalUserClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
@@ -98,7 +98,7 @@ final class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->assertStringContainsString('Not all organization and project members have Multi-factor Authentication enabled', $e->getMessage());
         }
 
-        $this->assertSame(false, $this->organization['mfaRequired']);
+        $this->assertFalse($this->organization['mfaRequired']);
     }
 
     public function testAllProjectsMembersHaveMfaEnabledValidation(): void
@@ -109,7 +109,7 @@ final class OrganizationMfaValidationTest extends ClientMfaTestCase
         $this->assertIsArray($member);
         $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
 
-        $this->assertSame(false, $this->organization['mfaRequired']);
+        $this->assertFalse($this->organization['mfaRequired']);
 
         $project = $this->createRedshiftProjectForClient($this->normalUserWithMfaClient, $this->organization['id'], ['name' => 'Test']);
         $this->normalUserWithMfaClient->addUserToProject($project['id'], ['email' => self::DUMMY_USER_EMAIL]);
@@ -122,7 +122,7 @@ final class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->assertStringContainsString('Not all organization and project members have Multi-factor Authentication enabled', $e->getMessage());
         }
 
-        $this->assertSame(false, $this->organization['mfaRequired']);
+        $this->assertFalse($this->organization['mfaRequired']);
     }
 
     public function testAdminWithoutMfaCannotBecameMember(): void
@@ -169,7 +169,7 @@ final class OrganizationMfaValidationTest extends ClientMfaTestCase
             $this->fail('Enabling MFA validation for organization should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertEquals('You must setup Multi-Factor Authentication on your account first', $e->getMessage());
+            $this->assertSame('You must setup Multi-Factor Authentication on your account first', $e->getMessage());
         }
 
         $organization = $this->client->getOrganization($this->organization['id']);
@@ -284,7 +284,7 @@ final class OrganizationMfaValidationTest extends ClientMfaTestCase
         $this->createRedshiftProjectForClient($this->normalUserWithMfaClient, $this->organization['id'], ['name' => 'Test']);
 
         $projects = $this->client->listOrganizationProjects($this->organization['id']);
-        $this->assertEquals(1, count($projects));
+        $this->assertCount(1, $projects);
     }
 
     public function testOrganizationAdminWithoutMfaCannotListProjectsUser(): void

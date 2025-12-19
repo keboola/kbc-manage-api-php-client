@@ -68,7 +68,7 @@ final class FileStorageGcsTest extends ClientTestCase
         $this->assertSame($this->getExpectedGcsCredentialsWithoutPk(), $credentials);
         $this->assertSame('keboola', $storage['owner']);
         $this->assertSame(TEST_GCS_REGION, $storage['region']);
-        $this->assertSame($storage['provider'], 'gcp');
+        $this->assertSame('gcp', $storage['provider']);
         $this->assertFalse($storage['isDefault']);
         $this->assertStringEndsWith('_' . $storage['id'] . '_GCS', $storage['gcsSnowflakeIntegrationName']);
     }
@@ -94,7 +94,7 @@ final class FileStorageGcsTest extends ClientTestCase
         $this->client->createGcsFileStorage($this->getGcsDefaultOptions());
         $storages = $this->client->listGcsFileStorage();
 
-        $this->assertSame($initCount + 1, count($storages));
+        $this->assertCount($initCount + 1, $storages);
 
         foreach ($storages as $storage) {
             if ($storage['provider'] !== 'gcp') {
@@ -243,7 +243,7 @@ Errors:
         $this->assertSame($this->getExpectedGcsCredentialsWithoutPk(), $credentials);
         $this->assertSame('keboola', $storage['owner']);
         $this->assertSame(TEST_GCS_REGION, $storage['region']);
-        $this->assertSame($storage['provider'], 'gcp');
+        $this->assertSame('gcp', $storage['provider']);
         $this->assertFalse($storage['isDefault']);
         $this->assertStringEndsWith('_' . $storage['id'] . '_GCS', $storage['gcsSnowflakeIntegrationName']);
     }

@@ -46,7 +46,7 @@ final class UiAppsTest extends ClientTestCase
         sort($listOfAppsAfterDeletion);
 
         $this->assertSame(count($listOfAppsBeforeCreation), (count($listOfAppsAfterCreation) - 1));
-        $this->assertNotFalse(array_search($newAppName, $listOfAppsAfterCreation));
+        $this->assertContains($newAppName, $listOfAppsAfterCreation);
         $this->assertEquals($listOfAppsBeforeCreation, $listOfAppsAfterDeletion);
     }
 

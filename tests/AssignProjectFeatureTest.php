@@ -10,6 +10,7 @@ use Keboola\ManageApi\ProjectRole;
 
 final class AssignProjectFeatureTest extends BaseFeatureTest
 {
+    public $organization;
     public function setUp(): void
     {
         parent::setUp();
@@ -452,25 +453,23 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
-    public function notAllowedAddFeaturesRoles(): array
+    public function notAllowedAddFeaturesRoles(): \Iterator
     {
-        return [
-            'guest manage token' => [
-                ProjectRole::GUEST,
-                self::MANAGE_TOKEN_CLIENT,
-            ],
-            'guest session token' => [
-                ProjectRole::GUEST,
-                self::SESSION_TOKEN_CLIENT,
-            ],
-            'readOnly manage token' => [
-                ProjectRole::READ_ONLY,
-                self::MANAGE_TOKEN_CLIENT,
-            ],
-            'readOnly session token' => [
-                ProjectRole::READ_ONLY,
-                self::SESSION_TOKEN_CLIENT,
-            ],
+        yield 'guest manage token' => [
+            ProjectRole::GUEST,
+            self::MANAGE_TOKEN_CLIENT,
+        ];
+        yield 'guest session token' => [
+            ProjectRole::GUEST,
+            self::SESSION_TOKEN_CLIENT,
+        ];
+        yield 'readOnly manage token' => [
+            ProjectRole::READ_ONLY,
+            self::MANAGE_TOKEN_CLIENT,
+        ];
+        yield 'readOnly session token' => [
+            ProjectRole::READ_ONLY,
+            self::SESSION_TOKEN_CLIENT,
         ];
     }
 

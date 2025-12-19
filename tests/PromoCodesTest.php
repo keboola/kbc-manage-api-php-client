@@ -57,7 +57,7 @@ final class PromoCodesTest extends ClientTestCase
         ]);
 
         $promoCodesAfterCreate = $this->normalUserClient->listPromoCodes($this->testMaintainerId);
-        $this->assertEquals(count($promoCodesBeforeCreate) + 1, count($promoCodesAfterCreate));
+        $this->assertCount(count($promoCodesBeforeCreate) + 1, $promoCodesAfterCreate);
 
         $this->assertEquals($promoCode, end($promoCodesAfterCreate));
     }
@@ -124,14 +124,14 @@ final class PromoCodesTest extends ClientTestCase
         $usedPromoCodesAfterCreateProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function (array $val) use ($promoCodeCode): bool {
             return $val['code'] === $promoCodeCode;
         });
-        $this->assertEquals(1, count($usedPromoCodesAfterCreateProject));
+        $this->assertCount(1, $usedPromoCodesAfterCreateProject);
 
         $this->normalUserClient->deleteProject($project['id']);
 
         $usedPromoCodesAfterRemoveProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function (array $val) use ($promoCodeCode): bool {
             return $val['code'] === $promoCodeCode;
         });
-        $this->assertEquals(0, count($usedPromoCodesAfterRemoveProject));
+        $this->assertCount(0, $usedPromoCodesAfterRemoveProject);
     }
 
     public function testSuperAdminCanListAndCreatePromoCodes(): void
@@ -145,7 +145,7 @@ final class PromoCodesTest extends ClientTestCase
         ]);
         $promoCodesAfterCreate = $this->client->listPromoCodes($this->testMaintainerId);
 
-        $this->assertEquals(count($promoCodesBeforeCreate) + 1, count($promoCodesAfterCreate));
+        $this->assertCount(count($promoCodesBeforeCreate) + 1, $promoCodesAfterCreate);
 
         $this->assertEquals($promoCode, end($promoCodesAfterCreate));
     }

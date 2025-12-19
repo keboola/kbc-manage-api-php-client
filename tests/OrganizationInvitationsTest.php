@@ -45,15 +45,13 @@ final class OrganizationInvitationsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): array
+    public function autoJoinProvider(): \Iterator
     {
-        return [
-            [
-                true,
-            ],
-            [
-                false,
-            ],
+        yield [
+            true,
+        ];
+        yield [
+            false,
         ];
     }
 

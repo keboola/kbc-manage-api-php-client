@@ -11,6 +11,6 @@ final class BackendTest extends TestCase
 {
     public function testDefaultBackend(): void
     {
-        $this->assertEquals('snowflake', Backend::getDefaultBackend());
+        $this->assertSame('snowflake', Backend::getDefaultBackend());
     }
 }
