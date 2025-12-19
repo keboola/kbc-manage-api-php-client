@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
-use Iterator;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
+use Iterator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;

@@ -115,7 +115,7 @@ class ClientTestCase extends TestCase
      * @param array $token
      * @return StorageClient
      */
-    protected function getStorageClient(array $options): \Keboola\StorageApi\Client
+    protected function getStorageClient(array $options): StorageClient
     {
         $tokenParts = explode('-', (string) $options['token']);
         $tokenAgentString = '';
@@ -148,9 +148,6 @@ class ClientTestCase extends TestCase
         ]);
     }
 
-    /**
-     * @return string
-     */
     protected function getTestName(): string
     {
         return static::class . '::' . $this->getName();
@@ -279,9 +276,6 @@ class ClientTestCase extends TestCase
         return null;
     }
 
-    /**
-     * @return string
-     */
     protected function getBuildId(): string
     {
         if (getenv('TRAVIS_BUILD_ID')) {
@@ -290,9 +284,6 @@ class ClientTestCase extends TestCase
         return '';
     }
 
-    /**
-     * @return string
-     */
     protected function getSuiteName(): string
     {
         if (getenv('SUITE_NAME')) {

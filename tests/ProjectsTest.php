@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
-use Iterator;
 use Generator;
 use InvalidArgumentException;
+use Iterator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
