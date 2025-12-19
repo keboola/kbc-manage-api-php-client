@@ -36,9 +36,8 @@ class Exception extends GenericException
 
     /**
      * @param $stringCode
-     * @return Exception
      */
-    public function setStringCode($stringCode): static
+    public function setStringCode($stringCode): self
     {
         $this->stringCode = $stringCode ? (string) $stringCode : 'APPLICATION_ERROR';
         return $this;
@@ -51,9 +50,8 @@ class Exception extends GenericException
 
     /**
      * @param array $contextParams
-     * @return Exception
      */
-    public function setContextParams($contextParams): static
+    public function setContextParams($contextParams): self
     {
         $this->contextParams = (array) $contextParams;
         return $this;

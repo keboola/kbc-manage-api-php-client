@@ -15,13 +15,9 @@ final class ProjectStorageBackendTest extends ClientTestCase
 {
     use BackendConfigurationProviderTrait;
 
-    public function supportedNonDefaultBackends(): array
+    public function supportedNonDefaultBackends(): \Iterator
     {
-        return [
-            [Backend::REDSHIFT],
-//            [Backend::SYNAPSE],
-        // synapse isnt available on e2e testing
-        ];
+        yield [Backend::REDSHIFT];
     }
 
     /**
@@ -146,7 +142,7 @@ final class ProjectStorageBackendTest extends ClientTestCase
         // ensure, that backend ID is passed as string into body
         $requestOptions['body'] = '{"storageBackendId": "'.$backend['id'].'"}';
         $response = $client->post('/manage/projects/' . $project['id'] . '/storage-backend', $requestOptions);
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
 
         $this->client->deleteProject($project['id']);
         $this->waitForProjectPurge($project['id']);

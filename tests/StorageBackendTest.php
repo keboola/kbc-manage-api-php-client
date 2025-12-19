@@ -21,12 +21,12 @@ final class StorageBackendTest extends ClientTestCase
     public function testOnlySuperadminCanRegisterStorageBackend(): void
     {
         $newBackend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
-        $this->assertSame($newBackend['backend'], 'snowflake');
+        $this->assertSame('snowflake', $newBackend['backend']);
         $this->assertBackendExist($newBackend['id']);
         $this->client->removeStorageBackend($newBackend['id']);
 
         $newBackend = $this->normalUserClient->createStorageBackend($this->getSnowflakeBackendCreateOptions());
-        $this->assertSame($newBackend['backend'], 'snowflake');
+        $this->assertSame('snowflake', $newBackend['backend']);
         $this->assertBackendExist($newBackend['id']);
         $this->client->removeStorageBackend($newBackend['id']);
     }
@@ -142,7 +142,7 @@ final class StorageBackendTest extends ClientTestCase
             $this->assertSame($options['useDynamicBackends'], $newBackend['useDynamicBackends']);
         }
 
-        $this->assertSame($newBackend['backend'], 'snowflake');
+        $this->assertSame('snowflake', $newBackend['backend']);
         $this->assertBackendExist($newBackend['id']);
 
         $newMaintainer = $this->client->createMaintainer([

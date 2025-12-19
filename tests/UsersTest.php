@@ -25,7 +25,7 @@ final class UsersTest extends ClientTestCase
         $this->client->addUserFeature($userEmail, $feature);
 
         $user = $this->client->getUser($userEmail);
-        $this->assertEquals($initialFeaturesCount + 1, count($user['features']));
+        $this->assertCount($initialFeaturesCount + 1, $user['features']);
         $this->assertContains($feature, $user['features']);
 
         $feature2 = 'manage-feature-test-2-' . $this->getRandomFeatureSuffix();
@@ -33,14 +33,14 @@ final class UsersTest extends ClientTestCase
         $this->client->addUserFeature($userId, $feature2);
 
         $user = $this->client->getUser($userEmail);
-        $this->assertEquals($initialFeaturesCount + 2, count($user['features']));
+        $this->assertCount($initialFeaturesCount + 2, $user['features']);
         $this->assertContains($feature, $user['features']);
 
         $this->client->removeUserFeature($userId, $feature);
         $this->client->removeUserFeature($userId, $feature2);
 
         $user = $this->client->getUser($userId);
-        $this->assertEquals($initialFeaturesCount, count($user['features']));
+        $this->assertCount($initialFeaturesCount, $user['features']);
     }
 
     public function testGetNonexistentUser(): void
@@ -83,7 +83,7 @@ final class UsersTest extends ClientTestCase
 
         $user = $this->client->getUser($userId);
 
-        $this->assertSame($initialFeaturesCount + 1, count($user['features']));
+        $this->assertCount($initialFeaturesCount + 1, $user['features']);
 
         try {
             $this->client->addUserFeature($userId, $newFeature);
@@ -94,7 +94,7 @@ final class UsersTest extends ClientTestCase
 
         $user = $this->client->getUser($userId);
 
-        $this->assertSame($initialFeaturesCount + 1, count($user['features']));
+        $this->assertCount($initialFeaturesCount + 1, $user['features']);
     }
 
     public function testUpdateUser(): void
@@ -237,7 +237,7 @@ final class UsersTest extends ClientTestCase
         $deletedUser = $this->client->getUser($user['id']);
 
         $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
-        $this->assertSame(false, $deletedUser['mfaEnabled'], 'User mfa has not been disabled');
+        $this->assertFalse($deletedUser['mfaEnabled'], 'User mfa has not been disabled');
         $this->assertSame('DELETED', $deletedUser['name'], 'User name has not been deleted');
     }
 

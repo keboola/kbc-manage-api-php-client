@@ -22,7 +22,7 @@ final class MaintainersTest extends ClientTestCase
             $this->client->createMaintainer([]);
             $this->fail('Should fail');
         } catch (Throwable $e) {
-            $this->assertEquals('A name must be set', $e->getMessage());
+            $this->assertSame('A name must be set', $e->getMessage());
         }
 
         $newMaintainer = $this->client->createMaintainer([

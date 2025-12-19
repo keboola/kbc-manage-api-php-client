@@ -555,15 +555,13 @@ final class ProjectsMetadataTest extends ClientTestCase
     }
 
     // project member
-    public function allowedAddMetadataRoles(): array
+    public function allowedAddMetadataRoles(): \Iterator
     {
-        return [
-            'admin' => [
-                ProjectRole::ADMIN,
-            ],
-            'share' => [
-                ProjectRole::SHARE,
-            ],
+        yield 'admin' => [
+            ProjectRole::ADMIN,
+        ];
+        yield 'share' => [
+            ProjectRole::SHARE,
         ];
     }
 
@@ -784,15 +782,13 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
-    public function notAllowedAddMetadataRoles(): array
+    public function notAllowedAddMetadataRoles(): \Iterator
     {
-        return [
-            'guest' => [
-                ProjectRole::GUEST,
-            ],
-            'read only' => [
-                ProjectRole::READ_ONLY,
-            ],
+        yield 'guest' => [
+            ProjectRole::GUEST,
+        ];
+        yield 'read only' => [
+            ProjectRole::READ_ONLY,
         ];
     }
 
@@ -840,21 +836,19 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
-    public function allowedListMetadataRoles(): array
+    public function allowedListMetadataRoles(): \Iterator
     {
-        return [
-            'admin' => [
-                ProjectRole::ADMIN,
-            ],
-            'share' => [
-                ProjectRole::SHARE,
-            ],
-            'guest' => [
-                ProjectRole::GUEST,
-            ],
-            'read only' => [
-                ProjectRole::READ_ONLY,
-            ],
+        yield 'admin' => [
+            ProjectRole::ADMIN,
+        ];
+        yield 'share' => [
+            ProjectRole::SHARE,
+        ];
+        yield 'guest' => [
+            ProjectRole::GUEST,
+        ];
+        yield 'read only' => [
+            ProjectRole::READ_ONLY,
         ];
     }
 

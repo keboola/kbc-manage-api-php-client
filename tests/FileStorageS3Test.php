@@ -36,10 +36,10 @@ final class FileStorageS3Test extends ClientTestCase
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->assertArrayNotHasKey('awsSecret', $storage);
-        $this->assertSame($storage['awsKey'], TEST_S3_KEY);
-        $this->assertSame($storage['region'], TEST_S3_REGION);
-        $this->assertSame($storage['filesBucket'], TEST_S3_FILES_BUCKET);
-        $this->assertSame($storage['provider'], 'aws');
+        $this->assertSame(TEST_S3_KEY, $storage['awsKey']);
+        $this->assertSame(TEST_S3_REGION, $storage['region']);
+        $this->assertSame(TEST_S3_FILES_BUCKET, $storage['filesBucket']);
+        $this->assertSame('aws', $storage['provider']);
         $this->assertFalse($storage['isDefault']);
         $this->assertArrayNotHasKey('gcsSnowflakeIntegrationName', $storage);
     }
@@ -51,10 +51,10 @@ final class FileStorageS3Test extends ClientTestCase
         $rotatedStorage = $this->client->rotateS3FileStorageCredentials($storage['id'], self::ROTATE_S3_OPTIONS);
 
         $this->assertArrayNotHasKey('awsSecret', $storage);
-        $this->assertSame($rotatedStorage['awsKey'], TEST_S3_ROTATE_KEY);
-        $this->assertSame($rotatedStorage['region'], TEST_S3_REGION);
-        $this->assertSame($rotatedStorage['filesBucket'], TEST_S3_FILES_BUCKET);
-        $this->assertSame($rotatedStorage['provider'], 'aws');
+        $this->assertSame(TEST_S3_ROTATE_KEY, $rotatedStorage['awsKey']);
+        $this->assertSame(TEST_S3_REGION, $rotatedStorage['region']);
+        $this->assertSame(TEST_S3_FILES_BUCKET, $rotatedStorage['filesBucket']);
+        $this->assertSame('aws', $rotatedStorage['provider']);
         $this->assertFalse($rotatedStorage['isDefault']);
     }
 
@@ -64,7 +64,7 @@ final class FileStorageS3Test extends ClientTestCase
         $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
         $storages = $this->client->listS3FileStorage();
 
-        $this->assertSame($initCount + 1, count($storages));
+        $this->assertCount($initCount + 1, $storages);
 
         foreach ($storages as $storage) {
             if ($storage['provider'] !== 'aws') {

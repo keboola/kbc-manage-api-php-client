@@ -49,33 +49,29 @@ final class CommandsTest extends ClientTestCase
         }
     }
 
-    public function validParameters(): array
+    public function validParameters(): \Iterator
     {
-        return [
+        yield [
             [
-                [
-                    'command' => 'storage:workers-list',
-                    'parameters' => [
-                        '--help',
-                    ],
+                'command' => 'storage:workers-list',
+                'parameters' => [
+                    '--help',
                 ],
             ],
+        ];
+        yield [
             [
-                [
-                    'command' => 'storage:workers-list',
-                ],
+                'command' => 'storage:workers-list',
             ],
         ];
     }
 
-    public function invalidParameters(): array
+    public function invalidParameters(): \Iterator
     {
-        return [
+        yield [
             [
-                [
-                    'command' => 'test',
-                    'parameters' => 'unknown',
-                ],
+                'command' => 'test',
+                'parameters' => 'unknown',
             ],
         ];
     }

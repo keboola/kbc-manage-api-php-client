@@ -284,11 +284,10 @@ class ClientTestCase extends TestCase
      */
     protected function getBuildId(): string
     {
-        $buildId = '';
         if (getenv('TRAVIS_BUILD_ID')) {
-            $buildId = sprintf('Build id: %s, ', getenv('TRAVIS_BUILD_ID'));
+            return sprintf('Build id: %s, ', getenv('TRAVIS_BUILD_ID'));
         }
-        return $buildId;
+        return '';
     }
 
     /**
@@ -296,11 +295,10 @@ class ClientTestCase extends TestCase
      */
     protected function getSuiteName(): string
     {
-        $testSuiteName = '';
         if (getenv('SUITE_NAME')) {
-            $testSuiteName = sprintf('Suite: %s, ', getenv('SUITE_NAME'));
+            return sprintf('Suite: %s, ', getenv('SUITE_NAME'));
         }
-        return $testSuiteName;
+        return '';
     }
 
     protected function createProjectWithNormalAdminMember(int $organizationId, ?string $name = 'My test'): int

@@ -76,7 +76,7 @@ final class OrganizationsTest extends ClientTestCase
         $this->assertEmpty($projects);
 
         $organizations = $this->client->listMaintainerOrganizations($this->testMaintainerId);
-        $this->assertEquals($initialOrgsCount + 1, count($organizations));
+        $this->assertCount($initialOrgsCount + 1, $organizations);
 
         $this->client->deleteOrganization($organization['id']);
     }
@@ -190,7 +190,7 @@ final class OrganizationsTest extends ClientTestCase
         ]);
 
         $this->assertEquals('Test org', $organization['name']);
-        $this->assertEquals(1, (int) $organization['allowAutoJoin']);
+        $this->assertSame(1, (int) $organization['allowAutoJoin']);
 
         $org = $this->client->updateOrganization($organization['id'], [
             'name' => 'new name',
@@ -198,7 +198,7 @@ final class OrganizationsTest extends ClientTestCase
         ]);
 
         $this->assertEquals('new name', $org['name']);
-        $this->assertEquals(0, (int) $org['allowAutoJoin']);
+        $this->assertSame(0, (int) $org['allowAutoJoin']);
 
         // permissions of another user
         try {
@@ -550,7 +550,7 @@ final class OrganizationsTest extends ClientTestCase
             $this->normalUserClient->updateOrganization($organizationA['id'], ['activityCenterProjectId' => $testProjectA['id']]);
             $this->fail('should fail');
         } catch (ClientException $e) {
-            $this->assertEquals('Only maintainer members can change ActivityCenter ProjectId', $e->getMessage());
+            $this->assertSame('Only maintainer members can change ActivityCenter ProjectId', $e->getMessage());
         }
 
         $this->client->addUserToMaintainer($this->testMaintainerId, [
@@ -568,7 +568,7 @@ final class OrganizationsTest extends ClientTestCase
             $this->normalUserClient->updateOrganization($organizationA['id'], ['activityCenterProjectId' => $testProjectB['id']]);
             $this->fail('should fail');
         } catch (ClientException $e) {
-            $this->assertEquals('Project not found', $e->getMessage());
+            $this->assertSame('Project not found', $e->getMessage());
         }
 
         // move project A under Org B .

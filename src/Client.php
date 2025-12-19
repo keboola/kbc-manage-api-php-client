@@ -75,27 +75,20 @@ class Client
 
     private function createDefaultDecider(int $maxRetries = 3)
     {
-        return function (
-            $retries,
-            RequestInterface $request,
-            ?ResponseInterface $response = null,
-            $error = null
-        ) use ($maxRetries): bool {
+        return function ($retries, RequestInterface $request, ?ResponseInterface $response = null, $error = null) use ($maxRetries): bool {
             if ($retries >= $maxRetries) {
                 return false;
-            } elseif ($response && $response->getStatusCode() > 499) {
-                return true;
-            } elseif ($error) {
-                return true;
-            } else {
-                return false;
             }
+            if ($response && $response->getStatusCode() > 499) {
+                return true;
+            }
+            return (bool) $error;
         };
     }
 
-    private function createExponentialDelay()
+    private function createExponentialDelay(): \Closure
     {
-        return function ($retries): int|float {
+        return function ($retries): int {
             return (int) pow(2, $retries - 1) * 1000;
         };
     }
@@ -972,9 +965,8 @@ class Client
                 }
             }
             return $message;
-        } else {
-            return $requestException->getMessage();
         }
+        return $requestException->getMessage();
     }
 
     public function createGcsFileStorage(array $options)

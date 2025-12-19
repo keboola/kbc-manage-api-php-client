@@ -8,6 +8,7 @@ use Keboola\ManageApi\ClientException;
 
 final class AssignAdminFeatureTest extends BaseFeatureTest
 {
+    public $organization;
     public function setUp(): void
     {
         parent::setUp();
@@ -192,7 +193,7 @@ final class AssignAdminFeatureTest extends BaseFeatureTest
             $this->fail('Should not be able to add feature to other user');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
-            $this->assertEquals('You can\'t access other users', $e->getMessage());
+            $this->assertSame('You can\'t access other users', $e->getMessage());
         }
 
         $this->client->addUserFeature($this->normalUserWithMfa['email'], $featureName);
@@ -205,7 +206,7 @@ final class AssignAdminFeatureTest extends BaseFeatureTest
             $this->fail('Should not be able to remove feature from other user');
         } catch (ClientException $e) {
             $this->assertEquals(403, $e->getCode());
-            $this->assertEquals('You can\'t access other users', $e->getMessage());
+            $this->assertSame('You can\'t access other users', $e->getMessage());
         }
     }
 

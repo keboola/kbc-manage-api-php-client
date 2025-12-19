@@ -34,9 +34,9 @@ final class FileStorageAbsTest extends ClientTestCase
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->assertArrayNotHasKey('accountKey', $storage);
-        $this->assertSame($storage['accountName'], TEST_ABS_ACCOUNT_NAME);
-        $this->assertSame($storage['containerName'], TEST_ABS_CONTAINER_NAME);
-        $this->assertSame($storage['provider'], 'azure');
+        $this->assertSame(TEST_ABS_ACCOUNT_NAME, $storage['accountName']);
+        $this->assertSame(TEST_ABS_CONTAINER_NAME, $storage['containerName']);
+        $this->assertSame('azure', $storage['provider']);
         $this->assertFalse($storage['isDefault']);
         $this->assertArrayNotHasKey('gcsSnowflakeIntegrationName', $storage);
     }
@@ -47,9 +47,9 @@ final class FileStorageAbsTest extends ClientTestCase
 
         $rotatedStorage = $this->client->rotateAbsFileStorageCredentials($storage['id'], self::ROTATE_ABS_OPTIONS);
         $this->assertArrayNotHasKey('accountKey', $storage);
-        $this->assertSame($rotatedStorage['accountName'], TEST_ABS_ACCOUNT_NAME);
-        $this->assertSame($rotatedStorage['containerName'], TEST_ABS_CONTAINER_NAME);
-        $this->assertSame($rotatedStorage['provider'], 'azure');
+        $this->assertSame(TEST_ABS_ACCOUNT_NAME, $rotatedStorage['accountName']);
+        $this->assertSame(TEST_ABS_CONTAINER_NAME, $rotatedStorage['containerName']);
+        $this->assertSame('azure', $rotatedStorage['provider']);
         $this->assertFalse($rotatedStorage['isDefault']);
     }
 
@@ -59,7 +59,7 @@ final class FileStorageAbsTest extends ClientTestCase
         $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
         $storages = $this->client->listAbsFileStorage();
 
-        $this->assertSame($initCount + 1, count($storages));
+        $this->assertCount($initCount + 1, $storages);
 
         foreach ($storages as $storage) {
             if ($storage['provider'] !== 'azure') {
