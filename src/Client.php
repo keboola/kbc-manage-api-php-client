@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApi;
 
+use Closure;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
@@ -25,7 +26,7 @@ class Client
     /**
      * @var GuzzleClient
      */
-    private \GuzzleHttp\Client $client;
+    private GuzzleClient $client;
 
     /**
      * Clients accept an array of constructor parameters.
@@ -86,7 +87,7 @@ class Client
         };
     }
 
-    private function createExponentialDelay(): \Closure
+    private function createExponentialDelay(): Closure
     {
         return function ($retries): int {
             return (int) pow(2, $retries - 1) * 1000;
@@ -932,7 +933,7 @@ class Client
             $response = $this->client->request($method, $url, $requestOptions);
         } catch (RequestException $e) {
             $response = $e->getResponse();
-            $body = $response instanceof \Psr\Http\Message\ResponseInterface ? json_decode((string) $response->getBody(), true) : [];
+            $body = $response instanceof ResponseInterface ? json_decode((string) $response->getBody(), true) : [];
 
             if ($response && $response->getStatusCode() === 503) {
                 throw new MaintenanceException(isset($body['reason']) ? $body['reason'] : 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
@@ -940,7 +941,7 @@ class Client
 
             throw new ClientException(
                 $this->composeErrorMessage($e, $body),
-                $response instanceof \Psr\Http\Message\ResponseInterface ? $response->getStatusCode() : $e->getCode(),
+                $response instanceof ResponseInterface ? $response->getStatusCode() : $e->getCode(),
                 $e,
                 isset($body['code']) ? $body['code'] : '',
                 $body

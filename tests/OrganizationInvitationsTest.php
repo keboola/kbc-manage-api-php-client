@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\ClientException;
 
 final class OrganizationInvitationsTest extends ClientTestCase
@@ -45,7 +46,7 @@ final class OrganizationInvitationsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): \Iterator
+    public function autoJoinProvider(): Iterator
     {
         yield [
             true,

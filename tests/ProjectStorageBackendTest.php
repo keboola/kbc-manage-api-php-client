@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
 use Keboola\ManageApi\Backend;
@@ -15,7 +16,7 @@ final class ProjectStorageBackendTest extends ClientTestCase
 {
     use BackendConfigurationProviderTrait;
 
-    public function supportedNonDefaultBackends(): \Iterator
+    public function supportedNonDefaultBackends(): Iterator
     {
         yield [Backend::REDSHIFT];
     }

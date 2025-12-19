@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Generator;
 use InvalidArgumentException;
 use Keboola\ManageApi\Backend;
@@ -37,7 +38,7 @@ final class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function supportedBackends(): \Iterator
+    public function supportedBackends(): Iterator
     {
         yield [Backend::SNOWFLAKE];
         yield [Backend::REDSHIFT];
@@ -45,7 +46,7 @@ final class ProjectsTest extends ClientTestCase
         yield [Backend::TERADATA];
     }
 
-    public function unsupportedBackendFileStorageCombinations(): \Iterator
+    public function unsupportedBackendFileStorageCombinations(): Iterator
     {
         yield [
             Backend::REDSHIFT,
@@ -267,7 +268,7 @@ final class ProjectsTest extends ClientTestCase
         return $foundProject;
     }
 
-    public function addUserToProjectWithRoleData(): \Iterator
+    public function addUserToProjectWithRoleData(): Iterator
     {
         yield [
             ProjectRole::ADMIN,

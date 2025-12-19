@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
@@ -51,7 +52,7 @@ final class MaintainersMetadataTest extends ClientTestCase
         $this->client->removeUserFromMaintainer($this->maintainer['id'], $this->superAdmin['id']);
     }
 
-    public function providers(): \Iterator
+    public function providers(): Iterator
     {
         yield 'system provider' => [
             self::PROVIDER_SYSTEM,
@@ -61,7 +62,7 @@ final class MaintainersMetadataTest extends ClientTestCase
         ];
     }
 
-    public function allProjectRoles(): \Iterator
+    public function allProjectRoles(): Iterator
     {
         yield 'admin' => [
             ProjectRole::ADMIN,
