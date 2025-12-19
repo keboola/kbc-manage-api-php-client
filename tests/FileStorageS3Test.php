@@ -91,7 +91,7 @@ class FileStorageS3Test extends ClientTestCase
             }
 
             if ($item['isDefault']) {
-                array_push($regions, $item['region']);
+                $regions[] = $item['region'];
             }
 
             if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === self::DEFAULT_S3_OPTIONS['region']) {
@@ -132,7 +132,7 @@ class FileStorageS3Test extends ClientTestCase
             }
 
             if ($item['isDefault']) {
-                array_push($regions, $item['region']);
+                $regions[] = $item['region'];
             }
 
             if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === self::DEFAULT_S3_OPTIONS['region']) {

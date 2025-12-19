@@ -51,7 +51,7 @@ class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
 
     private function createProject(string $userEmail, ?Client $client = null): array
     {
-        if ($client === null) {
+        if (!$client instanceof \Keboola\ManageApi\Client) {
             $client = $this->client;
         }
         $this->client->addUserToOrganization(

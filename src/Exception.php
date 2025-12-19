@@ -37,11 +37,7 @@ class Exception extends GenericException
      */
     public function setStringCode($stringCode)
     {
-        if ($stringCode) {
-            $this->stringCode = (string) $stringCode;
-        } else {
-            $this->stringCode = 'APPLICATION_ERROR';
-        }
+        $this->stringCode = $stringCode ? (string) $stringCode : 'APPLICATION_ERROR';
         return $this;
     }
 
