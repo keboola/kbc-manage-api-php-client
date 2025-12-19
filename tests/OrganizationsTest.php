@@ -112,14 +112,14 @@ class OrganizationsTest extends ClientTestCase
         }));
 
         // we can't assert much more, because the token sees every organization (even those created outside of this test)
+        $this->assertNotEmpty(
+            $orgsFromToken,
+            'There was no organization returned from the list',
+        );
         $this->assertSame(
             $orgsFromAdmin[0],
             $orgsFromToken[0],
             'Organization from list does not match the one we created',
-        );
-        $this->assertNotEmpty(
-            $orgsFromToken,
-            'There was no organization returned from the list',
         );
 
         // test that deleted organization are not accessible in detail nor list

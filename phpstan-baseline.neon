@@ -26,21 +26,6 @@ parameters:
 			path: tests/FileStorageS3Test.php
 
 		-
-			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/OrganizationJoinMfaValidationTest.php
-
-		-
-			message: "#^Offset 'id' does not exist on array\\|null\\.$#"
-			count: 3
-			path: tests/OrganizationMfaValidationTest.php
-
-		-
-			message: "#^Offset 'role' does not exist on array\\|null\\.$#"
-			count: 2
-			path: tests/ProjectMembershipRolesTest.php
-
-		-
 			message: "#^Method Keboola\\\\ManageApiTest\\\\ProjectsTest\\:\\:initTestOrganization\\(\\) should return array but returns array\\|ArrayAccess\\.$#"
 			count: 1
 			path: tests/ProjectsTest.php
@@ -48,11 +33,6 @@ parameters:
 		-
 			message: "#^Method Keboola\\\\ManageApiTest\\\\ProjectsTest\\:\\:initTestProject\\(\\) should return array but returns array\\|ArrayAccess\\.$#"
 			count: 1
-			path: tests/ProjectsTest.php
-
-		-
-			message: "#^Offset 'role' does not exist on array\\|null\\.$#"
-			count: 4
 			path: tests/ProjectsTest.php
 
 		-

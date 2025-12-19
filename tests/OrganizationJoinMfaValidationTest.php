@@ -37,6 +37,7 @@ class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
 
         $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->assertIsArray($member);
         $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
 
         $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
@@ -60,6 +61,7 @@ class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
 
         $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->assertIsArray($member);
         $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
 
         $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
