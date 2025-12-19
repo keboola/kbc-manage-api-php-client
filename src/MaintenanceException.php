@@ -15,9 +15,6 @@ class MaintenanceException extends ClientException
         parent::__construct($reason, 503, null, 'MAINTENANCE', $params);
     }
 
-    /**
-     * @return int
-     */
     public function getRetryAfter(): int
     {
         return $this->retryAfter;

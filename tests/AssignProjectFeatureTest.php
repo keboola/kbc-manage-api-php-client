@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
-use Iterator;
 use Generator;
+use Iterator;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
