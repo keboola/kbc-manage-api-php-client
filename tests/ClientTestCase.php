@@ -80,7 +80,7 @@ class ClientTestCase extends TestCase
 
     protected function getClient(array $options): Client
     {
-        $tokenParts = explode('-', $options['token']);
+        $tokenParts = explode('-', (string) $options['token']);
         $tokenAgentString = '';
         if (count($tokenParts) === 2) {
             $tokenAgentString = sprintf(
@@ -117,7 +117,7 @@ class ClientTestCase extends TestCase
      */
     protected function getStorageClient(array $options): \Keboola\StorageApi\Client
     {
-        $tokenParts = explode('-', $options['token']);
+        $tokenParts = explode('-', (string) $options['token']);
         $tokenAgentString = '';
         if (count($tokenParts) === 3) {
             // token comes in from of <projectId>-<tokenId>-<hash>
@@ -153,7 +153,7 @@ class ClientTestCase extends TestCase
      */
     protected function getTestName(): string
     {
-        return get_class($this) . '::' . $this->getName();
+        return static::class . '::' . $this->getName();
     }
 
 
@@ -218,7 +218,7 @@ class ClientTestCase extends TestCase
                         $this->client->removeUserFromMaintainer($maintainer['id'], $member['id']);
                     }
                 }
-            } elseif (strpos($maintainer['name'], self::TESTS_MAINTAINER_PREFIX) === 0) {
+            } elseif (str_starts_with((string) $maintainer['name'], self::TESTS_MAINTAINER_PREFIX)) {
                 // cleanup orgranizations and projects to delete maintainer at the end
                 // get organizations for maintainer
                 $organizations = $this->client->listMaintainerOrganizations($maintainer['id']);
@@ -353,7 +353,7 @@ class ClientTestCase extends TestCase
             $isProjectDeleted = false;
             try {
                 $this->client->getProject($projectId);
-            } catch (ClientException $e) {
+            } catch (ClientException) {
                 $isProjectDeleted = true;
             }
             if (time() - $startTime > $maxWaitTimeSeconds) {
@@ -388,14 +388,12 @@ class ClientTestCase extends TestCase
             $testSuiteName = sprintf('%s::', SUITE_NAME);
         }
 
-        return $testSuiteName . get_class($this) . '\\' . $this->getName();
+        return $testSuiteName . static::class . '\\' . $this->getName();
     }
 
     public function sortByKey($data, $sortKey): array
     {
-        $comparsion = function (array $attrLeft, array $attrRight) use ($sortKey): int {
-            return strcmp($attrLeft[$sortKey], $attrRight[$sortKey]);
-        };
+        $comparsion = (fn(array $attrLeft, array $attrRight): int => strcmp((string) $attrLeft[$sortKey], (string) $attrRight[$sortKey]));
         usort($data, $comparsion);
         return $data;
     }

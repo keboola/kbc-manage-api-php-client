@@ -51,7 +51,7 @@ final class PromoCodesTest extends ClientTestCase
 
         $promoCode = $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
@@ -67,22 +67,18 @@ final class PromoCodesTest extends ClientTestCase
         $promoCodeCode = 'TEST-' . time();
         $this->client->createPromoCode($this->testMaintainerId, [
             'code' => $promoCodeCode,
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
 
         $listBeforeRemoveOrganization = $this->client->listPromoCodes($this->testMaintainerId);
-        $this->assertCount(1, array_filter($listBeforeRemoveOrganization, function (array $item) use ($promoCodeCode): bool {
-            return $item['code'] === $promoCodeCode;
-        }));
+        $this->assertCount(1, array_filter($listBeforeRemoveOrganization, fn(array $item): bool => $item['code'] === $promoCodeCode));
 
         $this->client->deleteOrganization($this->organization['id']);
 
         $listAfterRemoveOrganization = $this->client->listPromoCodes($this->testMaintainerId);
-        $this->assertCount(0, array_filter($listAfterRemoveOrganization, function (array $item) use ($promoCodeCode): bool {
-            return $item['code'] === $promoCodeCode;
-        }));
+        $this->assertCount(0, array_filter($listAfterRemoveOrganization, fn(array $item): bool => $item['code'] === $promoCodeCode));
     }
 
     public function testDifferentOrganizationMaintainerCannotCreatePromoCodes(): void
@@ -104,7 +100,7 @@ final class PromoCodesTest extends ClientTestCase
         $this->expectExceptionMessage(sprintf('You don\'t have access to the organization %s', $this->organization['id']));
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
@@ -115,22 +111,18 @@ final class PromoCodesTest extends ClientTestCase
         $promoCodeCode = 'TEST-' . time();
         $this->client->createPromoCode($this->testMaintainerId, [
             'code' => $promoCodeCode,
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
         $project = $this->normalUserClient->createProjectFromPromoCode($promoCodeCode);
 
-        $usedPromoCodesAfterCreateProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function (array $val) use ($promoCodeCode): bool {
-            return $val['code'] === $promoCodeCode;
-        });
+        $usedPromoCodesAfterCreateProject = array_filter($this->normalUserClient->listUsedPromoCodes(), fn(array $val): bool => $val['code'] === $promoCodeCode);
         $this->assertCount(1, $usedPromoCodesAfterCreateProject);
 
         $this->normalUserClient->deleteProject($project['id']);
 
-        $usedPromoCodesAfterRemoveProject = array_filter($this->normalUserClient->listUsedPromoCodes(), function (array $val) use ($promoCodeCode): bool {
-            return $val['code'] === $promoCodeCode;
-        });
+        $usedPromoCodesAfterRemoveProject = array_filter($this->normalUserClient->listUsedPromoCodes(), fn(array $val): bool => $val['code'] === $promoCodeCode);
         $this->assertCount(0, $usedPromoCodesAfterRemoveProject);
     }
 
@@ -139,7 +131,7 @@ final class PromoCodesTest extends ClientTestCase
         $promoCodesBeforeCreate = $this->client->listPromoCodes($this->testMaintainerId);
         $promoCode = $this->client->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
@@ -155,7 +147,7 @@ final class PromoCodesTest extends ClientTestCase
         $promoCodeCode = 'TEST-' . time();
         $promoCode = [
             'code' => $promoCodeCode,
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ];
@@ -190,7 +182,7 @@ final class PromoCodesTest extends ClientTestCase
         $this->expectExceptionMessage(sprintf('You don\'t have access to maintainer %s', $this->testMaintainerId));
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
@@ -203,7 +195,7 @@ final class PromoCodesTest extends ClientTestCase
         $this->expectExceptionMessage('You can\'t access project templates');
         $this->normalUserClient->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc6months',
         ]);
@@ -216,7 +208,7 @@ final class PromoCodesTest extends ClientTestCase
         $this->expectExceptionMessage('Organization 0 not found');
         $this->client->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => 0,
             'projectTemplateStringId' => 'poc6months',
         ]);
@@ -229,7 +221,7 @@ final class PromoCodesTest extends ClientTestCase
         $this->expectExceptionMessage('Project template not found');
         $this->client->createPromoCode($this->testMaintainerId, [
             'code' => 'TEST-' . time(),
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => ProjectTemplatesTest::TEST_NONEXISTS_PROJECT_TEMPLATE_STRING_ID,
         ]);
@@ -240,7 +232,7 @@ final class PromoCodesTest extends ClientTestCase
         $testingPromoCode = 'TEST-' . time();
         $this->client->createPromoCode($this->testMaintainerId, [
             'code' => $testingPromoCode,
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc',
         ]);
@@ -262,7 +254,7 @@ final class PromoCodesTest extends ClientTestCase
 
         $this->client->createPromoCode($this->testMaintainerId, [
             'code' => $testingPromoCode,
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc',
         ]);
@@ -290,7 +282,7 @@ final class PromoCodesTest extends ClientTestCase
 
         $this->client->createPromoCode($this->testMaintainerId, [
             'code' => $testingPromoCode,
-            'expirationDays' => rand(5, 20),
+            'expirationDays' => random_int(5, 20),
             'organizationId' => $this->organization['id'],
             'projectTemplateStringId' => 'poc',
         ]);

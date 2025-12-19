@@ -19,9 +19,7 @@ final class UiAppsTest extends ClientTestCase
 
         $newAppName = 'Sample KBC Application';
 
-        $listOfAppsBeforeCreation = array_map(function (array $app) {
-            return $app['name'];
-        }, $client->listUiApps());
+        $listOfAppsBeforeCreation = array_map(fn(array $app) => $app['name'], $client->listUiApps());
         sort($listOfAppsBeforeCreation);
 
         if (in_array($newAppName, $listOfAppsBeforeCreation)) {
@@ -33,16 +31,12 @@ final class UiAppsTest extends ClientTestCase
             'activate' => true,
         ]);
 
-        $listOfAppsAfterCreation = array_map(function (array $app) {
-            return $app['name'];
-        }, $client->listUiApps());
+        $listOfAppsAfterCreation = array_map(fn(array $app) => $app['name'], $client->listUiApps());
         sort($listOfAppsAfterCreation);
 
         $client->deleteUiApp($newAppName);
 
-        $listOfAppsAfterDeletion = array_map(function (array $app) {
-            return $app['name'];
-        }, $client->listUiApps());
+        $listOfAppsAfterDeletion = array_map(fn(array $app) => $app['name'], $client->listUiApps());
         sort($listOfAppsAfterDeletion);
 
         $this->assertSame(count($listOfAppsBeforeCreation), (count($listOfAppsAfterCreation) - 1));

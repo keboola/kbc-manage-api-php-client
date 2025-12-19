@@ -715,7 +715,7 @@ final class ProjectsTest extends ClientTestCase
             if (count($admins) < 2) {
                 break;
             }
-            sleep(pow(2, $tries++));
+            sleep(2 ** $tries++);
         }
         $this->assertCount(1, $admins);
     }
@@ -1566,7 +1566,7 @@ final class ProjectsTest extends ClientTestCase
 
         $params = [
             'organizationId' => $organization['id'],
-            'name' => sha1($project['name']),
+            'name' => sha1((string) $project['name']),
         ];
 
         $projects = $testClient->listDeletedProjects($params);
@@ -2125,7 +2125,7 @@ final class ProjectsTest extends ClientTestCase
         $feature = self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME;
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => __CLASS__,
+            'name' => self::class,
         ]);
 
         $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [

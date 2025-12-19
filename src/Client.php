@@ -89,9 +89,7 @@ class Client
 
     private function createExponentialDelay(): Closure
     {
-        return function ($retries): int {
-            return (int) pow(2, $retries - 1) * 1000;
-        };
+        return fn($retries): int => (int) 2 ** ($retries - 1) * 1000;
     }
 
     /**
@@ -880,7 +878,7 @@ class Client
     private function encode(string $url, ...$params): string
     {
         foreach ($params as &$param) {
-            $param = rawurlencode($param);
+            $param = rawurlencode((string) $param);
         }
         return vsprintf($url, $params);
     }
@@ -936,14 +934,14 @@ class Client
             $body = $response instanceof ResponseInterface ? json_decode((string) $response->getBody(), true) : [];
 
             if ($response && $response->getStatusCode() === 503) {
-                throw new MaintenanceException(isset($body['reason']) ? $body['reason'] : 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
+                throw new MaintenanceException($body['reason'] ?? 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
             }
 
             throw new ClientException(
                 $this->composeErrorMessage($e, $body),
                 $response instanceof ResponseInterface ? $response->getStatusCode() : $e->getCode(),
                 $e,
-                isset($body['code']) ? $body['code'] : '',
+                $body['code'] ?? '',
                 $body
             );
         }

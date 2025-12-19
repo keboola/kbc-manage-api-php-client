@@ -53,7 +53,7 @@ final class StorageBackendTest extends ClientTestCase
 
         $this->assertBackendExist($newBackend['id']);
 
-        $statements = array_filter(array_map('trim', explode(';', $newBackend['sqlTemplate'])));
+        $statements = array_filter(array_map(trim(...), explode(';', (string) $newBackend['sqlTemplate'])));
         foreach ($statements as $statement) {
             $db->executeStatement($statement);
         }
@@ -557,7 +557,7 @@ final class StorageBackendTest extends ClientTestCase
         foreach ($cleanupStatements as $cleanupSql) {
             try {
                 $db->executeStatement($cleanupSql);
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
         }
     }

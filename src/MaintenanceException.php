@@ -7,7 +7,7 @@ namespace Keboola\ManageApi;
 class MaintenanceException extends ClientException
 {
 
-    private int $retryAfter;
+    private readonly int $retryAfter;
 
     public function __construct($reason, $retryAfter, $params)
     {

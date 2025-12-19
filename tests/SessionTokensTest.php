@@ -35,7 +35,7 @@ final class SessionTokensTest extends ClientTestCase
 
         $this->assertEquals('session', $this->sessionToken['type']);
         $this->assertTrue($this->sessionToken['isSessionToken']);
-        $this->assertLessThanOrEqual(strtotime($this->sessionToken['created']) + 3600, strtotime($this->sessionToken['expires']));
+        $this->assertLessThanOrEqual(strtotime((string) $this->sessionToken['created']) + 3600, strtotime((string) $this->sessionToken['expires']));
     }
 
     public function testMaintainersManipulation(): void

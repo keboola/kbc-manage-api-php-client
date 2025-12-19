@@ -471,12 +471,8 @@ final class OrganizationsMetadataTest extends ClientTestCase
 
     private function validateMetadataAsSortedArray(array $expected, array $actual, string $provider): void
     {
-        usort($expected, function (array $a, array $b): int {
-            return strcmp($a['key'], $b['key']);
-        });
-        usort($actual, function (array $a, array $b): int {
-            return strcmp($a['key'], $b['key']);
-        });
+        usort($expected, fn(array $a, array $b): int => strcmp((string) $a['key'], (string) $b['key']));
+        usort($actual, fn(array $a, array $b): int => strcmp((string) $a['key'], (string) $b['key']));
 
         foreach ($expected as $index => $metadata) {
             $this->validateMetadataEquality($metadata, $actual[$index], $provider);
