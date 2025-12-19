@@ -2074,6 +2074,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertNotNull($member);
         $this->assertEquals($role, $member['role']);
     }
 
@@ -2106,16 +2107,19 @@ class ProjectsTest extends ClientTestCase
         $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email'],]);
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertNotNull($member);
         $this->assertEquals('admin', $member['role']);
 
         $this->client->updateUserProjectMembership($project['id'], $this->normalUser['id'], ['role' => ProjectRole::GUEST]);
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertNotNull($member);
         $this->assertEquals('guest', $member['role']);
 
         $this->client->updateUserProjectMembership($project['id'], $this->normalUser['id'], ['role' => 'admin']);
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertNotNull($member);
         $this->assertEquals('admin', $member['role']);
     }
 
@@ -2218,7 +2222,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('moneyAmount', $response);
         $this->assertNull($response['moneyAmount']);
         $this->assertArrayHasKey('idStripeInvoice', $response);
-        $this->assertNull($response['moneyAmount']);
+        $this->assertNull($response['idStripeInvoice']);
         $this->assertArrayHasKey('description', $response);
         $this->assertSame('Promo', $response['description']);
         $this->assertArrayHasKey('created', $response);
@@ -2264,7 +2268,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('moneyAmount', $response);
         $this->assertNull($response['moneyAmount']);
         $this->assertArrayHasKey('idStripeInvoice', $response);
-        $this->assertNull($response['moneyAmount']);
+        $this->assertNull($response['idStripeInvoice']);
         $this->assertArrayHasKey('description', $response);
         $this->assertSame('Promo', $response['description']);
         $this->assertArrayHasKey('created', $response);

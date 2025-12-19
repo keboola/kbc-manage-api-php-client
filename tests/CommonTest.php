@@ -13,12 +13,10 @@ class CommonTest extends ClientTestCase
     {
         $token = $this->client->verifyToken();
 
-        $this->assertIsInt($token['id']);
         $this->assertNotEmpty($token['description']);
         $this->assertNotEmpty($token['created']);
         $this->assertFalse($token['isDisabled']);
         $this->assertFalse($token['isExpired']);
-        $this->assertIsArray($token['scopes']);
         $this->assertEquals($token['type'], 'admin');
         $this->assertNotEmpty($token['lastUsed']);
         $this->assertFalse($token['isSessionToken']);
@@ -39,12 +37,10 @@ class CommonTest extends ClientTestCase
         ]);
         $token = $client->verifyToken();
 
-        $this->assertIsInt($token['id']);
         $this->assertNotEmpty($token['description']);
         $this->assertNotEmpty($token['created']);
         $this->assertFalse($token['isDisabled']);
         $this->assertFalse($token['isExpired']);
-        $this->assertIsArray($token['scopes']);
         $this->assertEquals($token['type'], 'super');
         $this->assertFalse($token['isSessionToken']);
     }

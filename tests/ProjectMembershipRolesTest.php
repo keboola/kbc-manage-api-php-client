@@ -313,6 +313,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         }
 
         $membership = $this->findProjectUser($this->project['id'], $this->normalUserWithMfa['email']);
+        $this->assertNotNull($membership);
         $this->assertEquals('admin', $membership['role']);
     }
 
@@ -449,6 +450,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         }
 
         $membership = $this->findProjectUser($this->project['id'], $this->normalUserWithMfa['email']);
+        $this->assertNotNull($membership);
         $this->assertEquals('admin', $membership['role']);
     }
 
