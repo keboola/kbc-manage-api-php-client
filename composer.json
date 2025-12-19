@@ -16,6 +16,7 @@
         "phpstan/phpstan": "^2",
         "phpstan/phpstan-phpunit": "^2",
         "phpunit/phpunit": "^7.0|^8.0",
+        "rector/rector": "^2.2",
         "tomasfejfar/phpstan-phpunit": "^0.2.0"
     },
     "autoload": {
@@ -37,7 +38,8 @@
         "phpcbf": "phpcbf -s -n -p --extensions=php src tests",
         "phpstan": "phpstan analyse ./src ./tests -c phpstan.neon",
         "tests": "phpunit --testsuite 'Main'",
-        "tests-file-storage": "phpunit --testsuite 'File Storage'"
+        "tests-file-storage": "phpunit --testsuite 'File Storage'",
+        "rector": "rector"
     },
     "authors": [
         {
