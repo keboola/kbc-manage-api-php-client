@@ -7,7 +7,7 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Backend;
 use PHPUnit\Framework\TestCase;
 
-class BackendTest extends TestCase
+final class BackendTest extends TestCase
 {
     public function testDefaultBackend(): void
     {

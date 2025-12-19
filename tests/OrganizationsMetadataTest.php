@@ -9,7 +9,7 @@ use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\Exception;
 use Keboola\ManageApi\ProjectRole;
 
-class OrganizationsMetadataTest extends ClientTestCase
+final class OrganizationsMetadataTest extends ClientTestCase
 {
     public const TEST_METADATA = [
         [

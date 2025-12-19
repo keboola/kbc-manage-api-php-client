@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Doctrine\DBAL\Connection;
@@ -12,7 +14,7 @@ use Keboola\StorageApi\Workspaces;
 use Keboola\TableBackendUtils\Connection\Snowflake\SnowflakeConnectionFactory;
 use Keboola\TableBackendUtils\Escaping\Snowflake\SnowflakeQuote;
 
-class StorageBackendTest extends ClientTestCase
+final class StorageBackendTest extends ClientTestCase
 {
     use BackendConfigurationProviderTrait;
 

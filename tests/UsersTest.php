@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class UsersTest extends ClientTestCase
+final class UsersTest extends ClientTestCase
 {
 
     public function testGetUser(): void

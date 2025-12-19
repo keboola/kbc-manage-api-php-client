@@ -8,7 +8,7 @@ use Retry\BackOff\ExponentialRandomBackOffPolicy;
 use Retry\Policy\SimpleRetryPolicy;
 use Retry\RetryProxy;
 
-class BigqueryProjectsTest extends ClientTestCase
+final class BigqueryProjectsTest extends ClientTestCase
 {
     public function setUp(): void
     {

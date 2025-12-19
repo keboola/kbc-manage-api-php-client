@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
-class ProjectMembershipRolesTest extends ClientMfaTestCase
+final class ProjectMembershipRolesTest extends ClientMfaTestCase
 {
     private const SHARE_ROLE_EXPECTED_ERROR = 'Only member of the project\'s organization can grant "share" role to other users.';
 

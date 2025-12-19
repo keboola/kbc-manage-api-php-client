@@ -8,7 +8,7 @@ use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\ManageApiTest\Utils\MissingEnvVariableException;
 use PHPUnit\Framework\TestCase;
 
-class EnvVariableHelperTest extends TestCase
+final class EnvVariableHelperTest extends TestCase
 {
     private string $originalManageApiUrl = '';
     private string $originalTestAbsKey = '';

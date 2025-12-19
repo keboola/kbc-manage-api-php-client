@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Generator;
 use Keboola\ManageApi\ClientException;
 
-class FeaturesTest extends BaseFeatureTest
+final class FeaturesTest extends BaseFeatureTest
 {
     public function setUp(): void
     {

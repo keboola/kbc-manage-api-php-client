@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
@@ -9,7 +11,7 @@ use const JSON_THROW_ON_ERROR;
 /**
  * @group FileStorage
  */
-class FileStorageGcsTest extends ClientTestCase
+final class FileStorageGcsTest extends ClientTestCase
 {
     private const ROTATE_S3_OPTIONS = [
         'awsKey' => TEST_S3_ROTATE_KEY,

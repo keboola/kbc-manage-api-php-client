@@ -6,7 +6,7 @@ namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class AssignAdminFeatureTest extends BaseFeatureTest
+final class AssignAdminFeatureTest extends BaseFeatureTest
 {
     public function setUp(): void
     {

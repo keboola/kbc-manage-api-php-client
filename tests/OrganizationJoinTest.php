@@ -1,9 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class OrganizationJoinTest extends ClientTestCase
+final class OrganizationJoinTest extends ClientTestCase
 {
     private $organization;
 

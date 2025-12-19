@@ -1,10 +1,13 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
-class ProjectInvitationsTest extends ClientTestCase
+final class ProjectInvitationsTest extends ClientTestCase
 {
     private $organization;
 

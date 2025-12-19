@@ -9,7 +9,7 @@ use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use PHPUnit\Framework\ExpectationFailedException;
 
-class UsersMetadataTest extends ClientTestCase
+final class UsersMetadataTest extends ClientTestCase
 {
     public const TEST_METADATA = [
         [

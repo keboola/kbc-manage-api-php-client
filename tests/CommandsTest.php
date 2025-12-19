@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
 
-class CommandsTest extends ClientTestCase
+final class CommandsTest extends ClientTestCase
 {
 
     /**

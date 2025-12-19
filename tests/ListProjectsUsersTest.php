@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class ListProjectsUsersTest extends ClientTestCase
+final class ListProjectsUsersTest extends ClientTestCase
 {
     private const EXCEPTION_MESSAGE = 'Only organization members can get list of projects users';
 

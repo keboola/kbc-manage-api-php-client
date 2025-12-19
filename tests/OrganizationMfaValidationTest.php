@@ -1,10 +1,13 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class OrganizationMfaValidationTest extends ClientMfaTestCase
+final class OrganizationMfaValidationTest extends ClientMfaTestCase
 {
     private $organization;
 

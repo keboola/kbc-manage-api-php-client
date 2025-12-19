@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
@@ -8,7 +10,7 @@ use function GuzzleHttp\json_encode;
 /**
  * @group FileStorage
  */
-class FileStorageAbsTest extends ClientTestCase
+final class FileStorageAbsTest extends ClientTestCase
 {
     public const DEFAULT_ABS_OPTIONS = [
         'accountName' => TEST_ABS_ACCOUNT_NAME,

@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
-class StorageBackendBigqueryTest extends ClientTestCase
+final class StorageBackendBigqueryTest extends ClientTestCase
 {
     public function testUpdateOwnerOnBigquery(): void
     {
