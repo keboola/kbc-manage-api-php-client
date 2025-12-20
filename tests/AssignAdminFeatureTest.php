@@ -8,7 +8,6 @@ use Keboola\ManageApi\ClientException;
 
 final class AssignAdminFeatureTest extends BaseFeatureTest
 {
-    public $organization;
     public function setUp(): void
     {
         parent::setUp();
