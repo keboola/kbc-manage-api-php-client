@@ -11,7 +11,6 @@ use Keboola\ManageApi\ProjectRole;
 
 final class AssignProjectFeatureTest extends BaseFeatureTest
 {
-    public $organization;
     public function setUp(): void
     {
         parent::setUp();
