@@ -52,7 +52,7 @@ final class MaintainersMetadataTest extends ClientTestCase
         $this->client->removeUserFromMaintainer($this->maintainer['id'], $this->superAdmin['id']);
     }
 
-    public function providers(): Iterator
+    public static function providers(): Iterator
     {
         yield 'system provider' => [
             self::PROVIDER_SYSTEM,
@@ -62,7 +62,7 @@ final class MaintainersMetadataTest extends ClientTestCase
         ];
     }
 
-    public function allProjectRoles(): Iterator
+    public static function allProjectRoles(): Iterator
     {
         yield 'admin' => [
             ProjectRole::ADMIN,

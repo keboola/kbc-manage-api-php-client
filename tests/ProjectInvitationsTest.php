@@ -47,7 +47,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): Iterator
+    public static function autoJoinProvider(): Iterator
     {
         yield [
             true,
@@ -57,7 +57,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         ];
     }
 
-    public function inviteUserToProjectWithRoleData(): Iterator
+    public static function inviteUserToProjectWithRoleData(): Iterator
     {
         yield [
             ProjectRole::ADMIN,
@@ -670,7 +670,7 @@ final class ProjectInvitationsTest extends ClientTestCase
             $this->fail('Create project membership with invalid role should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertRegExp('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
             $this->assertStringContainsString('invalid-role', $e->getMessage());
         }
 

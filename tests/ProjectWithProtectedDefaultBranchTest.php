@@ -75,7 +75,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         return $project;
     }
 
-    public function autoJoinProvider(): array
+    public static function autoJoinProvider(): array
     {
         return [
             [
@@ -87,7 +87,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         ];
     }
 
-    public function inviteUserToProjectWithRoleData(): Iterator
+    public static function inviteUserToProjectWithRoleData(): Iterator
     {
         yield [
             ProjectRole::PRODUCTION_MANAGER,
@@ -103,7 +103,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         ];
     }
 
-    public function inviteUserToProjectInvalidRoleData(): Iterator
+    public static function inviteUserToProjectInvalidRoleData(): Iterator
     {
         yield [
             ProjectRole::ADMIN,

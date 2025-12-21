@@ -50,7 +50,7 @@ final class CommandsTest extends ClientTestCase
         }
     }
 
-    public function validParameters(): Iterator
+    public static function validParameters(): Iterator
     {
         yield [
             [
@@ -67,7 +67,7 @@ final class CommandsTest extends ClientTestCase
         ];
     }
 
-    public function invalidParameters(): Iterator
+    public static function invalidParameters(): Iterator
     {
         yield [
             [
