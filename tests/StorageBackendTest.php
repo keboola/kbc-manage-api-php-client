@@ -13,6 +13,7 @@ use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Workspaces;
 use Keboola\TableBackendUtils\Connection\Snowflake\SnowflakeConnectionFactory;
 use Keboola\TableBackendUtils\Escaping\Snowflake\SnowflakeQuote;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class StorageBackendTest extends ClientTestCase
 {
@@ -123,9 +124,7 @@ final class StorageBackendTest extends ClientTestCase
         $this->client->activateStorageBackend($newBackend['id']);
     }
 
-    /**
-     * @dataProvider storageBackendOptionsProvider
-     */
+    #[DataProvider('storageBackendOptionsProvider')]
     public function testCreateStorageBackend(array $options): void
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
@@ -241,9 +240,7 @@ final class StorageBackendTest extends ClientTestCase
         ];
     }
 
-    /**
-     * @dataProvider storageBackendOptionsProvider
-     */
+    #[DataProvider('storageBackendOptionsProvider')]
     public function testUpdateStorageBackendWithWrongPassword(array $options): void
     {
         $backend = $this->client->createStorageBackend($options);
@@ -262,9 +259,7 @@ final class StorageBackendTest extends ClientTestCase
         }
     }
 
-    /**
-     * @dataProvider storageBackendOptionsProviderForUpdate
-     */
+    #[DataProvider('storageBackendOptionsProviderForUpdate')]
     public function testUpdateStorageBackend(array $options, array $updateOptions, bool $checkResponse): void
     {
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);

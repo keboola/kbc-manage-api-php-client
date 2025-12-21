@@ -29,7 +29,7 @@ return RectorConfig::configure()
         PHPUnitSetList::PHPUNIT_80,
         PHPUnitSetList::PHPUNIT_90,
         PHPUnitSetList::PHPUNIT_100,
-//        PHPUnitSetList::PHPUNIT_110,
+        PHPUnitSetList::PHPUNIT_110,
 //        PHPUnitSetList::PHPUNIT_120,
     ])
     ->withSkip([

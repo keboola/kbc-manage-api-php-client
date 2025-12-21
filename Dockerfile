@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.1
+ARG PHP_VERSION=8.2
 # the default env bellow is used when build pipeline sends "PHP_VERSION=" - the above default value is ignored in that case
 FROM php:${PHP_VERSION:-8.2}-cli-bullseye AS dev
 MAINTAINER Martin Halamicek <martin@keboola.com>

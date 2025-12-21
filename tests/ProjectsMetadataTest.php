@@ -8,6 +8,7 @@ use Iterator;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class ProjectsMetadataTest extends ClientTestCase
 {
@@ -566,9 +567,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         ];
     }
 
-    /**
-     * @dataProvider allowedAddMetadataRoles
-     */
+    #[DataProvider('allowedAddMetadataRoles')]
     public function testProjectMemberCanManageUserMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -617,9 +616,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
-    /**
-     * @dataProvider allowedAddMetadataRoles
-     */
+    #[DataProvider('allowedAddMetadataRoles')]
     public function testProjectMemeberCannotManageSystemMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -671,9 +668,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
-    /**
-     * @dataProvider allowedAddMetadataRoles
-     */
+    #[DataProvider('allowedAddMetadataRoles')]
     public function testProjectMemberWithSamlFeatureCanManageSamlSystemMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -730,9 +725,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(1, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
-    /**
-     * @dataProvider allowedAddMetadataRoles
-     */
+    #[DataProvider('allowedAddMetadataRoles')]
     public function testProjectMemeberWithSamlFeatureCannotManageSamlSystemMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -793,9 +786,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         ];
     }
 
-    /**
-     * @dataProvider notAllowedAddMetadataRoles
-     */
+    #[DataProvider('notAllowedAddMetadataRoles')]
     public function testProjectMemeberCannotManageUserAndSystemMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -853,9 +844,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         ];
     }
 
-    /**
-     * @dataProvider allowedListMetadataRoles
-     */
+    #[DataProvider('allowedListMetadataRoles')]
     public function testProjectMemberCanListUserMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -874,9 +863,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
-    /**
-     * @dataProvider allowedListMetadataRoles
-     */
+    #[DataProvider('allowedListMetadataRoles')]
     public function testProjectMemberWithoutMfaCannotListUserMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -1036,9 +1023,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
     }
 
-    /**
-     * @dataProvider allowedAddMetadataRoles
-     */
+    #[DataProvider('allowedAddMetadataRoles')]
     public function testProjectMemberWithoutMfaCannotManageMetadata(string $role): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
