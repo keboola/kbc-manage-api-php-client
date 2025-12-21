@@ -22,13 +22,13 @@ return RectorConfig::configure()
         symfonyCodeQuality: true,
     )
     ->withImportNames(true)
-//    ->withAttributesSets()
+    ->withAttributesSets()
     ->withPhpSets()
     ->withSets([
         PHPUnitSetList::PHPUNIT_70,
         PHPUnitSetList::PHPUNIT_80,
         PHPUnitSetList::PHPUNIT_90,
-//        PHPUnitSetList::PHPUNIT_100,
+        PHPUnitSetList::PHPUNIT_100,
 //        PHPUnitSetList::PHPUNIT_110,
 //        PHPUnitSetList::PHPUNIT_120,
     ])

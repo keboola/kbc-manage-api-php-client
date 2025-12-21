@@ -48,7 +48,7 @@ class BaseFeatureTest extends ClientTestCase
 
     protected function getNormalUserClient(): CLient
     {
-        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->providedData(), true)) {
             $sessionToken = $this->normalUserClient->createSessionToken();
             return $this->getClient([
                 'token' => $sessionToken['token'],
@@ -62,7 +62,7 @@ class BaseFeatureTest extends ClientTestCase
 
     protected function getSuperAdminClient(): Client
     {
-        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->providedData(), true)) {
             $sessionToken = $this->client->createSessionToken();
             return $this->getClient([
                 'token' => $sessionToken['token'],

@@ -150,7 +150,7 @@ class ClientTestCase extends TestCase
 
     protected function getTestName(): string
     {
-        return static::class . '::' . $this->getName();
+        return static::class . '::' . $this->name();
     }
 
 
@@ -379,7 +379,7 @@ class ClientTestCase extends TestCase
             $testSuiteName = sprintf('%s::', SUITE_NAME);
         }
 
-        return $testSuiteName . static::class . '\\' . $this->getName();
+        return $testSuiteName . static::class . '\\' . $this->name();
     }
 
     public function sortByKey($data, $sortKey): array
