@@ -30,7 +30,7 @@ return RectorConfig::configure()
         PHPUnitSetList::PHPUNIT_90,
         PHPUnitSetList::PHPUNIT_100,
         PHPUnitSetList::PHPUNIT_110,
-//        PHPUnitSetList::PHPUNIT_120,
+        PHPUnitSetList::PHPUNIT_120,
     ])
     ->withSkip([
         FinalizeTestCaseClassRector::class => [
