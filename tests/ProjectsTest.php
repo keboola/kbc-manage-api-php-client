@@ -13,6 +13,7 @@ use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
+use PHPUnit\Framework\Attributes\Group;
 use Throwable;
 
 final class ProjectsTest extends ClientTestCase
@@ -38,7 +39,7 @@ final class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function supportedBackends(): Iterator
+    public static function supportedBackends(): Iterator
     {
         yield [Backend::SNOWFLAKE];
         yield [Backend::REDSHIFT];
@@ -46,7 +47,7 @@ final class ProjectsTest extends ClientTestCase
         yield [Backend::TERADATA];
     }
 
-    public function unsupportedBackendFileStorageCombinations(): Iterator
+    public static function unsupportedBackendFileStorageCombinations(): Iterator
     {
         yield [
             Backend::REDSHIFT,
@@ -56,9 +57,9 @@ final class ProjectsTest extends ClientTestCase
     }
 
     /**
-     * @group skipOnGcp
      * @dataProvider unsupportedBackendFileStorageCombinations
      */
+    #[Group('skipOnGcp')]
     public function testUnsupportedFileStorageForBackend(
         string $backend,
         string $unsupportedFileStorageProvider,
@@ -114,9 +115,9 @@ final class ProjectsTest extends ClientTestCase
     }
 
     /**
-     * @group skipOnGcp
      * @dataProvider unsupportedBackendFileStorageCombinations
      */
+    #[Group('skipOnGcp')]
     public function testUnsupportedBackendForFileStorage(
         string $backend,
         string $unsupportedFileStorageProvide,
@@ -268,7 +269,7 @@ final class ProjectsTest extends ClientTestCase
         return $foundProject;
     }
 
-    public function addUserToProjectWithRoleData(): Iterator
+    public static function addUserToProjectWithRoleData(): Iterator
     {
         yield [
             ProjectRole::ADMIN,
@@ -2088,7 +2089,7 @@ final class ProjectsTest extends ClientTestCase
             $this->fail('Create project membership with invalid role should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertRegExp('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
             $this->assertStringContainsString('invalid-role', $e->getMessage());
         }
 
@@ -2275,7 +2276,7 @@ final class ProjectsTest extends ClientTestCase
         $this->assertSame($purchasedCredits + $givenCredits, $project['payAsYouGo']['purchasedCredits']);
     }
 
-    public function provideProjectCredits(): Generator
+    public static function provideProjectCredits(): Generator
     {
         yield 'integer' => [
             100,
