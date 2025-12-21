@@ -9,6 +9,7 @@ use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class MaintainersMetadataTest extends ClientTestCase
 {
@@ -95,9 +96,7 @@ final class MaintainersMetadataTest extends ClientTestCase
     }
 
     // super admin
-    /**
-     * @dataProvider providers
-     */
+    #[DataProvider('providers')]
     public function testSuperAdminCanManageMetadata(string $provider): void
     {
         // Create
@@ -120,9 +119,7 @@ final class MaintainersMetadataTest extends ClientTestCase
     }
 
     // maintainer
-    /**
-     * @dataProvider providers
-     */
+    #[DataProvider('providers')]
     public function testMaintainerAdminCanListMetadata(string $provider): void
     {
         // add normal user as maintainer admin
@@ -191,9 +188,7 @@ final class MaintainersMetadataTest extends ClientTestCase
     }
 
     // project
-    /**
-     * @dataProvider allProjectRoles
-     */
+    #[DataProvider('allProjectRoles')]
     public function testProjectAdminCannotManageUserMetadata(string $role): void
     {
         // create ogranization + add super-admin as admin

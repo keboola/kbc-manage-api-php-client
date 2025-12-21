@@ -6,6 +6,7 @@ namespace Keboola\ManageApiTest;
 
 use Iterator;
 use Keboola\ManageApi\ClientException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class ProjectJoinTest extends ClientTestCase
 {
@@ -231,10 +232,7 @@ final class ProjectJoinTest extends ClientTestCase
         }
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testOrganizationAdminCanJoinProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -259,10 +257,7 @@ final class ProjectJoinTest extends ClientTestCase
         $this->assertEquals($this->normalUser['name'], $projectUser['approver']['name']);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testOrganizationAdminCanCreateStorageTokenRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -344,10 +339,7 @@ final class ProjectJoinTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testRandomAdminCannotJoinProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -371,10 +363,7 @@ final class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testRandomAdminCannotCreateStorageTokenRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -400,10 +389,7 @@ final class ProjectJoinTest extends ClientTestCase
         }
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testProjectMemberCannotJoinProjectAgainRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -424,10 +410,7 @@ final class ProjectJoinTest extends ClientTestCase
         }
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testProjectMemberCanCreateStorageTokenRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -448,10 +431,7 @@ final class ProjectJoinTest extends ClientTestCase
         $this->assertArrayHasKey('token', $token);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testMaintainerAdminCannotAddSelfToProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -480,10 +460,7 @@ final class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testRandomAdminCannotAddSelfToProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -510,10 +487,7 @@ final class ProjectJoinTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testSuperAdminCannotAddSelfToProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);

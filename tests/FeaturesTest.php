@@ -6,6 +6,7 @@ namespace Keboola\ManageApiTest;
 
 use Generator;
 use Keboola\ManageApi\ClientException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class FeaturesTest extends BaseFeatureTest
 {
@@ -15,9 +16,7 @@ final class FeaturesTest extends BaseFeatureTest
         $this->client->removeUserFeature($this->normalUser['email'], 'can-manage-features');
     }
 
-    /**
-     * @dataProvider featureProvider
-     */
+    #[DataProvider('featureProvider')]
     public function testNormalUserCannotSeeTheSameFeatureAsSuperAdmin(array $createFeature, array $expectedFeature): void
     {
         $createdFeature = $this->client->createFeature(
@@ -71,9 +70,7 @@ final class FeaturesTest extends BaseFeatureTest
         $this->client->removeFeature($createdFeature['id']);
     }
 
-    /**
-     * @dataProvider featureProvider
-     */
+    #[DataProvider('featureProvider')]
     public function testNormalUserWithFeatureCanSeeTheSameFeatureAsSuperAdmin(array $createFeature, array $expectedFeature): void
     {
         $this->client->addUserFeature($this->normalUser['email'], 'can-manage-features');
@@ -117,9 +114,7 @@ final class FeaturesTest extends BaseFeatureTest
         $this->client->removeFeature($featureFound['id']);
     }
 
-    /**
-     * @dataProvider featureProvider
-     */
+    #[DataProvider('featureProvider')]
     public function testCreateListAndDeleteFeature(array $createFeature, array $expectedFeature): void
     {
         $this->client->createFeature(
