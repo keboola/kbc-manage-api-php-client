@@ -8,6 +8,7 @@ use Generator;
 use Iterator;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class AssignProjectFeatureTest extends BaseFeatureTest
 {
@@ -18,9 +19,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         $this->client->removeUserFeature($this->normalUser['email'], 'can-manage-features');
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
+    #[DataProvider('provideVariousOfTokensClient')]
     public function testNormalUserCannotManageFeatureToProject(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -70,9 +69,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         }
     }
 
-    /**
-     * @dataProvider canBeManageByAdminProvider
-     */
+    #[DataProvider('canBeManageByAdminProvider')]
     public function testSuperAdminCanManageProjectFeature(bool $canBeManageByAdmin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -116,9 +113,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasNotFeature($featureName, $project['features']);
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
+    #[DataProvider('provideVariousOfTokensClient')]
     public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -196,9 +191,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         }
     }
 
-    /**
-     * @dataProvider provideAllowedRoleToManageFeature
-     */
+    #[DataProvider('provideAllowedRoleToManageFeature')]
     public function testProjectMemberCanManageFeatureCanBeManageByAdmin(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -250,9 +243,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasNotFeature($featureName, $project['features']);
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
+    #[DataProvider('provideVariousOfTokensClient')]
     public function testAdminProjectMemberCannotManageFeatureCannotBeManageByAdmin(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -315,9 +306,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
+    #[DataProvider('provideVariousOfTokensClient')]
     public function testProjectMemberCannotManageFeatureCannotBeManagedViaAPI(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -385,9 +374,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         }
     }
 
-    /**
-     * @dataProvider notAllowedAddFeaturesRoles
-     */
+    #[DataProvider('notAllowedAddFeaturesRoles')]
     public function testOtherProjectMembersCannotManageFeatureCanBeManageByAdmin(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -473,9 +460,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         ];
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
+    #[DataProvider('provideVariousOfTokensClient')]
     public function testUserWithCanManageFeaturesCanManageFeatures(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -543,9 +528,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         }
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
+    #[DataProvider('provideVariousOfTokensClient')]
     public function testOrgAdminCannotManageFeatures(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);

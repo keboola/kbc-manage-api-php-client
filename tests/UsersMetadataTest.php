@@ -7,6 +7,7 @@ namespace Keboola\ManageApiTest;
 use Generator;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\ExpectationFailedException;
 
 final class UsersMetadataTest extends ClientTestCase
@@ -49,9 +50,7 @@ final class UsersMetadataTest extends ClientTestCase
         yield 'session manage token' => [true];
     }
 
-    /**
-     * @dataProvider tokenTypeProvider
-     */
+    #[DataProvider('tokenTypeProvider')]
     public function testNormalUserCannotManageOthersMetadata(bool $useSessionToken): void
     {
         $client = $this->normalUserClient;

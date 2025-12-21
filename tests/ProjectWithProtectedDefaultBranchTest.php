@@ -11,6 +11,7 @@ use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
 {
@@ -116,10 +117,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         ];
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testNobodyCanInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
@@ -156,10 +154,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testOrganizationAdminCanInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         ['id' => $projectId] = $this->createProject($this->superAdmin['email']);
@@ -227,10 +222,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         }
     }
 
-    /**
-     * @dataProvider userCannotInviteProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('userCannotInviteProvider')]
     public function testProjectMemberCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin, string $role): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
@@ -312,9 +304,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         $this->assertNull($projectUser['approver']);
     }
 
-    /**
-     * @dataProvider inviteUserToProjectWithRoleData
-     */
+    #[DataProvider('inviteUserToProjectWithRoleData')]
     public function testInvitationAttributesPropagationToProjectMembership(string $role): void
     {
         ['id' => $projectId] = $this->createProject($this->superAdmin['email']);
@@ -349,9 +339,7 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         $this->assertNotEmpty($projectUser['expires']);
     }
 
-    /**
-     * @dataProvider inviteUserToProjectInvalidRoleData
-     */
+    #[DataProvider('inviteUserToProjectInvalidRoleData')]
     public function testInvitationClassicProjectRolesAreDisabled(string $role): void
     {
         ['id' => $projectId] = $this->createProject($this->superAdmin['email']);
