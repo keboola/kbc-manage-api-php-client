@@ -42,7 +42,7 @@ final class UsersMetadataTest extends ClientTestCase
         }
     }
 
-    public function tokenTypeProvider(): Generator
+    public static function tokenTypeProvider(): Generator
     {
         yield 'manage token' => [false];
 

@@ -37,7 +37,7 @@ final class ProjectDeleteTest extends ClientTestCase
         ]);
     }
 
-    public function deleteAndPurgeProjectWithData(): iterable
+    public static function deleteAndPurgeProjectWithData(): iterable
     {
         yield 'snowflake with S3 file storage' => [
             'backend' => Backend::SNOWFLAKE,

@@ -84,7 +84,7 @@ final class OrganizationsMetadataTest extends ClientTestCase
         $this->client->removeUserFeature($this->normalUser['id'], self::FEATURE_SAML_METADATA_ACCESS);
     }
 
-    public function allProjectRoles(): Iterator
+    public static function allProjectRoles(): Iterator
     {
         yield 'admin' => [
             ProjectRole::ADMIN,
@@ -100,7 +100,7 @@ final class OrganizationsMetadataTest extends ClientTestCase
         ];
     }
 
-    public function providers(): Iterator
+    public static function providers(): Iterator
     {
         yield 'system provider' => [
             self::PROVIDER_SYSTEM,

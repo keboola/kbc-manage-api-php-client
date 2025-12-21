@@ -453,7 +453,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
-    public function notAllowedAddFeaturesRoles(): Iterator
+    public static function notAllowedAddFeaturesRoles(): Iterator
     {
         yield 'guest manage token' => [
             ProjectRole::GUEST,

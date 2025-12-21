@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use PHPUnit\Framework\Attributes\Group;
 use RuntimeException;
 use const JSON_THROW_ON_ERROR;
 
-/**
- * @group FileStorage
- */
+#[Group('FileStorage')]
 final class FileStorageGcsTest extends ClientTestCase
 {
     private const ROTATE_S3_OPTIONS = [

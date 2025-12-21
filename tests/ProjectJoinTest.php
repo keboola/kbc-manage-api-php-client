@@ -46,7 +46,7 @@ final class ProjectJoinTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): Iterator
+    public static function autoJoinProvider(): Iterator
     {
         yield [
             true,

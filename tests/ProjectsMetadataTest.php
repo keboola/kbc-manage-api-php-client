@@ -556,7 +556,7 @@ final class ProjectsMetadataTest extends ClientTestCase
     }
 
     // project member
-    public function allowedAddMetadataRoles(): Iterator
+    public static function allowedAddMetadataRoles(): Iterator
     {
         yield 'admin' => [
             ProjectRole::ADMIN,
@@ -783,7 +783,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
-    public function notAllowedAddMetadataRoles(): Iterator
+    public static function notAllowedAddMetadataRoles(): Iterator
     {
         yield 'guest' => [
             ProjectRole::GUEST,
@@ -837,7 +837,7 @@ final class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
-    public function allowedListMetadataRoles(): Iterator
+    public static function allowedListMetadataRoles(): Iterator
     {
         yield 'admin' => [
             ProjectRole::ADMIN,

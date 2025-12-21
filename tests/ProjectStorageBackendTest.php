@@ -11,21 +11,22 @@ use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\Client;
+use PHPUnit\Framework\Attributes\Group;
 
 final class ProjectStorageBackendTest extends ClientTestCase
 {
     use BackendConfigurationProviderTrait;
 
-    public function supportedNonDefaultBackends(): Iterator
+    public static function supportedNonDefaultBackends(): Iterator
     {
         yield [Backend::REDSHIFT];
     }
 
     /**
-     * @group skipOnGcp
      * @dataProvider supportedNonDefaultBackends
      * @param string $backendName
      */
+    #[Group('skipOnGcp')]
     public function testProjectStorageAssignBackend(string $backendName): void
     {
         // get redshift and synapse backend
