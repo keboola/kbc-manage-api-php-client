@@ -203,9 +203,9 @@ final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    public function userCannotInviteProvider(): Generator
+    public static function userCannotInviteProvider(): Generator
     {
-        foreach ($this->autoJoinProvider() as $autoJoin) {
+        foreach (self::autoJoinProvider() as $autoJoin) {
             $autoJoinTF = $autoJoin[0] ? 'true' : 'false';
             yield 'autojoin ' . $autoJoinTF . ' role developer' => [
                 $autoJoin[0],
