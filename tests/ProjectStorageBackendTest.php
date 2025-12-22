@@ -137,7 +137,7 @@ final class ProjectStorageBackendTest extends ClientTestCase
             $this->assertStringContainsString('storageBackendId: \"This value should be of type string|int and whole number.\"', $e->getMessage());
         }
 
-        $backend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
+        $backend = $this->client->createStorageBackend(self::getSnowflakeBackendCreateOptions());
 
         // ensure, that backend ID is passed as string into body
         $requestOptions['body'] = '{"storageBackendId": "'.$backend['id'].'"}';

@@ -74,7 +74,7 @@ class BaseFeatureTest extends ClientTestCase
         return $this->client;
     }
 
-    public function canBeManageByAdminProvider(): array
+    public static function canBeManageByAdminProvider(): array
     {
         return [
             'admin can manage with manage token' => [true, self::MANAGE_TOKEN_CLIENT],
@@ -84,7 +84,7 @@ class BaseFeatureTest extends ClientTestCase
         ];
     }
 
-    public function provideVariousOfTokensClient(): array
+    public static function provideVariousOfTokensClient(): array
     {
         return [
             'manage token' => [self::MANAGE_TOKEN_CLIENT],
