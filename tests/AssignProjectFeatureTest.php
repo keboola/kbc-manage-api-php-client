@@ -177,9 +177,9 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
         }
     }
 
-    public function provideAllowedRoleToManageFeature(): Generator
+    public static function provideAllowedRoleToManageFeature(): Generator
     {
-        foreach ($this->provideVariousOfTokensClient() as $token) {
+        foreach (self::provideVariousOfTokensClient() as $token) {
             yield 'admin ' . $token[0] => [
                 ProjectRole::ADMIN,
                 $token[0],

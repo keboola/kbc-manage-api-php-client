@@ -180,9 +180,9 @@ final class FeaturesTest extends BaseFeatureTest
         $this->client->removeFeature($secondFeatureCreated['id']);
     }
 
-    public function featureProvider(): Generator
+    public static function featureProvider(): Generator
     {
-        $suffix = $this->getRandomFeatureSuffix();
+        $suffix = self::getRandomFeatureSuffix();
         $name = 'test-feature-' . $suffix;
         $title = 'Test Feature ' . $suffix;
 

@@ -229,7 +229,7 @@ class ClientTestCase extends TestCase
         }
     }
 
-    public function getRandomFeatureSuffix(): string
+    public static function getRandomFeatureSuffix(): string
     {
         return uniqid('', true);
     }
