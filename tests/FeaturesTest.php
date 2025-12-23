@@ -8,7 +8,7 @@ use Generator;
 use Keboola\ManageApi\ClientException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class FeaturesTest extends BaseFeatureTest
+final class FeaturesTest extends BaseFeatureCase
 {
     public function setUp(): void
     {

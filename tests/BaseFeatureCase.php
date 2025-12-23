@@ -7,7 +7,7 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class BaseFeatureTest extends ClientTestCase
+class BaseFeatureCase extends ClientTestCase
 {
     public const MANAGE_TOKEN_CLIENT = 'manageTokenClient';
     public const SESSION_TOKEN_CLIENT = 'sessionTokenClient';
