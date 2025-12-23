@@ -34,7 +34,7 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         FinalizeTestCaseClassRector::class => [
-            'tests/BaseFeatureTest.php'
+            'tests/BaseFeatureCase.php'
         ],
     ])
     ;
