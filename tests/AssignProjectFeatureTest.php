@@ -10,7 +10,7 @@ use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-final class AssignProjectFeatureTest extends BaseFeatureTest
+final class AssignProjectFeatureTest extends BaseFeatureCase
 {
     public function setUp(): void
     {
@@ -20,7 +20,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
     }
 
     #[DataProvider('provideVariousOfTokensClient')]
-    public function testNormalUserCannotManageFeatureToProject(): void
+    public function testNormalUserCannotManageFeatureToProject(string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -70,7 +70,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
     }
 
     #[DataProvider('canBeManageByAdminProvider')]
-    public function testSuperAdminCanManageProjectFeature(bool $canBeManageByAdmin): void
+    public function testSuperAdminCanManageProjectFeature(bool $canBeManageByAdmin, string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
@@ -114,7 +114,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
     }
 
     #[DataProvider('provideVariousOfTokensClient')]
-    public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI(): void
+    public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI(string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
@@ -192,7 +192,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
     }
 
     #[DataProvider('provideAllowedRoleToManageFeature')]
-    public function testProjectMemberCanManageFeatureCanBeManageByAdmin(string $role): void
+    public function testProjectMemberCanManageFeatureCanBeManageByAdmin(string $role, string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -244,7 +244,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
     }
 
     #[DataProvider('provideVariousOfTokensClient')]
-    public function testAdminProjectMemberCannotManageFeatureCannotBeManageByAdmin(): void
+    public function testAdminProjectMemberCannotManageFeatureCannotBeManageByAdmin(string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -307,7 +307,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
     }
 
     #[DataProvider('provideVariousOfTokensClient')]
-    public function testProjectMemberCannotManageFeatureCannotBeManagedViaAPI(): void
+    public function testProjectMemberCannotManageFeatureCannotBeManagedViaAPI(string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -375,7 +375,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
     }
 
     #[DataProvider('notAllowedAddFeaturesRoles')]
-    public function testOtherProjectMembersCannotManageFeatureCanBeManageByAdmin(string $role): void
+    public function testOtherProjectMembersCannotManageFeatureCanBeManageByAdmin(string $role, string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -461,7 +461,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
     }
 
     #[DataProvider('provideVariousOfTokensClient')]
-    public function testUserWithCanManageFeaturesCanManageFeatures(): void
+    public function testUserWithCanManageFeaturesCanManageFeatures(string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -529,7 +529,7 @@ final class AssignProjectFeatureTest extends BaseFeatureTest
     }
 
     #[DataProvider('provideVariousOfTokensClient')]
-    public function testOrgAdminCannotManageFeatures(): void
+    public function testOrgAdminCannotManageFeatures(string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
