@@ -1,25 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\GuzzleException;
+use Iterator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\Client;
 
-class ProjectStorageBackendTest extends ClientTestCase
+final class ProjectStorageBackendTest extends ClientTestCase
 {
     use BackendConfigurationProviderTrait;
 
-    public function supportedNonDefaultBackends(): array
+    public function supportedNonDefaultBackends(): Iterator
     {
-        return [
-            [Backend::REDSHIFT],
-//            [Backend::SYNAPSE],
-        // synapse isnt available on e2e testing
-        ];
+        yield [Backend::REDSHIFT];
     }
 
     /**
@@ -144,7 +143,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         // ensure, that backend ID is passed as string into body
         $requestOptions['body'] = '{"storageBackendId": "'.$backend['id'].'"}';
         $response = $client->post('/manage/projects/' . $project['id'] . '/storage-backend', $requestOptions);
-        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
 
         $this->client->deleteProject($project['id']);
         $this->waitForProjectPurge($project['id']);
@@ -154,7 +153,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         $this->client->deleteMaintainer($maintainer['id']);
     }
 
-    public function testStorageBackendRemove()
+    public function testStorageBackendRemove(): void
     {
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -176,7 +175,7 @@ class ProjectStorageBackendTest extends ClientTestCase
         $this->assertEmpty($project['backends']);
     }
 
-    public function testStorageBackendShouldNotBeRemovedIfThereAreBuckets()
+    public function testStorageBackendShouldNotBeRemovedIfThereAreBuckets(): void
     {
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [

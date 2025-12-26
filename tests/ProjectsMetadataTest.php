@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
-class ProjectsMetadataTest extends ClientTestCase
+final class ProjectsMetadataTest extends ClientTestCase
 {
     public const TEST_METADATA = [
         [
@@ -555,15 +556,13 @@ class ProjectsMetadataTest extends ClientTestCase
     }
 
     // project member
-    public function allowedAddMetadataRoles(): array
+    public function allowedAddMetadataRoles(): Iterator
     {
-        return [
-            'admin' => [
-                ProjectRole::ADMIN,
-            ],
-            'share' => [
-                ProjectRole::SHARE,
-            ],
+        yield 'admin' => [
+            ProjectRole::ADMIN,
+        ];
+        yield 'share' => [
+            ProjectRole::SHARE,
         ];
     }
 
@@ -784,15 +783,13 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserClient->listProjectMetadata($projectId));
     }
 
-    public function notAllowedAddMetadataRoles(): array
+    public function notAllowedAddMetadataRoles(): Iterator
     {
-        return [
-            'guest' => [
-                ProjectRole::GUEST,
-            ],
-            'read only' => [
-                ProjectRole::READ_ONLY,
-            ],
+        yield 'guest' => [
+            ProjectRole::GUEST,
+        ];
+        yield 'read only' => [
+            ProjectRole::READ_ONLY,
         ];
     }
 
@@ -840,21 +837,19 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->client->listProjectMetadata($projectId));
     }
 
-    public function allowedListMetadataRoles(): array
+    public function allowedListMetadataRoles(): Iterator
     {
-        return [
-            'admin' => [
-                ProjectRole::ADMIN,
-            ],
-            'share' => [
-                ProjectRole::SHARE,
-            ],
-            'guest' => [
-                ProjectRole::GUEST,
-            ],
-            'read only' => [
-                ProjectRole::READ_ONLY,
-            ],
+        yield 'admin' => [
+            ProjectRole::ADMIN,
+        ];
+        yield 'share' => [
+            ProjectRole::SHARE,
+        ];
+        yield 'guest' => [
+            ProjectRole::GUEST,
+        ];
+        yield 'read only' => [
+            ProjectRole::READ_ONLY,
         ];
     }
 
@@ -882,7 +877,7 @@ class ProjectsMetadataTest extends ClientTestCase
     /**
      * @dataProvider allowedListMetadataRoles
      */
-    public function testProjectMemberWithoutMfaCannotListUserMetadata(string $role)
+    public function testProjectMemberWithoutMfaCannotListUserMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -1002,7 +997,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
     }
 
-    public function testOrgAdminWithoutMfaCannotManageMetadata()
+    public function testOrgAdminWithoutMfaCannotManageMetadata(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -1089,7 +1084,7 @@ class ProjectsMetadataTest extends ClientTestCase
         $this->assertCount(2, $this->normalUserWithMfaClient->listProjectMetadata($projectId));
     }
 
-    public function testUpdateProjectMetadata()
+    public function testUpdateProjectMetadata(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);

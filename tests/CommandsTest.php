@@ -1,24 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
 
-class CommandsTest extends ClientTestCase
+final class CommandsTest extends ClientTestCase
 {
 
     /**
      * @dataProvider  validParameters
      * @param $parameters
      */
-    public function testSuperAdminShouldBeAllowedToRunCommand($parameters)
+    public function testSuperAdminShouldBeAllowedToRunCommand(array $parameters): void
     {
         $response = $this->client->runCommand($parameters);
         $this->assertArrayHasKey('commandExecutionId', $response);
     }
 
-    public function testNormalUserShouldNotBeAllowedToRunCommand()
+    public function testNormalUserShouldNotBeAllowedToRunCommand(): void
     {
         try {
             $this->normalUserClient->runCommand([
@@ -37,7 +40,7 @@ class CommandsTest extends ClientTestCase
      * @dataProvider  invalidParameters
      * @param $parameters
      */
-    public function testInvalidParameters($parameters)
+    public function testInvalidParameters(array $parameters): void
     {
         try {
             $this->client->runCommand($parameters);
@@ -47,33 +50,29 @@ class CommandsTest extends ClientTestCase
         }
     }
 
-    public function validParameters()
+    public function validParameters(): Iterator
     {
-        return [
+        yield [
             [
-                [
-                    'command' => 'storage:workers-list',
-                    'parameters' => [
-                        '--help',
-                    ],
+                'command' => 'storage:workers-list',
+                'parameters' => [
+                    '--help',
                 ],
             ],
+        ];
+        yield [
             [
-                [
-                    'command' => 'storage:workers-list',
-                ],
+                'command' => 'storage:workers-list',
             ],
         ];
     }
 
-    public function invalidParameters()
+    public function invalidParameters(): Iterator
     {
-        return [
+        yield [
             [
-                [
-                    'command' => 'test',
-                    'parameters' => 'unknown',
-                ],
+                'command' => 'test',
+                'parameters' => 'unknown',
             ],
         ];
     }

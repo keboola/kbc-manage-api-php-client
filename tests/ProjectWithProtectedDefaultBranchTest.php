@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Generator;
+use Iterator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
+final class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
 {
     private $organization;
 
@@ -51,7 +54,7 @@ class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
 
     private function createProject(string $userEmail, ?Client $client = null): array
     {
-        if ($client === null) {
+        if (!$client instanceof Client) {
             $client = $this->client;
         }
         $this->client->addUserToOrganization(
@@ -84,36 +87,32 @@ class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
         ];
     }
 
-    public function inviteUserToProjectWithRoleData(): array
+    public function inviteUserToProjectWithRoleData(): Iterator
     {
-        return [
-            [
-                ProjectRole::PRODUCTION_MANAGER,
-            ],
-            [
-                ProjectRole::DEVELOPER,
-            ],
-            [
-                ProjectRole::READ_ONLY,
-            ],
-            [
-                ProjectRole::REVIEWER,
-            ],
+        yield [
+            ProjectRole::PRODUCTION_MANAGER,
+        ];
+        yield [
+            ProjectRole::DEVELOPER,
+        ];
+        yield [
+            ProjectRole::READ_ONLY,
+        ];
+        yield [
+            ProjectRole::REVIEWER,
         ];
     }
 
-    public function inviteUserToProjectInvalidRoleData(): array
+    public function inviteUserToProjectInvalidRoleData(): Iterator
     {
-        return [
-            [
-                ProjectRole::ADMIN,
-            ],
-            [
-                ProjectRole::SHARE,
-            ],
-            [
-                ProjectRole::GUEST,
-            ],
+        yield [
+            ProjectRole::ADMIN,
+        ];
+        yield [
+            ProjectRole::SHARE,
+        ];
+        yield [
+            ProjectRole::GUEST,
         ];
     }
 
@@ -386,7 +385,7 @@ class ProjectWithProtectedDefaultBranchTest extends ClientTestCase
 
         $projectUser = $this->findProjectUser($projectId, $this->superAdmin['email']);
         $this->assertNotNull($projectUser);
-        $this->assertSame($projectUser['role'], 'developer');
+        $this->assertSame('developer', $projectUser['role']);
 
         $this->assertArrayHasKey('approver', $projectUser);
 

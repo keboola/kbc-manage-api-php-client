@@ -7,7 +7,7 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\SnowflakeNameHelper;
 use PHPUnit\Framework\TestCase;
 
-class SnowflakeNameHelperTest extends TestCase
+final class SnowflakeNameHelperTest extends TestCase
 {
     public function testConstructorWithLowercasePrefix(): void
     {

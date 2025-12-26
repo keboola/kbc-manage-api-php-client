@@ -8,7 +8,7 @@ use Retry\BackOff\ExponentialRandomBackOffPolicy;
 use Retry\Policy\SimpleRetryPolicy;
 use Retry\RetryProxy;
 
-class BigqueryProjectsTest extends ClientTestCase
+final class BigqueryProjectsTest extends ClientTestCase
 {
     public function setUp(): void
     {
@@ -68,14 +68,12 @@ class BigqueryProjectsTest extends ClientTestCase
             60_000, // max interval: 60s
         );
         $proxy = new RetryProxy($retryPolicy, $backOffPolicy);
-        $updatedProject = $proxy->call(function () use ($project): array {
-            return $this->normalUserClient->updateProject(
-                $project['id'],
-                [
-                    'timezone' => 'America/Detroit',
-                ],
-            );
-        });
+        $updatedProject = $proxy->call(fn(): array => $this->normalUserClient->updateProject(
+            $project['id'],
+            [
+                'timezone' => 'America/Detroit',
+            ],
+        ));
 
         $this->assertSame('America/Detroit', $updatedProject['timezone']);
 

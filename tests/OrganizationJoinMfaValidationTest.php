@@ -1,9 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
+final class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
 {
     private $organization;
 
@@ -32,11 +35,12 @@ class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testSuperAdminWithoutMfaCannotJoinOrganization()
+    public function testSuperAdminWithoutMfaCannotJoinOrganization(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
 
         $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->assertIsArray($member);
         $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
 
         $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);
@@ -53,13 +57,14 @@ class OrganizationJoinMfaValidationTest extends ClientMfaTestCase
         $this->assertNull($member);
     }
 
-    public function testMaintainerAdminWithoutMfaCannotJoinOrganization()
+    public function testMaintainerAdminWithoutMfaCannotJoinOrganization(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUserWithMfa['email']]);
 
         $member = $this->findOrganizationMember($this->organization['id'], self::DUMMY_USER_EMAIL);
+        $this->assertIsArray($member);
         $this->client->removeUserFromOrganization($this->organization['id'], $member['id']);
 
         $this->normalUserWithMfaClient->updateOrganization($this->organization['id'], ['mfaRequired' => 1]);

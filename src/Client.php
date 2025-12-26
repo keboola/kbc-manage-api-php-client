@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApi;
 
+use Closure;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
@@ -16,14 +19,14 @@ class Client
 
     private $tokenString = '';
 
-    private $backoffMaxTries = 10;
+    private int $backoffMaxTries = 10;
 
-    private $userAgent = 'Keboola Manage API PHP Client';
+    private string $userAgent = 'Keboola Manage API PHP Client';
 
     /**
      * @var GuzzleClient
      */
-    private $client;
+    private GuzzleClient $client;
 
     /**
      * Clients accept an array of constructor parameters.
@@ -57,12 +60,12 @@ class Client
         $this->initClient();
     }
 
-    private function initClient()
+    private function initClient(): void
     {
         $handlerStack = HandlerStack::create();
         $handlerStack->push(Middleware::retry(
-            self::createDefaultDecider($this->backoffMaxTries),
-            self::createExponentialDelay()
+            $this->createDefaultDecider($this->backoffMaxTries),
+            $this->createExponentialDelay()
         ));
 
         $this->client = new GuzzleClient([
@@ -71,31 +74,22 @@ class Client
         ]);
     }
 
-    private static function createDefaultDecider($maxRetries = 3)
+    private function createDefaultDecider(int $maxRetries = 3)
     {
-        return function (
-            $retries,
-            RequestInterface $request,
-            ?ResponseInterface $response = null,
-            $error = null
-        ) use ($maxRetries) {
+        return function ($retries, RequestInterface $request, ?ResponseInterface $response = null, $error = null) use ($maxRetries): bool {
             if ($retries >= $maxRetries) {
                 return false;
-            } elseif ($response && $response->getStatusCode() > 499) {
-                return true;
-            } elseif ($error) {
-                return true;
-            } else {
-                return false;
             }
+            if ($response && $response->getStatusCode() > 499) {
+                return true;
+            }
+            return (bool) $error;
         };
     }
 
-    private static function createExponentialDelay()
+    private function createExponentialDelay(): Closure
     {
-        return function ($retries) {
-            return (int) pow(2, $retries - 1) * 1000;
-        };
+        return fn($retries): int => (int) 2 ** ($retries - 1) * 1000;
     }
 
     /**
@@ -150,7 +144,7 @@ class Client
         return $this->apiPatch($this->encode('/manage/maintainers/%s', $maintainerId), $params);
     }
 
-    public function deleteMaintainer($maintainerId)
+    public function deleteMaintainer($maintainerId): void
     {
         $this->apiDelete($this->encode('/manage/maintainers/%s', $maintainerId));
     }
@@ -170,12 +164,12 @@ class Client
         return $this->apiPost($this->encode('/manage/maintainers/%s/users', $maintainerId), $params);
     }
 
-    public function removeUserFromMaintainer($maintainerId, $userId)
+    public function removeUserFromMaintainer($maintainerId, $userId): void
     {
         $this->apiDelete($this->encode('/manage/maintainers/%s/users/%s', $maintainerId, $userId));
     }
 
-    public function removeUser($userId)
+    public function removeUser($userId): void
     {
         $this->apiDelete($this->encode('/manage/users/%s', $userId));
     }
@@ -195,7 +189,7 @@ class Client
         return $this->apiGet($this->encode('/manage/maintainers/%s/invitations/%s', $maintainerId, $invitationId));
     }
 
-    public function cancelMaintainerInvitation($maintainerId, $invitationId)
+    public function cancelMaintainerInvitation($maintainerId, $invitationId): void
     {
         $this->apiDelete($this->encode('/manage/maintainers/%s/invitations/%s', $maintainerId, $invitationId));
     }
@@ -205,7 +199,7 @@ class Client
         return $this->apiGet('/manage/current-user/maintainers-invitations');
     }
 
-    public function acceptMyMaintainerInvitation($id)
+    public function acceptMyMaintainerInvitation($id): void
     {
         $this->apiPut($this->encode('/manage/current-user/maintainers-invitations/%s', $id), []);
     }
@@ -215,12 +209,12 @@ class Client
         return $this->apiGet($this->encode('/manage/current-user/maintainers-invitations/%s', $id));
     }
 
-    public function declineMyMaintainerInvitation($id)
+    public function declineMyMaintainerInvitation($id): void
     {
         $this->apiDelete($this->encode('/manage/current-user/maintainers-invitations/%s', $id));
     }
 
-    public function joinMaintainer($maintainerId)
+    public function joinMaintainer($maintainerId): void
     {
         $this->apiPost($this->encode('/manage/maintainers/%s/join-maintainer', $maintainerId));
     }
@@ -293,12 +287,12 @@ class Client
         return $this->apiPost($this->encode('manage/organizations/%s/users', $organizationId), $params);
     }
 
-    public function removeUserFromOrganization($organizationId, $userId)
+    public function removeUserFromOrganization($organizationId, $userId): void
     {
         $this->apiDelete($this->encode('manage/organizations/%s/users/%s', $organizationId, $userId));
     }
 
-    public function deleteOrganization($id)
+    public function deleteOrganization($id): void
     {
         $this->apiDelete($this->encode('/manage/organizations/%s', $id));
     }
@@ -318,7 +312,7 @@ class Client
         return $this->apiGet($this->encode('/manage/organizations/%s/invitations/%s', $organizationId, $invitationId));
     }
 
-    public function cancelOrganizationInvitation($organizationId, $invitationId)
+    public function cancelOrganizationInvitation($organizationId, $invitationId): void
     {
         $this->apiDelete($this->encode('/manage/organizations/%s/invitations/%s', $organizationId, $invitationId));
     }
@@ -328,7 +322,7 @@ class Client
         return $this->apiGet('/manage/current-user/organizations-invitations');
     }
 
-    public function acceptMyOrganizationInvitation($id)
+    public function acceptMyOrganizationInvitation($id): void
     {
         $this->apiPut($this->encode('/manage/current-user/organizations-invitations/%s', $id), []);
     }
@@ -338,12 +332,12 @@ class Client
         return $this->apiGet($this->encode('/manage/current-user/organizations-invitations/%s', $id));
     }
 
-    public function declineMyOrganizationInvitation($id)
+    public function declineMyOrganizationInvitation($id): void
     {
         $this->apiDelete($this->encode('/manage/current-user/organizations-invitations/%s', $id));
     }
 
-    public function joinOrganization($organizationId)
+    public function joinOrganization($organizationId): void
     {
         $this->apiPost($this->encode('/manage/organizations/%s/join-organization', $organizationId));
     }
@@ -363,12 +357,12 @@ class Client
         return $this->apiGet($this->encode('/manage/projects/%s', $id));
     }
 
-    public function deleteProject($id)
+    public function deleteProject($id): void
     {
         $this->apiDelete($this->encode('/manage/projects/%s', $id));
     }
 
-    public function undeleteProject($id, $params = [])
+    public function undeleteProject($id, $params = []): void
     {
         $this->apiDelete($this->encode('/manage/deleted-projects/%s?', $id) . http_build_query($params));
     }
@@ -409,7 +403,7 @@ class Client
         return $this->apiGet('/manage/current-user/projects-invitations');
     }
 
-    public function acceptMyProjectInvitation($id)
+    public function acceptMyProjectInvitation($id): void
     {
         $this->apiPut($this->encode('/manage/current-user/projects-invitations/%s', $id), []);
     }
@@ -419,7 +413,7 @@ class Client
         return $this->apiGet($this->encode('/manage/current-user/projects-invitations/%s', $id));
     }
 
-    public function declineMyProjectInvitation($id)
+    public function declineMyProjectInvitation($id): void
     {
         $this->apiDelete($this->encode('/manage/current-user/projects-invitations/%s', $id));
     }
@@ -434,7 +428,7 @@ class Client
         return $this->apiPost($this->encode('/manage/projects/%s/invitations', $projectId), $params);
     }
 
-    public function removeUserFromProject($projectId, $userId)
+    public function removeUserFromProject($projectId, $userId): void
     {
         $this->apiDelete($this->encode('/manage/projects/%s/users/%s', $projectId, $userId));
     }
@@ -449,19 +443,19 @@ class Client
         return $this->apiGet($this->encode('/manage/projects/%s/invitations/%s', $projectId, $invitationId));
     }
 
-    public function cancelProjectInvitation($projectId, $invitationId)
+    public function cancelProjectInvitation($projectId, $invitationId): void
     {
         $this->apiDelete($this->encode('/manage/projects/%s/invitations/%s', $projectId, $invitationId));
     }
 
-    public function enableProject($projectId)
+    public function enableProject($projectId): void
     {
         $this->apiPost($this->encode('/manage/projects/%s/disabled', $projectId), [
            'isDisabled' => false,
         ]);
     }
 
-    public function disableProject($projectId, $params = [])
+    public function disableProject($projectId, $params = []): void
     {
         $this->apiPost($this->encode('/manage/projects/%s/disabled', $projectId), array_merge($params, [
             'isDisabled' => true,
@@ -485,7 +479,7 @@ class Client
         ]);
     }
 
-    public function removeProjectStorageBackend($projectId, $backendId)
+    public function removeProjectStorageBackend($projectId, $backendId): void
     {
         $this->apiDelete($this->encode('/manage/projects/%s/storage-backend/%s', $projectId, $backendId));
     }
@@ -511,7 +505,7 @@ class Client
         ]);
     }
 
-    public function removeProjectLimit($projectId, $limitName)
+    public function removeProjectLimit($projectId, $limitName): void
     {
         $this->apiDelete($this->encode('/manage/projects/%s/limits/%s', $projectId, $limitName));
     }
@@ -575,7 +569,7 @@ class Client
         return $this->apiPatch($this->encode('/manage/features/%s', $id), $options);
     }
 
-    public function removeFeature($id)
+    public function removeFeature($id): void
     {
         $this->apiDelete($this->encode('/manage/features/%s', $id));
     }
@@ -611,7 +605,7 @@ class Client
         ]);
     }
 
-    public function removeProjectFeature($projectId, $feature)
+    public function removeProjectFeature($projectId, $feature): void
     {
         $this->apiDelete($this->encode('/manage/projects/%s/features/%s', $projectId, $feature));
     }
@@ -633,7 +627,7 @@ class Client
         ]);
     }
 
-    public function removeUserFeature($emailOrId, $feature)
+    public function removeUserFeature($emailOrId, $feature): void
     {
         $this->apiDelete($this->encode('/manage/users/%s/features/%s', $emailOrId, $feature));
     }
@@ -699,12 +693,12 @@ class Client
         return $this->apiGet('/manage/current-user/promo-codes');
     }
 
-    public function removeProjectTemplateFeature($templateStringId, $featureName)
+    public function removeProjectTemplateFeature($templateStringId, $featureName): void
     {
         $this->apiDelete($this->encode('/manage/project-templates/%s/features/%s', $templateStringId, $featureName));
     }
 
-    public function disableUserMFA($emailOrId)
+    public function disableUserMFA($emailOrId): void
     {
         $this->apiDelete($this->encode('/manage/users/%s/mfa', $emailOrId));
     }
@@ -808,7 +802,7 @@ class Client
         return $this->apiPost('manage/ui-apps', $options);
     }
 
-    public function deleteUiApp($name)
+    public function deleteUiApp($name): void
     {
         $this->apiDelete($this->encode('manage/ui-apps/%s', $name));
     }
@@ -833,17 +827,17 @@ class Client
         return $this->apiPost($this->encode('/manage/projects/%s/request-access', $projectId), $params);
     }
 
-    public function joinProject($projectId)
+    public function joinProject($projectId): void
     {
         $this->apiPost($this->encode('/manage/projects/%s/join-project', $projectId));
     }
 
-    public function deleteMyProjectJoinRequest($id)
+    public function deleteMyProjectJoinRequest($id): void
     {
         $this->apiDelete($this->encode('/manage/current-user/projects-join-requests/%s', $id));
     }
 
-    public function approveMyProjectJoinRequest($id)
+    public function approveMyProjectJoinRequest($id): void
     {
         $this->apiPut($this->encode('/manage/current-user/projects-join-requests/%s', $id), []);
     }
@@ -858,12 +852,12 @@ class Client
         return $this->apiGet($this->encode('/manage/projects/%s/join-requests/%s', $projectId, $joinRequestId));
     }
 
-    public function approveProjectJoinRequest($projectId, $joinRequestId)
+    public function approveProjectJoinRequest($projectId, $joinRequestId): void
     {
         $this->apiPut($this->encode('/manage/projects/%s/join-requests/%s', $projectId, $joinRequestId), []);
     }
 
-    public function rejectProjectJoinRequest($projectId, $joinRequestId)
+    public function rejectProjectJoinRequest($projectId, $joinRequestId): void
     {
         $this->apiDelete($this->encode('/manage/projects/%s/join-requests/%s', $projectId, $joinRequestId));
     }
@@ -884,43 +878,43 @@ class Client
     private function encode(string $url, ...$params): string
     {
         foreach ($params as &$param) {
-            $param = rawurlencode($param);
+            $param = rawurlencode((string) $param);
         }
         return vsprintf($url, $params);
     }
 
-    private function apiGet($url)
+    private function apiGet(string $url)
     {
         return $this->request('GET', $url);
     }
 
-    private function apiPost($url, $data = [])
+    private function apiPost(string $url, $data = [])
     {
         return $this->request('POST', $url, [
             'json' => $data,
         ]);
     }
 
-    private function apiPut($url, $data)
+    private function apiPut(string $url, $data)
     {
         return $this->request('PUT', $url, [
             'json' => $data,
         ]);
     }
 
-    private function apiPatch($url, $data)
+    private function apiPatch(string $url, $data)
     {
         return $this->request('PATCH', $url, [
             'json' => $data,
         ]);
     }
 
-    private function apiDelete($url)
+    private function apiDelete(string $url): void
     {
         $this->request('DELETE', $url);
     }
 
-    private function request($method, $url, array $options = [])
+    private function request(string $method, string $url, array $options = [])
     {
         $requestOptions = array_merge($options, [
             'headers' => [
@@ -937,17 +931,17 @@ class Client
             $response = $this->client->request($method, $url, $requestOptions);
         } catch (RequestException $e) {
             $response = $e->getResponse();
-            $body = $response ? json_decode((string) $response->getBody(), true) : [];
+            $body = $response instanceof ResponseInterface ? json_decode((string) $response->getBody(), true) : [];
 
             if ($response && $response->getStatusCode() === 503) {
-                throw new MaintenanceException(isset($body['reason']) ? $body['reason'] : 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
+                throw new MaintenanceException($body['reason'] ?? 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
             }
 
             throw new ClientException(
                 $this->composeErrorMessage($e, $body),
-                $response ? $response->getStatusCode() : $e->getCode(),
+                $response instanceof ResponseInterface ? $response->getStatusCode() : $e->getCode(),
                 $e,
-                isset($body['code']) ? $body['code'] : '',
+                $body['code'] ?? '',
                 $body
             );
         }
@@ -970,9 +964,8 @@ class Client
                 }
             }
             return $message;
-        } else {
-            return $requestException->getMessage();
         }
+        return $requestException->getMessage();
     }
 
     public function createGcsFileStorage(array $options)

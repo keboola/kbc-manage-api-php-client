@@ -1,9 +1,13 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\ClientException;
 
-class ProjectJoinTest extends ClientTestCase
+final class ProjectJoinTest extends ClientTestCase
 {
     private $organization;
 
@@ -42,15 +46,13 @@ class ProjectJoinTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): array
+    public function autoJoinProvider(): Iterator
     {
-        return [
-            [
-                true,
-            ],
-            [
-                false,
-            ],
+        yield [
+            true,
+        ];
+        yield [
+            false,
         ];
     }
 

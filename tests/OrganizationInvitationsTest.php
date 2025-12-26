@@ -1,9 +1,13 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\ClientException;
 
-class OrganizationInvitationsTest extends ClientTestCase
+final class OrganizationInvitationsTest extends ClientTestCase
 {
     private $organization;
 
@@ -42,15 +46,13 @@ class OrganizationInvitationsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): array
+    public function autoJoinProvider(): Iterator
     {
-        return [
-            [
-                true,
-            ],
-            [
-                false,
-            ],
+        yield [
+            true,
+        ];
+        yield [
+            false,
         ];
     }
 
@@ -93,7 +95,7 @@ class OrganizationInvitationsTest extends ClientTestCase
      * @dataProvider autoJoinProvider
      * @param bool $allowAutoJoin
      */
-    public function testMaintainerCannotInviteRegardlessOfAllowAutoJoin($allowAutoJoin): void
+    public function testMaintainerCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
         $organizationId = $this->organization['id'];

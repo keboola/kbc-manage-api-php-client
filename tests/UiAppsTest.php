@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class UiAppsTest extends ClientTestCase
+final class UiAppsTest extends ClientTestCase
 {
-    public function testAppCreationAndDeletion()
+    public function testAppCreationAndDeletion(): void
     {
         $client = $this->getClient([
             'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithUiManageScope(),
@@ -17,9 +19,7 @@ class UiAppsTest extends ClientTestCase
 
         $newAppName = 'Sample KBC Application';
 
-        $listOfAppsBeforeCreation = array_map(function ($app) {
-            return $app['name'];
-        }, $client->listUiApps());
+        $listOfAppsBeforeCreation = array_map(fn(array $app) => $app['name'], $client->listUiApps());
         sort($listOfAppsBeforeCreation);
 
         if (in_array($newAppName, $listOfAppsBeforeCreation)) {
@@ -31,24 +31,20 @@ class UiAppsTest extends ClientTestCase
             'activate' => true,
         ]);
 
-        $listOfAppsAfterCreation = array_map(function ($app) {
-            return $app['name'];
-        }, $client->listUiApps());
+        $listOfAppsAfterCreation = array_map(fn(array $app) => $app['name'], $client->listUiApps());
         sort($listOfAppsAfterCreation);
 
         $client->deleteUiApp($newAppName);
 
-        $listOfAppsAfterDeletion = array_map(function ($app) {
-            return $app['name'];
-        }, $client->listUiApps());
+        $listOfAppsAfterDeletion = array_map(fn(array $app) => $app['name'], $client->listUiApps());
         sort($listOfAppsAfterDeletion);
 
         $this->assertSame(count($listOfAppsBeforeCreation), (count($listOfAppsAfterCreation) - 1));
-        $this->assertNotFalse(array_search($newAppName, $listOfAppsAfterCreation));
+        $this->assertContains($newAppName, $listOfAppsAfterCreation);
         $this->assertEquals($listOfAppsBeforeCreation, $listOfAppsAfterDeletion);
     }
 
-    public function testAppCreationWithIsCritical()
+    public function testAppCreationWithIsCritical(): void
     {
         $client = $this->getClient([
             'token' => EnvVariableHelper::getKbcManageApiSuperTokenWithUiManageScope(),
@@ -76,7 +72,7 @@ class UiAppsTest extends ClientTestCase
         $this->assertEquals(true, $apps[$key]['isCritical']);
     }
 
-    public function testPublicList()
+    public function testPublicList(): void
     {
         $client = $this->getClient([
             'token' => 'token is not required for this api all',

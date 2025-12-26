@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class ProjectTemplateFeaturesTest extends ClientTestCase
+final class ProjectTemplateFeaturesTest extends ClientTestCase
 {
     public const TEST_PROJECT_TEMPLATE_STRING_ID = 'productionRedshift';
 
-    public function testListAddAndDeleteFeatures()
+    public function testListAddAndDeleteFeatures(): void
     {
         $featuresAtTheBeginning = $this->getFeatures();
         $randomFeature = $this->prepareRandomFeature();
@@ -40,7 +42,7 @@ class ProjectTemplateFeaturesTest extends ClientTestCase
         $this->assertCount(count($featuresAtTheBeginning), $this->getFeatures());
     }
 
-    public function testCreateSameFeatureTwice()
+    public function testCreateSameFeatureTwice(): void
     {
         $featuresAtTheBeginning = $this->getFeatures();
 
@@ -63,7 +65,7 @@ class ProjectTemplateFeaturesTest extends ClientTestCase
     }
 
 
-    public function testRemoveNonexistentFeature()
+    public function testRemoveNonexistentFeature(): void
     {
         try {
             $this->client->removeProjectTemplateFeature(self::TEST_PROJECT_TEMPLATE_STRING_ID, 'random-feature-name-' . time());
@@ -73,7 +75,7 @@ class ProjectTemplateFeaturesTest extends ClientTestCase
         }
     }
 
-    public function testAccessNonexistentTemplate()
+    public function testAccessNonexistentTemplate(): void
     {
         try {
             $this->client->getProjectTemplateFeatures('random-template-name-' . time());
@@ -97,7 +99,7 @@ class ProjectTemplateFeaturesTest extends ClientTestCase
         ];
     }
 
-    private function createFeature($feature): void
+    private function createFeature(array $feature): void
     {
         $this->client->createFeature($feature['name'], $feature['type'], $feature['title'], $feature['description']);
     }

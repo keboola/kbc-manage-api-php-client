@@ -1,17 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
+use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class SessionTokensTest extends ClientTestCase
+final class SessionTokensTest extends ClientTestCase
 {
-    /** @var array */
-    private $sessionToken;
+    private array $sessionToken;
 
-    /** @var \Keboola\ManageApi\Client */
-    private $sessionTokenClient;
+    /** @var Client */
+    private Client $sessionTokenClient;
 
     public function setUp(): void
     {
@@ -26,17 +28,17 @@ class SessionTokensTest extends ClientTestCase
         ]);
     }
 
-    public function testSessionTokenProperties()
+    public function testSessionTokenProperties(): void
     {
         $this->assertEquals($this->normalUser['id'], $this->sessionToken['user']['id']);
         $this->assertEquals($this->normalUser['email'], $this->sessionToken['user']['email']);
 
         $this->assertEquals('session', $this->sessionToken['type']);
         $this->assertTrue($this->sessionToken['isSessionToken']);
-        $this->assertTrue(strtotime($this->sessionToken['expires']) <= strtotime($this->sessionToken['created']) + 3600);
+        $this->assertLessThanOrEqual(strtotime((string) $this->sessionToken['created']) + 3600, strtotime((string) $this->sessionToken['expires']));
     }
 
-    public function testMaintainersManipulation()
+    public function testMaintainersManipulation(): void
     {
         // get maintainers
         $maintainers = $this->sessionTokenClient->listMaintainers();
@@ -70,7 +72,7 @@ class SessionTokensTest extends ClientTestCase
         }
     }
 
-    public function testOrganizationsManipulation()
+    public function testOrganizationsManipulation(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
@@ -92,7 +94,7 @@ class SessionTokensTest extends ClientTestCase
         }
     }
 
-    public function testProjectManipulation()
+    public function testProjectManipulation(): void
     {
         $organization1 = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - project manipulation 1',
@@ -132,7 +134,7 @@ class SessionTokensTest extends ClientTestCase
         }
     }
 
-    public function testProjectUsersManipulation()
+    public function testProjectUsersManipulation(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - users manipulation',
@@ -145,12 +147,12 @@ class SessionTokensTest extends ClientTestCase
 
         // list project users
         $projectUsers = $this->sessionTokenClient->listProjectUsers($project['id']);
-        $this->assertEquals(2, count($projectUsers));
+        $this->assertCount(2, $projectUsers);
 
         // delete project user
         $this->sessionTokenClient->removeUserFromProject($project['id'], $this->superAdmin['id']);
         $projectUsers = $this->sessionTokenClient->listProjectUsers($project['id']);
-        $this->assertEquals(1, count($projectUsers));
+        $this->assertCount(1, $projectUsers);
 
         // add user to project
         try {
@@ -162,7 +164,7 @@ class SessionTokensTest extends ClientTestCase
         }
     }
 
-    public function testProjectInvitationsManipulation()
+    public function testProjectInvitationsManipulation(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - invitations manipulation',
@@ -179,15 +181,15 @@ class SessionTokensTest extends ClientTestCase
 
         // list invitations via session token
         $invitationsAfterInvite = $this->sessionTokenClient->listProjectInvitations($project['id']);
-        $this->assertEquals(1, count($invitationsAfterInvite));
+        $this->assertCount(1, $invitationsAfterInvite);
 
         // delete invitation via session token
         $this->sessionTokenClient->cancelProjectInvitation($project['id'], $invitationsAfterInvite[0]['id']);
         $invitationsAfterCancel = $this->sessionTokenClient->listProjectInvitations($project['id']);
-        $this->assertEquals(0, count($invitationsAfterCancel));
+        $this->assertCount(0, $invitationsAfterCancel);
     }
 
-    public function testProjectJoinRequestsManipulation()
+    public function testProjectJoinRequestsManipulation(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
             'name' => 'Session Tokens - join requests manipulation',
@@ -206,27 +208,27 @@ class SessionTokensTest extends ClientTestCase
 
         // list join requests
         $joinRequests = $this->sessionTokenClient->listProjectJoinRequests($project['id']);
-        $this->assertEquals(1, count($joinRequests));
+        $this->assertCount(1, $joinRequests);
 
         // approve join request
         $this->sessionTokenClient->approveProjectJoinRequest($project['id'], $joinRequests[0]['id']);
 
         // list join requests
         $joinRequestsAfterApproval = $this->sessionTokenClient->listProjectJoinRequests($project['id']);
-        $this->assertEquals(0, count($joinRequestsAfterApproval));
+        $this->assertCount(0, $joinRequestsAfterApproval);
 
         $this->client->removeUserFromProject($project['id'], $this->normalUserWithMfa['id']);
         $this->normalUserWithMfaClient->requestAccessToProject($project['id']);
 
         // list join requests
         $joinRequestsAfter2ndRequest = $this->sessionTokenClient->listProjectJoinRequests($project['id']);
-        $this->assertEquals(1, count($joinRequestsAfter2ndRequest));
+        $this->assertCount(1, $joinRequestsAfter2ndRequest);
 
         // reject join request
         $this->sessionTokenClient->rejectProjectJoinRequest($project['id'], $joinRequestsAfter2ndRequest[0]['id']);
 
         // list join requests
         $joinRequestsAfterRejection = $this->sessionTokenClient->listProjectJoinRequests($project['id']);
-        $this->assertEquals(0, count($joinRequestsAfterRejection));
+        $this->assertCount(0, $joinRequestsAfterRejection);
     }
 }

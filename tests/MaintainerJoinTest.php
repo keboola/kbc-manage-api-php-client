@@ -1,9 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class MaintainerJoinTest extends ClientTestCase
+final class MaintainerJoinTest extends ClientTestCase
 {
     private $maintainer;
 
