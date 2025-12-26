@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
@@ -9,7 +10,7 @@ use function GuzzleHttp\json_encode;
 /**
  * @group FileStorage
  */
-class FileStorageS3Test extends ClientTestCase
+final class FileStorageS3Test extends ClientTestCase
 {
 
     private const ROTATE_ABS_OPTIONS = [
@@ -30,40 +31,40 @@ class FileStorageS3Test extends ClientTestCase
         'awsSecret' => TEST_S3_ROTATE_SECRET,
     ];
 
-    public function testFileStorageS3Create()
+    public function testFileStorageS3Create(): void
     {
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $this->assertArrayNotHasKey('awsSecret', $storage);
-        $this->assertSame($storage['awsKey'], TEST_S3_KEY);
-        $this->assertSame($storage['region'], TEST_S3_REGION);
-        $this->assertSame($storage['filesBucket'], TEST_S3_FILES_BUCKET);
-        $this->assertSame($storage['provider'], 'aws');
+        $this->assertSame(TEST_S3_KEY, $storage['awsKey']);
+        $this->assertSame(TEST_S3_REGION, $storage['region']);
+        $this->assertSame(TEST_S3_FILES_BUCKET, $storage['filesBucket']);
+        $this->assertSame('aws', $storage['provider']);
         $this->assertFalse($storage['isDefault']);
         $this->assertArrayNotHasKey('gcsSnowflakeIntegrationName', $storage);
     }
 
-    public function testRotateS3Key()
+    public function testRotateS3Key(): void
     {
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
         $rotatedStorage = $this->client->rotateS3FileStorageCredentials($storage['id'], self::ROTATE_S3_OPTIONS);
 
         $this->assertArrayNotHasKey('awsSecret', $storage);
-        $this->assertSame($rotatedStorage['awsKey'], TEST_S3_ROTATE_KEY);
-        $this->assertSame($rotatedStorage['region'], TEST_S3_REGION);
-        $this->assertSame($rotatedStorage['filesBucket'], TEST_S3_FILES_BUCKET);
-        $this->assertSame($rotatedStorage['provider'], 'aws');
+        $this->assertSame(TEST_S3_ROTATE_KEY, $rotatedStorage['awsKey']);
+        $this->assertSame(TEST_S3_REGION, $rotatedStorage['region']);
+        $this->assertSame(TEST_S3_FILES_BUCKET, $rotatedStorage['filesBucket']);
+        $this->assertSame('aws', $rotatedStorage['provider']);
         $this->assertFalse($rotatedStorage['isDefault']);
     }
 
-    public function testListS3Storages()
+    public function testListS3Storages(): void
     {
         $initCount = count($this->client->listS3FileStorage());
         $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
         $storages = $this->client->listS3FileStorage();
 
-        $this->assertSame($initCount + 1, count($storages));
+        $this->assertCount($initCount + 1, $storages);
 
         foreach ($storages as $storage) {
             if ($storage['provider'] !== 'aws') {
@@ -73,7 +74,7 @@ class FileStorageS3Test extends ClientTestCase
     }
 
 
-    public function testSetS3StorageAsDefault()
+    public function testSetS3StorageAsDefault(): void
     {
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
@@ -91,7 +92,7 @@ class FileStorageS3Test extends ClientTestCase
             }
 
             if ($item['isDefault']) {
-                array_push($regions, $item['region']);
+                $regions[] = $item['region'];
             }
 
             if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === self::DEFAULT_S3_OPTIONS['region']) {
@@ -100,7 +101,7 @@ class FileStorageS3Test extends ClientTestCase
         }
     }
 
-    public function testSetS3StorageDefaultInMultipleRegions()
+    public function testSetS3StorageDefaultInMultipleRegions(): void
     {
         $this->markTestSkipped('This tests requires working us-east-1 S3 credentials and bucket');
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
@@ -132,7 +133,7 @@ class FileStorageS3Test extends ClientTestCase
             }
 
             if ($item['isDefault']) {
-                array_push($regions, $item['region']);
+                $regions[] = $item['region'];
             }
 
             if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === self::DEFAULT_S3_OPTIONS['region']) {
@@ -145,7 +146,7 @@ class FileStorageS3Test extends ClientTestCase
         }
     }
 
-    public function testCrossProviderStorageDefaultS3Abs()
+    public function testCrossProviderStorageDefaultS3Abs(): void
     {
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
@@ -154,7 +155,7 @@ class FileStorageS3Test extends ClientTestCase
         $this->client->setAbsFileStorageAsDefault($storage['id']);
     }
 
-    public function testCrossProviderStorageCredentialsRotateS3Abs()
+    public function testCrossProviderStorageCredentialsRotateS3Abs(): void
     {
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
@@ -163,7 +164,7 @@ class FileStorageS3Test extends ClientTestCase
         $this->client->rotateAbsFileStorageCredentials($storage['id'], self::ROTATE_ABS_OPTIONS);
     }
 
-    public function testCreateS3StorageWithoutRequiredParam()
+    public function testCreateS3StorageWithoutRequiredParam(): void
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage('Invalid request:
@@ -182,7 +183,7 @@ Errors:
         $this->client->createS3FileStorage([]);
     }
 
-    public function testRotateS3CredentialsWithoutRequiredParams()
+    public function testRotateS3CredentialsWithoutRequiredParams(): void
     {
         $storage = $this->client->createS3FileStorage(self::DEFAULT_S3_OPTIONS);
 
@@ -197,7 +198,7 @@ Errors:
         $this->client->rotateS3FileStorageCredentials($storage['id'], []);
     }
 
-    public function testProjectAssignS3FileStorage()
+    public function testProjectAssignS3FileStorage(): void
     {
         $name = 'My org';
         $organization = $this->client->createOrganization($this->testMaintainerId, [

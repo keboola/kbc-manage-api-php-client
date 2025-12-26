@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Doctrine\DBAL\Connection;
@@ -12,24 +14,24 @@ use Keboola\StorageApi\Workspaces;
 use Keboola\TableBackendUtils\Connection\Snowflake\SnowflakeConnectionFactory;
 use Keboola\TableBackendUtils\Escaping\Snowflake\SnowflakeQuote;
 
-class StorageBackendTest extends ClientTestCase
+final class StorageBackendTest extends ClientTestCase
 {
     use BackendConfigurationProviderTrait;
 
     public function testOnlySuperadminCanRegisterStorageBackend(): void
     {
         $newBackend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
-        $this->assertSame($newBackend['backend'], 'snowflake');
+        $this->assertSame('snowflake', $newBackend['backend']);
         $this->assertBackendExist($newBackend['id']);
         $this->client->removeStorageBackend($newBackend['id']);
 
         $newBackend = $this->normalUserClient->createStorageBackend($this->getSnowflakeBackendCreateOptions());
-        $this->assertSame($newBackend['backend'], 'snowflake');
+        $this->assertSame('snowflake', $newBackend['backend']);
         $this->assertBackendExist($newBackend['id']);
         $this->client->removeStorageBackend($newBackend['id']);
     }
 
-    public function testCreateStorageBackendWithCert()
+    public function testCreateStorageBackendWithCert(): void
     {
         $db = $this->prepareConnection();
         $kbcTestSnowflakeBackendName = 'CI_CREATE_WITH_ENDPOINT';
@@ -51,7 +53,7 @@ class StorageBackendTest extends ClientTestCase
 
         $this->assertBackendExist($newBackend['id']);
 
-        $statements = array_filter(array_map('trim', explode(';', $newBackend['sqlTemplate'])));
+        $statements = array_filter(array_map(trim(...), explode(';', (string) $newBackend['sqlTemplate'])));
         foreach ($statements as $statement) {
             $db->executeStatement($statement);
         }
@@ -95,7 +97,7 @@ class StorageBackendTest extends ClientTestCase
         $this->createTestProjectAndValidate($project['id'], $newBackend['useDynamicBackends'], $newBackend['id'], $newMaintainer['id']);
     }
 
-    public function testCreateStorageBackendWithCertWithoutUserOnBackend()
+    public function testCreateStorageBackendWithCertWithoutUserOnBackend(): void
     {
         $newBackend = $this->client->createSnowflakeStorageBackend([
             'host' => EnvVariableHelper::getKbcTestSnowflakeHost(),
@@ -124,7 +126,7 @@ class StorageBackendTest extends ClientTestCase
     /**
      * @dataProvider storageBackendOptionsProvider
      */
-    public function testCreateStorageBackend(array $options)
+    public function testCreateStorageBackend(array $options): void
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
@@ -140,7 +142,7 @@ class StorageBackendTest extends ClientTestCase
             $this->assertSame($options['useDynamicBackends'], $newBackend['useDynamicBackends']);
         }
 
-        $this->assertSame($newBackend['backend'], 'snowflake');
+        $this->assertSame('snowflake', $newBackend['backend']);
         $this->assertBackendExist($newBackend['id']);
 
         $newMaintainer = $this->client->createMaintainer([
@@ -242,7 +244,7 @@ class StorageBackendTest extends ClientTestCase
     /**
      * @dataProvider storageBackendOptionsProvider
      */
-    public function testUpdateStorageBackendWithWrongPassword(array $options)
+    public function testUpdateStorageBackendWithWrongPassword(array $options): void
     {
         $backend = $this->client->createStorageBackend($options);
 
@@ -254,7 +256,7 @@ class StorageBackendTest extends ClientTestCase
             $this->client->updateStorageBackend($backend['id'], $wrongOptions);
             $this->fail('Should fail!');
         } catch (ClientException $e) {
-            $this->assertContains('Supplied credentials cannot use the supplied warehouse', $e->getMessage());
+            $this->assertStringContainsString('Supplied credentials cannot use the supplied warehouse', $e->getMessage());
         } finally {
             $this->client->removeStorageBackend($backend['id']);
         }
@@ -263,7 +265,7 @@ class StorageBackendTest extends ClientTestCase
     /**
      * @dataProvider storageBackendOptionsProviderForUpdate
      */
-    public function testUpdateStorageBackend(array $options, array $updateOptions, bool $checkResponse)
+    public function testUpdateStorageBackend(array $options, array $updateOptions, bool $checkResponse): void
     {
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
         $backend = $this->client->createStorageBackend($options);
@@ -555,7 +557,7 @@ class StorageBackendTest extends ClientTestCase
         foreach ($cleanupStatements as $cleanupSql) {
             try {
                 $db->executeStatement($cleanupSql);
-            } catch (Exception $e) {
+            } catch (Exception) {
             }
         }
     }

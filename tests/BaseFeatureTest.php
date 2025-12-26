@@ -11,8 +11,9 @@ class BaseFeatureTest extends ClientTestCase
 {
     public const MANAGE_TOKEN_CLIENT = 'manageTokenClient';
     public const SESSION_TOKEN_CLIENT = 'sessionTokenClient';
-    protected string $sessionToken;
-    protected array $organization;
+
+    /** @var array<mixed> */
+    protected array $organization = [];
 
     public function setUp(): void
     {
@@ -47,15 +48,13 @@ class BaseFeatureTest extends ClientTestCase
 
     protected function getNormalUserClient(): CLient
     {
-        if ($this->usesDataProvider()) {
-            if (in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
-                $sessionToken = $this->normalUserClient->createSessionToken();
-                return $this->getClient([
-                    'token' => $sessionToken['token'],
-                    'url' => EnvVariableHelper::getKbcManageApiUrl(),
-                    'backoffMaxTries' => 0,
-                ]);
-            }
+        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+            $sessionToken = $this->normalUserClient->createSessionToken();
+            return $this->getClient([
+                'token' => $sessionToken['token'],
+                'url' => EnvVariableHelper::getKbcManageApiUrl(),
+                'backoffMaxTries' => 0,
+            ]);
         }
 
         return $this->normalUserClient;
@@ -63,15 +62,13 @@ class BaseFeatureTest extends ClientTestCase
 
     protected function getSuperAdminClient(): Client
     {
-        if ($this->usesDataProvider()) {
-            if (in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
-                $sessionToken = $this->client->createSessionToken();
-                return $this->getClient([
-                    'token' => $sessionToken['token'],
-                    'url' => EnvVariableHelper::getKbcManageApiUrl(),
-                    'backoffMaxTries' => 0,
-                ]);
-            }
+        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+            $sessionToken = $this->client->createSessionToken();
+            return $this->getClient([
+                'token' => $sessionToken['token'],
+                'url' => EnvVariableHelper::getKbcManageApiUrl(),
+                'backoffMaxTries' => 0,
+            ]);
         }
 
         return $this->client;

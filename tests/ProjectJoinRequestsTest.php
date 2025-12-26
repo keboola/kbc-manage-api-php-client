@@ -1,9 +1,13 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\ClientException;
 
-class ProjectJoinRequestsTest extends ClientTestCase
+final class ProjectJoinRequestsTest extends ClientTestCase
 {
     private $organization;
 
@@ -42,15 +46,13 @@ class ProjectJoinRequestsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): array
+    public function autoJoinProvider(): Iterator
     {
-        return [
-            [
-                true,
-            ],
-            [
-                false,
-            ],
+        yield [
+            true,
+        ];
+        yield [
+            false,
         ];
     }
 
@@ -527,7 +529,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
     }
 
-    public function testProjectMemberCanApproveJoinRequest()
+    public function testProjectMemberCanApproveJoinRequest(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
@@ -582,7 +584,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testProjectMemberCanRejectJoinRequest()
+    public function testProjectMemberCanRejectJoinRequest(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
         $projectId = $this->createProjectWithNormalAdminMember($this->organization['id']);
@@ -619,7 +621,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testDeletingProjectRemovesJoinRequests()
+    public function testDeletingProjectRemovesJoinRequests(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -649,7 +651,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testJoinRequestExpiration()
+    public function testJoinRequestExpiration(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -677,7 +679,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testAdminCanCancelHisOwnJoinRequest()
+    public function testAdminCanCancelHisOwnJoinRequest(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -712,7 +714,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testCannotRequestAccessTwoTimes()
+    public function testCannotRequestAccessTwoTimes(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -741,7 +743,7 @@ class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(1, $joinRequests);
     }
 
-    public function testInvitedAdminCannotRequestAccess()
+    public function testInvitedAdminCannotRequestAccess(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);

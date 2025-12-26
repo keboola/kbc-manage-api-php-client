@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Exception;
@@ -18,7 +20,7 @@ use Keboola\StorageApi\Workspaces;
 /**
  * @retryAttempts 0
  */
-class ProjectDeleteTest extends ClientTestCase
+final class ProjectDeleteTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';
@@ -59,7 +61,7 @@ class ProjectDeleteTest extends ClientTestCase
         ];
     }
 
-    public function testPurgeExpiredProjectRemoveJoinRequest()
+    public function testPurgeExpiredProjectRemoveJoinRequest(): void
     {
         $normalJoinRequests = $this->normalUserClient->listMyProjectJoinRequests();
 
@@ -93,7 +95,7 @@ class ProjectDeleteTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    public function testPurgeExpiredProjectRemoveUserInvitation()
+    public function testPurgeExpiredProjectRemoveUserInvitation(): void
     {
         $normalUserInvitations = $this->normalUserClient->listMyProjectInvitations();
 
@@ -122,7 +124,7 @@ class ProjectDeleteTest extends ClientTestCase
         $this->assertCount(0, $normalUserInvitations);
     }
 
-    public function testPurgeExpiredProjectRemoveMetadata()
+    public function testPurgeExpiredProjectRemoveMetadata(): void
     {
         /*
           creates and purges project with project metadata. Metadata should be erased after purging. Check it manually
@@ -317,23 +319,17 @@ class ProjectDeleteTest extends ClientTestCase
         if ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_ABS) {
             $fileStorages = array_filter(
                 $this->client->listAbsFileStorage(),
-                function (array $fileStorage) {
-                    return $fileStorage['owner'] === 'keboola';
-                }
+                fn(array $fileStorage): bool => $fileStorage['owner'] === 'keboola'
             );
         } elseif ($fileStorageProvider === self::FILE_STORAGE_PROVIDER_GCS) {
             $fileStorages = array_filter(
                 $this->client->listGcsFileStorage(),
-                function (array $fileStorage) {
-                    return $fileStorage['owner'] === 'keboola';
-                }
+                fn(array $fileStorage): bool => $fileStorage['owner'] === 'keboola'
             );
         } else {
             $fileStorages = array_filter(
                 $this->client->listS3FileStorage(),
-                function (array $fileStorage) {
-                    return $fileStorage['owner'] === 'keboola';
-                }
+                fn(array $fileStorage): bool => $fileStorage['owner'] === 'keboola'
             );
         }
 

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
-class MaintainersMetadataTest extends ClientTestCase
+final class MaintainersMetadataTest extends ClientTestCase
 {
     public const TEST_METADATA = [
         [
@@ -25,10 +26,7 @@ class MaintainersMetadataTest extends ClientTestCase
     public const PROVIDER_USER = 'user';
     public const PROVIDER_SYSTEM = 'system';
 
-    /**
-     * @var array
-     */
-    private $maintainer;
+    private array $maintainer;
 
     public function setUp(): void
     {
@@ -54,33 +52,29 @@ class MaintainersMetadataTest extends ClientTestCase
         $this->client->removeUserFromMaintainer($this->maintainer['id'], $this->superAdmin['id']);
     }
 
-    public function providers(): array
+    public function providers(): Iterator
     {
-        return [
-            'system provider' => [
-                self::PROVIDER_SYSTEM,
-            ],
-            'user provider' => [
-                self::PROVIDER_USER,
-            ],
+        yield 'system provider' => [
+            self::PROVIDER_SYSTEM,
+        ];
+        yield 'user provider' => [
+            self::PROVIDER_USER,
         ];
     }
 
-    public function allProjectRoles(): array
+    public function allProjectRoles(): Iterator
     {
-        return [
-            'admin' => [
-                ProjectRole::ADMIN,
-            ],
-            'share' => [
-                ProjectRole::SHARE,
-            ],
-            'guest' => [
-                ProjectRole::GUEST,
-            ],
-            'read only' => [
-                ProjectRole::READ_ONLY,
-            ],
+        yield 'admin' => [
+            ProjectRole::ADMIN,
+        ];
+        yield 'share' => [
+            ProjectRole::SHARE,
+        ];
+        yield 'guest' => [
+            ProjectRole::GUEST,
+        ];
+        yield 'read only' => [
+            ProjectRole::READ_ONLY,
         ];
     }
 
@@ -245,7 +239,7 @@ class MaintainersMetadataTest extends ClientTestCase
         );
     }
 
-    private function createMetadata(Client $client, int $maintainerId, $provider): array
+    private function createMetadata(Client $client, int $maintainerId, string $provider): array
     {
         return $client->setMaintainerMetadata(
             $maintainerId,
@@ -264,7 +258,7 @@ class MaintainersMetadataTest extends ClientTestCase
         $this->assertArrayHasKey('timestamp', $actual);
     }
 
-    private function cannotManageUserMetadata(Client $client, $metadataId)
+    private function cannotManageUserMetadata(Client $client, $metadataId): void
     {
         // note there is no cannotManageSYSTEMMetadata because LIST operation is the same and SET/DELETE operations are tested explicitly
         try {
@@ -284,7 +278,7 @@ class MaintainersMetadataTest extends ClientTestCase
         $this->cannotDeleteMetadata($client, $metadataId);
     }
 
-    private function cannotSetSystemMetadata($client)
+    private function cannotSetSystemMetadata($client): void
     {
         try {
             $client->setMaintainerMetadata($this->maintainer['id'], self::PROVIDER_SYSTEM, self::TEST_METADATA);
@@ -299,14 +293,14 @@ class MaintainersMetadataTest extends ClientTestCase
      * @param Client $client
      * @param int $metadataId
      */
-    private function deleteAndCheckMetadata(Client $client, int $metadataId)
+    private function deleteAndCheckMetadata(Client $client, int $metadataId): void
     {
         $client->deleteMaintainerMetadata($this->maintainer['id'], $metadataId);
         $metadataArray = $this->client->listMaintainerMetadata($this->maintainer['id']);
         $this->assertCount(1, $metadataArray);
     }
 
-    private function cannotDeleteMetadata($client, $metadataId)
+    private function cannotDeleteMetadata($client, $metadataId): void
     {
         try {
             $client->deleteMaintainerMetadata($this->maintainer['id'], $metadataId);

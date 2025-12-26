@@ -8,7 +8,7 @@ use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\ManageApiTest\Utils\MissingEnvVariableException;
 use PHPUnit\Framework\TestCase;
 
-class EnvVariableHelperTest extends TestCase
+final class EnvVariableHelperTest extends TestCase
 {
     private string $originalManageApiUrl = '';
     private string $originalTestAbsKey = '';
@@ -33,7 +33,7 @@ class EnvVariableHelperTest extends TestCase
     {
         $expectedUrl = 'https://example.com';
         putenv('KBC_MANAGE_API_URL=' . $expectedUrl);
-        self::assertSame($expectedUrl, EnvVariableHelper::getKbcManageApiUrl());
+        $this->assertSame($expectedUrl, EnvVariableHelper::getKbcManageApiUrl());
     }
 
     public function testGetKbcManageApiUrlMissing(): void
@@ -64,7 +64,7 @@ class EnvVariableHelperTest extends TestCase
     {
         $expectedKey = 'someAbsKey123';
         putenv('TEST_ABS_ACCOUNT_KEY=' . $expectedKey);
-        self::assertSame($expectedKey, EnvVariableHelper::getTestAbsAccountKey());
+        $this->assertSame($expectedKey, EnvVariableHelper::getTestAbsAccountKey());
     }
 
     public function testGetTestAbsAccountKeyMissing(): void

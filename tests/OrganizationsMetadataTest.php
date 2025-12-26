@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\Exception;
 use Keboola\ManageApi\ProjectRole;
 
-class OrganizationsMetadataTest extends ClientTestCase
+final class OrganizationsMetadataTest extends ClientTestCase
 {
     public const TEST_METADATA = [
         [
@@ -83,33 +84,29 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->client->removeUserFeature($this->normalUser['id'], self::FEATURE_SAML_METADATA_ACCESS);
     }
 
-    public function allProjectRoles(): array
+    public function allProjectRoles(): Iterator
     {
-        return [
-            'admin' => [
-                ProjectRole::ADMIN,
-            ],
-            'share' => [
-                ProjectRole::SHARE,
-            ],
-            'guest' => [
-                ProjectRole::GUEST,
-            ],
-            'read only' => [
-                ProjectRole::READ_ONLY,
-            ],
+        yield 'admin' => [
+            ProjectRole::ADMIN,
+        ];
+        yield 'share' => [
+            ProjectRole::SHARE,
+        ];
+        yield 'guest' => [
+            ProjectRole::GUEST,
+        ];
+        yield 'read only' => [
+            ProjectRole::READ_ONLY,
         ];
     }
 
-    public function providers(): array
+    public function providers(): Iterator
     {
-        return [
-            'system provider' => [
-                self::PROVIDER_SYSTEM,
-            ],
-            'user provider' => [
-                self::PROVIDER_USER,
-            ],
+        yield 'system provider' => [
+            self::PROVIDER_SYSTEM,
+        ];
+        yield 'user provider' => [
+            self::PROVIDER_USER,
         ];
     }
 
@@ -453,7 +450,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         );
     }
 
-    private function createMetadata(Client $client, int $organizationId, $provider, array $metadata = self::TEST_METADATA): array
+    private function createMetadata(Client $client, int $organizationId, string $provider, array $metadata = self::TEST_METADATA): array
     {
         return $client->setOrganizationMetadata(
             $organizationId,
@@ -472,21 +469,17 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->assertArrayHasKey('timestamp', $actual);
     }
 
-    private function validateMetadataAsSortedArray(array $expected, array $actual, string $provider)
+    private function validateMetadataAsSortedArray(array $expected, array $actual, string $provider): void
     {
-        usort($expected, function ($a, $b) {
-            return strcmp($a['key'], $b['key']);
-        });
-        usort($actual, function ($a, $b) {
-            return strcmp($a['key'], $b['key']);
-        });
+        usort($expected, fn(array $a, array $b): int => strcmp((string) $a['key'], (string) $b['key']));
+        usort($actual, fn(array $a, array $b): int => strcmp((string) $a['key'], (string) $b['key']));
 
         foreach ($expected as $index => $metadata) {
             $this->validateMetadataEquality($metadata, $actual[$index], $provider);
         }
     }
 
-    private function cannotManageUserMetadata(Client $client, $metadataId, array $metadata = self::TEST_METADATA)
+    private function cannotManageUserMetadata(Client $client, $metadataId, array $metadata = self::TEST_METADATA): void
     {
         // note there is no cannotManageSYSTEMMetadata because LIST operation is the same and SET/DELETE operations are tested explicitly
         try {
@@ -506,7 +499,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         $this->cannotDeleteMetadata($client, $metadataId);
     }
 
-    private function cannotManageMetadataBecauseOfMissingMFA($client, array $metadata = self::TEST_METADATA)
+    private function cannotManageMetadataBecauseOfMissingMFA($client, array $metadata = self::TEST_METADATA): void
     {
         try {
             $client->listOrganizationMetadata($this->organization['id']);
@@ -533,7 +526,7 @@ class OrganizationsMetadataTest extends ClientTestCase
         }
     }
 
-    private function cannotSetSystemMetadata($client, array $metadata = self::TEST_METADATA)
+    private function cannotSetSystemMetadata($client, array $metadata = self::TEST_METADATA): void
     {
         try {
             $client->setOrganizationMetadata($this->organization['id'], self::PROVIDER_SYSTEM, $metadata);
@@ -548,14 +541,14 @@ class OrganizationsMetadataTest extends ClientTestCase
      * @param Client $client
      * @param int $metadataId
      */
-    private function deleteAndCheckMetadata(Client $client, int $metadataId)
+    private function deleteAndCheckMetadata(Client $client, int $metadataId): void
     {
         $client->deleteOrganizationMetadata($this->organization['id'], $metadataId);
         $metadataArray = $this->client->listOrganizationMetadata($this->organization['id']);
         $this->assertCount(1, $metadataArray);
     }
 
-    private function cannotDeleteMetadata($client, $metadataId)
+    private function cannotDeleteMetadata($client, $metadataId): void
     {
         try {
             $client->deleteOrganizationMetadata($this->organization['id'], $metadataId);
@@ -571,7 +564,7 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->normalUserClient->setOrganizationMetadata($this->organization['id'], 'maintainer', self::TEST_METADATA);
             $this->fail('user who is not maintainer nor org member should not have access to the org metadata');
         } catch (Exception $e) {
-            $this->assertEquals(sprintf('You don\'t have access to the organization %s', $this->organization['id']), $e->getMessage());
+            $this->assertSame(sprintf('You don\'t have access to the organization %s', $this->organization['id']), $e->getMessage());
         }
     }
 
@@ -583,7 +576,7 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->normalUserClient->setOrganizationMetadata($this->organization['id'], 'maintainer', self::TEST_METADATA);
             $this->fail('user who is not maintainer nor org member should not have access to the org metadata');
         } catch (ClientException $e) {
-            $this->assertEquals(sprintf('You can\'t edit metadata for organization %s with maintainer provider', $this->organization['id']), $e->getMessage());
+            $this->assertSame(sprintf('You can\'t edit metadata for organization %s with maintainer provider', $this->organization['id']), $e->getMessage());
             $this->assertEquals(403, $e->getCode());
         }
     }
@@ -618,7 +611,7 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $metadata[0]['id']);
             $this->fail('org member but not maintainer member cannot delete maintainer metadata');
         } catch (ClientException $e) {
-            $this->assertEquals(sprintf('You can\'t edit metadata for organization %s with maintainer provider', $this->organization['id']), $e->getMessage());
+            $this->assertSame(sprintf('You can\'t edit metadata for organization %s with maintainer provider', $this->organization['id']), $e->getMessage());
             $this->assertEquals(403, $e->getCode());
         }
 
@@ -640,7 +633,7 @@ class OrganizationsMetadataTest extends ClientTestCase
             $this->normalUserClient->deleteOrganizationMetadata($this->organization['id'], $metadata[0]['id']);
             $this->fail('org member but not maintainer member cannot delete maintainer metadata');
         } catch (ClientException $e) {
-            $this->assertEquals(sprintf('You don\'t have access to the organization %s', $this->organization['id']), $e->getMessage());
+            $this->assertSame(sprintf('You don\'t have access to the organization %s', $this->organization['id']), $e->getMessage());
             $this->assertEquals(403, $e->getCode());
         }
     }

@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class UsersTest extends ClientTestCase
+final class UsersTest extends ClientTestCase
 {
 
-    public function testGetUser()
+    public function testGetUser(): void
     {
         $token = $this->client->verifyToken();
         $this->assertArrayHasKey('user', $token);
@@ -23,7 +25,7 @@ class UsersTest extends ClientTestCase
         $this->client->addUserFeature($userEmail, $feature);
 
         $user = $this->client->getUser($userEmail);
-        $this->assertEquals($initialFeaturesCount + 1, count($user['features']));
+        $this->assertCount($initialFeaturesCount + 1, $user['features']);
         $this->assertContains($feature, $user['features']);
 
         $feature2 = 'manage-feature-test-2-' . $this->getRandomFeatureSuffix();
@@ -31,17 +33,17 @@ class UsersTest extends ClientTestCase
         $this->client->addUserFeature($userId, $feature2);
 
         $user = $this->client->getUser($userEmail);
-        $this->assertEquals($initialFeaturesCount + 2, count($user['features']));
+        $this->assertCount($initialFeaturesCount + 2, $user['features']);
         $this->assertContains($feature, $user['features']);
 
         $this->client->removeUserFeature($userId, $feature);
         $this->client->removeUserFeature($userId, $feature2);
 
         $user = $this->client->getUser($userId);
-        $this->assertEquals($initialFeaturesCount, count($user['features']));
+        $this->assertCount($initialFeaturesCount, $user['features']);
     }
 
-    public function testGetNonexistentUser()
+    public function testGetNonexistentUser(): void
     {
         try {
             $this->client->getUser('nonexistent.user@keboola.com');
@@ -51,7 +53,7 @@ class UsersTest extends ClientTestCase
         }
     }
 
-    public function testAddNonexistentFeature()
+    public function testAddNonexistentFeature(): void
     {
         $token = $this->client->verifyToken();
         $featureName = 'random-feature-' . $this->getRandomFeatureSuffix();
@@ -65,7 +67,7 @@ class UsersTest extends ClientTestCase
         }
     }
 
-    public function testAddUserFeatureTwice()
+    public function testAddUserFeatureTwice(): void
     {
         $token = $this->client->verifyToken();
         $this->assertArrayHasKey('user', $token);
@@ -81,7 +83,7 @@ class UsersTest extends ClientTestCase
 
         $user = $this->client->getUser($userId);
 
-        $this->assertSame($initialFeaturesCount + 1, count($user['features']));
+        $this->assertCount($initialFeaturesCount + 1, $user['features']);
 
         try {
             $this->client->addUserFeature($userId, $newFeature);
@@ -92,10 +94,10 @@ class UsersTest extends ClientTestCase
 
         $user = $this->client->getUser($userId);
 
-        $this->assertSame($initialFeaturesCount + 1, count($user['features']));
+        $this->assertCount($initialFeaturesCount + 1, $user['features']);
     }
 
-    public function testUpdateUser()
+    public function testUpdateUser(): void
     {
         $token = $this->client->verifyToken();
         $this->assertArrayHasKey('user', $token);
@@ -112,7 +114,7 @@ class UsersTest extends ClientTestCase
         $this->assertEquals($newUserName, $updatedUser['name']);
     }
 
-    public function testDisableUserMFA()
+    public function testDisableUserMFA(): void
     {
         $token = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $token);
@@ -131,7 +133,7 @@ class UsersTest extends ClientTestCase
         }
     }
 
-    public function testNormalUserShouldNotBeAbleDisableMFA()
+    public function testNormalUserShouldNotBeAbleDisableMFA(): void
     {
         $token = $this->normalUserClient->verifyToken();
         $this->assertArrayHasKey('user', $token);
@@ -150,7 +152,7 @@ class UsersTest extends ClientTestCase
         }
     }
 
-    public function testRemoveUserFromDeletedStructures()
+    public function testRemoveUserFromDeletedStructures(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'RemoveMeOrg']);
         $project = $this->client->createProject($organization['id'], [
@@ -173,7 +175,7 @@ class UsersTest extends ClientTestCase
         $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
     }
 
-    public function testRemoveUserFromEverywhere()
+    public function testRemoveUserFromEverywhere(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
         $inviteOrganization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-2']);
@@ -235,11 +237,11 @@ class UsersTest extends ClientTestCase
         $deletedUser = $this->client->getUser($user['id']);
 
         $this->assertSame('DELETED', $deletedUser['email'], 'User e-mail has not been deleted');
-        $this->assertSame(false, $deletedUser['mfaEnabled'], 'User mfa has not been disabled');
+        $this->assertFalse($deletedUser['mfaEnabled'], 'User mfa has not been disabled');
         $this->assertSame('DELETED', $deletedUser['name'], 'User name has not been deleted');
     }
 
-    public function testRemoveUserFromEverywhereFailsWhenLastUserInOrg()
+    public function testRemoveUserFromEverywhereFailsWhenLastUserInOrg(): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, ['name' => 'ToRemoveOrg-1']);
         $project = $this->client->createProject($organization['id'], [
@@ -270,7 +272,7 @@ class UsersTest extends ClientTestCase
         $this->client->removeUser($email);
     }
 
-    public function testRemoveNonExistingUser()
+    public function testRemoveNonExistingUser(): void
     {
         $email = 'non-existing' . uniqid() . '@non-existing-keboola.com';
         $this->expectExceptionMessage("Admin $email not found.");

@@ -1,10 +1,13 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 
-class ProjectMfaValidationTest extends ClientMfaTestCase
+final class ProjectMfaValidationTest extends ClientMfaTestCase
 {
     private $organization;
 
@@ -34,7 +37,7 @@ class ProjectMfaValidationTest extends ClientMfaTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testAdminWithoutMfaCannotBecameMember()
+    public function testAdminWithoutMfaCannotBecameMember(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -57,7 +60,7 @@ class ProjectMfaValidationTest extends ClientMfaTestCase
         $this->assertNull($member);
     }
 
-    public function testLockAccessForOrganizationAdminIfMfaWasForced()
+    public function testLockAccessForOrganizationAdminIfMfaWasForced(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
@@ -68,7 +71,7 @@ class ProjectMfaValidationTest extends ClientMfaTestCase
         $this->assertAccessLocked($this->normalUserClient, $projectId);
     }
 
-    public function testLockAccessForMaintainerAdminsIfMfaWasForced()
+    public function testLockAccessForMaintainerAdminsIfMfaWasForced(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
@@ -79,7 +82,7 @@ class ProjectMfaValidationTest extends ClientMfaTestCase
         $this->assertAccessLocked($this->normalUserClient, $projectId);
     }
 
-    public function testLockAccessForSuperAdminIfMfaWasForced()
+    public function testLockAccessForSuperAdminIfMfaWasForced(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -88,7 +91,7 @@ class ProjectMfaValidationTest extends ClientMfaTestCase
         $this->assertAccessLocked($this->client, $projectId);
     }
 
-    public function testLockAccessForAdminIfMfaWasForced()
+    public function testLockAccessForAdminIfMfaWasForced(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -99,7 +102,7 @@ class ProjectMfaValidationTest extends ClientMfaTestCase
         $this->assertAccessLocked($this->normalUserClient, $projectId);
     }
 
-    public function testSuperAdminCanDeleteOrganizationIfMfaWasForced()
+    public function testSuperAdminCanDeleteOrganizationIfMfaWasForced(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 

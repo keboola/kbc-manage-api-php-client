@@ -1,26 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
+use Iterator;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
-class ProjectMembershipRolesTest extends ClientMfaTestCase
+final class ProjectMembershipRolesTest extends ClientMfaTestCase
 {
     private const SHARE_ROLE_EXPECTED_ERROR = 'Only member of the project\'s organization can grant "share" role to other users.';
 
-    /** @var array */
-    private $organization;
+    private array $organization;
 
-    /** @var array */
-    private $project;
+    private array $project;
 
-    /** @var Client */
-    private $guestRoleMemberClient;
+    private Client $guestRoleMemberClient;
 
-    /** @var array */
-    private $guestUser;
+    private array $guestUser;
 
     public function setUp(): void
     {
@@ -46,27 +45,23 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->guestUser = $this->normalUser;
     }
 
-    public function limitedRolesData(): array
+    public function limitedRolesData(): Iterator
     {
-        return [
-            [
-                ProjectRole::GUEST,
-            ],
-            [
-                ProjectRole::READ_ONLY,
-            ],
+        yield [
+            ProjectRole::GUEST,
+        ];
+        yield [
+            ProjectRole::READ_ONLY,
         ];
     }
 
-    public function adminRolesData(): array
+    public function adminRolesData(): Iterator
     {
-        return [
-            [
-                ProjectRole::SHARE,
-            ],
-            [
-                ProjectRole::ADMIN,
-            ],
+        yield [
+            ProjectRole::SHARE,
+        ];
+        yield [
+            ProjectRole::ADMIN,
         ];
     }
 
@@ -313,6 +308,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         }
 
         $membership = $this->findProjectUser($this->project['id'], $this->normalUserWithMfa['email']);
+        $this->assertNotNull($membership);
         $this->assertEquals('admin', $membership['role']);
     }
 
@@ -449,6 +445,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         }
 
         $membership = $this->findProjectUser($this->project['id'], $this->normalUserWithMfa['email']);
+        $this->assertNotNull($membership);
         $this->assertEquals('admin', $membership['role']);
     }
 
@@ -477,7 +474,7 @@ class ProjectMembershipRolesTest extends ClientMfaTestCase
         $this->assertEquals($this->organization['id'], $project['organization']['id']);
     }
 
-    private function restrictedActionTest(ClientException $e)
+    private function restrictedActionTest(ClientException $e): void
     {
         $this->assertEquals(403, $e->getCode());
         $this->assertStringContainsString('Action is restricted for your role', $e->getMessage());

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
@@ -8,7 +10,7 @@ use function GuzzleHttp\json_encode;
 /**
  * @group FileStorage
  */
-class FileStorageAbsTest extends ClientTestCase
+final class FileStorageAbsTest extends ClientTestCase
 {
     public const DEFAULT_ABS_OPTIONS = [
         'accountName' => TEST_ABS_ACCOUNT_NAME,
@@ -27,37 +29,37 @@ class FileStorageAbsTest extends ClientTestCase
         'awsSecret' => TEST_S3_ROTATE_SECRET,
     ];
 
-    public function testFileStorageAbsCreate()
+    public function testFileStorageAbsCreate(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $this->assertArrayNotHasKey('accountKey', $storage);
-        $this->assertSame($storage['accountName'], TEST_ABS_ACCOUNT_NAME);
-        $this->assertSame($storage['containerName'], TEST_ABS_CONTAINER_NAME);
-        $this->assertSame($storage['provider'], 'azure');
+        $this->assertSame(TEST_ABS_ACCOUNT_NAME, $storage['accountName']);
+        $this->assertSame(TEST_ABS_CONTAINER_NAME, $storage['containerName']);
+        $this->assertSame('azure', $storage['provider']);
         $this->assertFalse($storage['isDefault']);
         $this->assertArrayNotHasKey('gcsSnowflakeIntegrationName', $storage);
     }
 
-    public function testRotateAbsKey()
+    public function testRotateAbsKey(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
         $rotatedStorage = $this->client->rotateAbsFileStorageCredentials($storage['id'], self::ROTATE_ABS_OPTIONS);
         $this->assertArrayNotHasKey('accountKey', $storage);
-        $this->assertSame($rotatedStorage['accountName'], TEST_ABS_ACCOUNT_NAME);
-        $this->assertSame($rotatedStorage['containerName'], TEST_ABS_CONTAINER_NAME);
-        $this->assertSame($rotatedStorage['provider'], 'azure');
+        $this->assertSame(TEST_ABS_ACCOUNT_NAME, $rotatedStorage['accountName']);
+        $this->assertSame(TEST_ABS_CONTAINER_NAME, $rotatedStorage['containerName']);
+        $this->assertSame('azure', $rotatedStorage['provider']);
         $this->assertFalse($rotatedStorage['isDefault']);
     }
 
-    public function testListAbsStorages()
+    public function testListAbsStorages(): void
     {
         $initCount = count($this->client->listAbsFileStorage());
         $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
         $storages = $this->client->listAbsFileStorage();
 
-        $this->assertSame($initCount + 1, count($storages));
+        $this->assertCount($initCount + 1, $storages);
 
         foreach ($storages as $storage) {
             if ($storage['provider'] !== 'azure') {
@@ -66,7 +68,7 @@ class FileStorageAbsTest extends ClientTestCase
         }
     }
 
-    public function testSetAbsStorageAsDefault()
+    public function testSetAbsStorageAsDefault(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
@@ -84,7 +86,7 @@ class FileStorageAbsTest extends ClientTestCase
             }
 
             if ($item['isDefault']) {
-                array_push($regions, $item['region']);
+                $regions[] = $item['region'];
             }
 
             if ($item['isDefault'] && $item['id'] !== $storage['id'] && $item['region'] === self::DEFAULT_ABS_OPTIONS['region']) {
@@ -93,7 +95,7 @@ class FileStorageAbsTest extends ClientTestCase
         }
     }
 
-    public function testCrossProviderStorageDefaultAbsS3()
+    public function testCrossProviderStorageDefaultAbsS3(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
@@ -102,7 +104,7 @@ class FileStorageAbsTest extends ClientTestCase
         $this->client->setS3FileStorageAsDefault($storage['id']);
     }
 
-    public function testCreateAbsStorageWithoutRequiredParam()
+    public function testCreateAbsStorageWithoutRequiredParam(): void
     {
         $this->expectException(ClientException::class);
         $this->expectExceptionMessage('Invalid request:
@@ -121,7 +123,7 @@ Errors:
         $this->client->createAbsFileStorage([]);
     }
 
-    public function testRotateAbsCredentialsWithoutRequiredParams()
+    public function testRotateAbsCredentialsWithoutRequiredParams(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 
@@ -135,7 +137,7 @@ Errors:
         $this->client->rotateAbsFileStorageCredentials($storage['id'], []);
     }
 
-    public function testProjectAssignAbsFileStorage()
+    public function testProjectAssignAbsFileStorage(): void
     {
         $this->markTestSkipped('Will be enabled after Azure FS will be fully working');
 
@@ -156,7 +158,7 @@ Errors:
         $this->assertEquals($storage['id'], $project['fileStorage']['id']);
     }
 
-    public function testCrossProviderStorageCredentialsRotateAbsS3()
+    public function testCrossProviderStorageCredentialsRotateAbsS3(): void
     {
         $storage = $this->client->createAbsFileStorage(self::DEFAULT_ABS_OPTIONS);
 

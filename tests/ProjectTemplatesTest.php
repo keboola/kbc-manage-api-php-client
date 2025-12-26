@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class ProjectTemplatesTest extends ClientTestCase
+final class ProjectTemplatesTest extends ClientTestCase
 {
     public const TEST_PROJECT_TEMPLATE_STRING_ID = 'production';
     public const TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID = 'poc15DaysGuideMode';
@@ -43,14 +45,12 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->client->removeUserFromOrganization($this->organization['id'], $this->superAdmin['id']);
     }
 
-    public function testSuperAdminCanViewAndListProjectTemplates()
+    public function testSuperAdminCanViewAndListProjectTemplates(): void
     {
         $templates = $this->client->getProjectTemplates();
         $this->assertGreaterThan(2, count($templates));
 
-        $filteredTemplates = array_filter($templates, function ($item) {
-            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(1, $filteredTemplates);
 
@@ -58,9 +58,7 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertEquals($templateDetail, current($filteredTemplates));
 
         // system templates
-        $filteredTemplates = array_filter($templates, function ($item) {
-            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(1, $filteredTemplates);
 
@@ -68,15 +66,13 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertEquals($templateDetail, current($filteredTemplates));
     }
 
-    public function testMaintainerAdminCanViewAndListProjectTemplates()
+    public function testMaintainerAdminCanViewAndListProjectTemplates(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $templates = $this->normalUserClient->getProjectTemplates();
 
-        $filteredTemplates = array_filter($templates, function ($item) {
-            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(1, $filteredTemplates);
 
@@ -84,15 +80,13 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertEquals($templateDetail, current($filteredTemplates));
     }
 
-    public function testOrganizationAdminCanViewAndListProjectTemplates()
+    public function testOrganizationAdminCanViewAndListProjectTemplates(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $templates = $this->normalUserClient->getProjectTemplates();
 
-        $filteredTemplates = array_filter($templates, function ($item) {
-            return $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(1, $filteredTemplates);
 
@@ -100,7 +94,7 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertEquals($templateDetail, current($filteredTemplates));
     }
 
-    public function testTemplateDetail()
+    public function testTemplateDetail(): void
     {
         $template = $this->client->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
 
@@ -119,15 +113,13 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->assertEquals('snowflake', $template['defaultBackend']);
     }
 
-    public function testOrganizationAdminCannotViewHiddenProjectTemplate()
+    public function testOrganizationAdminCannotViewHiddenProjectTemplate(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
 
         $templates = $this->normalUserClient->getProjectTemplates();
 
-        $filteredTemplates = array_filter($templates, function ($item) {
-            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(0, $filteredTemplates);
 
@@ -137,15 +129,13 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->normalUserClient->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
     }
 
-    public function testMaintainerAdminCannotViewHiddenProjectTemplate()
+    public function testMaintainerAdminCannotViewHiddenProjectTemplate(): void
     {
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
 
         $templates = $this->normalUserClient->getProjectTemplates();
 
-        $filteredTemplates = array_filter($templates, function ($item) {
-            return $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID;
-        });
+        $filteredTemplates = array_filter($templates, fn(array $item): bool => $item['id'] === self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
 
         $this->assertCount(0, $filteredTemplates);
 
@@ -155,7 +145,7 @@ class ProjectTemplatesTest extends ClientTestCase
         $this->normalUserClient->getProjectTemplate(self::TEST_HIDDEN_PROJECT_TEMPLATE_STRING_ID);
     }
 
-    public function testRandomAdminCannotViewAndListProjectTemplates()
+    public function testRandomAdminCannotViewAndListProjectTemplates(): void
     {
         try {
             $this->normalUserClient->getProjectTemplates();
@@ -165,7 +155,7 @@ class ProjectTemplatesTest extends ClientTestCase
         }
     }
 
-    public function testGetNonExistProjectTemplate()
+    public function testGetNonExistProjectTemplate(): void
     {
         try {
             $this->client->getProjectTemplate('random-template-name-' . time());

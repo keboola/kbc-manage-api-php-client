@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApi;
 
 use Exception as GenericException;
@@ -33,15 +36,10 @@ class Exception extends GenericException
 
     /**
      * @param $stringCode
-     * @return Exception
      */
-    public function setStringCode($stringCode)
+    public function setStringCode($stringCode): self
     {
-        if ($stringCode) {
-            $this->stringCode = (string) $stringCode;
-        } else {
-            $this->stringCode = 'APPLICATION_ERROR';
-        }
+        $this->stringCode = $stringCode ? (string) $stringCode : 'APPLICATION_ERROR';
         return $this;
     }
 
@@ -52,9 +50,8 @@ class Exception extends GenericException
 
     /**
      * @param array $contextParams
-     * @return Exception
      */
-    public function setContextParams($contextParams)
+    public function setContextParams($contextParams): self
     {
         $this->contextParams = (array) $contextParams;
         return $this;

@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace Keboola\ManageApiTest;
 
 use Generator;
+use Iterator;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 
-class AssignProjectFeatureTest extends BaseFeatureTest
+final class AssignProjectFeatureTest extends BaseFeatureTest
 {
     public function setUp(): void
     {
@@ -252,7 +253,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider provideVariousOfTokensClient
      */
-    public function testAdminProjectMemberCannotManageFeatureCannotBeManageByAdmin()
+    public function testAdminProjectMemberCannotManageFeatureCannotBeManageByAdmin(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -317,7 +318,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     /**
      * @dataProvider provideVariousOfTokensClient
      */
-    public function testProjectMemberCannotManageFeatureCannotBeManagedViaAPI()
+    public function testProjectMemberCannotManageFeatureCannotBeManagedViaAPI(): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $projectId = $this->createProjectWithSuperAdminMember($this->organization['id']);
@@ -452,25 +453,23 @@ class AssignProjectFeatureTest extends BaseFeatureTest
         $this->assertProjectHasFeature($featureName, $project['features']);
     }
 
-    public function notAllowedAddFeaturesRoles(): array
+    public function notAllowedAddFeaturesRoles(): Iterator
     {
-        return [
-            'guest manage token' => [
-                ProjectRole::GUEST,
-                self::MANAGE_TOKEN_CLIENT,
-            ],
-            'guest session token' => [
-                ProjectRole::GUEST,
-                self::SESSION_TOKEN_CLIENT,
-            ],
-            'readOnly manage token' => [
-                ProjectRole::READ_ONLY,
-                self::MANAGE_TOKEN_CLIENT,
-            ],
-            'readOnly session token' => [
-                ProjectRole::READ_ONLY,
-                self::SESSION_TOKEN_CLIENT,
-            ],
+        yield 'guest manage token' => [
+            ProjectRole::GUEST,
+            self::MANAGE_TOKEN_CLIENT,
+        ];
+        yield 'guest session token' => [
+            ProjectRole::GUEST,
+            self::SESSION_TOKEN_CLIENT,
+        ];
+        yield 'readOnly manage token' => [
+            ProjectRole::READ_ONLY,
+            self::MANAGE_TOKEN_CLIENT,
+        ];
+        yield 'readOnly session token' => [
+            ProjectRole::READ_ONLY,
+            self::SESSION_TOKEN_CLIENT,
         ];
     }
 
@@ -609,7 +608,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     private function assertProjectHasFeature(string $featureName, array $features): void
     {
         $featureFound = null;
-        if (array_search($featureName, $features) !== false) {
+        if (in_array($featureName, $features)) {
             $featureFound = $featureName;
         }
         $this->assertNotNull($featureFound);
@@ -618,7 +617,7 @@ class AssignProjectFeatureTest extends BaseFeatureTest
     private function assertProjectHasNotFeature(string $featureName, array $features): void
     {
         $featureFound = null;
-        if (array_search($featureName, $features) !== false) {
+        if (in_array($featureName, $features)) {
             $featureFound = $featureName;
         }
         $this->assertNull($featureFound);

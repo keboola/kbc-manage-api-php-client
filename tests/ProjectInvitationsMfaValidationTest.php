@@ -1,9 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
 
-class ProjectInvitationsMfaValidationTest extends ClientMfaTestCase
+final class ProjectInvitationsMfaValidationTest extends ClientMfaTestCase
 {
     private $organization;
 
@@ -42,7 +45,7 @@ class ProjectInvitationsMfaValidationTest extends ClientMfaTestCase
         }
     }
 
-    public function testInvitedAdminCannotAcceptInvitation()
+    public function testInvitedAdminCannotAcceptInvitation(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 
@@ -75,7 +78,7 @@ class ProjectInvitationsMfaValidationTest extends ClientMfaTestCase
         $this->assertNull($member);
     }
 
-    public function testInvitedAdminCanDeclineInvitation()
+    public function testInvitedAdminCanDeclineInvitation(): void
     {
         $projectId = $this->createProjectWithAdminHavingMfaEnabled($this->organization['id']);
 

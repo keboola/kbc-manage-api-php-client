@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Exception;
@@ -78,7 +80,7 @@ class ClientTestCase extends TestCase
 
     protected function getClient(array $options): Client
     {
-        $tokenParts = explode('-', $options['token']);
+        $tokenParts = explode('-', (string) $options['token']);
         $tokenAgentString = '';
         if (count($tokenParts) === 2) {
             $tokenAgentString = sprintf(
@@ -113,9 +115,9 @@ class ClientTestCase extends TestCase
      * @param array $token
      * @return StorageClient
      */
-    protected function getStorageClient($options)
+    protected function getStorageClient(array $options): StorageClient
     {
-        $tokenParts = explode('-', $options['token']);
+        $tokenParts = explode('-', (string) $options['token']);
         $tokenAgentString = '';
         if (count($tokenParts) === 3) {
             // token comes in from of <projectId>-<tokenId>-<hash>
@@ -146,12 +148,9 @@ class ClientTestCase extends TestCase
         ]);
     }
 
-    /**
-     * @return string
-     */
-    protected function getTestName()
+    protected function getTestName(): string
     {
-        return get_class($this) . '::' . $this->getName();
+        return static::class . '::' . $this->getName();
     }
 
 
@@ -216,7 +215,7 @@ class ClientTestCase extends TestCase
                         $this->client->removeUserFromMaintainer($maintainer['id'], $member['id']);
                     }
                 }
-            } elseif (strpos($maintainer['name'], self::TESTS_MAINTAINER_PREFIX) === 0) {
+            } elseif (str_starts_with((string) $maintainer['name'], self::TESTS_MAINTAINER_PREFIX)) {
                 // cleanup orgranizations and projects to delete maintainer at the end
                 // get organizations for maintainer
                 $organizations = $this->client->listMaintainerOrganizations($maintainer['id']);
@@ -233,7 +232,7 @@ class ClientTestCase extends TestCase
         }
     }
 
-    public function getRandomFeatureSuffix()
+    public function getRandomFeatureSuffix(): string
     {
         return uniqid('', true);
     }
@@ -277,28 +276,20 @@ class ClientTestCase extends TestCase
         return null;
     }
 
-    /**
-     * @return string
-     */
-    protected function getBuildId()
+    protected function getBuildId(): string
     {
-        $buildId = '';
         if (getenv('TRAVIS_BUILD_ID')) {
-            $buildId = sprintf('Build id: %s, ', getenv('TRAVIS_BUILD_ID'));
+            return sprintf('Build id: %s, ', getenv('TRAVIS_BUILD_ID'));
         }
-        return $buildId;
+        return '';
     }
 
-    /**
-     * @return string
-     */
-    protected function getSuiteName()
+    protected function getSuiteName(): string
     {
-        $testSuiteName = '';
         if (getenv('SUITE_NAME')) {
-            $testSuiteName = sprintf('Suite: %s, ', getenv('SUITE_NAME'));
+            return sprintf('Suite: %s, ', getenv('SUITE_NAME'));
         }
-        return $testSuiteName;
+        return '';
     }
 
     protected function createProjectWithNormalAdminMember(int $organizationId, ?string $name = 'My test'): int
@@ -337,7 +328,7 @@ class ClientTestCase extends TestCase
      * @param array<mixed> $params
      * @return array
      */
-    protected function createRedshiftProjectForClient($client, int $organizationId, $params = [])
+    protected function createRedshiftProjectForClient($client, int $organizationId, array $params = [])
     {
         $params['defaultBackend'] = Backend::REDSHIFT;
         return $client->createProject($organizationId, $params);
@@ -353,14 +344,14 @@ class ClientTestCase extends TestCase
             $isProjectDeleted = false;
             try {
                 $this->client->getProject($projectId);
-            } catch (ClientException $e) {
+            } catch (ClientException) {
                 $isProjectDeleted = true;
             }
             if (time() - $startTime > $maxWaitTimeSeconds) {
                 throw new Exception('Project delete timed out.');
             }
             sleep(1);
-        } while ($isProjectDeleted !== true);
+        } while (!$isProjectDeleted);
 
         // reset the clock
         $startTime = time();
@@ -388,14 +379,12 @@ class ClientTestCase extends TestCase
             $testSuiteName = sprintf('%s::', SUITE_NAME);
         }
 
-        return $testSuiteName . get_class($this) . '\\' . $this->getName();
+        return $testSuiteName . static::class . '\\' . $this->getName();
     }
 
     public function sortByKey($data, $sortKey): array
     {
-        $comparsion = function ($attrLeft, $attrRight) use ($sortKey) {
-            return strcmp($attrLeft[$sortKey], $attrRight[$sortKey]);
-        };
+        $comparsion = (fn(array $attrLeft, array $attrRight): int => strcmp((string) $attrLeft[$sortKey], (string) $attrRight[$sortKey]));
         usort($data, $comparsion);
         return $data;
     }

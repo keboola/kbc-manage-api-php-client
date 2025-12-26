@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\ManageApiTest;
 
 use Generator;
 use InvalidArgumentException;
+use Iterator;
 use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
@@ -12,7 +15,7 @@ use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
 use Throwable;
 
-class ProjectsTest extends ClientTestCase
+final class ProjectsTest extends ClientTestCase
 {
     private const FILE_STORAGE_PROVIDER_S3 = 'aws';
     private const FILE_STORAGE_PROVIDER_ABS = 'azure';
@@ -35,24 +38,20 @@ class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function supportedBackends(): array
+    public function supportedBackends(): Iterator
     {
-        return [
-            [Backend::SNOWFLAKE],
-            [Backend::REDSHIFT],
-            [Backend::SYNAPSE],
-            [Backend::TERADATA],
-        ];
+        yield [Backend::SNOWFLAKE];
+        yield [Backend::REDSHIFT];
+        yield [Backend::SYNAPSE];
+        yield [Backend::TERADATA];
     }
 
-    public function unsupportedBackendFileStorageCombinations(): array
+    public function unsupportedBackendFileStorageCombinations(): Iterator
     {
-        return [
-            [
-                Backend::REDSHIFT,
-                self::FILE_STORAGE_PROVIDER_GCS,
-                'Redshift does not support other file storage than S3.',
-            ],
+        yield [
+            Backend::REDSHIFT,
+            self::FILE_STORAGE_PROVIDER_GCS,
+            'Redshift does not support other file storage than S3.',
         ];
     }
 
@@ -220,7 +219,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertFalse($foundProject['isBYODB']);
         $this->assertEquals($organizationId, $foundProject['organization']['id']);
         $this->assertArrayHasKey('limits', $foundProject);
-        $this->assertTrue(count($foundProject['limits']) > 1);
+        $this->assertGreaterThan(1, count($foundProject['limits']));
         $this->assertArrayHasKey('metrics', $foundProject);
         $this->assertEquals('snowflake', $foundProject['defaultBackend']);
         $this->assertArrayHasKey('isDisabled', $foundProject);
@@ -269,21 +268,19 @@ class ProjectsTest extends ClientTestCase
         return $foundProject;
     }
 
-    public function addUserToProjectWithRoleData(): array
+    public function addUserToProjectWithRoleData(): Iterator
     {
-        return [
-            [
-                ProjectRole::ADMIN,
-            ],
-            [
-                ProjectRole::GUEST,
-            ],
-            [
-                ProjectRole::READ_ONLY,
-            ],
-            [
-                ProjectRole::SHARE,
-            ],
+        yield [
+            ProjectRole::ADMIN,
+        ];
+        yield [
+            ProjectRole::GUEST,
+        ];
+        yield [
+            ProjectRole::READ_ONLY,
+        ];
+        yield [
+            ProjectRole::SHARE,
         ];
     }
 
@@ -336,7 +333,7 @@ class ProjectsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertEquals('manage.createProjectPermissionDenied', $e->getStringCode());
-            $this->assertEquals('Only organization members can create new projects', $e->getMessage());
+            $this->assertSame('Only organization members can create new projects', $e->getMessage());
         }
 
         $projects = $this->client->listOrganizationProjects($organizationId);
@@ -370,7 +367,7 @@ class ProjectsTest extends ClientTestCase
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
             $this->assertEquals('manage.createProjectPermissionDenied', $e->getStringCode());
-            $this->assertEquals('Only organization members can create new projects', $e->getMessage());
+            $this->assertSame('Only organization members can create new projects', $e->getMessage());
         }
 
         $projects = $this->normalUserClient->listOrganizationProjects($organizationId);
@@ -718,7 +715,7 @@ class ProjectsTest extends ClientTestCase
             if (count($admins) < 2) {
                 break;
             }
-            sleep(pow(2, $tries++));
+            sleep(2 ** $tries++);
         }
         $this->assertCount(1, $admins);
     }
@@ -915,7 +912,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertSame('snowflake', $project['defaultBackend']);
         $this->assertSame('0', $project['hasTryModeOn']);
         $this->assertSame('production', $project['type']);
-        $this->assertSame(null, $project['billedMonthlyPrice']);
+        $this->assertNull($project['billedMonthlyPrice']);
         $this->assertSame(1, $project['dataRetentionTimeInDays']);
 
         $currentProjectType = $project['type'];
@@ -1169,7 +1166,7 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->client->getProject($project['id']);
 
-        $this->assertSame($initialFeaturesCount + 1, count($project['features']));
+        $this->assertCount($initialFeaturesCount + 1, $project['features']);
 
         try {
             $this->client->addProjectFeature($project['id'], $newFeature);
@@ -1180,7 +1177,7 @@ class ProjectsTest extends ClientTestCase
 
         $project = $this->client->getProject($project['id']);
 
-        $this->assertSame($initialFeaturesCount + 1, count($project['features']));
+        $this->assertCount($initialFeaturesCount + 1, $project['features']);
     }
 
     public function testAddRemoveProjectFeatures(): void
@@ -1457,8 +1454,8 @@ class ProjectsTest extends ClientTestCase
             $client->verifyToken();
             $this->fail('Token should be disabled');
         } catch (StorageApiClientException $e) {
-            $this->assertEquals($e->getStringCode(), 'MAINTENANCE');
-            $this->assertEquals($e->getMessage(), $disableReason);
+            $this->assertEquals('MAINTENANCE', $e->getStringCode());
+            $this->assertSame($e->getMessage(), $disableReason);
         }
 
         $this->client->enableProject($project['id']);
@@ -1519,7 +1516,7 @@ class ProjectsTest extends ClientTestCase
         $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
         $organizations = [];
 
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 2; ++$i) {
             $organization = $this->initTestOrganization();
             $organizations[] = $organization;
             $project = $this->initTestProject($organization['id']);
@@ -1569,7 +1566,7 @@ class ProjectsTest extends ClientTestCase
 
         $params = [
             'organizationId' => $organization['id'],
-            'name' => sha1($project['name']),
+            'name' => sha1((string) $project['name']),
         ];
 
         $projects = $testClient->listDeletedProjects($params);
@@ -1653,7 +1650,7 @@ class ProjectsTest extends ClientTestCase
 
             $this->fail('List deleted projects of deleted organization should produce error');
         } catch (ClientException $e) {
-            $this->assertEquals(
+            $this->assertSame(
                 sprintf('Organization "%s" not found', $organization['id']),
                 $e->getMessage()
             );
@@ -1886,7 +1883,7 @@ class ProjectsTest extends ClientTestCase
         $organization = $this->initTestOrganization();
         $project = $this->initTestProject($organization['id']);
 
-        $this->assertEquals(1, (int) $project['dataRetentionTimeInDays']);
+        $this->assertSame(1, (int) $project['dataRetentionTimeInDays']);
 
         // verify that normal users can't update data retention time
         try {
@@ -1897,7 +1894,7 @@ class ProjectsTest extends ClientTestCase
         }
 
         $project = $this->client->updateProject($project['id'], ['dataRetentionTimeInDays' => 0]);
-        $this->assertEquals(0, (int) $project['dataRetentionTimeInDays']);
+        $this->assertSame(0, (int) $project['dataRetentionTimeInDays']);
     }
 
     public function testLastMemberCanLeaveProject(): void
@@ -2074,6 +2071,7 @@ class ProjectsTest extends ClientTestCase
         ]);
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertNotNull($member);
         $this->assertEquals($role, $member['role']);
     }
 
@@ -2106,16 +2104,19 @@ class ProjectsTest extends ClientTestCase
         $this->client->addUserToProject($project['id'], ['email' => $this->normalUser['email'],]);
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertNotNull($member);
         $this->assertEquals('admin', $member['role']);
 
         $this->client->updateUserProjectMembership($project['id'], $this->normalUser['id'], ['role' => ProjectRole::GUEST]);
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertNotNull($member);
         $this->assertEquals('guest', $member['role']);
 
         $this->client->updateUserProjectMembership($project['id'], $this->normalUser['id'], ['role' => 'admin']);
 
         $member = $this->findProjectUser($project['id'], $this->normalUser['email']);
+        $this->assertNotNull($member);
         $this->assertEquals('admin', $member['role']);
     }
 
@@ -2124,7 +2125,7 @@ class ProjectsTest extends ClientTestCase
         $feature = self::PAY_AS_YOU_GO_PROJECT_FEATURE_NAME;
 
         $organization = $this->client->createOrganization($this->testMaintainerId, [
-            'name' => __CLASS__,
+            'name' => self::class,
         ]);
 
         $project = $this->createRedshiftProjectForClient($this->client, $organization['id'], [
@@ -2187,7 +2188,7 @@ class ProjectsTest extends ClientTestCase
      * @dataProvider provideProjectCredits
      * @param int|float $givenCredits
      */
-    public function testSuperAdminCanGiveProjectCredits($givenCredits): void
+    public function testSuperAdminCanGiveProjectCredits(int|float $givenCredits): void
     {
         $this->client->removeUserFeature($this->superAdmin['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
 
@@ -2218,7 +2219,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('moneyAmount', $response);
         $this->assertNull($response['moneyAmount']);
         $this->assertArrayHasKey('idStripeInvoice', $response);
-        $this->assertNull($response['moneyAmount']);
+        $this->assertNull($response['idStripeInvoice']);
         $this->assertArrayHasKey('description', $response);
         $this->assertSame('Promo', $response['description']);
         $this->assertArrayHasKey('created', $response);
@@ -2232,7 +2233,7 @@ class ProjectsTest extends ClientTestCase
      * @dataProvider provideProjectCredits
      * @param int|float $givenCredits
      */
-    public function testAdminWithFeatureCanGiveProjectCredits($givenCredits): void
+    public function testAdminWithFeatureCanGiveProjectCredits(int|float $givenCredits): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
         $this->client->addUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
@@ -2264,7 +2265,7 @@ class ProjectsTest extends ClientTestCase
         $this->assertArrayHasKey('moneyAmount', $response);
         $this->assertNull($response['moneyAmount']);
         $this->assertArrayHasKey('idStripeInvoice', $response);
-        $this->assertNull($response['moneyAmount']);
+        $this->assertNull($response['idStripeInvoice']);
         $this->assertArrayHasKey('description', $response);
         $this->assertSame('Promo', $response['description']);
         $this->assertArrayHasKey('created', $response);
