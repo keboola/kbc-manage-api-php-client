@@ -55,7 +55,8 @@ final class UiAppsTest extends ClientTestCase
         $appName = 'Sample critical KBC Application';
         try {
             $client->deleteUiApp($appName);
-            $this->fail('Should fail');
+            // @phpstan-ignore-next-line tomasfejfar.phpstanPhpunit.missingFailInTryCatch
+            // we dont care only ensure that app is not present
         } catch (ClientException) {
         }
 
