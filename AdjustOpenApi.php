@@ -6,12 +6,12 @@ $openApi = str_replace([
     '#/components/schemasOrganizationModel',
     '#/components/schemasProjectModel',
     'components:',
-    '  - url: https://connection.keboola.com/'
+    '  - url: https://connection.keboola.com/',
 ], [
     '#/components/schemas/MaintainerModel',
     '#/components/schemas/OrganizationModel',
     '#/components/schemas/ProjectModel',
-    "
+    '
 security:
   - ApiKeyAuth: []
 components:
@@ -19,10 +19,10 @@ components:
     ApiKeyAuth:
       type: apiKey
       in: header     
-      name: X-KBC-ManageApiToken",
+      name: X-KBC-ManageApiToken',
     '  - url: https://connection.keboola.com/
   - url: https://connection.eu-central-1.keboola.com/
-  - url: https://connection.north-europe.azure.keboola.com/'
+  - url: https://connection.north-europe.azure.keboola.com/',
 
 ], $openApi);
 

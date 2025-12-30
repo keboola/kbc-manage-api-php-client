@@ -65,7 +65,7 @@ class Client
         $handlerStack = HandlerStack::create();
         $handlerStack->push(Middleware::retry(
             $this->createDefaultDecider($this->backoffMaxTries),
-            $this->createExponentialDelay()
+            $this->createExponentialDelay(),
         ));
 
         $this->client = new GuzzleClient([
@@ -552,7 +552,7 @@ class Client
         string $title,
         string $description,
         ?bool $canBeManageByAdmin = false,
-        ?bool $canBeManagedViaAPI = true
+        ?bool $canBeManagedViaAPI = true,
     ) {
         return $this->apiPost('/manage/features', [
             'name' => $name,
@@ -942,7 +942,7 @@ class Client
                 $response instanceof ResponseInterface ? $response->getStatusCode() : $e->getCode(),
                 $e,
                 $body['code'] ?? '',
-                $body
+                $body,
             );
         }
 
