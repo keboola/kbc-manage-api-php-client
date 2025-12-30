@@ -8,7 +8,6 @@
     },
     "require-dev": {
         "keboola/coding-standard": "^16.0",
-        "keboola/phpunit-retry-annotations": "^0.5.0",
         "keboola/retry": "^0.5.1",
         "keboola/storage-api-client": "^18",
         "keboola/table-backend-utils": "^2.11",
@@ -37,8 +36,6 @@
         "phpcs": "phpcs -s -n -p --extensions=php src tests",
         "phpcbf": "phpcbf -s -n -p --extensions=php src tests",
         "phpstan": "phpstan analyse ./src ./tests -c phpstan.neon",
-        "tests": "phpunit --testsuite 'Main'",
-        "tests-file-storage": "phpunit --testsuite 'File Storage'",
         "rector": "rector"
     },
     "authors": [
