@@ -19,11 +19,6 @@
             "Keboola\\ManageApi\\": "src/"
         }
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Keboola\\ManageApiTest\\": "tests/"
-        }
-    },
     "scripts": {
         "ci": [
             "@phpcs",
