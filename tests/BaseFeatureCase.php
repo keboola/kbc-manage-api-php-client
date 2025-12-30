@@ -7,7 +7,7 @@ namespace Keboola\ManageApiTest;
 use Keboola\ManageApi\Client;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
-class BaseFeatureTest extends ClientTestCase
+class BaseFeatureCase extends ClientTestCase
 {
     public const MANAGE_TOKEN_CLIENT = 'manageTokenClient';
     public const SESSION_TOKEN_CLIENT = 'sessionTokenClient';
@@ -48,7 +48,7 @@ class BaseFeatureTest extends ClientTestCase
 
     protected function getNormalUserClient(): CLient
     {
-        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->providedData(), true)) {
             $sessionToken = $this->normalUserClient->createSessionToken();
             return $this->getClient([
                 'token' => $sessionToken['token'],
@@ -62,7 +62,7 @@ class BaseFeatureTest extends ClientTestCase
 
     protected function getSuperAdminClient(): Client
     {
-        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->getProvidedData(), true)) {
+        if ($this->usesDataProvider() && in_array(self::SESSION_TOKEN_CLIENT, $this->providedData(), true)) {
             $sessionToken = $this->client->createSessionToken();
             return $this->getClient([
                 'token' => $sessionToken['token'],
@@ -74,7 +74,7 @@ class BaseFeatureTest extends ClientTestCase
         return $this->client;
     }
 
-    public function canBeManageByAdminProvider(): array
+    public static function canBeManageByAdminProvider(): array
     {
         return [
             'admin can manage with manage token' => [true, self::MANAGE_TOKEN_CLIENT],
@@ -84,7 +84,7 @@ class BaseFeatureTest extends ClientTestCase
         ];
     }
 
-    public function provideVariousOfTokensClient(): array
+    public static function provideVariousOfTokensClient(): array
     {
         return [
             'manage token' => [self::MANAGE_TOKEN_CLIENT],

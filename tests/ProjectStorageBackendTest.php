@@ -11,21 +11,20 @@ use Keboola\ManageApi\Backend;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\Client;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 
 final class ProjectStorageBackendTest extends ClientTestCase
 {
     use BackendConfigurationProviderTrait;
 
-    public function supportedNonDefaultBackends(): Iterator
+    public static function supportedNonDefaultBackends(): Iterator
     {
         yield [Backend::REDSHIFT];
     }
 
-    /**
-     * @group skipOnGcp
-     * @dataProvider supportedNonDefaultBackends
-     * @param string $backendName
-     */
+    #[Group('skipOnGcp')]
+    #[DataProvider('supportedNonDefaultBackends')]
     public function testProjectStorageAssignBackend(string $backendName): void
     {
         // get redshift and synapse backend
@@ -138,7 +137,7 @@ final class ProjectStorageBackendTest extends ClientTestCase
             $this->assertStringContainsString('storageBackendId: \"This value should be of type string|int and whole number.\"', $e->getMessage());
         }
 
-        $backend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
+        $backend = $this->client->createStorageBackend(self::getSnowflakeBackendCreateOptions());
 
         // ensure, that backend ID is passed as string into body
         $requestOptions['body'] = '{"storageBackendId": "'.$backend['id'].'"}';

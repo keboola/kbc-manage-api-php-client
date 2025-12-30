@@ -7,6 +7,7 @@ namespace Keboola\ManageApiTest;
 use Iterator;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class ProjectInvitationsTest extends ClientTestCase
 {
@@ -47,7 +48,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): Iterator
+    public static function autoJoinProvider(): Iterator
     {
         yield [
             true,
@@ -57,7 +58,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         ];
     }
 
-    public function inviteUserToProjectWithRoleData(): Iterator
+    public static function inviteUserToProjectWithRoleData(): Iterator
     {
         yield [
             ProjectRole::ADMIN,
@@ -73,10 +74,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         ];
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testSuperAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
@@ -107,10 +105,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testMaintainerAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
@@ -143,10 +138,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testRandomAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
@@ -184,10 +176,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testOrganizationAdminCanInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -237,10 +226,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         $this->assertNull($projectUser);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testProjectMemberCanInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
@@ -557,9 +543,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         $this->assertCount(1, $invitations);
     }
 
-    /**
-     * @dataProvider inviteUserToProjectWithRoleData
-     */
+    #[DataProvider('inviteUserToProjectWithRoleData')]
     public function testInvitationAttributesPropagationToProjectMembership(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -636,9 +620,7 @@ final class ProjectInvitationsTest extends ClientTestCase
         $this->assertCount(0, $invitations);
     }
 
-    /**
-     * @dataProvider inviteUserToProjectWithRoleData
-     */
+    #[DataProvider('inviteUserToProjectWithRoleData')]
     public function testInviteUserToProjectWithRole(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -670,7 +652,7 @@ final class ProjectInvitationsTest extends ClientTestCase
             $this->fail('Create project membership with invalid role should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertRegExp('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
             $this->assertStringContainsString('invalid-role', $e->getMessage());
         }
 

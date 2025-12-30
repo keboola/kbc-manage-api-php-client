@@ -13,6 +13,8 @@ use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\ProjectRole;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\ClientException as StorageApiClientException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
 use Throwable;
 
 final class ProjectsTest extends ClientTestCase
@@ -38,7 +40,7 @@ final class ProjectsTest extends ClientTestCase
         }
     }
 
-    public function supportedBackends(): Iterator
+    public static function supportedBackends(): Iterator
     {
         yield [Backend::SNOWFLAKE];
         yield [Backend::REDSHIFT];
@@ -46,7 +48,7 @@ final class ProjectsTest extends ClientTestCase
         yield [Backend::TERADATA];
     }
 
-    public function unsupportedBackendFileStorageCombinations(): Iterator
+    public static function unsupportedBackendFileStorageCombinations(): Iterator
     {
         yield [
             Backend::REDSHIFT,
@@ -55,10 +57,8 @@ final class ProjectsTest extends ClientTestCase
         ];
     }
 
-    /**
-     * @group skipOnGcp
-     * @dataProvider unsupportedBackendFileStorageCombinations
-     */
+    #[Group('skipOnGcp')]
+    #[DataProvider('unsupportedBackendFileStorageCombinations')]
     public function testUnsupportedFileStorageForBackend(
         string $backend,
         string $unsupportedFileStorageProvider,
@@ -113,10 +113,8 @@ final class ProjectsTest extends ClientTestCase
         }
     }
 
-    /**
-     * @group skipOnGcp
-     * @dataProvider unsupportedBackendFileStorageCombinations
-     */
+    #[Group('skipOnGcp')]
+    #[DataProvider('unsupportedBackendFileStorageCombinations')]
     public function testUnsupportedBackendForFileStorage(
         string $backend,
         string $unsupportedFileStorageProvide,
@@ -268,7 +266,7 @@ final class ProjectsTest extends ClientTestCase
         return $foundProject;
     }
 
-    public function addUserToProjectWithRoleData(): Iterator
+    public static function addUserToProjectWithRoleData(): Iterator
     {
         yield [
             ProjectRole::ADMIN,
@@ -467,10 +465,7 @@ final class ProjectsTest extends ClientTestCase
         $this->assertNotEmpty($project['expires']);
     }
 
-    /**
-     * @dataProvider supportedBackends
-     * @param string $backend
-     */
+    #[DataProvider('supportedBackends')]
     public function testCreateProjectWithBackend(string $backend): void
     {
         $organization = $this->client->createOrganization($this->testMaintainerId, [
@@ -1508,9 +1503,7 @@ final class ProjectsTest extends ClientTestCase
         yield 'AdminWithFeature' => ['AdminWithFeature'];
     }
 
-    /**
-     * @dataProvider deleteProjectsClientProvider
-     */
+    #[DataProvider('deleteProjectsClientProvider')]
     public function testListDeletedProjects(string $case): void
     {
         $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
@@ -1679,9 +1672,7 @@ final class ProjectsTest extends ClientTestCase
         }
     }
 
-    /**
-     * @dataProvider deleteProjectsClientProvider
-     */
+    #[DataProvider('deleteProjectsClientProvider')]
     public function testProjectUnDelete(string $case): void
     {
         $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
@@ -1714,9 +1705,7 @@ final class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    /**
-     * @dataProvider deleteProjectsClientProvider
-     */
+    #[DataProvider('deleteProjectsClientProvider')]
     public function testDeletedProjectDetail(string $case): void
     {
         $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
@@ -1790,9 +1779,7 @@ final class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    /**
-     * @dataProvider deleteProjectsClientProvider
-     */
+    #[DataProvider('deleteProjectsClientProvider')]
     public function testProjectWithExpirationUnDelete(string $case): void
     {
         $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
@@ -1839,9 +1826,7 @@ final class ProjectsTest extends ClientTestCase
         $this->client->deleteOrganization($organization['id']);
     }
 
-    /**
-     * @dataProvider deleteProjectsClientProvider
-     */
+    #[DataProvider('deleteProjectsClientProvider')]
     public function testProjectUnDeleteWithExpiration(string $case): void
     {
         $testClient = $this->getTestClientWithFeature($case, self::CAN_MANAGE_DELETED_PROJECTS_FEATURE_NAME);
@@ -2057,9 +2042,7 @@ final class ProjectsTest extends ClientTestCase
         $this->assertTrue($project['isDisabled']);
     }
 
-    /**
-     * @dataProvider addUserToProjectWithRoleData
-     */
+    #[DataProvider('addUserToProjectWithRoleData')]
     public function testAddUserToProjectWithRole(string $role): void
     {
         $organization = $this->initTestOrganization();
@@ -2088,7 +2071,7 @@ final class ProjectsTest extends ClientTestCase
             $this->fail('Create project membership with invalid role should produce error');
         } catch (ClientException $e) {
             $this->assertEquals(400, $e->getCode());
-            $this->assertRegExp('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
+            $this->assertMatchesRegularExpression('/Role .* is not valid. Allowed roles are: admin, guest/', $e->getMessage());
             $this->assertStringContainsString('invalid-role', $e->getMessage());
         }
 
@@ -2184,10 +2167,7 @@ final class ProjectsTest extends ClientTestCase
         ]);
     }
 
-    /**
-     * @dataProvider provideProjectCredits
-     * @param int|float $givenCredits
-     */
+    #[DataProvider('provideProjectCredits')]
     public function testSuperAdminCanGiveProjectCredits(int|float $givenCredits): void
     {
         $this->client->removeUserFeature($this->superAdmin['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
@@ -2229,10 +2209,7 @@ final class ProjectsTest extends ClientTestCase
         $this->assertSame($purchasedCredits + $givenCredits, $project['payAsYouGo']['purchasedCredits']);
     }
 
-    /**
-     * @dataProvider provideProjectCredits
-     * @param int|float $givenCredits
-     */
+    #[DataProvider('provideProjectCredits')]
     public function testAdminWithFeatureCanGiveProjectCredits(int|float $givenCredits): void
     {
         $this->client->removeUserFeature($this->normalUser['email'], self::PAY_AS_YOU_GO_CREDITS_ADMIN_FEATURE_NAME);
@@ -2275,7 +2252,7 @@ final class ProjectsTest extends ClientTestCase
         $this->assertSame($purchasedCredits + $givenCredits, $project['payAsYouGo']['purchasedCredits']);
     }
 
-    public function provideProjectCredits(): Generator
+    public static function provideProjectCredits(): Generator
     {
         yield 'integer' => [
             100,

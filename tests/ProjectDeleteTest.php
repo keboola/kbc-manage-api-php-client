@@ -16,6 +16,7 @@ use Keboola\StorageApi\Options\Components as ComponentsOptions;
 use Keboola\StorageApi\Options\Components\Configuration;
 use Keboola\StorageApi\Options\Components\ConfigurationMetadata;
 use Keboola\StorageApi\Workspaces;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * @retryAttempts 0
@@ -37,7 +38,7 @@ final class ProjectDeleteTest extends ClientTestCase
         ]);
     }
 
-    public function deleteAndPurgeProjectWithData(): iterable
+    public static function deleteAndPurgeProjectWithData(): iterable
     {
         yield 'snowflake with S3 file storage' => [
             'backend' => Backend::SNOWFLAKE,
@@ -178,9 +179,7 @@ final class ProjectDeleteTest extends ClientTestCase
     }
 
 
-    /**
-     * @dataProvider deleteAndPurgeProjectWithData
-     */
+    #[DataProvider('deleteAndPurgeProjectWithData')]
     public function testDeleteAndPurgeProjectWithData(
         string $backend,
         string $fileStorageProvider

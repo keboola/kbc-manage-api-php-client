@@ -7,14 +7,12 @@ namespace Keboola\ManageApiTest;
 use Iterator;
 use Keboola\ManageApi\ClientException;
 use Keboola\StorageApi\Client;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class CommandsTest extends ClientTestCase
 {
 
-    /**
-     * @dataProvider  validParameters
-     * @param $parameters
-     */
+    #[DataProvider('validParameters')]
     public function testSuperAdminShouldBeAllowedToRunCommand(array $parameters): void
     {
         $response = $this->client->runCommand($parameters);
@@ -36,10 +34,7 @@ final class CommandsTest extends ClientTestCase
         }
     }
 
-    /**
-     * @dataProvider  invalidParameters
-     * @param $parameters
-     */
+    #[DataProvider('invalidParameters')]
     public function testInvalidParameters(array $parameters): void
     {
         try {
@@ -50,7 +45,7 @@ final class CommandsTest extends ClientTestCase
         }
     }
 
-    public function validParameters(): Iterator
+    public static function validParameters(): Iterator
     {
         yield [
             [
@@ -67,7 +62,7 @@ final class CommandsTest extends ClientTestCase
         ];
     }
 
-    public function invalidParameters(): Iterator
+    public static function invalidParameters(): Iterator
     {
         yield [
             [

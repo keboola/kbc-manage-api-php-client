@@ -3,7 +3,7 @@
     "description": "Keboola Management API Client",
     "license": "MIT",
     "require": {
-        "php" : ">=8.1",
+        "php" : ">=8.2",
         "guzzlehttp/guzzle": "^7.0|^6.1"
     },
     "require-dev": {
@@ -15,7 +15,7 @@
         "phpstan/phpdoc-parser": "^1.24.5",
         "phpstan/phpstan": "^2",
         "phpstan/phpstan-phpunit": "^2",
-        "phpunit/phpunit": "^9",
+        "phpunit/phpunit": "^12",
         "rector/rector": "^2.2",
         "tomasfejfar/phpstan-phpunit": "^0.2.0"
     },

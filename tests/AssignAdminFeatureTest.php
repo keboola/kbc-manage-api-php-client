@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-final class AssignAdminFeatureTest extends BaseFeatureTest
+final class AssignAdminFeatureTest extends BaseFeatureCase
 {
     public function setUp(): void
     {
@@ -14,10 +15,8 @@ final class AssignAdminFeatureTest extends BaseFeatureTest
         $this->cleanupFeatures($this->testFeatureName(), 'admin');
     }
 
-    /**
-     * @dataProvider canBeManageByAdminProvider
-     */
-    public function testSuperAdminCanManageAdminFeatureForAnybody(bool $canBeManageByAdmin): void
+    #[DataProvider('canBeManageByAdminProvider')]
+    public function testSuperAdminCanManageAdminFeatureForAnybody(bool $canBeManageByAdmin, string $_): void
     {
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
@@ -54,10 +53,8 @@ final class AssignAdminFeatureTest extends BaseFeatureTest
         $this->assertNotContains($featureName, $user['features']);
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
-    public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI(): void
+    #[DataProvider('provideVariousOfTokensClient')]
+    public function testSuperAdminCannotManageFeatureCannotBeManagedViaAPI(string $_): void
     {
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
@@ -116,10 +113,8 @@ final class AssignAdminFeatureTest extends BaseFeatureTest
         }
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
-    public function testUserCanManageOwnFeatures(): void
+    #[DataProvider('provideVariousOfTokensClient')]
+    public function testUserCanManageOwnFeatures(string $_): void
     {
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
@@ -157,10 +152,8 @@ final class AssignAdminFeatureTest extends BaseFeatureTest
         $this->assertNotContains($featureName, $user['features']);
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
-    public function testUserCanNotManageOtherUserFeatures(): void
+    #[DataProvider('provideVariousOfTokensClient')]
+    public function testUserCanNotManageOtherUserFeatures(string $_): void
     {
         $featureName = $this->testFeatureName();
         $newFeature = $this->client->createFeature(
@@ -209,10 +202,8 @@ final class AssignAdminFeatureTest extends BaseFeatureTest
         }
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
-    public function testMaintainerAdminCannotManageFeatures(): void
+    #[DataProvider('provideVariousOfTokensClient')]
+    public function testMaintainerAdminCannotManageFeatures(string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToMaintainer($this->testMaintainerId, ['email' => $this->normalUser['email']]);
@@ -267,10 +258,8 @@ final class AssignAdminFeatureTest extends BaseFeatureTest
         $this->assertContains($featureName, $user['features']);
     }
 
-    /**
-     * @dataProvider provideVariousOfTokensClient
-     */
-    public function testOrgAdminCannotManageFeatures(): void
+    #[DataProvider('provideVariousOfTokensClient')]
+    public function testOrgAdminCannotManageFeatures(string $_): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
