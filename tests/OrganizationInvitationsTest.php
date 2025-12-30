@@ -6,6 +6,7 @@ namespace Keboola\ManageApiTest;
 
 use Iterator;
 use Keboola\ManageApi\ClientException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class OrganizationInvitationsTest extends ClientTestCase
 {
@@ -46,7 +47,7 @@ final class OrganizationInvitationsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): Iterator
+    public static function autoJoinProvider(): Iterator
     {
         yield [
             true,
@@ -56,10 +57,7 @@ final class OrganizationInvitationsTest extends ClientTestCase
         ];
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testSuperAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
@@ -91,10 +89,7 @@ final class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testMaintainerCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
@@ -128,10 +123,7 @@ final class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testRandomAdminCannotInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';
@@ -170,10 +162,7 @@ final class OrganizationInvitationsTest extends ClientTestCase
         $this->assertNull($member);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testOrganizationAdminCanInviteRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $inviteeEmail = 'devel-tests@keboola.com';

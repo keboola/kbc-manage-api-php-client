@@ -56,7 +56,6 @@
             <file>tests/MaintainerJoinTest.php</file>
             <file>tests/MaintainersTest.php</file>
             <file>tests/MaintainersMetadataTest.php</file>
-            <file>tests/UsersMetadataTest.php</file>
             <file>tests/UsersTest.php</file>
             <file>tests/ProjectDeleteTest.php</file>
             <file>tests/ProjectInvitationsMfaValidationTest.php</file>

@@ -11,13 +11,10 @@ use Keboola\ManageApi\ClientException;
 use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 use Keboola\StorageApi\Client as StorageClient;
 use PHPUnit\Framework\TestCase;
-use PHPUnitRetry\RetryTrait;
 
 class ClientTestCase extends TestCase
 {
     protected const CAN_MANAGE_PROJECT_SETTINGS_FEATURE_NAME = 'can-update-project-settings';
-
-    use RetryTrait;
 
     public const PRODUCTION_HOSTS = [
         'connection.keboola.com',
@@ -150,7 +147,7 @@ class ClientTestCase extends TestCase
 
     protected function getTestName(): string
     {
-        return static::class . '::' . $this->getName();
+        return static::class . '::' . $this->name();
     }
 
 
@@ -232,7 +229,7 @@ class ClientTestCase extends TestCase
         }
     }
 
-    public function getRandomFeatureSuffix(): string
+    public static function getRandomFeatureSuffix(): string
     {
         return uniqid('', true);
     }
@@ -379,7 +376,7 @@ class ClientTestCase extends TestCase
             $testSuiteName = sprintf('%s::', SUITE_NAME);
         }
 
-        return $testSuiteName . static::class . '\\' . $this->getName();
+        return $testSuiteName . static::class . '\\' . $this->name();
     }
 
     public function sortByKey($data, $sortKey): array

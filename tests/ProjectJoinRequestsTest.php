@@ -6,6 +6,7 @@ namespace Keboola\ManageApiTest;
 
 use Iterator;
 use Keboola\ManageApi\ClientException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class ProjectJoinRequestsTest extends ClientTestCase
 {
@@ -46,7 +47,7 @@ final class ProjectJoinRequestsTest extends ClientTestCase
         }
     }
 
-    public function autoJoinProvider(): Iterator
+    public static function autoJoinProvider(): Iterator
     {
         yield [
             true,
@@ -155,10 +156,7 @@ final class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testOrganizationAdminCannotRequestAccessRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -188,10 +186,7 @@ final class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testRandomAdminCannotRequestAccessRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -218,10 +213,7 @@ final class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testProjectMemberCannotRequestAccessRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -299,10 +291,7 @@ final class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertCount(0, $joinRequests);
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testOrganizationAdminCannotManageJoinRequestsInProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -357,10 +346,7 @@ final class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testMaintainerAdminCannotManageJoinRequestsInProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -412,10 +398,7 @@ final class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testSuperAdminCannotManageJoinRequestsInProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -465,10 +448,7 @@ final class ProjectJoinRequestsTest extends ClientTestCase
         $this->assertEquals($joinRequest, reset($joinRequests));
     }
 
-    /**
-     * @dataProvider autoJoinProvider
-     * @param bool $allowAutoJoin
-     */
+    #[DataProvider('autoJoinProvider')]
     public function testRandomAdminCannotManageJoinRequestsInProjectRegardlessOfAllowAutoJoin(bool $allowAutoJoin): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);

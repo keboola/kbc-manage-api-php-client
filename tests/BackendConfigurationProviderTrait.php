@@ -8,7 +8,7 @@ use Keboola\ManageApiTest\Utils\EnvVariableHelper;
 
 trait BackendConfigurationProviderTrait
 {
-    public function getSnowflakeBackendCreateOptions(): array
+    public static function getSnowflakeBackendCreateOptions(): array
     {
         return [
             'backend' => 'snowflake',

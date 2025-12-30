@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Keboola\ManageApiTest;
 
 use Keboola\ManageApi\ClientException;
+use PHPUnit\Framework\Attributes\Group;
 use function GuzzleHttp\json_encode;
 
-/**
- * @group FileStorage
- */
+#[Group('FileStorage')]
 final class FileStorageS3Test extends ClientTestCase
 {
 

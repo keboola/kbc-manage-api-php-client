@@ -13,6 +13,7 @@ use Keboola\StorageApi\Client;
 use Keboola\StorageApi\Workspaces;
 use Keboola\TableBackendUtils\Connection\Snowflake\SnowflakeConnectionFactory;
 use Keboola\TableBackendUtils\Escaping\Snowflake\SnowflakeQuote;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class StorageBackendTest extends ClientTestCase
 {
@@ -20,12 +21,12 @@ final class StorageBackendTest extends ClientTestCase
 
     public function testOnlySuperadminCanRegisterStorageBackend(): void
     {
-        $newBackend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
+        $newBackend = $this->client->createStorageBackend(self::getSnowflakeBackendCreateOptions());
         $this->assertSame('snowflake', $newBackend['backend']);
         $this->assertBackendExist($newBackend['id']);
         $this->client->removeStorageBackend($newBackend['id']);
 
-        $newBackend = $this->normalUserClient->createStorageBackend($this->getSnowflakeBackendCreateOptions());
+        $newBackend = $this->normalUserClient->createStorageBackend(self::getSnowflakeBackendCreateOptions());
         $this->assertSame('snowflake', $newBackend['backend']);
         $this->assertBackendExist($newBackend['id']);
         $this->client->removeStorageBackend($newBackend['id']);
@@ -123,9 +124,7 @@ final class StorageBackendTest extends ClientTestCase
         $this->client->activateStorageBackend($newBackend['id']);
     }
 
-    /**
-     * @dataProvider storageBackendOptionsProvider
-     */
+    #[DataProvider('storageBackendOptionsProvider')]
     public function testCreateStorageBackend(array $options): void
     {
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
@@ -176,19 +175,19 @@ final class StorageBackendTest extends ClientTestCase
         );
     }
 
-    public function storageBackendOptionsProvider(): iterable
+    public static function storageBackendOptionsProvider(): iterable
     {
         yield 'snowflake' => [
-            $this->getSnowflakeBackendCreateOptions(),
+            self::getSnowflakeBackendCreateOptions(),
         ];
         yield 'snowflake with dynamic backends' => [
-            $this->getBackendCreateOptionsWithDynamicBackends(),
+            self::getBackendCreateOptionsWithDynamicBackends(),
         ];
     }
 
-    public function storageBackendOptionsProviderForUpdate(): iterable
+    public static function storageBackendOptionsProviderForUpdate(): iterable
     {
-        $create = $this->getSnowflakeBackendCreateOptions();
+        $create = self::getSnowflakeBackendCreateOptions();
         yield 'snowflake update password' => [
             $create,
             [
@@ -224,7 +223,7 @@ final class StorageBackendTest extends ClientTestCase
             ],
             true,
         ];
-        $createOptionsWithDynamicBackends = $this->getBackendCreateOptionsWithDynamicBackends();
+        $createOptionsWithDynamicBackends = self::getBackendCreateOptionsWithDynamicBackends();
         yield 'snowflake with dynamic backends update password' => [
             $createOptionsWithDynamicBackends,
             [
@@ -241,9 +240,7 @@ final class StorageBackendTest extends ClientTestCase
         ];
     }
 
-    /**
-     * @dataProvider storageBackendOptionsProvider
-     */
+    #[DataProvider('storageBackendOptionsProvider')]
     public function testUpdateStorageBackendWithWrongPassword(array $options): void
     {
         $backend = $this->client->createStorageBackend($options);
@@ -262,9 +259,7 @@ final class StorageBackendTest extends ClientTestCase
         }
     }
 
-    /**
-     * @dataProvider storageBackendOptionsProviderForUpdate
-     */
+    #[DataProvider('storageBackendOptionsProviderForUpdate')]
     public function testUpdateStorageBackend(array $options, array $updateOptions, bool $checkResponse): void
     {
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . sprintf(' - test managing %s storage backend', $options['backend']);
@@ -362,7 +357,7 @@ final class StorageBackendTest extends ClientTestCase
         $this->assertFalse($hasBackend);
     }
 
-    public function getBackendCreateOptionsWithDynamicBackends(): array
+    public static function getBackendCreateOptionsWithDynamicBackends(): array
     {
         return [
             'backend' => 'snowflake',
@@ -382,7 +377,7 @@ final class StorageBackendTest extends ClientTestCase
         $testMaintainer = $this->client->getMaintainer($this->testMaintainerId);
         $maintainerName = self::TESTS_MAINTAINER_PREFIX . ' - test isBYODB flag';
 
-        $backend = $this->client->createStorageBackend($this->getSnowflakeBackendCreateOptions());
+        $backend = $this->client->createStorageBackend(self::getSnowflakeBackendCreateOptions());
 
         $newMaintainer = $this->client->createMaintainer([
             'name' => $maintainerName,

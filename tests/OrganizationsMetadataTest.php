@@ -9,6 +9,7 @@ use Keboola\ManageApi\Client;
 use Keboola\ManageApi\ClientException;
 use Keboola\ManageApi\Exception;
 use Keboola\ManageApi\ProjectRole;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 final class OrganizationsMetadataTest extends ClientTestCase
 {
@@ -84,7 +85,7 @@ final class OrganizationsMetadataTest extends ClientTestCase
         $this->client->removeUserFeature($this->normalUser['id'], self::FEATURE_SAML_METADATA_ACCESS);
     }
 
-    public function allProjectRoles(): Iterator
+    public static function allProjectRoles(): Iterator
     {
         yield 'admin' => [
             ProjectRole::ADMIN,
@@ -100,7 +101,7 @@ final class OrganizationsMetadataTest extends ClientTestCase
         ];
     }
 
-    public function providers(): Iterator
+    public static function providers(): Iterator
     {
         yield 'system provider' => [
             self::PROVIDER_SYSTEM,
@@ -125,9 +126,7 @@ final class OrganizationsMetadataTest extends ClientTestCase
         $this->cannotDeleteMetadata($this->normalUserClient, $metadataArray[0]['id']);
     }
 
-    /**
-     * @dataProvider providers
-     */
+    #[DataProvider('providers')]
     public function testSuperAdminCanManageMetadata(string $provider): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->normalUser['email']]);
@@ -377,9 +376,7 @@ final class OrganizationsMetadataTest extends ClientTestCase
     }
 
     // project admin
-    /**
-     * @dataProvider allProjectRoles
-     */
+    #[DataProvider('allProjectRoles')]
     public function testProjectAdminCanNotManageMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
@@ -405,9 +402,7 @@ final class OrganizationsMetadataTest extends ClientTestCase
         $this->cannotManageUserMetadata($this->normalUserClient, $userMetadata[0]['id']);
     }
 
-    /**
-     * @dataProvider allProjectRoles
-     */
+    #[DataProvider('allProjectRoles')]
     public function testProjectAdminWithSamlFeatureCanNotManageSamlSystemMetadata(string $role): void
     {
         $this->client->addUserToOrganization($this->organization['id'], ['email' => $this->superAdmin['email']]);
