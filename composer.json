@@ -24,9 +24,9 @@
             "@phpcs",
             "@phpstan"
         ],
-        "phpcs": "phpcs -s -n -p --extensions=php src tests",
-        "phpcbf": "phpcbf -s -n -p --extensions=php src tests",
-        "phpstan": "phpstan analyse ./src ./tests -c phpstan.neon",
+        "phpcs": "phpcs -s -n -p --extensions=php src",
+        "phpcbf": "phpcbf -s -n -p --extensions=php src",
+        "phpstan": "phpstan analyse ./src -c phpstan.neon",
         "rector": "rector"
     },
     "authors": [
