@@ -4076,6 +4076,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + owner: keboola (required) - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (string) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + skipValidation: false (boolean) - If true, the backend validation step is skipped during the update. Only possible to use with owner and technicalOwner not with other options.
++ technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails for SAML2 certificate rotation notifications.
 
 ## StorageBackend
 + id: 123 (number, required)
@@ -4098,6 +4099,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + creator
     + id: 10 (number, required)
     + name: keboola (required)
++ technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails for SAML2 certificate rotation notifications.
 
 ## StorageBackendListRedshift (StorageBackendListBase)
 + host: demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
