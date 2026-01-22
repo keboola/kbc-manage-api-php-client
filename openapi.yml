@@ -1738,6 +1738,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -1873,6 +1874,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -2067,6 +2069,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -2206,6 +2209,8 @@ paths:
                     type: number
                   fileStorageProvider:
                     type: string
+                  isBYODB:
+                    type: boolean
               example:
                 id: 101
                 name: test project
@@ -2234,6 +2239,7 @@ paths:
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 1
                 fileStorageProvider: aws
+                isBYODB: false
       summary: List projects for an organization
       operationId: List projects for an organization
       description: ''
@@ -2322,6 +2328,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -2456,6 +2463,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -2590,6 +2598,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -2718,6 +2727,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -2852,6 +2862,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -4080,6 +4091,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -4403,6 +4415,8 @@ paths:
                     type: string
                   purgedTime:
                     nullable: true
+                  isBYODB:
+                    type: boolean
               example:
                 id: 101
                 name: test project
@@ -4430,6 +4444,7 @@ paths:
                 isDeleted: true
                 deletedTime: 2018-02-11T14:25:15+0100
                 purgedTime: null
+                isBYODB: false
       summary: Deleted project detail
       operationId: Deleted project detail
       description: >-
@@ -4582,6 +4597,8 @@ paths:
                       nullable: true
                     dataRetentionTimeInDays:
                       type: number
+                    isBYODB:
+                      type: boolean
                     isPurged:
                       type: boolean
                     isDeleted:
@@ -4624,6 +4641,7 @@ paths:
                     - isDisabled
                     - billedMonthlyPrice
                     - dataRetentionTimeInDays
+                    - isBYODB
                     - isPurged
                     - isDeleted
                     - deletedTime
@@ -4652,6 +4670,7 @@ paths:
                   isDisabled: false
                   billedMonthlyPrice: null
                   dataRetentionTimeInDays: 7
+                  isBYODB: false
                   isPurged: false
                   isDeleted: true
                   deletedTime: 2018-02-11T14:25:15+0100
@@ -4683,6 +4702,7 @@ paths:
                   isDisabled: false
                   billedMonthlyPrice: null
                   dataRetentionTimeInDays: 7
+                  isBYODB: false
                   isPurged: false
                   isDeleted: true
                   deletedTime: 2018-02-11T14:25:15+0100
@@ -5734,6 +5754,8 @@ paths:
                     nullable: true
                   dataRetentionTimeInDays:
                     type: number
+                  isBYODB:
+                    type: boolean
               example:
                 id: 89
                 name: dev user (TEST1568723795)
@@ -5790,6 +5812,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 1
+                isBYODB: false
       summary: Create project
       operationId: Create project
       description: Create a new project from given promo code
@@ -6499,6 +6522,7 @@ paths:
                 isDisabled: false
                 billedMonthlyPrice: null
                 dataRetentionTimeInDays: 7
+                isBYODB: false
                 organization:
                   id: 5
                   name: Martinovo
@@ -7501,6 +7525,7 @@ paths:
               useDynamicBackends: false
               owner: keboola
               technicalOwner: keboola
+              skipValidation: false
             schema:
               $ref: '#/components/schemas/StorageBackendUpdate'
     delete:
@@ -8579,6 +8604,8 @@ components:
           nullable: true
         dataRetentionTimeInDays:
           type: number
+        isBYODB:
+          type: boolean
         organization:
           type: object
           properties:
@@ -9062,6 +9089,12 @@ components:
           description: >-
             associated technical owner (who technically manages the account).
             Enum: keboola, internal, kbdb, byodb
+        skipValidation:
+          type: boolean
+          description: >-
+            If true, the backend validation step is skipped during the update.
+            Only possible to use with owner and technicalOwner not with other
+            options.
     StorageBackend:
       type: object
       required:
