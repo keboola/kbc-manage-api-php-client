@@ -3929,7 +3929,10 @@ Update of the credentials for BigQuery backend.
 
 ### Create a new Snowflake backend with certificate authentication [POST]
 
-Create a new Snowflake storage backend with RSA certificate authentication. The backend is created as disabled and returns an SQL template for setting up Snowflake roles and users. After running the generated query, you can activate the backend using the [Activate Snowflake Storage Backend](#reference/super-storage-backends-management/activate-snowflake-storage-backend/activate-snowflake-backend) endpoint.
+Create a new Snowflake storage backend with RSA certificate authentication. The backend is created as disabled and returns either an SQL template for setting up Snowflake roles and users (default), or just the public keys when `output=keys`. After running the generated query, you can activate the backend using the [Activate Snowflake Storage Backend](#reference/super-storage-backends-management/activate-snowflake-storage-backend/activate-snowflake-backend) endpoint.
+
+When `output=sql` (default), returns `CreateSnowflakeStorageBackendResponse` with full SQL template.
+When `output=keys`, returns `CreateSnowflakeStorageBackendKeysResponse` with only `id`, `userPublicKey`, and `securityIntegrationKey` (when SSO enabled).
 
 Registration will provide personalized queries based on this template
 ```
@@ -4122,6 +4125,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + useDynamicBackends: false (optional) - Enable dynamic backends
 + useNetworkPolicies: false (optional) - Enable network policies
 + useSso: false (optional) - Enable SSO
++ output: `sql` (optional) - Response format: `sql` returns full SQL template (default), `keys` returns only public keys
 
 ### CreateSnowflakeStorageBackendResponse
 + id: 123 - Snowflake storage backend ID
@@ -4140,6 +4144,11 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + useSso: false - Whether SSO is enabled
 + sqlTemplate: `CREATE ROLE "KEBOOLA_STORAGE";...` - SQL template for setting up Snowflake roles and users
 + isEnabled: false - Whether backend is validated and can be used
+
+### CreateSnowflakeStorageBackendKeysResponse
++ id: 123 - Snowflake storage backend ID
++ userPublicKey: `MIIBIjANBgkqhki...` - RSA public key for user authentication
++ securityIntegrationKey: `MIIBIjANBgkqhki...` (optional) - SAML2 public key for security integration (only present when SSO is enabled)
 
 ### ActivateSnowflakeStorageBackendResponse
 + id: 123 - Snowflake storage backend ID
