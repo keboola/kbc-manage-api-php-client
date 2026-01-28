@@ -3931,6 +3931,8 @@ Update of the credentials for BigQuery backend.
 
 Create a new Snowflake storage backend with RSA certificate authentication. The backend is created as disabled and returns an SQL template for setting up Snowflake roles and users, along with the public keys. After running the generated query, you can activate the backend using the [Activate Snowflake Storage Backend](#reference/super-storage-backends-management/activate-snowflake-storage-backend/activate-snowflake-backend) endpoint.
 
+Warehouse name cannot contain warehouse size suffixes (_X-SMALL, _SMALL, etc.) when dynamic backends are enabled. Size suffixes will be automatically added to the warehouse name.
+
 Registration will provide personalized queries based on this template
 ```
 // base
@@ -4114,7 +4116,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 
 ### CreateSnowflakeBackendWithCertRequest
 + host: `demo.snowflakecomputing.com` (required) - Snowflake host name
-+ warehouse: `KEBOOLA` (required) - Snowflake warehouse name
++ warehouse: `KEBOOLA` (required) - Snowflake warehouse name; Warehouse name cannot contain warehouse size suffixes (_X-SMALL, _SMALL, etc.) when dynamic backends are enabled. Size suffixes will be automatically added to the warehouse name.
 + username: `KEBOOLA_STORAGE` (optional) - Snowflake username
 + region: `us-east-1` (required) - Backend region
 + owner: `keboola` (required) - associated legal owner (string, mostly: keboola,client-<name>)
