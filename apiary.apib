@@ -4124,6 +4124,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + useDynamicBackends: false (optional) - Enable dynamic backends
 + useNetworkPolicies: false (optional) - Enable network policies
 + useSso: false (optional) - Enable SSO
++ edition: standard (optional) - Snowflake edition type. Enum: enterprise, standard. Enterprise enables multi-cluster warehouses when dynamic backends are enabled.
 
 ### CreateSnowflakeStorageBackendResponse
 + id: 123 - Snowflake storage backend ID
@@ -4140,6 +4141,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + useDynamicBackends: false - Whether dynamic backends are enabled
 + useNetworkPolicies: false - Whether network policies are enabled
 + useSso: false - Whether SSO is enabled
++ edition: standard - Snowflake edition type (enterprise/standard). Enterprise enables multi-cluster warehouses.
 + sqlTemplate: `CREATE ROLE "KEBOOLA_STORAGE";...` - SQL template for setting up Snowflake roles and users
 + isEnabled: false - Whether backend is validated and can be used
 + userPublicKey: `MIIBIjANBgkqhki...` - RSA public key for user authentication
