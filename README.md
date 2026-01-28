@@ -246,7 +246,9 @@ $ npm install -g apib2swagger
 ```
 Then run following commands 
 ```
-$ cat apiary.apib | grep -v "X-KBC-ManageApiToken:" | apib2swagger -o openapi.yml -y --open-api-3 --info-title="Manage API" 
+$ cat apiary.apib | grep -v "X-KBC-ManageApiToken:" | apib2swagger -o openapi.yml -y --open-api-3 --info-title="Manage API"
+# or in docker
+$ docker-compose run --rm openapi 
 $ php AdjustOpenApi.php
 ```
 
