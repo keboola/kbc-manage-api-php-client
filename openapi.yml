@@ -7426,6 +7426,7 @@ paths:
                   host: sapi
                   backend: redshift
                   region: us
+                  technicalOwnerContactEmails: []
       summary: List backends
       operationId: List backends
       description: ''
@@ -7458,6 +7459,7 @@ paths:
                   creator:
                     id: 10
                     name: keboola
+                  technicalOwnerContactEmails: []
                   host: demo.snowflakecomputing.com
                   backend: snowflake
                   warehouse: keboola
@@ -7494,6 +7496,10 @@ paths:
                   region:
                     type: string
                     description: east-1
+                  technicalOwnerContactEmails:
+                    type: array
+                    description: Array of technical owner contact emails
+                    items: {}
                 required:
                   - id
                   - backend
@@ -7502,6 +7508,7 @@ paths:
                 host: sapi
                 backend: redshift
                 region: us
+                technicalOwnerContactEmails: []
       summary: Update backend
       operationId: Update backend
       description: >-
@@ -7526,6 +7533,7 @@ paths:
               owner: keboola
               technicalOwner: keboola
               skipValidation: false
+              technicalOwnerContactEmails: []
             schema:
               $ref: '#/components/schemas/StorageBackendUpdate'
     delete:
@@ -7844,6 +7852,10 @@ paths:
                     description: >-
                       associated technical owner (who technically manages the
                       account). Enum: keboola, internal, kbdb, byodb
+                  technicalOwnerContactEmails:
+                    type: array
+                    description: Array of technical owner contact emails
+                    items: {}
                   region:
                     type: string
                     description: Backend region
@@ -7881,6 +7893,8 @@ paths:
                 username: KEBOOLA_STORAGE
                 owner: keboola
                 technicalOwner: keboola
+                technicalOwnerContactEmails:
+                  - devel@keboola.com
                 region: us-east-1
                 created: '2024-01-15T10:30:00Z'
                 creatorName: John Doe
@@ -7997,30 +8011,34 @@ paths:
 
         // sso
 
-        CREATE SECURITY INTEGRATION "STACK_SAML_INTEGRATION"',
+        CREATE SECURITY INTEGRATION "STACK_SAML_INTEGRATION"'
 
-        TYPE = SAML2',
+        TYPE = SAML2'
 
-        ENABLED = TRUE',
+        ENABLED = TRUE'
 
-        SAML2_PROVIDER = 'CUSTOM'",
+        SAML2_PROVIDER = 'CUSTOM'"
 
-        SAML2_ISSUER = 'issuer'",
+        SAML2_ISSUER = 'issuer'"
 
-        SAML2_SSO_URL = 'https://sso'",
+        SAML2_SSO_URL = 'https://sso'"
 
-        SAML2_X509_CERT = 'ABC'",
+        SAML2_X509_CERT = 'ABC'"
 
-        SAML2_SNOWFLAKE_ACS_URL ='https://host/fed/login'",
+        SAML2_SNOWFLAKE_ACS_URL ='https://host/fed/login'"
 
-        SAML2_ENABLE_SP_INITIATED = FALSE',
+        SAML2_ENABLE_SP_INITIATED = FALSE'
 
-        SAML2_FORCE_AUTHN = FALSE',
+        SAML2_FORCE_AUTHN = FALSE'
 
-        SAML2_SIGN_REQUEST = TRUE',
+        SAML2_SIGN_REQUEST = TRUE'
 
         SAML2_REQUESTED_NAMEID_FORMAT =
-        'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress';,
+        'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress';
+
+
+        GRANT OWNERSHIP ON INTEGRATION "STACK_SAML_INTEGRATION" TO ROLE
+        "KBC_STORAGE";
 
         ```
       tags:
@@ -8036,6 +8054,8 @@ paths:
               region: us-east-1
               owner: keboola
               technicalOwner: keboola
+              technicalOwnerContactEmails:
+                - devel@keboola.com
               useDynamicBackends: 'false'
               useNetworkPolicies: 'false'
               useSso: 'false'
@@ -8064,6 +8084,10 @@ paths:
                   description: >-
                     associated technical owner (who technically manages the
                     account). Enum: keboola, internal, kbdb, byodb
+                technicalOwnerContactEmails:
+                  type: array
+                  description: Array of technical owner contact emails
+                  items: {}
                 useDynamicBackends:
                   type: string
                   description: Enable dynamic backends
@@ -8112,6 +8136,10 @@ paths:
                     description: >-
                       associated technical owner (who technically manages the
                       account). Enum: keboola, internal, kbdb, byodb
+                  technicalOwnerContactEmails:
+                    type: array
+                    description: Array of technical owner contact emails
+                    items: {}
                   region:
                     type: string
                     description: Backend region
@@ -8146,6 +8174,8 @@ paths:
                 username: KEBOOLA_STORAGE
                 owner: keboola
                 technicalOwner: keboola
+                technicalOwnerContactEmails:
+                  - devel@keboola.com
                 region: us-east-1
                 created: '2024-01-15T10:30:00Z'
                 creatorName: John Doe
@@ -9095,6 +9125,10 @@ components:
             If true, the backend validation step is skipped during the update.
             Only possible to use with owner and technicalOwner not with other
             options.
+        technicalOwnerContactEmails:
+          type: array
+          items: {}
+          description: Array of technical owner contact emails
     StorageBackend:
       type: object
       required:
@@ -9115,6 +9149,10 @@ components:
           type: string
           example: us
           description: east-1
+        technicalOwnerContactEmails:
+          type: array
+          items: {}
+          description: Array of technical owner contact emails
     StorageBackendListBase:
       type: object
       required:
@@ -9175,6 +9213,10 @@ components:
             name:
               type: string
               example: keboola
+        technicalOwnerContactEmails:
+          type: array
+          items: {}
+          description: Array of technical owner contact emails
     StorageBackendListRedshift:
       allOf:
         - $ref: '#/components/schemas/StorageBackendListBase'
@@ -9260,6 +9302,10 @@ components:
           description: >-
             associated technical owner (who technically manages the account).
             Enum: keboola, internal, kbdb, byodb
+        technicalOwnerContactEmails:
+          type: array
+          items: {}
+          description: Array of technical owner contact emails
         useDynamicBackends:
           type: string
           example: 'false'
@@ -9301,6 +9347,10 @@ components:
           description: >-
             associated technical owner (who technically manages the account).
             Enum: keboola, internal, kbdb, byodb
+        technicalOwnerContactEmails:
+          type: array
+          items: {}
+          description: Array of technical owner contact emails
         region:
           type: string
           example: us-east-1
@@ -9370,6 +9420,10 @@ components:
           description: >-
             associated technical owner (who technically manages the account).
             Enum: keboola, internal, kbdb, byodb
+        technicalOwnerContactEmails:
+          type: array
+          items: {}
+          description: Array of technical owner contact emails
         region:
           type: string
           example: us-east-1

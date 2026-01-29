@@ -3968,18 +3968,20 @@ GRANT OWNERSHIP ON NETWORK RULE STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS TO
 -- END_OPTIONAL_RESOURCES
 
 // sso
-CREATE SECURITY INTEGRATION "STACK_SAML_INTEGRATION"',
-TYPE = SAML2',
-ENABLED = TRUE',
-SAML2_PROVIDER = 'CUSTOM'",
-SAML2_ISSUER = 'issuer'",
-SAML2_SSO_URL = 'https://sso'",
-SAML2_X509_CERT = 'ABC'",
-SAML2_SNOWFLAKE_ACS_URL ='https://host/fed/login'",
-SAML2_ENABLE_SP_INITIATED = FALSE',
-SAML2_FORCE_AUTHN = FALSE',
-SAML2_SIGN_REQUEST = TRUE',
-SAML2_REQUESTED_NAMEID_FORMAT = 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress';,
+CREATE SECURITY INTEGRATION "STACK_SAML_INTEGRATION"'
+TYPE = SAML2'
+ENABLED = TRUE'
+SAML2_PROVIDER = 'CUSTOM'"
+SAML2_ISSUER = 'issuer'"
+SAML2_SSO_URL = 'https://sso'"
+SAML2_X509_CERT = 'ABC'"
+SAML2_SNOWFLAKE_ACS_URL ='https://host/fed/login'"
+SAML2_ENABLE_SP_INITIATED = FALSE'
+SAML2_FORCE_AUTHN = FALSE'
+SAML2_SIGN_REQUEST = TRUE'
+SAML2_REQUESTED_NAMEID_FORMAT = 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress';
+
+GRANT OWNERSHIP ON INTEGRATION "STACK_SAML_INTEGRATION" TO ROLE "KBC_STORAGE";
 ```
 
 + Request (application/json)
@@ -4076,12 +4078,14 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + owner: keboola (required) - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (string) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
 + skipValidation: false (boolean) - If true, the backend validation step is skipped during the update. Only possible to use with owner and technicalOwner not with other options.
++ technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails
 
 ## StorageBackend
 + id: 123 (number, required)
 + host: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
 + backend: redshift (required)
 + region: us-east-1
++ technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails
 
 ## StorageBackendListBase
 + id: 123 (number, required)
@@ -4098,6 +4102,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + creator
     + id: 10 (number, required)
     + name: keboola (required)
++ technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails
 
 ## StorageBackendListRedshift (StorageBackendListBase)
 + host: demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
@@ -4121,6 +4126,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + region: `us-east-1` (required) - Backend region
 + owner: `keboola` (required) - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ technicalOwnerContactEmails: `devel@keboola.com` (array[string], optional) - Array of technical owner contact emails
 + useDynamicBackends: false (optional) - Enable dynamic backends
 + useNetworkPolicies: false (optional) - Enable network policies
 + useSso: false (optional) - Enable SSO
@@ -4133,6 +4139,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + username: `KEBOOLA_STORAGE` - Snowflake username
 + owner: `keboola`  - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: `keboola` - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ technicalOwnerContactEmails: `devel@keboola.com` (array[string]) - Array of technical owner contact emails
 + region: `us-east-1` - Backend region
 + created: `2024-01-15T10:30:00Z` - Creation timestamp
 + creatorName: `John Doe` - Creator name
@@ -4154,6 +4161,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + username: `KEBOOLA_STORAGE` - Snowflake username
 + owner: `keboola` - associated legal owner (string, mostly: keboola,client-<name>)
 + technicalOwner: `keboola` - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ technicalOwnerContactEmails: `devel@keboola.com` (array[string]) - Array of technical owner contact emails
 + region: `us-east-1` - Backend region
 + created: `2024-01-15T10:30:00Z` - Creation timestamp
 + creatorName: `John Doe` - Creator name

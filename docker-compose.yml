@@ -64,6 +64,13 @@ services:
       - ./:/code/
       - ./docker/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
 
+  openapi:
+    image: node:24-alpine
+    volumes:
+      - ./:/code
+    working_dir: /code
+    command: sh -c "npm install -g apib2swagger && cat apiary.apib | grep -v 'X-KBC-ManageApiToken:' | apib2swagger -o openapi.yml -y --open-api-3 --info-title='Manage API'"
+
 networks:
   default:
     external:
