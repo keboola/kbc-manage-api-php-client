@@ -7460,6 +7460,9 @@ paths:
                     id: 10
                     name: keboola
                   technicalOwnerContactEmails: []
+                  useSso: 'false'
+                  isSsoEnabled: 'false'
+                  isSsoConfigured: 'false'
                   host: demo.snowflakecomputing.com
                   backend: snowflake
                   warehouse: keboola
@@ -7879,13 +7882,34 @@ paths:
                     description: Whether network policies are enabled
                   useSso:
                     type: string
-                    description: Whether SSO is enabled
+                    description: >-
+                      **Deprecated**, use `isSsoEnabled` instead. Whether SSO is
+                      enabled
+                  isSsoEnabled:
+                    type: string
+                    description: Whether SSO is enabled (SAML2 activated)
+                  isSsoConfigured:
+                    type: string
+                    description: Whether SAML2 SSO configuration exists
+                  edition:
+                    type: string
+                    description: >-
+                      Snowflake edition type (enterprise/standard). Enterprise
+                      enables multi-cluster warehouses.
                   sqlTemplate:
                     type: string
                     description: SQL template for setting up Snowflake roles and users
                   isEnabled:
                     type: string
                     description: Whether backend is validated and can be used
+                  userPublicKey:
+                    type: string
+                    description: RSA public key for user authentication
+                  securityIntegrationKey:
+                    type: string
+                    description: >-
+                      SAML2 public key for security integration (only present
+                      when SSO is enabled)
               example:
                 id: '123'
                 host: demo.snowflakecomputing.com
@@ -7903,8 +7927,13 @@ paths:
                 useDynamicBackends: 'false'
                 useNetworkPolicies: 'false'
                 useSso: 'false'
+                isSsoEnabled: 'false'
+                isSsoConfigured: 'false'
+                edition: standard
                 sqlTemplate: CREATE ROLE "KEBOOLA_STORAGE";...
                 isEnabled: 'false'
+                userPublicKey: MIIBIjANBgkqhki...
+                securityIntegrationKey: MIIBIjANBgkqhki...
         '400':
           description: Bad Request
           headers: {}
@@ -7918,11 +7947,16 @@ paths:
       description: >-
         Create a new Snowflake storage backend with RSA certificate
         authentication. The backend is created as disabled and returns an SQL
-        template for setting up Snowflake roles and users. After running the
-        generated query, you can activate the backend using the [Activate
-        Snowflake Storage
+        template for setting up Snowflake roles and users, along with the public
+        keys. After running the generated query, you can activate the backend
+        using the [Activate Snowflake Storage
         Backend](#reference/super-storage-backends-management/activate-snowflake-storage-backend/activate-snowflake-backend)
         endpoint.
+
+
+        Warehouse name cannot contain warehouse size suffixes (_X-SMALL, _SMALL,
+        etc.) when dynamic backends are enabled. Size suffixes will be
+        automatically added to the warehouse name.
 
 
         Registration will provide personalized queries based on this template
@@ -8059,6 +8093,7 @@ paths:
               useDynamicBackends: 'false'
               useNetworkPolicies: 'false'
               useSso: 'false'
+              edition: standard
             schema:
               type: object
               properties:
@@ -8067,7 +8102,11 @@ paths:
                   description: Snowflake host name
                 warehouse:
                   type: string
-                  description: Snowflake warehouse name
+                  description: >-
+                    Snowflake warehouse name; Warehouse name cannot contain
+                    warehouse size suffixes (_X-SMALL, _SMALL, etc.) when
+                    dynamic backends are enabled. Size suffixes will be
+                    automatically added to the warehouse name.
                 username:
                   type: string
                   description: Snowflake username
@@ -8097,6 +8136,12 @@ paths:
                 useSso:
                   type: string
                   description: Enable SSO
+                edition:
+                  type: string
+                  description: >-
+                    Snowflake edition type. Enum: enterprise, standard.
+                    Enterprise enables multi-cluster warehouses when dynamic
+                    backends are enabled.
               required:
                 - host
                 - warehouse
@@ -8163,7 +8208,15 @@ paths:
                     description: Whether network policies are enabled
                   useSso:
                     type: string
-                    description: Whether SSO is enabled
+                    description: >-
+                      **Deprecated**, use `isSsoEnabled` instead. Whether SSO is
+                      enabled
+                  isSsoEnabled:
+                    type: string
+                    description: Whether SSO is enabled (SAML2 activated)
+                  isSsoConfigured:
+                    type: string
+                    description: Whether SAML2 SSO configuration exists
                   isEnabled:
                     type: string
                     description: Whether backend is validated and can be used
@@ -8184,6 +8237,8 @@ paths:
                 useDynamicBackends: 'false'
                 useNetworkPolicies: 'false'
                 useSso: 'false'
+                isSsoEnabled: 'false'
+                isSsoConfigured: 'false'
                 isEnabled: 'true'
         '400':
           description: Bad Request
@@ -9217,6 +9272,18 @@ components:
           type: array
           items: {}
           description: Array of technical owner contact emails
+        useSso:
+          type: string
+          example: 'false'
+          description: '**Deprecated**, use `isSsoEnabled` instead. Whether SSO is enabled'
+        isSsoEnabled:
+          type: string
+          example: 'false'
+          description: Whether SSO is enabled (SAML2 activated)
+        isSsoConfigured:
+          type: string
+          example: 'false'
+          description: Whether SAML2 SSO configuration exists
     StorageBackendListRedshift:
       allOf:
         - $ref: '#/components/schemas/StorageBackendListBase'
@@ -9283,7 +9350,11 @@ components:
         warehouse:
           type: string
           example: KEBOOLA
-          description: Snowflake warehouse name
+          description: >-
+            Snowflake warehouse name; Warehouse name cannot contain warehouse
+            size suffixes (_X-SMALL, _SMALL, etc.) when dynamic backends are
+            enabled. Size suffixes will be automatically added to the warehouse
+            name.
         username:
           type: string
           example: KEBOOLA_STORAGE
@@ -9318,6 +9389,12 @@ components:
           type: string
           example: 'false'
           description: Enable SSO
+        edition:
+          type: string
+          example: standard
+          description: >-
+            Snowflake edition type. Enum: enterprise, standard. Enterprise
+            enables multi-cluster warehouses when dynamic backends are enabled.
     CreateSnowflakeStorageBackendResponse:
       type: object
       properties:
@@ -9382,7 +9459,21 @@ components:
         useSso:
           type: string
           example: 'false'
-          description: Whether SSO is enabled
+          description: '**Deprecated**, use `isSsoEnabled` instead. Whether SSO is enabled'
+        isSsoEnabled:
+          type: string
+          example: 'false'
+          description: Whether SSO is enabled (SAML2 activated)
+        isSsoConfigured:
+          type: string
+          example: 'false'
+          description: Whether SAML2 SSO configuration exists
+        edition:
+          type: string
+          example: standard
+          description: >-
+            Snowflake edition type (enterprise/standard). Enterprise enables
+            multi-cluster warehouses.
         sqlTemplate:
           type: string
           example: CREATE ROLE "KEBOOLA_STORAGE";...
@@ -9391,6 +9482,16 @@ components:
           type: string
           example: 'false'
           description: Whether backend is validated and can be used
+        userPublicKey:
+          type: string
+          example: MIIBIjANBgkqhki...
+          description: RSA public key for user authentication
+        securityIntegrationKey:
+          type: string
+          example: MIIBIjANBgkqhki...
+          description: >-
+            SAML2 public key for security integration (only present when SSO is
+            enabled)
     ActivateSnowflakeStorageBackendResponse:
       type: object
       properties:
@@ -9455,7 +9556,15 @@ components:
         useSso:
           type: string
           example: 'false'
-          description: Whether SSO is enabled
+          description: '**Deprecated**, use `isSsoEnabled` instead. Whether SSO is enabled'
+        isSsoEnabled:
+          type: string
+          example: 'false'
+          description: Whether SSO is enabled (SAML2 activated)
+        isSsoConfigured:
+          type: string
+          example: 'false'
+          description: Whether SAML2 SSO configuration exists
         isEnabled:
           type: string
           example: 'true'
