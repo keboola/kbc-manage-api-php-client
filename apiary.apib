@@ -4103,6 +4103,9 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
     + id: 10 (number, required)
     + name: keboola (required)
 + technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails
++ useSso: false - **Deprecated**, use `isSsoEnabled` instead. Whether SSO is enabled
++ isSsoEnabled: false - Whether SSO is enabled (SAML2 activated)
++ isSsoConfigured: false - Whether SAML2 SSO configuration exists
 
 ## StorageBackendListRedshift (StorageBackendListBase)
 + host: demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
