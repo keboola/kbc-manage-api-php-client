@@ -885,25 +885,7 @@ class Client
         ]);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function createProjectFromPromoCode(string $promoCode): array
-    {
-        return $this->apiPost('/manage/current-user/promo-codes', [
-            'code' => $promoCode,
-        ]);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function listUsedPromoCodes(): array
-    {
-        return $this->apiGet('/manage/current-user/promo-codes');
-    }
-
-    public function removeProjectTemplateFeature(string $templateStringId, string $featureName): void
+    public function removeProjectTemplateFeature($templateStringId, $featureName): void
     {
         $this->apiDelete($this->encode('/manage/project-templates/%s/features/%s', $templateStringId, $featureName));
     }
@@ -1150,19 +1132,12 @@ class Client
         $this->apiDelete($this->encode('/manage/projects/%s/join-requests/%s', $projectId, $joinRequestId));
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function listPromoCodes(int $maintainerId): array
+    public function listPromoCodes($maintainerId)
     {
         return $this->apiGet($this->encode('/manage/maintainers/%s/promo-codes', $maintainerId));
     }
 
-    /**
-     * @param array<string, mixed> $params
-     * @return array<string, mixed>
-     */
-    public function createPromoCode(int $maintainerId, array $params = []): array
+    public function createPromoCode($maintainerId, $params = [])
     {
         return $this->apiPost($this->encode('/manage/maintainers/%s/promo-codes/', $maintainerId), $params);
     }
