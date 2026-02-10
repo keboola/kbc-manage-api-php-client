@@ -262,7 +262,7 @@ class Client
     /**
      * @return array<string, mixed>
      */
-    public function listMaintainerOrganizations(int $maintainerId): array
+    public function listMaintainerOrganizations(int|string $maintainerId): array
     {
         return $this->apiGet($this->encode('/manage/maintainers/%s/organizations', $maintainerId));
     }
