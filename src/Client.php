@@ -188,9 +188,9 @@ class Client
         return $this->apiPost($this->encode('/manage/maintainers/%s/users', $maintainerId), $params);
     }
 
-    public function removeUserFromMaintainer(int $maintainerId, int $userId): void
+    public function removeUserFromMaintainer(int $maintainerId, int|string $userEmailOrId): void
     {
-        $this->apiDelete($this->encode('/manage/maintainers/%s/users/%s', $maintainerId, $userId));
+        $this->apiDelete($this->encode('/manage/maintainers/%s/users/%s', $maintainerId, $userEmailOrId));
     }
 
     public function removeUser(int|string $idOrEmail): void
@@ -360,9 +360,9 @@ class Client
         return $this->apiPost($this->encode('manage/organizations/%s/users', $organizationId), $params);
     }
 
-    public function removeUserFromOrganization(int $organizationId, int $userId): void
+    public function removeUserFromOrganization(int $organizationId, int|string $userEmailOrId): void
     {
-        $this->apiDelete($this->encode('manage/organizations/%s/users/%s', $organizationId, $userId));
+        $this->apiDelete($this->encode('manage/organizations/%s/users/%s', $organizationId, $userEmailOrId));
     }
 
     public function deleteOrganization(int $id): void
@@ -561,9 +561,9 @@ class Client
         return $this->apiPost($this->encode('/manage/projects/%s/invitations', $projectId), $params);
     }
 
-    public function removeUserFromProject(int $projectId, int $userId): void
+    public function removeUserFromProject(int $projectId, int|string $userEmailOrId): void
     {
-        $this->apiDelete($this->encode('/manage/projects/%s/users/%s', $projectId, $userId));
+        $this->apiDelete($this->encode('/manage/projects/%s/users/%s', $projectId, $userEmailOrId));
     }
 
     /**
