@@ -193,9 +193,9 @@ class Client
         $this->apiDelete($this->encode('/manage/maintainers/%s/users/%s', $maintainerId, $userId));
     }
 
-    public function removeUser(int $userId): void
+    public function removeUser(int|string $idOrEmail): void
     {
-        $this->apiDelete($this->encode('/manage/users/%s', $userId));
+        $this->apiDelete($this->encode('/manage/users/%s', $idOrEmail));
     }
 
     /**
