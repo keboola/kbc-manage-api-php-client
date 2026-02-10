@@ -741,7 +741,7 @@ class Client
         return $this->apiPatch($this->encode('/manage/features/%s', $id), $options);
     }
 
-    public function removeFeature(int $id): void
+    public function removeFeature(int|string $id): void
     {
         $this->apiDelete($this->encode('/manage/features/%s', $id));
     }
