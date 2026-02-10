@@ -546,11 +546,10 @@ class Client
 
     /**
      * @param array<string, mixed> $params
-     * @return array<string, mixed>
      */
-    public function addUserToProject(int $projectId, array $params = []): array
+    public function addUserToProject(int $projectId, array $params = []): void
     {
-        return $this->apiPost($this->encode('/manage/projects/%s/users', $projectId), $params);
+        $this->apiPost($this->encode('/manage/projects/%s/users', $projectId), $params);
     }
 
     /**
@@ -627,7 +626,7 @@ class Client
     /**
      * @return array<string, mixed>
      */
-    public function assignProjectStorageBackend(int $projectId, int $backendId): array
+    public function assignProjectStorageBackend(int $projectId, ?int $backendId): array
     {
         return $this->apiPost($this->encode('/manage/projects/%s/storage-backend', $projectId), [
             'storageBackendId' => (int) $backendId,
@@ -642,7 +641,7 @@ class Client
     /**
      * @return array<string, mixed>
      */
-    public function assignFileStorage(int $projectId, int $storageId): array
+    public function assignFileStorage(int $projectId, ?int $storageId): array
     {
         return $this->apiPost($this->encode('/manage/projects/%s/file-storage', $projectId), [
            'fileStorageId' => (int) $storageId,
@@ -786,7 +785,7 @@ class Client
     /**
      * @return array<string, mixed>
      */
-    public function addProjectFeature(int $projectId, string $feature): array
+    public function addProjectFeature(int $projectId, ?string $feature): array
     {
         return $this->apiPost($this->encode('/manage/projects/%s/features', $projectId), [
            'feature' => (string) $feature,
@@ -879,12 +878,9 @@ class Client
         return $this->apiGet($this->encode('/manage/project-templates/%s/features', $templateStringId));
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function addProjectTemplateFeature(string $templateStringId, string $featureName): array
+    public function addProjectTemplateFeature(string $templateStringId, string $featureName): void
     {
-        return $this->apiPost($this->encode('/manage/project-templates/%s/features', $templateStringId), [
+        $this->apiPost($this->encode('/manage/project-templates/%s/features', $templateStringId), [
             'feature' => $featureName,
         ]);
     }
