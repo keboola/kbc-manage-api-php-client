@@ -738,7 +738,7 @@ class Client
      */
     public function updateFeature(int $id, ?array $options = []): array
     {
-        return $this->apiPatch($this->encode('/manage/features/%s', $id), $options);
+        return $this->apiPatch($this->encode('/manage/features/%s', $id), $options ?? []);
     }
 
     public function removeFeature(int|string $id): void
