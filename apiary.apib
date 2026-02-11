@@ -11,7 +11,7 @@ for controlling and monitoring Keboola Connection.
  * Create, modify and delete maintainers, organizations and projects
  * Move projects between organizations
  * Define project limits
- * Provision Redshift and other Storage backends
+ * Provision Storage backends
  * Access project management activity log
 
 ## Projects Monitoring
@@ -90,7 +90,7 @@ Creates a new maintainer. The user associated with the token will become an admi
 
 + Attributes
     + name:Example (required) - Maintainer name
-    + defaultConnectionRedshiftId:234 (optional) - Default Redshift Connection ID
+
     + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection ID
     + defaultConnectionSynapseId:324 (optional) - Default Synapse Connection ID
     + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
@@ -127,7 +127,7 @@ Creates a new maintainer. The user associated with the token will become an admi
             "name": "Keboola CZ",
             "created": "2014-11-11T08:40:51.620Z",
             "defaultConnectionMysqlId": 234,
-            "defaultConnectionRedshiftId": 232,
+
             "defaultConnectionSnowflakeId": 242,
             "defaultConnectionSynapseId": 235,
             "defaultConnectionExasolId": 236,
@@ -141,7 +141,7 @@ Creates a new maintainer. The user associated with the token will become an admi
             "name": "abc",
             "crated": "2014-11-11T08:40:51.620Z",
             "defaultConnectionMysqlId": 234,
-            "defaultConnectionRedshiftId": 232,
+
             "defaultConnectionSnowflakeId": 242,
             "defaultConnectionSynapseId": 235,
             "defaultConnectionExasolId": 236,
@@ -172,7 +172,7 @@ A maintainer object has the following attributes:
         "created": "2014-11-11T08:40:51.620Z",
         "url": "/questions/1",
         "defaultConnectionMysqlId": 234,
-        "defaultConnectionRedshiftId": 232,
+
         "defaultConnectionSnowflakeId": 242,
         "defaultConnectionSynapseId": 235,
         "defaultConnectionExasolId": 236,
@@ -197,7 +197,7 @@ A partial update of a maintainer
 
 + Attributes
     + name:Example - Maintainer name
-    + defaultConnectionRedshiftId:234 (optional) - Default Redshift Connection ID
+
     + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection ID
     + defaultConnectionSynapseId:324 (optional) - Default Synapse Connection ID
     + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
@@ -557,7 +557,7 @@ Lists all organizations the user is part of. If authorized with application toke
                 "name": "Some Maintainer",
                 "created": "2025-04-28T09:43:21+0200",
                 "defaultConnectionMysqlId": null,
-                "defaultConnectionRedshiftId": null,
+
                 "defaultConnectionSnowflakeId": 1,
                 "defaultConnectionSynapseId": null,
                 "defaultConnectionExasolId": null,
@@ -639,7 +639,7 @@ scope `organizations:read`.
             "name": "MAPI",
             "created": "2025-04-28T09:43:21+0200",
             "defaultConnectionMysqlId": null,
-            "defaultConnectionRedshiftId": null,
+
             "defaultConnectionSnowflakeId": 1,
             "defaultConnectionSynapseId": null,
             "defaultConnectionExasolId": null,
@@ -1146,7 +1146,7 @@ Only organization members, members of the maintainer and super admins can delete
       "dataSizeBytes": 22691704832,
       "rowsCount": 4295727047,
       "hasMysql": false,
-      "hasRedshift": false,
+
       "hasSnowflake": true,
       "hasSynapse": false,
       "hasExasol": false,
@@ -1335,7 +1335,7 @@ A project will be created from a default template which defines its limits. Only
 
     + name: My Demo (required) - Project name
     + type: demo (required) -  One of `production`, `poc`, `demo`; default is `production`
-    + defaultBackend: snowflake - Project default backend `snowflake` or `redshift`; default is `snowflake`
+    + defaultBackend: snowflake - Project default backend; default is `snowflake`
     + dataRetentionTimeInDays: 7 - Data retention in days for Time Travel
 
 + Request (application/json)
@@ -1368,7 +1368,7 @@ A project will be created from a default template which defines its limits. Only
             "dataSizeBytes": 49152,
             "rowsCount": 200,
             "hasMysql": false,
-            "hasRedshift": false,
+      
             "hasSynapse": false,
             "hasExasol": false,
             "hasTeradata": false,
@@ -2275,7 +2275,7 @@ This endpoint can also be accessed using application tokens with scope `deleted-
             "dataSizeBytes": 49152,
             "rowsCount": 200,
             "hasMysql": false,
-            "hasRedshift": false,
+      
             "hasSynapse": false,
             "hasExasol": false,
             "hasTeradata": false,
@@ -2311,7 +2311,7 @@ Enqueues the command that fully deletes a project and returns its execution ID f
             X-KBC-ManageApiToken: your_token
 
     + Attributes
-        + ignoreBackendErrors: `false` (boolean) - Ignore all errors from the backend, e.g. deleted Redshift cluster. `false` is default.
+        + ignoreBackendErrors: `false` (boolean) - Ignore all errors from the backend. `false` is default.
 
 + Response 200 (application/json)
 
@@ -2356,7 +2356,7 @@ Projects can be filtered by various filters:
             "dataSizeBytes": 49152,
             "rowsCount": 200,
             "hasMysql": false,
-            "hasRedshift": false,
+      
             "hasSnowflake": true,
             "hasSynapse": false,
             "hasTeradata": false,
@@ -2391,7 +2391,7 @@ Projects can be filtered by various filters:
             "dataSizeBytes": 49152,
             "rowsCount": 200,
             "hasMysql": false,
-            "hasRedshift": false,
+      
             "hasSnowflake": true,
             "hasSynapse": false,
             "hasTeradata": false,
@@ -3007,7 +3007,7 @@ Create a new project from given promo code
         "dataSizeBytes": 0,
         "rowsCount": 0,
         "hasMysql": false,
-        "hasRedshift": false,
+  
         "hasSnowflake": true,
         "hasExasol": false,
         "hasSynapse": false,
@@ -4039,8 +4039,8 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 
 ### StorageBackendCreate
 
-+ backend: snowflake (required) - can be redshift, snowflake ,synapse, exasol, teradata
-+ host: `sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com` (required)
++ backend: snowflake (required) - can be snowflake, synapse, exasol, teradata, bigquery
++ host: `sapi-37-demo.snowflakecomputing.com` (required)
 + warehouse: `production` - required only for Snowflake
 + username: keboola (required)
 + password: 1234 (required)
@@ -4082,8 +4082,8 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 
 ## StorageBackend
 + id: 123 (number, required)
-+ host: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
-+ backend: redshift (required)
++ host: sapi-37-demo.snowflakecomputing.com (required)
++ backend: snowflake (required)
 + region: us-east-1
 + technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails
 
@@ -4106,10 +4106,6 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + useSso: false - **Deprecated**, use `isSsoEnabled` instead. Whether SSO is enabled
 + isSsoEnabled: false - Whether SSO is enabled (SAML2 activated)
 + isSsoConfigured: false - Whether SAML2 SSO configuration exists
-
-## StorageBackendListRedshift (StorageBackendListBase)
-+ host: demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
-+ backend: redshift (required)
 
 ## StorageBackendListSnowflake (StorageBackendListBase)
 + host: demo.snowflakecomputing.com (required)
