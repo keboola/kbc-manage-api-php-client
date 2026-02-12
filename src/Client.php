@@ -885,7 +885,7 @@ class Client
         ]);
     }
 
-    public function removeProjectTemplateFeature($templateStringId, $featureName): void
+    public function removeProjectTemplateFeature(string $templateStringId, string $featureName): void
     {
         $this->apiDelete($this->encode('/manage/project-templates/%s/features/%s', $templateStringId, $featureName));
     }
@@ -1130,16 +1130,6 @@ class Client
     public function rejectProjectJoinRequest(int $projectId, int $joinRequestId): void
     {
         $this->apiDelete($this->encode('/manage/projects/%s/join-requests/%s', $projectId, $joinRequestId));
-    }
-
-    public function listPromoCodes($maintainerId)
-    {
-        return $this->apiGet($this->encode('/manage/maintainers/%s/promo-codes', $maintainerId));
-    }
-
-    public function createPromoCode($maintainerId, $params = [])
-    {
-        return $this->apiPost($this->encode('/manage/maintainers/%s/promo-codes/', $maintainerId), $params);
     }
 
     /**
