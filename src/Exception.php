@@ -29,7 +29,7 @@ class Exception extends GenericException
     }
 
 
-    public function getStringCode()
+    public function getStringCode(): string
     {
         return $this->stringCode;
     }
