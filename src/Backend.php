@@ -11,6 +11,7 @@ final class Backend
     public const SYNAPSE = 'synapse';
     public const EXASOL = 'exasol';
     public const TERADATA = 'teradata';
+    public const POSTGRES = 'postgres';
 
     public static function getDefaultBackend(): string
     {
