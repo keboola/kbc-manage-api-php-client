@@ -21,7 +21,7 @@ info:
     * Define project limits
 
 
-    * Provision Redshift and other Storage backends
+    * Provision Storage backends
 
 
     * Access project management activity log
@@ -182,7 +182,6 @@ paths:
                 created: '2014-11-11T08:40:51.620Z'
                 url: /questions/1
                 defaultConnectionMysqlId: 234
-                defaultConnectionRedshiftId: 232
                 defaultConnectionSnowflakeId: 242
                 defaultConnectionSynapseId: 235
                 defaultConnectionExasolId: 236
@@ -203,7 +202,6 @@ paths:
           application/json:
             example:
               name: Example
-              defaultConnectionRedshiftId: '234'
               defaultConnectionSnowflakeId: '324'
               defaultConnectionSynapseId: '324'
               defaultConnectionExasolId: '324'
@@ -220,10 +218,6 @@ paths:
                   type: string
                   example: Example
                   description: Maintainer name
-                defaultConnectionRedshiftId:
-                  type: string
-                  example: '234'
-                  description: Default Redshift Connection ID
                 defaultConnectionSnowflakeId:
                   type: string
                   example: '324'
@@ -271,8 +265,6 @@ paths:
                       type: string
                     defaultConnectionMysqlId:
                       type: number
-                    defaultConnectionRedshiftId:
-                      type: number
                     defaultConnectionSnowflakeId:
                       type: number
                     defaultConnectionSynapseId:
@@ -294,7 +286,6 @@ paths:
                     - id
                     - name
                     - defaultConnectionMysqlId
-                    - defaultConnectionRedshiftId
                     - defaultConnectionSnowflakeId
                     - defaultConnectionSynapseId
                     - defaultConnectionExasolId
@@ -307,7 +298,6 @@ paths:
                   name: Keboola CZ
                   created: '2014-11-11T08:40:51.620Z'
                   defaultConnectionMysqlId: 234
-                  defaultConnectionRedshiftId: 232
                   defaultConnectionSnowflakeId: 242
                   defaultConnectionSynapseId: 235
                   defaultConnectionExasolId: 236
@@ -319,7 +309,6 @@ paths:
                   name: abc
                   crated: '2014-11-11T08:40:51.620Z'
                   defaultConnectionMysqlId: 234
-                  defaultConnectionRedshiftId: 232
                   defaultConnectionSnowflakeId: 242
                   defaultConnectionSynapseId: 235
                   defaultConnectionExasolId: 236
@@ -348,7 +337,6 @@ paths:
                 created: '2014-11-11T08:40:51.620Z'
                 url: /questions/1
                 defaultConnectionMysqlId: 234
-                defaultConnectionRedshiftId: 232
                 defaultConnectionSnowflakeId: 242
                 defaultConnectionSynapseId: 235
                 defaultConnectionExasolId: 236
@@ -384,7 +372,6 @@ paths:
                 created: '2014-11-11T08:40:51.620Z'
                 url: /questions/1
                 defaultConnectionMysqlId: 234
-                defaultConnectionRedshiftId: 232
                 defaultConnectionSnowflakeId: 242
                 defaultConnectionSynapseId: 235
                 defaultConnectionExasolId: 236
@@ -404,7 +391,6 @@ paths:
           application/json:
             example:
               name: Example
-              defaultConnectionRedshiftId: '234'
               defaultConnectionSnowflakeId: '324'
               defaultConnectionSynapseId: '324'
               defaultConnectionExasolId: '324'
@@ -419,10 +405,6 @@ paths:
                   type: string
                   example: Example
                   description: Maintainer name
-                defaultConnectionRedshiftId:
-                  type: string
-                  example: '234'
-                  description: Default Redshift Connection ID
                 defaultConnectionSnowflakeId:
                   type: string
                   example: '324'
@@ -1678,7 +1660,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -1814,7 +1795,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -2009,7 +1989,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -2136,8 +2115,7 @@ paths:
                   type: string
                   example: snowflake
                   description: >-
-                    Project default backend `snowflake` or `redshift`; default
-                    is `snowflake`
+                    Project default backend; default is `snowflake`
                 dataRetentionTimeInDays:
                   type: string
                   example: '7'
@@ -2173,8 +2151,6 @@ paths:
                   rowsCount:
                     type: number
                   hasMysql:
-                    type: boolean
-                  hasRedshift:
                     type: boolean
                   hasSynapse:
                     type: boolean
@@ -2223,7 +2199,6 @@ paths:
                 dataSizeBytes: 49152
                 rowsCount: 200
                 hasMysql: false
-                hasRedshift: false
                 hasSynapse: false
                 hasExasol: false
                 hasTeradata: false
@@ -2268,7 +2243,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -2403,7 +2377,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -2538,7 +2511,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -2667,7 +2639,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -2802,7 +2773,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -4031,7 +4001,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -4381,8 +4350,6 @@ paths:
                     type: number
                   hasMysql:
                     type: boolean
-                  hasRedshift:
-                    type: boolean
                   hasSynapse:
                     type: boolean
                   hasExasol:
@@ -4428,7 +4395,6 @@ paths:
                 dataSizeBytes: 49152
                 rowsCount: 200
                 hasMysql: false
-                hasRedshift: false
                 hasSynapse: false
                 hasExasol: false
                 hasTeradata: false
@@ -4535,8 +4501,7 @@ paths:
                 ignoreBackendErrors:
                   type: boolean
                   description: >-
-                    Ignore all errors from the backend, e.g. deleted Redshift
-                    cluster. `false` is default.
+                    Ignore all errors from the backend. `false` is default.
   /manage/deleted-projects:
     get:
       responses:
@@ -4570,8 +4535,6 @@ paths:
                     rowsCount:
                       type: number
                     hasMysql:
-                      type: boolean
-                    hasRedshift:
                       type: boolean
                     hasSnowflake:
                       type: boolean
@@ -4629,7 +4592,6 @@ paths:
                     - dataSizeBytes
                     - rowsCount
                     - hasMysql
-                    - hasRedshift
                     - hasSnowflake
                     - hasSynapse
                     - hasTeradata
@@ -4658,7 +4620,6 @@ paths:
                   dataSizeBytes: 49152
                   rowsCount: 200
                   hasMysql: false
-                  hasRedshift: false
                   hasSnowflake: true
                   hasSynapse: false
                   hasTeradata: false
@@ -4690,7 +4651,6 @@ paths:
                   dataSizeBytes: 49152
                   rowsCount: 200
                   hasMysql: false
-                  hasRedshift: false
                   hasSnowflake: true
                   hasSynapse: false
                   hasTeradata: false
@@ -5989,7 +5949,6 @@ paths:
                 dataSizeBytes: 22691704832
                 rowsCount: 4295727047
                 hasMysql: false
-                hasRedshift: false
                 hasSnowflake: true
                 hasSynapse: false
                 hasExasol: false
@@ -6951,7 +6910,7 @@ paths:
               example:
                 - id: 123
                   host: sapi
-                  backend: redshift
+                  backend: snowflake
                   region: us
                   technicalOwnerContactEmails: []
       summary: List backends
@@ -7018,14 +6977,10 @@ paths:
                     type: number
                   host:
                     type: string
-                    description: >-
-                      37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com
-                      (required)
                   backend:
                     type: string
                   region:
                     type: string
-                    description: east-1
                   technicalOwnerContactEmails:
                     type: array
                     description: Array of technical owner contact emails
@@ -7036,7 +6991,7 @@ paths:
               example:
                 id: 123
                 host: sapi
-                backend: redshift
+                backend: snowflake
                 region: us
                 technicalOwnerContactEmails: []
       summary: Update backend
@@ -8010,8 +7965,6 @@ components:
           type: string
         defaultConnectionMysqlId:
           type: number
-        defaultConnectionRedshiftId:
-          type: number
         defaultConnectionSnowflakeId:
           type: number
         defaultConnectionSynapseId:
@@ -8077,8 +8030,6 @@ components:
         rowsCount:
           type: number
         hasMysql:
-          type: boolean
-        hasRedshift:
           type: boolean
         hasSnowflake:
           type: boolean
@@ -8567,10 +8518,10 @@ components:
         backend:
           type: string
           example: snowflake
-          description: can be redshift, snowflake ,synapse, exasol, teradata
+          description: can be snowflake, synapse, exasol, teradata
         host:
           type: string
-          example: sapi-37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com
+          example: sapi-37-demo.snowflakecomputing.com
         warehouse:
           type: string
           example: production
@@ -8722,15 +8673,13 @@ components:
           example: 123
         host:
           type: string
-          example: sapi
-          description: 37-demo.cmizbsfmzc6w.us-east-1.redshift.amazonaws.com (required)
+          example: sapi-37-demo.snowflakecomputing.com
         backend:
           type: string
-          example: redshift
+          example: snowflake
         region:
           type: string
-          example: us
-          description: east-1
+          example: us-east-1
         technicalOwnerContactEmails:
           type: array
           items: {}
@@ -8811,20 +8760,6 @@ components:
           type: string
           example: 'false'
           description: Whether SAML2 SSO configuration exists
-    StorageBackendListRedshift:
-      allOf:
-        - $ref: '#/components/schemas/StorageBackendListBase'
-        - type: object
-          required:
-            - backend
-          properties:
-            host:
-              type: string
-              example: demo.cmizbsfmzc6w.us
-              description: east-1.redshift.amazonaws.com (required)
-            backend:
-              type: string
-              example: redshift
     StorageBackendListSnowflake:
       allOf:
         - $ref: '#/components/schemas/StorageBackendListBase'
