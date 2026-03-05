@@ -6,7 +6,6 @@ namespace Keboola\ManageApi;
 
 final class Backend
 {
-    public const REDSHIFT = 'redshift';
     public const SNOWFLAKE = 'snowflake';
     public const SYNAPSE = 'synapse';
     public const EXASOL = 'exasol';
