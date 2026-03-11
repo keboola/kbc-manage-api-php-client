@@ -3819,6 +3819,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + folderId: 123(required) - where is service account created
 + region: `us-east-1` (required)
 + credentials(GCPCredentials)
++ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role pre-configured for Analytics Hub external bucket sharing. When set, the bucket sharing setup guide surfaces this role name to the user. When absent, the guide falls back to recommending the built-in `roles/analyticshub.listingAdmin` role. There is no validation on existence of this role. If the role is wrong, guide registering the external dataset will lead user to wrong role. It is used for guidance only, no direct logic applied. If you know that datasets for registration as external buckets are coming from one project, create a project-based custom role in that project. If you know, that your datasets to register will come from different projects, create orgazation based role.
 
 ### BigQueryStorageBackendCreated
 + id:  12 (number)
@@ -3826,11 +3827,13 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + backend: bigquery
 + credentials(GCPCredentialsNoPK)
 + folderId: 123 (number)
++ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role for Analytics Hub external bucket sharing. Present only when configured.
 
 ### BigQueryStorageBackendUpdate
 + credentials(GCPCredentials, optional)
 + owner: keboola (required) - associated GCP account owner, can be (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role pre-configured for Analytics Hub external bucket sharing. When set, the bucket sharing setup guide surfaces this role name to the user. When absent, the guide falls back to recommending the built-in `roles/analyticshub.listingAdmin` role. There is no validation on existence of this role. If the role is wrong, guide registering the external dataset will lead user to wrong role. It is used for guidance only, no direct logic applied. If you know that datasets for registration as external buckets are coming from one project, create a project-based custom role in that project. If you know, that your datasets to register will come from different projects, create orgazation based role.
 
 ### StorageBackendUpdate
 
