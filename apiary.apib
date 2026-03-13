@@ -3827,7 +3827,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + backend: bigquery
 + credentials(GCPCredentialsNoPK)
 + folderId: 123 (number)
-+ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role for Analytics Hub external bucket sharing. Present only when configured.
++ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (nullable, string) - Name of the custom IAM role for Analytics Hub external bucket sharing. Always present in the response; `null` when not configured.
 
 ### BigQueryStorageBackendUpdate
 + credentials(GCPCredentials, optional)
