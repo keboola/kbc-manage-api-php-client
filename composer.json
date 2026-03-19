@@ -1,0 +1,32 @@
+{
+    "name": "keboola/kbc-manage-api-php-client",
+    "description": "Keboola Management API Client",
+    "license": "MIT",
+    "require": {
+        "php" : ">=8.2",
+        "guzzlehttp/guzzle": "~7.0"
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Keboola\\ManageApi\\": "src/"
+        }
+    },
+    "scripts": {
+        "ci": []
+    },
+    "authors": [
+        {
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    ],
+    "config": {
+        "sort-packages": true,
+        "lock": false,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    }
+}

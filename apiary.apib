@@ -1,0 +1,4057 @@
+FORMAT: 1A
+HOST: https://connection.keboola.com/
+
+# Keboola Connection Management API
+
+
+The Keboola Connection Management API covers all tasks required for managing projects, as well as some super admin features
+for controlling and monitoring Keboola Connection.
+
+## Projects Management
+ * Create, modify and delete maintainers, organizations and projects
+ * Move projects between organizations
+ * Define project limits
+ * Provision Storage backends
+ * Access project management activity log
+
+## Projects Monitoring
+ * Monitoring of projects over organizations and maintainers
+
+## Super User Control and Monitoring
+
+ * UI release and deployment
+ * Components management
+ * Final project delete
+ * Workers start/shutdown, etc.
+
+## Authentication
+The API supports authentication by a personal access token, which can be retrieved in [Account Settings](https://connection.keboola.com/admin/account/change-password) in Keboola Connection.
+An access token is tied to an administrator and its permissions are derived from their permissions. When the administrator is disabled or deleted, all their tokens become invalid too.
+
+`$ curl -H "X-KBC-ManageApiToken: USER_TOKEN" https://connection.keboola.com/manage/tokens/verify`
+
+
+## Token Types
+There are the following types of tokens:
+
+| Name | Tied to User | Token string is available only on create | Description  |
+| ------------- | ------------- | ------------------- | ----- |
+| user | Yes | Yes |Full access to maintainers, organizations and projects. Access is limited only to resources which are available for the token user.|
+| super | No | Yes | KBC management. Limited scopes can be specified `super_ui_deploy`, `super_monitoring`, ...  |
+
+
+# Group Token Verification
+
+## Token Verification [/manage/tokens/verify]
+
+### Token Verification [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 13702,
+        "description": "Example token",
+        "created": "2021-06-28T22:27:28+0200",
+        "lastUsed": "2022-06-13T22:29:03+0200",
+        "expires": "2031-06-26T22:27:28+0200",
+        "isSessionToken": false,
+        "isExpired": false,
+        "isDisabled": false,
+        "scopes": [],
+        "type": "admin",
+        "creator": {
+            "id": 7919,
+            "name":  "John Doe"
+        },
+        "user": {
+            "id": 7919,
+            "name": "John Doe",
+            "email": "john.doe@keboola.com",
+            "mfaEnabled": true,
+            "features": [],
+            "canAccessLogs": true,
+            "isSuperAdmin": true
+        }
+    }
+    ```
+
+# Group Maintainers
+
+## Maintainers [/manage/maintainers]
+
+### Create a maintainer [POST]
+Creates a new maintainer. The user associated with the token will become an admin of the maintainer.
+
++ Attributes
+    + name:Example (required) - Maintainer name
+    + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection ID
+    + defaultConnectionSynapseId:324 (optional) - Default Synapse Connection ID
+    + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
+    + defaultConnectionTeradataId:324 (optional) - Default Teradata Connection ID
+    + defaultConnectionBigqueryId:324 (optional) - Default Bigquery Connection ID
+    + defaultFileStorageId:456 (optional) - Default File Storage ID
+    + zendeskUrl:https://keboola.zendesk.com (optional)
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 201
+
+    [Maintainer][]
+
+
+### List maintainers [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 123,
+            "name": "Keboola CZ",
+            "created": "2014-11-11T08:40:51.620Z",
+            "defaultConnectionMysqlId": 234,
+            "defaultConnectionSnowflakeId": 242,
+            "defaultConnectionSynapseId": 235,
+            "defaultConnectionExasolId": 236,
+            "defaultConnectionTeradataId": 236,
+            "defaultConnectionBigqueryId": 236,
+            "defaultFileStorageId": null,
+            "zendeskUrl": "https://some.url.com"
+        },
+        {
+            "id": 124,
+            "name": "abc",
+            "crated": "2014-11-11T08:40:51.620Z",
+            "defaultConnectionMysqlId": 234,
+            "defaultConnectionSnowflakeId": 242,
+            "defaultConnectionSynapseId": 235,
+            "defaultConnectionExasolId": 236,
+            "defaultConnectionTeradataId": 236,
+            "defaultConnectionBigqueryId": 236,
+            "defaultFileStorageId": 236,
+            "zendeskUrl": "https://some.url.com"
+        }
+    ]
+    ```
+
+## Maintainer [/manage/maintainers/{maintainer_id}]
+
+A maintainer object has the following attributes:
+
++ name
++ created
++ organizations - array of organization objects
+
++ Parameters
+    + maintainer_id: 1 (required, integer)
+
++ Model (application/json)
+
+    ```js
+    {
+        "id": 123,
+        "created": "2014-11-11T08:40:51.620Z",
+        "url": "/questions/1",
+        "defaultConnectionMysqlId": 234,
+        "defaultConnectionSnowflakeId": 242,
+        "defaultConnectionSynapseId": 235,
+        "defaultConnectionExasolId": 236,
+        "defaultConnectionTeradataId": 236,
+        "defaultConnectionBigqueryId": 236,
+        "defaultFileStorageId": 456,
+        "zendeskUrl": "https://some.url.com"
+    }
+    ```
+### Retrieve a maintainer [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+    [Maintainer][]
+
+### Update a maintainer [PATCH]
+A partial update of a maintainer
+
++ Attributes
+    + name:Example - Maintainer name
+    + defaultConnectionSnowflakeId:324 (optional) - Default Snowflake Connection ID
+    + defaultConnectionSynapseId:324 (optional) - Default Synapse Connection ID
+    + defaultConnectionExasolId:324 (optional) - Default Exasol Connection ID
+    + defaultConnectionTeradataId:324 (optional) - Default Teradata Connection ID
+    + defaultConnectionBigqueryId:324 (optional) - Default Teradata Connection ID
+    + defaultFileStorageId:456 (optional) - Default File Storage ID
+    + zendeskUrl:https://keboola.zendesk.com (optional)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
+
++ Response 200
+    [Maintainer][]
+
+### Delete a maintainer  [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Maintainer Invitations [/manage/maintainers/{maintainer_id}/invitations]
+
++ Parameters
+    + maintainer_id (required, int) - Maintainer ID
+
+### List maintainers invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 112,
+            "created": "2018-07-10T10:45:11+0200",
+            "user": {
+                "id": 124,
+                "name": "test user 2",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        },
+        {
+            "id": 113,
+            "created": "2018-07-10T10:50:00+0200",
+            "user": {
+                "id": 125,
+                "name": "test user 3",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+
+### Invite a user to a maintainer [POST]
+
+Only members of the maintainer and superadmins can invite other users.
+
++ Attributes
+
+    + email: martin@keboola.com (string, required) - Email of an invited user
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+## Manage User Invitation [/manage/maintainers/{maintainer_id}/invitations/{invitation_id}]
+
++ Parameters
+    + maintainer_id (required, int) - Maintainer ID
+    + invitation_id (required, int) - User ID
+
+
+### Maintainer invitation detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+### Cancel maintainer invitation [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+
+## Maintainer Users [/manage/maintainers/{maintainer_id}/users]
+
++ Parameters
+    + maintainer_id: 1 (required, number) - ID of the maintainer
+
+### List maintainer users [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 23423,
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    ]
+    ```
+
+## Add a User to maintainer [POST]
+
+Either `id` or `email` of a user must be set. If the email is not associated with a user, a new account is created and an invitation is sent.
+
++ Attributes
+    + id:7234 - User ID
+    + email:martin@keboola.com - User email
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 204
+
+## Remove a user from maintainer [DELETE /manage/maintainers/{maintainer_id}/users/{user_id}]
+
++ Parameters
+    + maintainer_id: 1 (required, number) - ID of the maintainer
+    + user_id: 1 (required, int) - User ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## Maintainer metadata [/manage/maintainers/{maintainer_id}/metadata]
+
+Metadata allows you to assign custom information to your organizations.
+
+### Set maintainer metadata [POST]
+
+Sets multiple metadata with one call. If the given key and provider combination already exist
+for the maintainer, the data will be updated with the new value and timestamp.
+Only maintainer members and super admins can change metadata.
+
++ Attributes
+    + provider (required, enum[string])
+        + Members
+            + user
+            + system - only super admin can change these metadata
+    + metadata (required, array[object]) - Array of metadata objects
+        + key (required)
+        + value (required)
+
++ Parameters
+    + maintainer_id (required, int) - Maintainer ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+        ```js
+        {
+            "provider": "user",
+            "metadata": [
+                {
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+        }
+        ```
+
++ Response 201
+
+    + Body
+
+        ```js
+        [
+            {
+                "id": 123,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "KBC.SomeEnity.metadataKey",
+                "value": "Some value"
+            },
+            {
+                "id": 124,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "someMetadataKey",
+                "value": "Some value"
+            }
+        ]
+        ```
+
+
+### List maintainer metadata [GET]
+
+Only members of the maintainer and super admins can list metadata.
+
++ Parameters
+    + maintainer_id (required, int) - Maintainer ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+    + Body
+
+        ```js
+        [
+            {
+                "id": 123,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "KBC.SomeEnity.metadataKey",
+                "value": "Some value"
+            },
+            {
+                "id": 124,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "someMetadataKey",
+                "value": "Some value"
+            }
+        ]
+        ```
+
+### Remove maintainer Metadata [/manage/maintainers/{maintainer_id}/metadata/{metadata_id}]
+
+Only maintainer members and super admins can delete metadata.
+
+### Remove maintainer metadata [DELETE]
+
++ Parameters
+    + maintainer_id (required, int) - Maintainer ID
+    + metadata_id (required, int) - Metadata ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+# Group Organizations
+
+## Organizations [/manage/organizations/]
+
+### List organizations [GET]
+
+Lists all organizations the user is part of. If authorized with application token with scope `organizations:read`, all organizations are listed.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```json
+    [
+        {
+            "id": 123,
+            "name": "Some Organization",
+            "created": "2014-11-11T08:40:51.620Z",
+            "allowAutoJoin": true,
+            "crmId": "6232456",
+            "activityCenterProjectId": 123,
+            "mfaRequired": false.
+            "maintainer": {
+                "id": 4,
+                "name": "Some Maintainer",
+                "created": "2025-04-28T09:43:21+0200",
+                "defaultConnectionMysqlId": null,
+                "defaultConnectionSnowflakeId": 1,
+                "defaultConnectionSynapseId": null,
+                "defaultConnectionExasolId": null,
+                "defaultConnectionBigqueryId": null,
+                "defaultConnectionTeradataId": null,
+                "defaultFileStorageId": 1,
+                "zendeskUrl": null
+            }
+        }
+    ]
+    ```
+
+
+## Organization [/manage/organizations/{organization_id}]
+
+An organization object has the following attributes:
+
++ name
++ created
++ allowAutoJoin
++ projects - an array of project objects
++ crmId - CRM id only for internal purposes
++ activityCenterProjectId - only for internal purposes
++ mfaRequired
+
++ Parameters
+    + organization_id: 1 (required, number) - ID of the organization in form of an integer
+
++ Model (application/json)
+
+    ```js
+    {
+        "id": 123,
+        "name": "sample org",
+        "created": "2014-11-11T08:40:51.620Z",
+        "allowAutoJoin": true,
+        "crmId": "6232456",
+        "activityCenterProjectId": 123,
+        "mfaRequired": false,
+        "projects": [
+            {
+                "id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+            }
+        ]
+    }
+    ```
+### Retrieve an organization [GET]
+
+To access token needs to be superuser, member of the organization, member of the maintainer or application token with
+scope `organizations:read`.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 123,
+        "name": "sample org",
+        "created": "2015-10-02T11:03:44+0200",
+        "allowAutoJoin": true,
+        "crmId": "6232456",
+        "activityCenterProjectId": 123,
+        "mfaRequired": false,
+        "projects": [
+            {
+                "id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+            }
+        ]
+        "maintainer": {
+            "id": 4,
+            "name": "MAPI",
+            "created": "2025-04-28T09:43:21+0200",
+            "defaultConnectionMysqlId": null,
+            "defaultConnectionSnowflakeId": 1,
+            "defaultConnectionSynapseId": null,
+            "defaultConnectionExasolId": null,
+            "defaultConnectionBigqueryId": null,
+            "defaultConnectionTeradataId": null,
+            "defaultFileStorageId": 1,
+            "zendeskUrl": null
+        }
+    }
+    ```
+
+
+### Update an organization [PATCH]
+
+Partial update of an organization
+
++ Attributes
+    + name:POC - Organization name
+    + maintainerId - Assign the organization to another maintainer.
+    + allowAutoJoin - Set whether superAdmins need approval to join the organization's projects (default `true`).
+    + crmId:123456 - Set CRM ID. Only maintainer members and superadmins can change this.
+    + activityCenterProjectId:123 - Set ActivityCenter ProjectId. Only maintainer members and superadmins can change this.
+    + mfaRequired - Toggle whether all members of or organization and its projects must have enabled multi-factor authentication (default `false`).
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 123,
+        "name": "POC",
+        "created": "2015-10-02T11:03:44+0200",
+        "allowAutoJoin": true,
+        "crmId": "123456",
+        "activityCenterProjectId": 123,
+        "mfaRequired": false,
+        "projects": [
+            {
+                "id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+            }
+        ]
+    }
+    ```
+
+
+### Delete an organization  [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Maintainer Organizations Collection [/manage/maintainers/{maintainer_id}/organizations]
+
++ Parameters
+    + maintainer_id: 1 (required, number) - ID of the parent maintainer. The created organization will be assigned to this maintainer.
+
+### Create an organization [POST]
+Creates a new organization.
+
++ Attributes
+    + name:POC - Organization name
+    + crmId:234 - CRM id
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
+    [Organization][]
+
+### List maintainer's organizations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    [
+        {
+          "id": 123,
+          "name": "sample org",
+          "created": "2014-11-11T08:40:51.620Z",
+          "allowAutoJoin": true,
+          "crmId": "6232456",
+          "activityCenterProjectId": 123,
+          "mfaRequired": false
+        }
+    ]
+    ```
+
+
+## Organization Invitations [/manage/organizations/{organization_id}/invitations]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
+### List organization invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 112,
+            "created": "2018-07-10T10:45:11+0200",
+            "user": {
+                "id": 124,
+                "name": "test user 2",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        },
+        {
+            "id": 113,
+            "created": "2018-07-10T10:50:00+0200",
+            "user": {
+                "id": 125,
+                "name": "test user 3",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+
+### Invite a user to a organization [POST]
+
+Only members of the organization can invite other users.
+
++ Attributes
+
+    + email: martin@keboola.com (string, required) - Email of an invited user
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+## Manage User Invitation [/manage/organizations/{organization_id}/invitations/{invitation_id}]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+    + invitation_id (required, int) - User ID
+
+
+### Organization invitation detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+### Cancel organization invitation [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## Organization Users [/manage/organizations/{organization_id}/users]
+
+
++ Parameters
+    + organization_id: 1 (required, number) - ID of the organization
+
+### List organization users [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 23423,
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    ]
+    ```
+
+## Add a User to organization [POST]
+
+Either `id` or `email` of a user must be set. If the email is not associated with a user, a new account is created and an invitation is sent.
+
+
++ Attributes
+    + id:7234 - User ID
+    + email:martin@keboola.com - User email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Remove a user from organization [DELETE /manage/organizations/{organization_id}/users/{user_id}]
+
++ Parameters
+    + organization_id: 1 (required, number) - ID of the organization
+    + user_id: 1 (required, int) - User ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Projects Users In Organization [/manage/organizations/{organization_id}/projects-users]
+
++ Parameters
+    + organization_id: 1 (required, number) - ID of the organization
+
+### List project users in organization [GET]
+
+List of all users who are members of at least one project in the organization. Only members of the organization can get this list.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        },
+        {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        }
+    ]
+    ```
+
+## Join Organization [/manage/organizations/{organization_id}/join-organization]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
+
+### Join a organization [POST]
+
+If the organization allows autojoin (`allowAutoJoin` attribute is se to `true`), all members of its maintainer and superadmins are allowed to join the organization.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Require Multi-Factor Authentication [/manage/organizations/{organization_id}/force-mfa]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
+
+### Require Multi-Factor Authentication [POST]
+
+With MFA as required, any user that does not have MFA enabled will lose access to the project until they set it up.
+
+Only members of the organization with MFA enabled can perform this action.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    ```js
+    {
+        "id": 123,
+        "name": "POC",
+        "created": "2015-10-02T11:03:44+0200",
+        "allowAutoJoin": true,
+        "crmId": "123456",
+        "activityCenterProjectId": 123,
+        "mfaRequired": true,
+        "projects": [
+            {
+                "id": 123,
+                "name": "Demo",
+                "created": "2014-11-11T08:40:51.620Z"
+            }
+        ]
+    }
+    ```
+
+## Organization metadata [/manage/organizations/{organization_id}/metadata]
+
+Metadata allows you to assign custom information to your organizations.
+
+### Set organization metadata [POST]
+
+Sets multiple metadata with one call. If the given key and provider combination already exist
+for the organization, the data will be updated with the new value and timestamp.
+Only organization members, members of the maintainer and super admins can change metadata.
++ Attributes
+    + provider (required, enum[string])
+        + Members
+            + user
+            + system - only super admin can change these metadata
+    + metadata (required, array[object]) - Array of metadata objects
+        + key (required)
+        + value (required)
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+        ```js
+        {
+            "provider": "user",
+            "metadata": [
+                {
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+        }
+        ```
+
++ Response 201 (application/json)
+
+    + Body
+
+        ```js
+        [
+            {
+                "id": 123,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "KBC.SomeEnity.metadataKey",
+                "value": "Some value"
+            },
+            {
+                "id": 124,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "someMetadataKey",
+                "value": "Some value"
+            }
+        ]
+        ```
+
+
+### List organization Metadata [GET]
+Only members of the maintainer, members of organization and super admins can list metadata.
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+    + Body
+
+        ```js
+        [
+            {
+                "id": 123,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "KBC.SomeEnity.metadataKey",
+                "value": "Some value"
+            },
+            {
+                "id": 124,
+                "provider": "user",
+                "timestamp": "2021-02-17T15:05:21+0100",
+                "key": "someMetadataKey",
+                "value": "Some value"
+            }
+        ]
+        ```
+
+### Remove Organization Metadata [/manage/organizations/{organization_id}/metadata/{metadata_id}]
+Only organization members, members of the maintainer and super admins can delete metadata.
+
+### Remove organization metadata [DELETE]
+
++ Parameters
+    + organization_id (required, int) - Organization ID
+    + metadata_id (required, int) - Metadata ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+# Group Projects
+
+## Project [/manage/projects/{project_id}]
+
++ Model (application/json)
+
+    ```js
+    {
+      "id": 4088,
+      "name": "Martinšík",
+      "type": "production",
+      "region": "us-east-1",
+      "created": "2017-12-11T09:02:13+0100",
+      "expires": null,
+      "features": [],
+      "dataSizeBytes": 22691704832,
+      "rowsCount": 4295727047,
+      "hasMysql": false,
+      "hasSnowflake": true,
+      "hasSynapse": false,
+      "hasExasol": false,
+      "hasTeradata": false,
+      "defaultBackend": "snowflake",
+      "hasTryModeOn": "0",
+      "limits": {
+        "components.jobsParallelism": {
+          "name": "components.jobsParallelism",
+          "value": 10
+        },
+        "goodData.dataSizeBytes": {
+          "name": "goodData.dataSizeBytes",
+          "value": 1000000000
+        },
+        "goodData.demoTokenEnabled": {
+          "name": "goodData.demoTokenEnabled",
+          "value": 1
+        },
+        "goodData.prodTokenEnabled": {
+          "name": "goodData.prodTokenEnabled",
+          "value": 0
+        },
+        "goodData.usersCount": {
+          "name": "goodData.usersCount",
+          "value": 30
+        },
+        "kbc.adminsCount": {
+          "name": "kbc.adminsCount",
+          "value": 10
+        },
+        "kbc.extractorsCount": {
+          "name": "kbc.extractorsCount",
+          "value": 0
+        },
+        "kbc.monthlyProjectPowerLimit": {
+          "name": "kbc.monthlyProjectPowerLimit",
+          "value": 50
+        },
+        "kbc.writersCount": {
+          "name": "kbc.writersCount",
+          "value": 0
+        },
+        "orchestrations.count": {
+          "name": "orchestrations.count",
+          "value": 10
+        },
+        "storage.dataSizeBytes": {
+          "name": "storage.dataSizeBytes",
+          "value": 50000000000
+        },
+        "storage.jobsParallelism": {
+          "name": "storage.jobsParallelism",
+          "value": 10
+        }
+      },
+      "metrics": {
+        "kbc.adminsCount": {
+          "name": "kbc.adminsCount",
+          "value": 1
+        },
+        "orchestrations.count": {
+          "name": "orchestrations.count",
+          "value": 1
+        },
+        "storage.dataSizeBytes": {
+          "name": "storage.dataSizeBytes",
+          "value": 22691704832
+        },
+        "storage.rowsCount": {
+          "name": "storage.rowsCount",
+          "value": 4295727047
+        }
+      },
+      "isDisabled": false,
+      "billedMonthlyPrice": null,
+      "dataRetentionTimeInDays": 7,
+      "isBYODB": false,
+      "organization": {
+        "id": 5,
+        "name": "Martinovo",
+        "crmId": "",
+        "activityCenterProjectId": "",
+        "created": "2013-12-31T11:22:33+0100",
+        "allowAutoJoin": true
+      },
+      "fileStorage": {
+        "id": 2,
+        "awsKey": "AKIAXXXXXXXXXXXXXXXXX",
+        "region": "us-east-1",
+        "filesBucket": "kbc-sapi-files",
+        "owner": "keboola",
+        "isDefault": true,
+        "created": "",
+        "creator": {
+          "id": 0,
+          "name": null
+        }
+      },
+      "backends": {
+        "snowflake": {
+          "id": 353,
+          "host": "keboola.snowflakecomputing.com",
+          "region": "us-east-1",
+          "owner": "keboola"
+        }
+      },
+      "payAsYouGo": {
+        "purchasedCredits": 123
+      },
+      "timezone": "Europe/Bratislava"
+    }
+    ```
+
+
+### Project detail [GET]
+
+Returns a project with associated limits and metrics.
+
+* limits  - These are limits assigned to a project (number of admins, number of orchestrations, parallelization).
+* metrics - Latest values of the monitored project metrics
+
+If the project is configured with pay as you go billing, `payAsYouGo` section is also included in the project details.
+
+This endpoint can also be accessed using application tokens with scope `projects:read`
+
++ Parameters
+    + project_id (required, int) - Project ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    [Project][]
+
+### Update a project [PUT]
+
++ Attributes
+
+    + name: Test - Rename project
+    + defaultBackend: snowflake - Change project default backend type
+    + type:demo - Change project type (demo, production, poc, ...) - allowed only for a super admin
+    + expirationDays: 7 (number) - Change project expiration - allowed only for a super admin
+    + billedMonthlyPrice: 2000 (number) - Change project monthly fee - allowed only for a super admin
+    + dataRetentionTimeInDays: 20 (number) - (Snowflake only) Change the data retention period for this project - allowed only for a super admin
+    + timezone: Europe/Bratislava (string) -(Bigquery only) Change default time zone to use in time zone-dependent SQL functions. [Allowed values](https://cloud.google.com/looker/docs/reference/param-view-timezone-values). Immediately after creating the project, it may take a while for the necessary permissions to be propagated in GCP. If you receive a 403 response, please try again several times.
+
++ Parameters
+    + project_id (required, int) - Project ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    [Project][]
+
+### Delete a project [DELETE]
+A project will not be physically deleted. It'll only be inaccessible and hidden. If project was listed as `activityCenterProjectId` in it's organization and it will be deleted, the `activityCenterProjectId` will be set to `null`.
+
++ Parameters
+    + project_id (required, int) - Project ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Organization Projects [/manage/organizations/{organization_id}/projects]
+
+A project will be created from a default template which defines its limits. Only members of the organization can create a project.
+
++ Parameters
+    + organization_id (required, int) - Organization ID; projects have to be created in an organization.
+
+### Add a project [POST]
+
++ Attributes
+
+    + name: My Demo (required) - Project name
+    + type: demo (required) -  One of `production`, `poc`, `demo`; default is `production`
+    + defaultBackend: snowflake - Project default backend; default is `snowflake`
+    + dataRetentionTimeInDays: 7 - Data retention in days for Time Travel
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
+     [Project][]
+
+### List projects for an organization [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+            "id": 101,
+            "name": "test project",
+            "type": "production",
+            "region": "eu-west-1",
+            "created": "2017-02-15T14:25:15+0100",
+            "expires": null,
+            "features": ["featureName"],
+            "dataSizeBytes": 49152,
+            "rowsCount": 200,
+            "hasMysql": false,
+            "hasSynapse": false,
+            "hasExasol": false,
+            "hasTeradata": false,
+            "hasSnowflake": true,
+            "defaultBackend": "snowflake",
+            "hasTryModeOn": "0",
+            "limits": {
+                "limitName": {
+                    "name": "limitName",
+                    "value": 10
+                }
+            },
+            "metrics": {},
+            "isDisabled": false,
+            "billedMonthlyPrice": null,
+            "dataRetentionTimeInDays": 1,
+            "fileStorageProvider": "aws",
+            "isBYODB": false
+    }
+    ```
+
+
+## Move Project to Another Organization [/manage/projects/{project_id}/organizations]
+If project was listed as `activityCenterProjectId` in it's organization and it will be moved, the `activityCenterProjectId` will be set to `null`.
++ Parameters
+    + project_id (required, int)  - Project ID
+
+### Move a project [POST]
+
++ Attributes
+
+    + organizationId: 523 (required) - ID of destination organization
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    [Project][]
+
+## Assign Project Storage Backend [/manage/projects/{project_id}/storage-backend]
+This action can be performed only by a super admin.
+
+One backend connection of each type (Snowflake, BigQuery) can be assigned to a project.
+Connection type is automatically detected from the passed connection identifier.
+
++ Parameters
+    + project_id (required, int)  - Project ID
+
+### Assign project Storage backend [POST]
+
++ Attributes
+
+    + storageBackendId: 32 (required) - ID of Storage backend
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+     [Project][]
+
+## Remove Project Storage Backend [/manage/projects/{project_id}/storage-backend/{storage_backend_id}]
+This action can be performed only by a super admin.
+
+A Storage backend type is automatically detected from its ID. Only backends without any buckets associated with them can be removed.
+
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + storage_backend_id (required, int) - Storage backend ID; must be one of Storage backends assigned to the project.
+
+### Remove project Storage backend [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+    [Project][]
+
+
+## Assign Project File Storage [/manage/projects/{project_id}/file-storage]
+This action can be performed only by a super admin.
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+### Assign project file Storage [POST]
+
++ Attributes
+
+    + fileStorageId: 32 (required) - ID of file Storage
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 200
+
+     [Project][]
+
+## Project Limits [/manage/projects/{project_id}/limits]
+
+Changing project limits is allowed only for a super admin.
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+### Set project limits [POST]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+        ```js
+        {
+            "limits": [
+                {
+                    "name": "goodData.usersCount",
+                    "value": 23
+                }
+            ]
+        }
+        ```
+
++ Response 200
+
+    [Project][]
+
+## Remove Project Limit [/manage/projects/{project_id}/limits/{limit_name}]
+
+Remove project limit is allowed only for a super admin.
++ Parameters
+    + project_id (required, int) - Project ID
+    + limit_name (required, string) - Limit name
+
+### Remove project limit [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Project Metadata [/manage/projects/{project_id}/metadata]
+Metadata allows you to assign custom information to your projects.
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### Set project metadata [POST]
+Sets multiple metadata with one call. If the given key and provider combination already exist
+for the project, the data will be updated with the new value and timestamp.
+Only project members with Admin or Share roles, members of the maintainer, members of organization and super admins can change metadata.
++ Attributes
+    + provider (required, enum[string])
+        + Members
+            + user
+            + system - only super admin can change these metadata
+    + metadata (required, array[object]) - Array of metadata objects
+        + key (required)
+        + value (required)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+        ```js
+        {
+            "provider": "user",
+            "metadata": [
+                {
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+        }
+        ```
+
++ Response 201 (application/json)
+    + Body
+
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+
+
+### List project Metadata [GET]
+Only project members, members of the maintainer, members of organization and super admins can list metadata.
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+    + Body
+
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+
+## Remove Project Metadata [/manage/projects/{project_id}/metadata/{metadata_id}]
+Only project members with Admin or Share roles, members of the maintainer, members of organization and super admins can delete metadata.
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + metadata_id (required, int) - Metadata ID
+
+### Remove project metadata [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+
+## Project Invitations [/manage/projects/{project_id}/invitations]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+### List project invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 112,
+            "created": "2018-07-10T10:45:11+0200",
+            "expires": null,
+            "reason": "",
+            "user": {
+                "id": 124,
+                "name": "test user 2",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        },
+        {
+            "id": 113,
+            "created": "2018-07-10T10:50:00+0200",
+            "expires": "2018-07-12T10:50:00+0200",
+            "reason": "Help with Restbox configuration",
+            "user": {
+                "id": 125,
+                "name": "test user 3",
+                "email": "spam@keboola.com"
+            },
+            "creator": {
+                "id": 123,
+                "name": "test user",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+
+### Invite a user to a project [POST]
+
+Only members of the project or its organization are allowed to invite new users to the project.
+
+An optional expiration (seconds) and reason for joining can be added to the request.
+
++ Attributes
+
+    + email: martin@keboola.com (string, required) - Email of an invited user
+    + role: admin (enum[string]) - User role in the project. Roles `admin`, `guest`, `readOnly` and `share` are allowed (default `admin`).
+
+        + Default: `admin`
+
+        + Members
+            + `guest`
+            + `readOnly`
+            + `share`
+    + expirationSeconds: 3600 (number) - After how many seconds the invitation and membership of a user will expire
+    + reason: Help with component configuration (string) - Reason for inviting user
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "expires": "2018-07-10T11:50:00+0200",
+        "reason": "Help with component configuration",
+        "role": "admin",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+## Manage User Invitation [/manage/projects/{project_id}/invitations/{invitation_id}]
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + invitation_id (required, int) - User ID
+
+
+### Project invitation detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T10:50:00+0200",
+        "expires": "2018-07-10T11:50:00+0200",
+        "reason": "Help with component configuration",
+        "role": "admin",
+        "user": {
+            "id": 125,
+            "name": "test user 3",
+            "email": "spam@keboola.com"
+        },
+        "creator": {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+### Cancel project invitation [DELETE]
+
+Only members of the project or its organization are allowed to cancel project invitation.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Project Users [/manage/projects/{project_id}/users]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### List project users [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 123,
+            "name": "test user",
+            "email": "martin@keboola.com",
+            "features": [],
+            "expires": null,
+            "created": "2016-02-29T08:01:13+0200",
+            "reason": "",
+            "role": "admin",
+            "status": "active",
+            "invitor": {
+                "id": 124,
+                "name": "test user 2",
+                "email": "spam@keboola.com"
+            },
+            "approver": null
+        },
+        {
+            "id": 124,
+            "name": "test user 2",
+            "email": "spam@keboola.com",
+            "features": [],
+            "expires": "2016-03-22T15:01:13+0200",
+            "created": "2016-02-22T15:01:13+0200",
+            "reason": "temporary test",
+            "role": "guest",
+            "status": "active",
+            "invitor": null,
+            "approver": {
+                "id": 1,
+                "name": "admin 1",
+                "email": "dev@keboola.com"
+            }
+        }
+    ]
+    ```
+
+### Add a user to a project [POST]
+
+Only members of the project or its organization are allowed to add new users to the project.
+
+An optional expiration (seconds) and reason for joining can be added to the request.
+
++ Attributes
+
+    + email: martin@keboola.com (required) - Email of an invited user
+    + role: admin (enum[string]) - User role in the project. Roles `admin`, `guest`, `readOnly` and `share` are allowed (default `admin`).
+
+        + Default: `admin`
+
+        + Members
+            + `guest`
+            + `readOnly`
+            + `share`
+    + expirationSeconds: 3600 (number) - After how many seconds the membership of a user will expire
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Project Templates [/manage/project-templates/]
+
+### List templates [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+    ```js
+    [
+        {
+            "id": "poc15Days",
+            "name": "POC 15 days",
+            "description": "Proof of concept. 15 days trial.",
+            "expirationDays": 15,
+            "billedMonthlyPrice": null,
+            "hasTryModeOn": false,
+            "defaultBackend": "snowflake"
+        },
+        {
+            "id": "poc15DaysGuideMode",
+            "name": "POC Guide Mode",
+            "description": "Proof of concept. 15 days trial - Guide Mode.",
+            "expirationDays": 15,
+            "billedMonthlyPrice": null,
+            "hasTryModeOn": true,
+            "defaultBackend": "snowflake"
+        }
+    ]
+    ```
+
+## Project Template Detail [/manage/project-templates/{template_string_id}]
+
++ Parameters
+    + template_string_id (required, string) - Project string ID
+
+### Project template detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+    ```js
+    {
+        "id": "poc15Days",
+        "name": "POC 15 days",
+        "description": "Proof of concept. 15 days trial.",
+        "expirationDays": 15,
+        "billedMonthlyPrice": null,
+        "hasTryModeOn": false,
+        "defaultBackend": "snowflake"
+    }
+    ```
+
+## Change Role or Delete User [/manage/projects/{project_id}/users/{user_id}]
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + user_id (required, int) - User ID
+
+### Change role of a user in a project [PATCH]
+
++ Attributes
+    + role: admin (enum[string]) - User role in the project. Roles `admin`, `guest`, `readOnly` and `share` are allowed (default `admin`).
+
+        + Default: `admin`
+
+        + Members
+            + `guest`
+            + `readOnly`
+            + `share`
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 123,
+        "name": "test user",
+        "email": "martin@keboola.com",
+        "features": [],
+        "expires": null,
+        "created": "2016-02-29T08:01:13+0200",
+        "reason": "",
+        "role": "admin",
+        "status": "active",
+        "invitor": {
+            "id": 124,
+            "name": "test user 2",
+            "email": "spam@keboola.com"
+        },
+        "approver": null
+    }
+    ```
+
+### Delete a user from a project [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## Join Project [/manage/projects/{project_id}/join-project]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### Join a project [POST]
+
+If the project's organization allows autojoin (`allowAutoJoin` attribute is se to `true`), all members of the organization, its maintainers and superadmins are allowed to join the project. Otherwise only members of the organization can join the project.
+
+An optional expiration (in seconds) and reason for joining can be added to the request.
+
++ Attributes
+
+    + reason: temporary test (string) - Reason for joining the project
+    + expirationSeconds: 3600 (number) - The number of seconds until the user's membership expires
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## Request Access [/manage/projects/{project_id}/request-access]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### Request access to a project [POST]
+
+Create a join request to the project. All join requests have to be approved by a project member.
+
+An optional expiration (in seconds) and reason for joining can be added to the request.
+
++ Attributes
+
+    + reason: temporary test (string) - Reason for joining the project
+    + expirationSeconds: 3600 (number) - The number of seconds until the user's membership expires
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+    ```js
+    {
+        "id": 124,
+        "created": "2016-02-22T15:01:13+0200",
+        "expires": "2016-03-22T15:01:13+0200",
+        "reason": "temporary test",
+        "project": {
+            "id": 324,
+            "name": "Main project"
+        }
+    }
+    ```
+
+
+## Project Join Requests [/manage/projects/{project_id}/join-requests]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+
+### List join requests [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 1234,
+            "created": "2016-02-22T15:01:13+0200",
+            "expires": "2016-03-22T15:01:13+0200",
+            "reason": "temporary test",
+            "user": {
+                "id": 1,
+                "name": "admin 1",
+                "email": "dev@keboola.com"
+            }
+        },
+        {
+            "id": 1235,
+            "created": "2016-02-30T11:50:13+0200",
+            "expires": null,
+            "reason": "",
+            "user": {
+                "id": 124,
+                "name": "test user 2",
+                "email": "spam@keboola.com"
+            }
+        }
+    ]
+    ```
+
+## Manage Join Requests [/manage/projects/{project_id}/join-requests/{join_request_id}]
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + join_request_id (required, int) - Join Request ID
+
+### Join request detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 1235,
+        "created": "2016-02-30T11:50:13+0200",
+        "expires": null,
+        "reason": "",
+        "user": {
+            "id": 124,
+            "name": "test user 2",
+            "email": "spam@keboola.com"
+        }
+    }
+    ```
+
+### Approve join request [PUT]
+
+Only members of the project can approve join requests.
+
+The user that submitted the join request will be added to the project.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 202
+
+### Reject join request [DELETE]
+
+Only members of the project can reject join requests.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## Enable/Disable Project [/manage/projects/{project_id}/disabled]
++ Parameters
+    + project_id (required, int) - Project ID
+
+### Change project disabled status [POST]
+
++ Attributes
+
+    + isDisabled: true (boolean) - Enable or disable project
+    + disableReason: Project maintenance - Why the project is disabled
+    + estimatedEndTime: +1 hour - When the project will be enabled
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200
+
+     [Project][]
+
+## Create Storage Token in Project [/manage/projects/{project_id}/tokens]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+### Create Storage token [POST]
+
+Requires the management token of admin who is either superuser or has joined the project previously. Alternatively it
+can be called with an application token with scope `manage:storage-tokens`.
+
++ Attributes
+
+    + description: Test Token (required) - Token description
+    + canManageBuckets: true (boolean) - Token has full permissions on tabular storage
+    + canManageTokens: false (boolean) - deprecated & will be ignored - Token has permission to create tokens in project
+    + canReadAllFileUploads: true (boolean) - Token has full permissions to files staging
+    + canPurgeTrash: true (boolean) - Allows permanently remove deleted configurations.
+    + expiresIn: 60 (number) - Token lifetime
+    + bucketPermissions (object)
+        - in.c-main: read
+    + componentAccess[] (optional) - Grants access for component configurations. Allowed values are [valid component IDs](https://components.keboola.com/components).
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+    ```js
+    {
+        "id": 3846,
+        "token": "TOKEN_VALUE",
+        "created":"2013-03-28T13:31:50+0100",
+        "description":"martin@keboola.com",
+        "uri": "https://connection.keboola.com/v2/storage/tokens/3846",
+        "isMasterToken":true,
+        "canManageBuckets":true,
+        "canManageTokens":true,
+        "canReadAllFileUploads":true,
+        "canPurgeTrash": true,
+        "expires":null,
+        "isExpired":false,
+        "isDisabled":false,
+        "dailyCapacity":0,
+        "bucketPermissions": {}
+    }
+    ```
+
+## Project Credits [/manage/projects/{project_id}/credits]
+
+### Give credits [POST]
+
+Changing balance of credits for PayGo projects.
+
+*Note: Only superadmin or user having assigned `pay-as-you-go-credits-admin` can change project credits balance.*
+
++ Parameters
+    + project_id (required, int) - Project ID
+
++ Attributes
+
+    + amount: 10 (required, number) - Credits amount
+    + description: Promo credits (required) - Reason or label of given credits
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+    ```js
+    {
+        "id": 259,
+        "creditsAmount": 10,
+        "moneyAmount": null,
+        "idStripeInvoice": null,
+        "description": "Promo credits",
+        "created": "2019-06-17T15:07:48+01:00"
+    }
+    ```
+
+# Group Deleted Projects
+
+Operations on deleted projects are allowed only for a super admin.
+
+## Deleted Project Detail [/manage/deleted-projects/{project_id}]
+
+### Deleted project detail [GET]
+
+This endpoint can also be accessed using application tokens with scope `deleted-projects:read` or user token with feature `can-manage-deleted-projects`.
+
++ Parameters
+    + project_id (required, int) - Deleted project ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+            "id": 101,
+            "name": "test project",
+            "type": "production",
+            "region": "eu-west-1",
+            "created": "2017-02-15T14:25:15+0100",
+            "expires": null,
+            "features": [],
+            "dataSizeBytes": 49152,
+            "rowsCount": 200,
+            "hasMysql": false,
+            "hasSynapse": false,
+            "hasExasol": false,
+            "hasTeradata": false,
+            "hasSnowflake": true,
+            "defaultBackend": "snowflake",
+            "hasTryModeOn": "0",
+            "limits": {},
+            "metrics": {},
+            "isDisabled": false,
+            "billedMonthlyPrice": null,
+            "dataRetentionTimeInDays": 1,
+            "isPurged": false,
+            "isDeleted": true,
+            "deletedTime": "2018-02-11T14:25:15+0100",
+            "purgedTime": null,
+            "isBYODB": false
+    }
+    ```
+
+
+## Purge Deleted Project [/manage/deleted-projects/{project_id}/purge]
+
+### Purge deleted project [POST]
+
+Enqueues the command that fully deletes a project and returns its execution ID for monitoring.
+
++ Parameters
+    + project_id (required, int) - Deleted project ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes
+        + ignoreBackendErrors: `false` (boolean) - Ignore all errors from the backend. `false` is default.
+
++ Response 200 (application/json)
+
+ + Attributes(CommandExecuteResponse)
+
+
+## List Deleted Projects [/manage/deleted-projects]
+
+### List deleted projects [GET]
+
+Listing deleted projects is allowed only for a super admin  or user with feature `can-manage-deleted-projects`.
+
+#### Projects filtering
+
+Projects can be filtered by various filters:
+
+* *organizationId* - organization ID
+* *name* - name of the project
+
+#### Projects pagination
+
+* *limit* - number of returned projects; default value: 100
+* *offset* - pagination offset
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 101,
+            "name": "test project",
+            "type": "production",
+            "region": "eu-west-1",
+            "created": "2017-02-15T14:25:15+0100",
+            "expires": null,
+            "features": [],
+            "dataSizeBytes": 49152,
+            "rowsCount": 200,
+            "hasMysql": false,
+            "hasSnowflake": true,
+            "hasSynapse": false,
+            "hasTeradata": false,
+            "hasExasol": false,
+            "defaultBackend": "snowflake",
+            "hasTryModeOn": "0",
+            "limits": {},
+            "metrics": {},
+            "isDisabled": false,
+            "billedMonthlyPrice": null,
+            "dataRetentionTimeInDays": 7,
+            "isBYODB": false,
+            "isPurged": false,
+            "isDeleted": true,
+            "deletedTime": "2018-02-11T14:25:15+0100",
+            "purgedTime": null,
+            "organization": {
+                "id": 1,
+                "name": "Keboola Tests",
+                "created": "",
+                "allowAutoJoin": true
+            }
+        },
+        {
+            "id": 104,
+            "name": "another test project",
+            "type": "production",
+            "region": "eu-west-1",
+            "created": "2017-02-15T14:25:15+0100",
+            "expires": null,
+            "features": [],
+            "dataSizeBytes": 49152,
+            "rowsCount": 200,
+            "hasMysql": false,
+            "hasSnowflake": true,
+            "hasSynapse": false,
+            "hasTeradata": false,
+            "hasExasol": false,
+            "defaultBackend": "snowflake",
+            "hasTryModeOn": "0",
+            "limits": {},
+            "metrics": {},
+            "isDisabled": false,
+            "billedMonthlyPrice": null,
+            "dataRetentionTimeInDays": 7,
+            "isBYODB": false,
+            "isPurged": false,
+            "isDeleted": true,
+            "deletedTime": "2018-02-11T14:25:15+0100",
+            "purgedTime": null,
+            "organization": {
+                "id": 1,
+                "name": "Keboola Tests",
+                "created": "",
+                "allowAutoJoin": true
+            }
+        }
+    ]
+    ```
+
+## Cancel Project Deletion [/manage/deleted-projects/{project_id}{?expirationDays}]
+
+### Cancel project deletion [DELETE]
+Cancelling project deletion is allowed only for a super admin or user with feature `can-manage-deleted-projects`.
+If the project has set expiration, the expiration is reset on the project renewal.
+You can also specify new expiration by `expirationDays` parameter.
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + expirationDays (optional, number) - Project expiration in days
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+# Group Users
+
+Users can be managed only by a super admin.
+
+## Manage User [/manage/users/{user_id_or_email}]
+
+### User detail [GET]
+
++ Parameters
+    + user_id_or_email (required) - User ID or email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 2,
+        "name": "Martin",
+        "email": "spelling@keboola.com",
+        "features": [
+            "inline-manual"
+        ],
+        "mfaEnabled": true,
+        "canAccessLogs": true,
+        "isSuperAdmin": true
+    }
+    ```
+
+### Update a user [PUT]
+
++ Parameters
+    + user_id_or_email (required) - User ID or email
+
++ Attributes
+
+    + name: Martin - User name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 2,
+        "name": "Martin",
+        "email": "spelling@keboola.com",
+        "features": [
+            "inline-manual"
+        ],
+        "mfaEnabled": true,
+        "canAccessLogs": true,
+        "isSuperAdmin": true
+    }
+    ```
+
+## Disable MFA for User [DELETE /manage/users/{user_id_or_email}/mfa]
+
+This endpoint can also be accessed using user token with feature `can-manage-users`.
+
++ Parameters
+    + user_id_or_email (required) - User ID or email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Remove super admin privilege from User [DELETE /manage/users/{user_id_or_email}/super-admin]
+
++ Parameters
+    + user_id_or_email (required) - User ID or email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 2,
+        "name": "Corrected Spelling",
+        "email": "spelling@keboola.com",
+        "features": [
+            "inline-manual"
+        ],
+        "mfaEnabled": true,
+        "canAccessLogs": false,
+        "isSuperAdmin": false
+    }
+    ```
+
+## Remove User [DELETE /manage/users/{user_id_or_email}]
+
+It will completly remove user from everywhere (projects, organizations and maintainers).
+Removes also personal data of user (e-mail and name).
++ Parameters
+    + user_id_or_email (required) - User ID or email
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204 (application/json)
+
+## User Metadata [/manage/users/{user_id_or_email}/metadata]
+Metadata allows you to assign custom information to your users.
+
++ Parameters
+    + user_id_or_email (required, string) - Project ID
+
+### Set user metadata [POST]
+Sets multiple metadata with one call. If the given key and provider combination already exist
+for the user, the data will be updated with the new value and timestamp.
+Each user can set only own metadata. Super admins can set everyone's metadata.
++ Attributes
+    + provider (required, enum[string])
+        + Members
+            + user
+            + system - only super admin can change these metadata
+    + metadata (required, array[object]) - Array of metadata objects
+        + key (required)
+        + value (required)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token or your_session_token
+
+    + Body
+
+        ```js
+        {
+            "provider": "user",
+            "metadata": [
+                {
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+        }
+        ```
+
++ Response 201 (application/json)
+    + Body
+
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+
+
+### List user Metadata [GET]
+Each user can list only own metadata. Super admins can list everyone's metadata.
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token or your_session_token
+
++ Response 200 (application/json)
+    + Body
+
+            [
+                {
+                    "id": 123,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "KBC.SomeEnity.metadataKey",
+                    "value": "Some value"
+                },
+                {
+                    "id": 124,
+                    "provider": "user",
+                    "timestamp": "2021-02-17T15:05:21+0100",
+                    "key": "someMetadataKey",
+                    "value": "Some value"
+                }
+            ]
+
+### Remove User Metadata [DELETE /manage/users/{user_id_or_email}/metadata/{metadata_id}]
+Each user can delete only own metadata. Super admins can delete everyone's metadata.
+
++ Parameters
+    + user_id_or_email (required, string) - User ID
+    + metadata_id (required, int) - Metadata ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token or your_session_token
+
++ Response 204
+
+
+# Group My Account
+
+## Maintainers Invitations [/manage/current-user/maintainers-invitations]
+
+### List my maintainer invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 113,
+            "created": "2018-07-10T11:13:00+0200",
+            "maintainer": {
+                "id": 7,
+                "name": "Keboola CZ"
+            },
+            "creator": {
+                "id": 2,
+                "name": "Martin Halamicek",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+## Manage Maintainer Invitation [/manage/current-user/maintainers-invitations/{invitation_id}]
+
+### My maintainer invitation detail [GET]
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T11:13:00+0200",
+        "maintainer": {
+            "id": 7,
+            "name": "Keboola CZ"
+        },
+        "creator": {
+            "id": 2,
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+### Accept a maintainer invitation [PUT]
+
+Invitation will be accepted and current user will become a member of the maintainer.
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 202
+
+
+
+## Organizations Invitations [/manage/current-user/organizations-invitations]
+
+### List my organization invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 113,
+            "created": "2018-07-10T11:13:00+0200",
+            "organization": {
+                "id": 7,
+                "name": "Keboola CZ"
+            },
+            "creator": {
+                "id": 2,
+                "name": "Martin Halamicek",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+## Manage Organization Invitation [/manage/current-user/organizations-invitations/{invitation_id}]
+
+### My organization invitation detail [GET]
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T11:13:00+0200",
+        "organization": {
+            "id": 7,
+            "name": "Keboola CZ"
+        },
+        "creator": {
+            "id": 2,
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+### Accept an organization invitation [PUT]
+
+Invitation will be accepted and current user will become a member of the organization.
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 202
+
+
+
+## Projects Join Requests [/manage/current-user/projects-join-requests]
+
+### List my join requests [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 124,
+            "created": "2016-02-22T15:01:13+0200",
+            "expires": "2016-03-22T15:01:13+0200",
+            "reason": "temporary test",
+            "project": {
+                "id": 324,
+                "name": "Main project"
+            }
+        },
+        {
+            "id": 127,
+            "crated": "2014-11-11T08:40:51.620Z",
+            "expires": null,
+            "reason": "",
+            "project": {
+                "id": 423,
+                "name": "Development"
+            }
+        }
+    ]
+    ```
+
+## Project Join Request [/manage/current-user/projects-join-requests/{join_request_id}]
+
++ Parameters
+    + join_request_id: 1 (required, integer)
+
+
+### My join request detail [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 124,
+        "created": "2016-02-22T15:01:13+0200",
+        "expires": "2016-03-22T15:01:13+0200",
+        "reason": "temporary test",
+        "project": {
+            "id": 324,
+            "name": "Main project"
+        }
+    }
+    ```
+
+### Cancel a join request [DELETE]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## Projects Invitations [/manage/current-user/projects-invitations]
+
+### List my project invitations [GET]
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 113,
+            "created": "2018-07-10T11:13:00+0200",
+            "expires": null,
+            "reason": "",
+            "role": "admin",
+            "project": {
+                "id": 7,
+                "name": "Martinovo"
+            },
+            "creator": {
+                "id": 2,
+                "name": "Martin Halamicek",
+                "email": "martin@keboola.com"
+            }
+        }
+    ]
+    ```
+
+## Manage Project Invitation [/manage/current-user/projects-invitations/{invitation_id}]
+
+### My project invitation detail [GET]
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 113,
+        "created": "2018-07-10T11:13:00+0200",
+        "expires": null,
+        "reason": "",
+        "role": "admin",
+        "project": {
+            "id": 7,
+            "name": "Martinovo"
+        },
+        "creator": {
+            "id": 2,
+            "name": "Martin Halamicek",
+            "email": "martin@keboola.com"
+        }
+    }
+    ```
+
+### Accept a project invitation [PUT]
+
+Invitation will be accepted and current user will be added to the project.
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 202
+
+### Decline a invitation [DELETE]
+
++ Parameters
+    + invitation_id (number, required) - Invitation ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+# Group SUPER - Features
+
+## Features [/manage/features]
+
+### Retrieve all features [GET /manage/features?type={type}]
+
+Gets all features. To filter only the features with a specific type,
+add the `type` parameter to your query.
+
+In case the token you are using for the call does not have super admin permissions,
+the response will only contain features that have `canBeManageByAdmin: true`, `canBeManagedViaAPI: true` set.
+
++ Parameters
+    + type: admin (string) - Type of features you want to filter
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token or your_session_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 1,
+            "name": "show-new-design",
+            "type": "admin",
+            "title": "Show new design",
+            "description": "Users with this feature will see new UI",
+            "created": "2016-04-28T15:24:51.620Z"
+        }
+    ]
+    ```
+
+### Retrieve one feature [GET /manage/features/{id}]
+
+In case your token that you use when calling does not have super admin permissions,
+the feature must have parameters `canBeManageByAdmin: true`, `canBeManagedViaAPI: true` set to be able to view its detail.
+Otherwise the response will be 404 Not Found.
+
++ Parameters
+    + id: 1 (required, number) - ID of the feature
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token or your_session_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 1,
+        "name": "show-new-design",
+        "type": "admin",
+        "title": "Show new design",
+        "description": "Users with this feature will see new UI",
+        "created": "2016-04-28T15:24:51.620Z"
+    }
+    ```
+
+### Retrieve feature projects [GET /manage/features/{id}/projects]
+
+Gets the projects with the specified feature assigned.
+
++ Parameters
+    + id: 1 (required, number) - ID of the feature
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 771,
+            "name": "Test project"
+        }
+    ]
+    ```
+
+### Retrieve feature users [GET /manage/features/{id}/admins]
+
+Gets the users with the specified feature assigned.
+
++ Parameters
+    + id: 1 (required, number) - ID of the feature
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 1,
+            "name": "Test user",
+            "email": "test@example.com"
+        }
+    ]
+    ```
+
+### Create a feature [POST]
+
+**Unless there is a specific reason why the feature MUST NOT be present on some stack, implement it through migration.**
+
+To create a new feature, provide the following parameters as JSON in the request body:
+
+If the `canBeManageByAdmin` parameter is true, the token of a user without a super admin role can assign the feature.
+In the case of the `project` feature, it must be in the project and have the `Admin` role.
+It is not enough to have the maintainer admin or organization admin permission.
+
+In the case of the `admin` role, an admin who does not have super admin privileges can only set the feature for himself.
+
+
+
++ Attributes
+
+    + name: `show-new-design` (required) - Feature name (programmatic name)
+    + type: admin, project (enum) (required) - Feature type
+    + title: Show new design (required) - Feature title (display name)
+    + description: Users with this feature will see new UI (required) - Short description of the feature
+    + canBeManageByAdmin: false (boolean, optional) - If true, the feature can be assigned by a user without the superadmin role
+    + canBeManagedViaAPI: true (boolean, optional) - Enables or disables the ability to assign the project/admin feature using the API
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+    ```js
+    {
+        "id": 1,
+        "name": "show-new-design",
+        "type": "admin",
+        "title": "Show new design",
+        "description": "Users with this feature will see new UI",
+        "canBeManageByAdmin": false,
+        "canBeManagedViaAPI": true,
+        "created": "2016-04-28T15:24:51.620Z"
+    }
+    ```
+
+### Update a feature [PATCH /manage/features/{id}]
+A partial update of a feature
+
++ Parameters
+    + id: 1 (required, number) - ID of the feature to update
+
++ Attributes
+
+    + title: Show new design (optional) - Feature title (display name)
+    + description: Users with this feature will see new UI (optional) - Short description of the feature
+    + canBeManageByAdmin: false (boolean, optional) - If true, the feature can be assigned by a user without the superadmin role
+    + canBeManagedViaAPI: true (boolean, optional) - Enables or disables the ability to assign the project/admin feature using the API
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
+
++ Response 200
+     ```js
+    {
+        "id": 1,
+        "name": "show-new-design",
+        "type": "admin",
+        "title": "Show new design",
+        "description": "Users with this feature will see new UI",
+        "canBeManageByAdmin": false,
+        "canBeManagedViaAPI": true,
+        "created": "2016-04-28T15:24:51.620Z"
+    }
+    ```
+
+### Delete a feature [DELETE /manage/features/{id}]
+
++ Parameters
+    + id: 1 (required, number) - ID of the feature to delete
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+## Project Features [/manage/projects/{project_id}/features]
+
+### Add a project feature [POST]
+
+If the parameter `canBeManageByAdmin` of the feature is `false`, project features can be assigned only by a super admin.
+
+If the `canBeManageByAdmin` is `true`, the project features can be set by an admin without super admin privileges.
+But this admin must be in the project to which he wants to assign this features with the role `Admin`.
+
+Organization and maintainer admin have no effect and the user needs activated `can-manage-features` feature.
+
+*Note: Features have to exist before they can be added to a project.*
+
++ Parameters
+    + project_id (required, int) - Project ID
+
++ Attributes
+
+    + feature: `show-new-design` (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    [Project][]
+
+### Remove a project feature [DELETE /manage/projects/{project_id}/features/{feature}]
+
+If the parameter `canBeManageByAdmin` of the feature is `false`, project features can be removed only by a super admin.
+
+If the `canBeManageByAdmin` is `true`, the project features can be removed by an admin without super admin privileges.
+But this admin must be in the project to which he wants to remove this features with the role `Admin`.
+
+Organization and maintainer admin have no effect and the user needs activated `can-manage-features` feature.
+
++ Parameters
+    + project_id (required, int) - Project ID
+    + feature: `show-new-design` (required, string) - Feature string ID
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+
+## User Features [/manage/users/{user_id_or_email}/features]
+
+
+### Add a user feature [POST /manage/users/{user_id_or_email}/features]
+
+If the parameter `canBeManageByAdmin` of the feature is `false`, project features can be set only by a super admin.
+If the `canBeManageByAdmin` parameter of the feature is `true`, the feature can be assigned by an admin without super admin permission,
+but he can assign the feature only to himself.
+
+Organization and maintainer admin have no effect.
+
+*Note: Features have to exist before they can be added to a user.*
+
++ Parameters
+    + user_id_or_email (required) - User ID or email
+
++ Attributes
+
+    + feature: `show-new-design` (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 2,
+        "name": "Martin Halamicek",
+        "email": "martin@keboola.com",
+        "features": [
+            "inline-manual"
+        ]
+    }
+    ```
+
+### Remove a user feature [DELETE /manage/users/{user_id_or_email}/features/{feature}]
+
+If the parameter `canBeManageByAdmin` of the feature is `false`, project features can be removed only by a super admin.
+If the `canBeManageByAdmin` parameter of the feature is `true`, the feature can be removed by an admin without super admin permission,
+but he can assign the feature only to himself.
+
+Organization and maintainer admin have no effect.
+
++ Parameters
+    + user_id_or_email (required) - User ID or email
+    + feature: `show-new-design` (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    {
+        "id": 2,
+        "name": "Martin Halamicek",
+        "email": "martin@keboola.com",
+        "features": [
+            "inline-manual"
+        ]
+    }
+    ```
+
+## Project Template Features [/manage/project-templates/{template}/features]
+
+These features will be added to a project on project creation.
+
+### List features [GET /manage/project-templates/{template}/features]
+
+Lists features assigned to a project template.
+
++ Parameters
+    + template (required) - StringId of project template
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 52,
+            "name": "test-feature",
+            "type": "project",
+            "title": "Test feature",
+            "description": "project template test feature",
+            "created": "2018-04-12T21:46:37+0200"
+        }
+    ]
+    ```
+
+### Add a feature [POST /manage/project-templates/{template}/features]
+
+*Note: Features have to exist before they can be added to a project template and have to be of the type `project`.*
+
++ Parameters
+    + template (required) - StringId of project template
+
++ Attributes
+
+    + feature: `show-new-design` (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201
+
+### Remove a feature [DELETE /manage/project-templates/{template}/features/{feature}]
+
+Removes a feature assigned to a project template.
+
++ Parameters
+    + template (required) - StringId of project template
+    + feature: `show-new-design` (required) - Feature name
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
+
+# Group SUPER - File Storage Management
+
+## Management of file storages.
+
+File storage can be represented:
+1) By the Azure Blob Storage container with associated credentials of Storage account
+2) By the AWS S3 bucket with associated AWS IAM credentials with full access to this bucket and access to the AWS STS service. At least one file storage has to be registered for one supported region.
+
+Each type of storage has its own endpoint.
+
+## S3 - File Storage Collection [/manage/file-storage-s3]
+
+### Create new AWS S3 Storage [POST]
+
+Superuser credentials are not required for storage registration
+
+New S3 file Storage will be registered. Provided AWS credentials are verified and required permissions are validated.
+The Storage region is automatically detected.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(S3FileStorageRequest)
+
++ Response 201 (application/json)
+
+    + Attributes(S3FileStorage)
+
+
+### List storages [GET]
+
++ Response 200 (application/json)
+
+    + Attributes (array[S3FileStorage])
+
+## S3 - Set Default File Storage [/manage/file-storage-s3/{file_storage_id}/default]
+Each region should have associated one default Storage, which is used for every new project in the region.
+Only storage owned by **keboola** can be set as default.
+
++ Parameters
+    + file_storage_id (required) - File Storage ID
+
+### Set S3 Storage as default [POST]
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 201 (application/json)
+
+    + Attributes(S3FileStorage)
+
+
+## Google Cloud Storage - File Storage Collection [/manage/file-storage-gcs]
+
+### Create new Google Cloud Storage [POST]
+
+Superuser credentials are not required for storage registration
+
+Will register new Google Cloud Storage for using inside KBC. Connection wil be verified during registraion.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(GCSCreate)
+
++ Response 201 (application/json)
+
+    + Attributes(GCSCreated)
+
+### List Google Cloud Storage [GET]
+
+Returns all registered Google Cloud Storages.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(array[GCSCreated])
+
+## Blob Storage - File Storage Collection [/manage/file-storage-abs]
+
+### Create new Azure Blob Storage [POST]
+
+Superuser credentials are not required for storage registration
+
+Will register new Azure Blob Storage for using inside KBC. Connection wil be verified during registraion.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(ABSCreate)
+
++ Response 201 (application/json)
+
+    + Attributes(ABSCreated)
+
+### List Azure Blob Storage [GET]
+
+Returns all registered Azure Blob Storages.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(array[ABSCreated])
+
+
+## Blob Storage - Set Blob storage as default [/manage/file-storage-abs/{file_storage_id}/default]
+
+Only storage owned by **keboola** can be set as default.
+
++ Parameters
+    + file_storage_id (required) - File Storage ID
+
+### Set Blob Storage as default [POST]
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(ABSDefault)
+
+## Data Structures
+
+### GCPCredentials
++ type: service_account (string, required)
++ project_id: 123456789 (string, required)
++ private_key_id: xxx (string, required)
++ private_key: `-----BEGIN PRIVATE KEY-----<key contents>-----END PRIVATE KEY-----\n` (string, required)
++ client_email: something@else.iam.gserviceaccount.com (string, required)
++ client_id: 123456789 (string, required)
++ auth_uri: https://accounts.google.com/o/oauth2/auth (string, required)
++ token_uri: https://oauth2.googleapis.com/token (string, required)
++ auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs (string, required)
++ client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something (string, required)
+
+### GCPCredentialsNoPK
++ type: service_account (string, required)
++ project_id: 123456789 (string, required)
++ private_key_id: xxx (string, required)
++ client_email: something@else.iam.gserviceaccount.com (string, required)
++ client_id: 123456789 (string, required)
++ auth_uri: https://accounts.google.com/o/oauth2/auth (string, required)
++ token_uri: https://oauth2.googleapis.com/token (string, required)
++ auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs (string, required)
++ client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something (string, required)
+
+### GCSCreate
++ gcsCredentials(GCPCredentials)
++ filesBucket: `my-bucket` (string, required) - name of the bucket
++ owner: keboola, client (enum, required)
++ region: `europe-west1` (string, required)
+
+### GCSCreated
++ id: 123 (number)
++ isDefault: false (boolean)
++ provider: gcp (string)
++ region: `europe-west1` (string)
++ created: `2019-06-17T15:07:48+01:00` (string) - (ISO8601 format) `Y-m-d\TH:i:sO`
++ creator(AdminIdAndName)
++ gcsCredentials(GCPCredentialsNoPK)
++ gcsSnowflakeIntegrationName: KEBOOLA_123_GCS (string)
++ filesBucket: `my-bucket` (string) - name of the bucket
+
+### GCSRotate
++ credentials(GCPCredentials)
+
+### AdminIdAndName
++ id: 123 (number)
++ name: Joe "The Admin" Doe
+
+### ABSBase
++ accountName: nameofaccount (required)
++ containerName: name-of-container (required)
++ owner: keboola (required)
+
+### ABSCreate(ABSBase)
++ accountKey: TTASDASASDfasdf== (required) - new key to be rotated to
+
+### ABSCreated(ABSBase)
+
++ id: 123
++ isDefault: false
++ provider: azure
++ created: 2019-06-17T15:07:48+01:00
++ creator
+    + id: 123
+    + name: name-of-creator
+
+### ABSDefault(ABSBase)
+
++ id: 123
++ isDefault: true
+
+
+### S3FileStorageBase
+
++ awsKey: AKIAXXXXXXXXXXXXXXXXX (required)
++ filesBucket: `kbc-sapi-files` (required)
++ region: `us-east-1` (required)
++ owner: keboola (required) - Associated AWS account owner
+
+### S3FileStorage(S3FileStorageBase)
+
++ id: 123 (required)
++ isDefault: false
++ provider: aws
++ created: 2019-06-17T15:07:48+01:00
++ creator
+    + id: 123
+    + name: name-of-creator
+
+## S3FileStorageRequest(S3FileStorageBase)
+
++ awsSecret: xxxx (required)
+
+# Group SUPER - Storage Backends Management
+Storage backends power Keboola Connection buckets and the main tabular data storage.
+Currently supported backends are:
+
+- Snowflake
+- BigQuery
+
+## Storage Backend Collection [/manage/storage-backend]
+
+### List backends [GET]
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+
++ Response 200 (application/json)
+
+    + Attributes (array[StorageBackend])
+
+### Backend detail [GET /manage/storage-backend/{backend_id}]
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes (array[StorageBackendListSnowflake])
+
+### Update backend [PATCH /manage/storage-backend/{backend_id}]
+
+A partial update of a storage backend, one of the attributes are required.
+
++ Parameters
+    + backend_id (required) - Backend ID
++ Attributes (StorageBackendUpdate)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+    + Attributes(StorageBackend)
+
+
+### Delete backend [DELETE /manage/storage-backend/{backend_id}]
+All projects using the backend must be deleted and purged before it can be deleted
++ Parameters
+    + backend_id (required) - Id of storage backend
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204 (application/json)
+
+## BigQuery - Storage Backend Collection [/manage/storage-backend/bigquery]
+
+Other actions like List and Delete are the same as for other backends.
+### Create a new BigQuery backend [POST]
+
+You must create a new project and service account in a folder in your organization,
+this service account must have the right to create new projects (roles/resourcemanager.projectCreator) in this folder (only in this folder)
+and use the generated json [keyFile](https://cloud.google.com/iam/docs/creating-managing-service-account-keys)
+for this `service account` in the `credentials` parameter, the folder id then as `folderId`.
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(BigQueryStorageBackendCreate)
+
++ Response 201 (application/json)
+
+    + Attributes(BigQueryStorageBackendCreated)
+
+### Update BigQuery backend [PATCH /manage/storage-backend/bigquery/{backend_id}]
+
+Update of the credentials for BigQuery backend.
+
++ Parameters
+    + backend_id (required) - Backend ID
++ Attributes (BigQueryStorageBackendUpdate)
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 201 (application/json)
+
+    + Attributes(BigQueryStorageBackendCreated)
+
+## Snowflake - Storage Backend Collection [/manage/storage-backend/snowflake]
+
+### Create a new Snowflake backend with certificate authentication [POST]
+
+Create a new Snowflake storage backend with RSA certificate authentication. The backend is created as disabled and returns an SQL template for setting up Snowflake roles and users, along with the public keys. After running the generated query, you can activate the backend using the [Activate Snowflake Storage Backend](#reference/super-storage-backends-management/activate-snowflake-storage-backend/activate-snowflake-backend) endpoint.
+
+Warehouse name cannot contain warehouse size suffixes (_X-SMALL, _SMALL, etc.) when dynamic backends are enabled. Size suffixes will be automatically added to the warehouse name.
+
+Registration will provide personalized queries based on this template
+```
+// base
+CREATE ROLE "KBC_STORAGE";
+GRANT CREATE DATABASE ON ACCOUNT TO ROLE "KBC_STORAGE";
+GRANT CREATE ROLE ON ACCOUNT TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+GRANT CREATE USER ON ACCOUNT TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+CREATE WAREHOUSE "WH_SMALL" WITH WAREHOUSE_SIZE = 'SMALL' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 4 RESOURCE_CONSTRAINT = 'STANDARD_GEN_1';
+GRANT USAGE ON WAREHOUSE "WH_SMALL" TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+CREATE USER "KBC_STORAGE" DEFAULT_ROLE = "KBC_STORAGE" RSA_PUBLIC_KEY = 'PUBLICKEY';
+GRANT OWNERSHIP ON USER "KBC_STORAGE" TO ROLE "KBC_STORAGE";
+GRANT ROLE "KBC_STORAGE" TO USER "KBC_STORAGE";
+GRANT ROLE "KBC_STORAGE" TO ROLE SYSADMIN;
+
+// dynamic backends
+CREATE WAREHOUSE "WH_MEDIUM" WITH WAREHOUSE_SIZE = 'MEDIUM' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 2 RESOURCE_CONSTRAINT = 'STANDARD_GEN_1';
+CREATE WAREHOUSE "WH_LARGE" WITH WAREHOUSE_SIZE = 'LARGE' WAREHOUSE_TYPE = 'STANDARD' AUTO_SUSPEND = 60 AUTO_RESUME = TRUE MIN_CLUSTER_COUNT = 1 MAX_CLUSTER_COUNT = 1 RESOURCE_CONSTRAINT = 'STANDARD_GEN_1';
+GRANT USAGE ON WAREHOUSE "WH_MEDIUM" TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+GRANT USAGE ON WAREHOUSE "WH_LARGE" TO ROLE "KBC_STORAGE" WITH GRANT OPTION;
+
+// network policies
+-- BEGIN_OPTIONAL_RESOURCES: These SQL statements are optional as the resources may already exist. In case of query failures due to existence of resources, you can skip this part.',
+CREATE DATABASE "STACK_INTERNAL";
+CREATE SCHEMA "STACK_INTERNAL"."NETWORK_RULES";
+USE SCHEMA "STACK_INTERNAL"."NETWORK_RULES";
+CREATE NETWORK RULE STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS TYPE = IPV4 MODE = INGRESS VALUE_LIST = ('1.1.1.1/32','2.2.2.2/32');
+CREATE NETWORK POLICY "STACK_SYSTEM_IPS_ONLY" allowed_network_rule_list = (STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS);
+ALTER USER "KBC_STORAGE" SET NETWORK_POLICY = "STACK_SYSTEM_IPS_ONLY";
+GRANT OWNERSHIP ON NETWORK POLICY "STACK_SYSTEM_IPS_ONLY" TO ROLE "KBC_STORAGE";
+GRANT OWNERSHIP ON DATABASE "STACK_INTERNAL" TO ROLE "KBC_STORAGE";
+GRANT OWNERSHIP ON SCHEMA "STACK_INTERNAL"."NETWORK_RULES" TO ROLE "KBC_STORAGE";
+GRANT OWNERSHIP ON NETWORK RULE STACK_INTERNAL.NETWORK_RULES.ALLOW_SYSTEM_IPS TO ROLE "KBC_STORAGE";
+-- END_OPTIONAL_RESOURCES
+
+// sso
+CREATE SECURITY INTEGRATION "STACK_SAML_INTEGRATION"'
+TYPE = SAML2'
+ENABLED = TRUE'
+SAML2_PROVIDER = 'CUSTOM'"
+SAML2_ISSUER = 'issuer'"
+SAML2_SSO_URL = 'https://sso'"
+SAML2_X509_CERT = 'ABC'"
+SAML2_SNOWFLAKE_ACS_URL ='https://host/fed/login'"
+SAML2_ENABLE_SP_INITIATED = FALSE'
+SAML2_FORCE_AUTHN = FALSE'
+SAML2_SIGN_REQUEST = TRUE'
+SAML2_REQUESTED_NAMEID_FORMAT = 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress';
+
+GRANT OWNERSHIP ON INTEGRATION "STACK_SAML_INTEGRATION" TO ROLE "KBC_STORAGE";
+```
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(CreateSnowflakeBackendWithCertRequest)
+
++ Response 200 (application/json)
+
+    + Attributes(CreateSnowflakeStorageBackendResponse)
+
++ Response 400 (application/json)
+
+    Returned when the request validation fails.
+
++ Response 403 (application/json)
+
+    Returned when the user does not have permission to create storage backends.
+
+## Activate Snowflake Storage Backend [/manage/storage-backend/{backendId}/activate]
+
+### Activate Snowflake backend [POST]
+
+Activate a Snowflake storage backend after the SQL template created via [Create a new Snowflake backend with certificate authentication](#reference/super-storage-backends-management/snowflake-storage-backend-collection/create-a-new-snowflake-backend-with-certificate-authentication) has been executed in Snowflake. This validates the backend configuration and enables it for use.
+
++ Parameters
+    + backendId (required) - Backend ID
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    + Attributes(ActivateSnowflakeStorageBackendResponse)
+
++ Response 400 (application/json)
+
+    Returned when the backend cannot be activated or validation fails.
+
++ Response 404 (application/json)
+
+    Returned when the backend does not exist.
+
++ Response 403 (application/json)
+
+    Returned when the user does not have permission to activate storage backends.
+
+## Data Structures
+
+### StorageBackendCreate
+
++ backend: snowflake (required) - can be snowflake, synapse, exasol, teradata
++ host: `sapi-37-demo.snowflakecomputing.com` (required)
++ warehouse: `production` - required only for Snowflake
++ username: keboola (required)
++ password: 1234 (required)
++ region: `us-east-1` (required)
++ owner: keboola (required) - associated legal owner (string, mostly: keboola,client-<name>)
++ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ database: MyDataWarehouse - required for Synapse and Teradata
++ useSynapseManagedIdentity: true - optional for Synapse
++ useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
+
+### BigQueryStorageBackendCreate
++ owner: keboola (required) - associated GCP account owner, can be (string, mostly: keboola,client-<name>)
++ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ folderId: 123(required) - where is service account created
++ region: `us-east-1` (required)
++ credentials(GCPCredentials)
++ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role pre-configured for Analytics Hub external bucket sharing. When set, the bucket sharing setup guide surfaces this role name to the user. When absent, the guide falls back to recommending the built-in `roles/analyticshub.listingAdmin` role. There is no validation on existence of this role. If the role is wrong, guide registering the external dataset will lead user to wrong role. It is used for guidance only, no direct logic applied. If you know that datasets for registration as external buckets are coming from one project, create a project-based custom role in that project. If you know, that your datasets to register will come from different projects, create orgazation based role.
+
+### BigQueryStorageBackendCreated
++ id:  12 (number)
++ region: `us-east-1` (required)
++ backend: bigquery
++ credentials(GCPCredentialsNoPK)
++ folderId: 123 (number)
++ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (nullable, string) - Name of the custom IAM role for Analytics Hub external bucket sharing. Always present in the response; `null` when not configured.
+
+### BigQueryStorageBackendUpdate
++ credentials(GCPCredentials, optional)
++ owner: keboola (required) - associated GCP account owner, can be (string, mostly: keboola,client-<name>)
++ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role pre-configured for Analytics Hub external bucket sharing. When set, the bucket sharing setup guide surfaces this role name to the user. When absent, the guide falls back to recommending the built-in `roles/analyticshub.listingAdmin` role. There is no validation on existence of this role. If the role is wrong, guide registering the external dataset will lead user to wrong role. It is used for guidance only, no direct logic applied. If you know that datasets for registration as external buckets are coming from one project, create a project-based custom role in that project. If you know, that your datasets to register will come from different projects, create orgazation based role.
+
+### StorageBackendUpdate
+
++ username: keboola (string)
++ password: 1234 (string)
++ useDynamicBackends: false (boolean) - Only for backends supporting dynamic sizing (Snowflake). When enabled, new projects get dynamic backends assigned automatically.
++ owner: keboola (required) - associated legal owner (string, mostly: keboola,client-<name>)
++ technicalOwner: keboola (string) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ skipValidation: false (boolean) - If true, the backend validation step is skipped during the update. Only possible to use with owner and technicalOwner not with other options.
++ technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails
+
+## StorageBackend
++ id: 123 (number, required)
++ host: sapi-37-demo.snowflakecomputing.com (required)
++ backend: snowflake (required)
++ region: us-east-1
++ technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails
+
+## StorageBackendListBase
++ id: 123 (number, required)
++ region: us-east-1 (required)
++ owner: keboola (required)
++ technicalOwner: keboola (required)
++ username: username
++ stats
+    + projectsCount: 10 (number, required)
+    + bucketsCount: 100 (number, required)
+    + dataSizeGB: 100 (number, required)
+    + rowsCount: 1000000 (number, required)
++ created: `2020-05-11T15:30:00Z` (required, string) - The datetime (ISO8601 format) 'Y-m-d\TH:i:sO'
++ creator
+    + id: 10 (number, required)
+    + name: keboola (required)
++ technicalOwnerContactEmails: (array[string], optional) - Array of technical owner contact emails
++ useSso: false - **Deprecated**, use `isSsoEnabled` instead. Whether SSO is enabled
++ isSsoEnabled: false - Whether SSO is enabled (SAML2 activated)
++ isSsoConfigured: false - Whether SAML2 SSO configuration exists
+
+## StorageBackendListSnowflake (StorageBackendListBase)
++ host: demo.snowflakecomputing.com (required)
++ backend: snowflake (required)
++ warehouse: keboola
++ saml2Configuration: (optional) - available only for Snowflake backend
+  + idpEntityId: https://example-idp.com
+  + spEntityId: https://example-sp.com
+  + spAcsUrl: https://example-sp.com/acs
+  + publicKey: RSA_PUBLIC_KEY
+
+
+### CreateSnowflakeBackendWithCertRequest
++ host: `demo.snowflakecomputing.com` (required) - Snowflake host name
++ warehouse: `KEBOOLA` (required) - Snowflake warehouse name; Warehouse name cannot contain warehouse size suffixes (_X-SMALL, _SMALL, etc.) when dynamic backends are enabled. Size suffixes will be automatically added to the warehouse name.
++ username: `KEBOOLA_STORAGE` (optional) - Snowflake username
++ region: `us-east-1` (required) - Backend region
++ owner: `keboola` (required) - associated legal owner (string, mostly: keboola,client-<name>)
++ technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ technicalOwnerContactEmails: `devel@keboola.com` (array[string], optional) - Array of technical owner contact emails
++ useDynamicBackends: false (optional) - Enable dynamic backends
++ useNetworkPolicies: false (optional) - Enable network policies
++ useSso: false (optional) - Enable SSO
++ edition: standard (optional) - Snowflake edition type. Enum: enterprise, standard. Enterprise enables multi-cluster warehouses when dynamic backends are enabled.
+
+### CreateSnowflakeStorageBackendResponse
++ id: 123 - Snowflake storage backend ID
++ host: `demo.snowflakecomputing.com` - Snowflake host
++ warehouse: `KEBOOLA` - Snowflake warehouse
++ username: `KEBOOLA_STORAGE` - Snowflake username
++ owner: `keboola`  - associated legal owner (string, mostly: keboola,client-<name>)
++ technicalOwner: `keboola` - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ technicalOwnerContactEmails: `devel@keboola.com` (array[string]) - Array of technical owner contact emails
++ region: `us-east-1` - Backend region
++ created: `2024-01-15T10:30:00Z` - Creation timestamp
++ creatorName: `John Doe` - Creator name
++ creatorId: 123 - Creator ID
++ isMaintenance: false - Whether backend is in maintenance mode
++ useDynamicBackends: false - Whether dynamic backends are enabled
++ useNetworkPolicies: false - Whether network policies are enabled
++ useSso: false - **Deprecated**, use `isSsoEnabled` instead. Whether SSO is enabled
++ isSsoEnabled: false - Whether SSO is enabled (SAML2 activated)
++ isSsoConfigured: false - Whether SAML2 SSO configuration exists
++ edition: standard - Snowflake edition type (enterprise/standard). Enterprise enables multi-cluster warehouses.
++ sqlTemplate: `CREATE ROLE "KEBOOLA_STORAGE";...` - SQL template for setting up Snowflake roles and users
++ isEnabled: false - Whether backend is validated and can be used
++ userPublicKey: `MIIBIjANBgkqhki...` - RSA public key for user authentication
++ securityIntegrationKey: `MIIBIjANBgkqhki...` (optional) - SAML2 public key for security integration (only present when SSO is enabled)
+
+### ActivateSnowflakeStorageBackendResponse
++ id: 123 - Snowflake storage backend ID
++ host: `demo.snowflakecomputing.com` - Snowflake host
++ warehouse: `KEBOOLA` - Snowflake warehouse
++ username: `KEBOOLA_STORAGE` - Snowflake username
++ owner: `keboola` - associated legal owner (string, mostly: keboola,client-<name>)
++ technicalOwner: `keboola` - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
++ technicalOwnerContactEmails: `devel@keboola.com` (array[string]) - Array of technical owner contact emails
++ region: `us-east-1` - Backend region
++ created: `2024-01-15T10:30:00Z` - Creation timestamp
++ creatorName: `John Doe` - Creator name
++ creatorId: 123 - Creator ID
++ isMaintenance: false - Whether backend is in maintenance mode
++ useDynamicBackends: false - Whether dynamic backends are enabled
++ useNetworkPolicies: false - Whether network policies are enabled
++ useSso: false - **Deprecated**, use `isSsoEnabled` instead. Whether SSO is enabled
++ isSsoEnabled: false - Whether SSO is enabled (SAML2 activated)
++ isSsoConfigured: false - Whether SAML2 SSO configuration exists
++ isEnabled: true - Whether backend is validated and can be used
+
+# Group SUPER - Commands
+
+## Run Command [POST /manage/commands]
+
+Executes a Keboola Connection CLI command asynchronously. The command is enqueued to the commands queue, `commandExecutionId` is returned.
+You can use this ID to search the command output in Papertrail logs.
+
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Attributes(CommandExecute)
+
++ Response 201 (application/json)
+
+    + Attributes(CommandExecuteResponse)
+
+## Data Structures
+
+### CommandExecute
+
++ command: `storage:workers\-list` (required) - command to execute
++ parameters: `--help`, 23 (array[string]) - command parameters
+
+## CommandExecuteResponse
+
++ commandExecutionId: `123\-abcd` (required) - execution ID; this ID is appended to all logs provided by the command
+
+
+
+# Group SUPER - UI Management
+
+## SUPER - UI Management [/manage/ui-apps]
+
+### List Applications [GET]
+
+Returns active applications. This resource doesn't require authentication.
+
+
++ Request (application/json)
+
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": "kbc.manageApps",
+            "name": "kbc.manageApps",
+            "version": "0.0.3-33-ga6bc947",
+            "basePath": "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/",
+            "scripts": [
+                "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/scripts\/libs.js",
+                "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/scripts\/scripts.js"
+            ],
+            "styles": [
+                "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/styles\/libs.css",
+                "https:\/\/kbc-uis.s3.amazonaws.com\/kbc.manageApps\/0.0.3-33-ga6bc947\/styles\/select2.png"
+            ],
+            "isCritical": false
+        }
+    ]
+    ```
+
+### Register New Application/Version [POST]
+
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Attributes
+    + manifest_url (required, string) - URL of manifest describing UI build
+    + activate (optional, boolean) - Activate version after registration
+
++ Response 201 (application/json)
+
+    ```js
+    {
+        "app": {
+            "id":"41",
+            "stringId":"kbc",
+            "name":"kbc",
+            "created":"2015-02-12 11:10:09"
+        },
+        "verion": {
+            "id":1646,
+            "created":"2015-08-17 17:43:37",
+            "version":"0.1.21-17-g3cae4c0",
+            "isActive":true,
+            "isCritical": false
+        }
+    }
+    ```
+
+### Delete Application [DELETE /manage/ui-apps/{id}]
+
+Deletes application and its versions
+
++ Parameters
+    + id (required, string) - stringId/name of application
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 204
