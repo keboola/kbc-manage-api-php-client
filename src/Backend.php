@@ -6,11 +6,12 @@ namespace Keboola\ManageApi;
 
 final class Backend
 {
-    public const SNOWFLAKE = 'snowflake';
-    public const SYNAPSE = 'synapse';
-    public const EXASOL = 'exasol';
-    public const TERADATA = 'teradata';
-    public const POSTGRES = 'postgres';
+    public const string SNOWFLAKE = 'snowflake';
+    public const string BIGQUERY = 'bigquery';
+    public const string SYNAPSE = 'synapse';
+    public const string EXASOL = 'exasol';
+    public const string TERADATA = 'teradata';
+    public const string POSTGRES = 'postgres';
 
     public static function getDefaultBackend(): string
     {
