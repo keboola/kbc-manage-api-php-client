@@ -457,6 +457,16 @@ class Client
         return $this->apiGet($this->encode('/manage/projects/%s', $id));
     }
 
+    /**
+     * @param list<int> $adminIds
+     */
+    public function updateProjectReviewers(int $projectId, array $adminIds): void
+    {
+        $this->apiPut($this->encode('/manage/projects/%s/reviewers', $projectId), [
+            'adminIds' => $adminIds,
+        ]);
+    }
+
     public function deleteProject(int $id): void
     {
         $this->apiDelete($this->encode('/manage/projects/%s', $id));

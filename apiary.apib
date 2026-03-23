@@ -1807,7 +1807,8 @@ Only members of the project or its organization are allowed to cancel project in
                 "name": "test user 2",
                 "email": "spam@keboola.com"
             },
-            "approver": null
+            "approver": null,
+            "canApproveMergeRequests": true
         },
         {
             "id": 124,
@@ -1824,7 +1825,8 @@ Only members of the project or its organization are allowed to cancel project in
                 "id": 1,
                 "name": "admin 1",
                 "email": "dev@keboola.com"
-            }
+            },
+            "canApproveMergeRequests": false
         }
     ]
     ```
@@ -1855,6 +1857,50 @@ An optional expiration (seconds) and reason for joining can be added to the requ
             X-KBC-ManageApiToken: your_token
 
 + Response 204
+
+## Project Reviewers [/manage/projects/{project_id}/reviewers]
+
++ Parameters
+    + project_id (required, int) - Project ID
+
+### Update project reviewers [PUT]
+
+Sets which project members can approve merge requests. Accepts a list of admin IDs with replace semantics — listed admins get the flag, others lose it. Empty array removes all reviewers.
+
+Only admins with `admin` or `share` role can be set as reviewers. Project must have the `branches-merge-requests` feature flag.
+
++ Attributes
+
+    + adminIds: [123, 456] (required, array[number]) - List of admin IDs to set as reviewers
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
+    + Body
+
+            {
+                "adminIds": [123, 456]
+            }
+
++ Response 204
+
++ Response 400 (application/json)
+
+    ```js
+    {
+        "error": "Admins [789] were not found in the project."
+    }
+    ```
+
++ Response 403 (application/json)
+
+    ```js
+    {
+        "error": "Access denied."
+    }
+    ```
 
 ## Project Templates [/manage/project-templates/]
 
@@ -1955,7 +2001,8 @@ An optional expiration (seconds) and reason for joining can be added to the requ
             "name": "test user 2",
             "email": "spam@keboola.com"
         },
-        "approver": null
+        "approver": null,
+        "canApproveMergeRequests": true
     }
     ```
 
