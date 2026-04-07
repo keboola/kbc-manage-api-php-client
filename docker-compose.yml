@@ -1,12 +1,10 @@
 services:
-  release:
-    build: .
-    image: keboola/manage-api-tests
-    command: composer ci
-
   dev: &dev-config
     platform: linux/amd64
-    build: .
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      target: package-ci
     volumes:
       - ./:/code
     environment:
@@ -57,12 +55,9 @@ services:
   dev-xdebug:
     <<: *dev-config
     build:
-      context: docker/xdebug
-      args:
-        IMAGE: kbc-manage-api-php-client-dev
-    volumes:
-      - ./:/code/
-      - ./docker/xdebug/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini
+      context: ../..
+      dockerfile: Dockerfile
+      target: package-ci-xdebug
 
   openapi:
     image: node:24-alpine
