@@ -2114,8 +2114,7 @@ paths:
                 defaultBackend:
                   type: string
                   example: snowflake
-                  description: >-
-                    Project default backend; default is `snowflake`
+                  description: Project default backend; default is `snowflake`
                 dataRetentionTimeInDays:
                   type: string
                   example: '7'
@@ -3403,6 +3402,8 @@ paths:
                           type: string
                         email:
                           type: string
+                    canApproveMergeRequests:
+                      type: boolean
                   required:
                     - id
                     - name
@@ -3415,6 +3416,7 @@ paths:
                     - status
                     - invitor
                     - approver
+                    - canApproveMergeRequests
               example:
                 - id: 123
                   name: test user
@@ -3430,6 +3432,7 @@ paths:
                     name: test user 2
                     email: spam@keboola.com
                   approver: null
+                  canApproveMergeRequests: true
                 - id: 124
                   name: test user 2
                   email: spam@keboola.com
@@ -3444,6 +3447,7 @@ paths:
                     id: 1
                     name: admin 1
                     email: dev@keboola.com
+                  canApproveMergeRequests: false
       summary: List project users
       operationId: List project users
       description: ''
@@ -3505,6 +3509,142 @@ paths:
                   type: number
                   example: 3600
                   description: After how many seconds the membership of a user will expire
+  /manage/projects/{project_id}/reviewers:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: number
+                    name:
+                      type: string
+                    email:
+                      type: string
+                  required:
+                    - id
+                    - name
+                    - email
+              example:
+                - id: 123
+                  name: John Doe
+                  email: john@example.com
+                - id: 456
+                  name: Jane Smith
+                  email: jane@example.com
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: >-
+                  Project is missing required feature flag
+                  "branches-merge-requests".
+        '403':
+          description: Forbidden
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Access denied.
+      summary: List project reviewers
+      operationId: List project reviewers
+      description: >-
+        Returns the list of project members eligible to approve merge requests.
+        If any member has been explicitly designated as a reviewer (via PUT),
+        only those members are returned. If no one has been explicitly
+        designated, all members with `admin` or `share` role are returned.
+
+
+        Project must have the `branches-merge-requests` feature flag.
+      tags:
+        - Projects
+      parameters:
+        - &ref_17
+          name: project_id
+          in: path
+          description: Project ID
+          required: true
+          schema:
+            type: string
+    put:
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+          content: {}
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Admins [789] were not found in the project.
+        '403':
+          description: Forbidden
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Access denied.
+      summary: Update project reviewers
+      operationId: Update project reviewers
+      description: >-
+        Sets which project members can approve merge requests. Accepts a list of
+        admin IDs with replace semantics — listed admins get the flag, others
+        lose it. Empty array removes all reviewers.
+
+
+        Only admins with `admin` or `share` role can be set as reviewers.
+        Project must have the `branches-merge-requests` feature flag.
+      tags:
+        - Projects
+      parameters:
+        - *ref_17
+      requestBody:
+        content:
+          application/json:
+            example:
+              adminIds:
+                - 123
+                - 456
+            schema:
+              type: object
+              required:
+                - adminIds
+              properties:
+                adminIds:
+                  type: array
+                  items: {}
+                  description: List of admin IDs to set as reviewers
   /manage/project-templates/:
     get:
       responses:
@@ -3647,6 +3787,8 @@ paths:
                         type: string
                   approver:
                     nullable: true
+                  canApproveMergeRequests:
+                    type: boolean
               example:
                 id: 123
                 name: test user
@@ -3662,20 +3804,21 @@ paths:
                   name: test user 2
                   email: spam@keboola.com
                 approver: null
+                canApproveMergeRequests: true
       summary: Change role of a user in a project
       operationId: Change role of a user in a project
       description: ''
       tags:
         - Projects
       parameters:
-        - &ref_17
+        - &ref_18
           name: project_id
           in: path
           description: Project ID
           required: true
           schema:
             type: string
-        - &ref_18
+        - &ref_19
           name: user_id
           in: path
           description: User ID
@@ -3711,8 +3854,8 @@ paths:
       tags:
         - Projects
       parameters:
-        - *ref_17
         - *ref_18
+        - *ref_19
   /manage/projects/{project_id}/join-project:
     post:
       responses:
@@ -3935,14 +4078,14 @@ paths:
       tags:
         - Projects
       parameters:
-        - &ref_19
+        - &ref_20
           name: project_id
           in: path
           description: Project ID
           required: true
           schema:
             type: string
-        - &ref_20
+        - &ref_21
           name: join_request_id
           in: path
           description: Join Request ID
@@ -3964,8 +4107,8 @@ paths:
       tags:
         - Projects
       parameters:
-        - *ref_19
         - *ref_20
+        - *ref_21
     delete:
       responses:
         '204':
@@ -3978,8 +4121,8 @@ paths:
       tags:
         - Projects
       parameters:
-        - *ref_19
         - *ref_20
+        - *ref_21
   /manage/projects/{project_id}/disabled:
     post:
       responses:
@@ -4500,8 +4643,7 @@ paths:
               properties:
                 ignoreBackendErrors:
                   type: boolean
-                  description: >-
-                    Ignore all errors from the backend. `false` is default.
+                  description: Ignore all errors from the backend. `false` is default.
   /manage/deleted-projects:
     get:
       responses:
@@ -4952,7 +5094,7 @@ paths:
       tags:
         - Users
       parameters:
-        - &ref_21
+        - &ref_22
           name: user_id_or_email
           in: path
           description: Project ID
@@ -5031,7 +5173,7 @@ paths:
       tags:
         - Users
       parameters:
-        - *ref_21
+        - *ref_22
   /manage/users/{user_id_or_email}/metadata/{metadata_id}:
     delete:
       responses:
@@ -5400,7 +5542,7 @@ paths:
       tags:
         - My Account
       parameters:
-        - &ref_22
+        - &ref_23
           name: join_request_id
           in: path
           description: ''
@@ -5420,7 +5562,7 @@ paths:
       tags:
         - My Account
       parameters:
-        - *ref_22
+        - *ref_23
   /manage/current-user/projects-invitations:
     get:
       responses:
@@ -6977,10 +7119,12 @@ paths:
                     type: number
                   host:
                     type: string
+                    description: 37-demo.snowflakecomputing.com (required)
                   backend:
                     type: string
                   region:
                     type: string
+                    description: east-1
                   technicalOwnerContactEmails:
                     type: array
                     description: Array of technical owner contact emails
@@ -7091,6 +7235,13 @@ paths:
                       - client_x509_cert_url
                   folderId:
                     type: number
+                  bqExternalSharingRoleName:
+                    type: string
+                    description: >-
+                      Name of the custom IAM role for Analytics Hub external
+                      bucket sharing. Always present in the response; `null`
+                      when not configured.
+                    nullable: true
                 required:
                   - region
               example:
@@ -7108,6 +7259,7 @@ paths:
                   auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
                   client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
                 folderId: 123
+                bqExternalSharingRoleName: roles/custom.analyticsHubListingAdmin
       summary: Create a new BigQuery backend
       operationId: Create a new BigQuery backend
       description: >-
@@ -7147,6 +7299,7 @@ paths:
                 token_uri: https://oauth2.googleapis.com/token
                 auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
                 client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
+              bqExternalSharingRoleName: roles/custom.analyticsHubListingAdmin
             schema:
               type: object
               properties:
@@ -7199,6 +7352,22 @@ paths:
                     - token_uri
                     - auth_provider_x509_cert_url
                     - client_x509_cert_url
+                bqExternalSharingRoleName:
+                  type: string
+                  description: >-
+                    Name of the custom IAM role pre-configured for Analytics Hub
+                    external bucket sharing. When set, the bucket sharing setup
+                    guide surfaces this role name to the user. When absent, the
+                    guide falls back to recommending the built-in
+                    `roles/analyticshub.listingAdmin` role. There is no
+                    validation on existence of this role. If the role is wrong,
+                    guide registering the external dataset will lead user to
+                    wrong role. It is used for guidance only, no direct logic
+                    applied. If you know that datasets for registration as
+                    external buckets are coming from one project, create a
+                    project-based custom role in that project. If you know, that
+                    your datasets to register will come from different projects,
+                    create orgazation based role.
               required:
                 - owner
                 - technicalOwner
@@ -7254,6 +7423,13 @@ paths:
                       - client_x509_cert_url
                   folderId:
                     type: number
+                  bqExternalSharingRoleName:
+                    type: string
+                    description: >-
+                      Name of the custom IAM role for Analytics Hub external
+                      bucket sharing. Always present in the response; `null`
+                      when not configured.
+                    nullable: true
                 required:
                   - region
               example:
@@ -7271,6 +7447,7 @@ paths:
                   auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
                   client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
                 folderId: 123
+                bqExternalSharingRoleName: roles/custom.analyticsHubListingAdmin
       summary: Update BigQuery backend
       operationId: Update BigQuery backend
       description: Update of the credentials for BigQuery backend.
@@ -7302,6 +7479,7 @@ paths:
                 client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/something
               owner: keboola
               technicalOwner: keboola
+              bqExternalSharingRoleName: roles/custom.analyticsHubListingAdmin
             schema:
               $ref: '#/components/schemas/BigQueryStorageBackendUpdate'
   /manage/storage-backend/snowflake:
@@ -8587,6 +8765,21 @@ components:
           example: us-east-1
         credentials:
           $ref: '#/components/schemas/GCPCredentials'
+        bqExternalSharingRoleName:
+          type: string
+          example: roles/custom.analyticsHubListingAdmin
+          description: >-
+            Name of the custom IAM role pre-configured for Analytics Hub
+            external bucket sharing. When set, the bucket sharing setup guide
+            surfaces this role name to the user. When absent, the guide falls
+            back to recommending the built-in `roles/analyticshub.listingAdmin`
+            role. There is no validation on existence of this role. If the role
+            is wrong, guide registering the external dataset will lead user to
+            wrong role. It is used for guidance only, no direct logic applied.
+            If you know that datasets for registration as external buckets are
+            coming from one project, create a project-based custom role in that
+            project. If you know, that your datasets to register will come from
+            different projects, create orgazation based role.
     BigQueryStorageBackendCreated:
       type: object
       required:
@@ -8606,6 +8799,13 @@ components:
         folderId:
           type: number
           example: 123
+        bqExternalSharingRoleName:
+          type: string
+          example: roles/custom.analyticsHubListingAdmin
+          description: >-
+            Name of the custom IAM role for Analytics Hub external bucket
+            sharing. Always present in the response; `null` when not configured.
+          nullable: true
     BigQueryStorageBackendUpdate:
       type: object
       required:
@@ -8626,6 +8826,21 @@ components:
           description: >-
             associated technical owner (who technically manages the account).
             Enum: keboola, internal, kbdb, byodb
+        bqExternalSharingRoleName:
+          type: string
+          example: roles/custom.analyticsHubListingAdmin
+          description: >-
+            Name of the custom IAM role pre-configured for Analytics Hub
+            external bucket sharing. When set, the bucket sharing setup guide
+            surfaces this role name to the user. When absent, the guide falls
+            back to recommending the built-in `roles/analyticshub.listingAdmin`
+            role. There is no validation on existence of this role. If the role
+            is wrong, guide registering the external dataset will lead user to
+            wrong role. It is used for guidance only, no direct logic applied.
+            If you know that datasets for registration as external buckets are
+            coming from one project, create a project-based custom role in that
+            project. If you know, that your datasets to register will come from
+            different projects, create orgazation based role.
     StorageBackendUpdate:
       type: object
       required:
@@ -8673,13 +8888,15 @@ components:
           example: 123
         host:
           type: string
-          example: sapi-37-demo.snowflakecomputing.com
+          example: sapi
+          description: 37-demo.snowflakecomputing.com (required)
         backend:
           type: string
           example: snowflake
         region:
           type: string
-          example: us-east-1
+          example: us
+          description: east-1
         technicalOwnerContactEmails:
           type: array
           items: {}
