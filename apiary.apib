@@ -1863,6 +1863,58 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 + Parameters
     + project_id (required, int) - Project ID
 
+### List project reviewers [GET]
+
+Returns the list of project members eligible to approve merge requests. If any member has been explicitly designated as a reviewer (via PUT), only those members are returned. If no one has been explicitly designated, all members with `admin` or `share` role are returned.
+
+Project must have the `branches-merge-requests` feature flag.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 123,
+            "name": "John Doe",
+            "email": "john@example.com"
+        },
+        {
+            "id": 456,
+            "name": "Jane Smith",
+            "email": "jane@example.com"
+        }
+    ]
+    ```
+
++ Response 400 (application/json)
+
+    ```js
+    {
+        "error": "Project is missing required feature flag \"branches-merge-requests\"."
+    }
+    ```
+
++ Response 403 (application/json)
+
+    ```js
+    {
+        "error": "Access denied."
+    }
+    ```
+
++ Response 404 (application/json)
+
+    ```js
+    {
+        "error": "Project not found."
+    }
+    ```
+
 ### Update project reviewers [PUT]
 
 Sets which project members can approve merge requests. Accepts a list of admin IDs with replace semantics — listed admins get the flag, others lose it. Empty array removes all reviewers.
@@ -1898,7 +1950,15 @@ Only admins with `admin` or `share` role can be set as reviewers. Project must h
 
     ```js
     {
-        "error": "Access denied."
+        "error": "Only organization admins can manage project reviewers."
+    }
+    ```
+
++ Response 404 (application/json)
+
+    ```js
+    {
+        "error": "Project not found."
     }
     ```
 
@@ -3866,7 +3926,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + folderId: 123(required) - where is service account created
 + region: `us-east-1` (required)
 + credentials(GCPCredentials)
-+ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role pre-configured for Analytics Hub external bucket sharing. When set, the bucket sharing setup guide surfaces this role name to the user. When absent, the guide falls back to recommending the built-in `roles/analyticshub.listingAdmin` role. There is no validation on existence of this role. If the role is wrong, guide registering the external dataset will lead user to wrong role. It is used for guidance only, no direct logic applied. If you know that datasets for registration as external buckets are coming from one project, create a project-based custom role in that project. If you know, that your datasets to register will come from different projects, create orgazation based role.
++ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role pre-configured for Analytics Hub external bucket sharing. When set, the bucket sharing setup guide surfaces this role name to the user. When absent, the guide falls back to recommending the built-in `roles/analyticshub.listingAdmin` role. There is no validation on existence of this role. If the role is wrong, guide registering the external dataset will lead user to wrong role. It is used for guidance only, no direct logic applied. If you know that datasets for registration as external buckets are coming from one project, create a project-based custom role in that project. If you know, that your datasets to register will come from different projects, create organization based role.
 
 ### BigQueryStorageBackendCreated
 + id:  12 (number)
@@ -3880,7 +3940,7 @@ Activate a Snowflake storage backend after the SQL template created via [Create 
 + credentials(GCPCredentials, optional)
 + owner: keboola (required) - associated GCP account owner, can be (string, mostly: keboola,client-<name>)
 + technicalOwner: keboola (required) - associated technical owner (who technically manages the account). Enum: keboola, internal, kbdb, byodb
-+ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role pre-configured for Analytics Hub external bucket sharing. When set, the bucket sharing setup guide surfaces this role name to the user. When absent, the guide falls back to recommending the built-in `roles/analyticshub.listingAdmin` role. There is no validation on existence of this role. If the role is wrong, guide registering the external dataset will lead user to wrong role. It is used for guidance only, no direct logic applied. If you know that datasets for registration as external buckets are coming from one project, create a project-based custom role in that project. If you know, that your datasets to register will come from different projects, create orgazation based role.
++ bqExternalSharingRoleName: `roles/custom.analyticsHubListingAdmin` (optional, string) - Name of the custom IAM role pre-configured for Analytics Hub external bucket sharing. When set, the bucket sharing setup guide surfaces this role name to the user. When absent, the guide falls back to recommending the built-in `roles/analyticshub.listingAdmin` role. There is no validation on existence of this role. If the role is wrong, guide registering the external dataset will lead user to wrong role. It is used for guidance only, no direct logic applied. If you know that datasets for registration as external buckets are coming from one project, create a project-based custom role in that project. If you know, that your datasets to register will come from different projects, create organization based role.
 
 ### StorageBackendUpdate
 
