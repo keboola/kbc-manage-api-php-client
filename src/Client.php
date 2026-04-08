@@ -458,6 +458,18 @@ class Client
     }
 
     /**
+     * @return list<array{
+     *     id: int,
+     *     name: string,
+     *     email: string,
+     * }>
+     */
+    public function listProjectReviewers(int $projectId): array
+    {
+        return $this->apiGet($this->encode('/manage/projects/%s/reviewers', $projectId));
+    }
+
+    /**
      * @param list<int> $adminIds
      */
     public function updateProjectReviewers(int $projectId, array $adminIds): void
