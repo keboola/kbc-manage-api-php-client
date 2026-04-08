@@ -55,6 +55,7 @@ services:
   # Alias for standalone repo workflow compatibility
   release:
     <<: *dev-config
+    image: keboola/manage-api-tests
 
   dev-xdebug:
     <<: *dev-config
