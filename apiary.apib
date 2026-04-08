@@ -1863,6 +1863,50 @@ An optional expiration (seconds) and reason for joining can be added to the requ
 + Parameters
     + project_id (required, int) - Project ID
 
+### List project reviewers [GET]
+
+Returns the list of project members eligible to approve merge requests. If any member has been explicitly designated as a reviewer (via PUT), only those members are returned. If no one has been explicitly designated, all members with `admin` or `share` role are returned.
+
+Project must have the `branches-merge-requests` feature flag.
+
++ Request (application/json)
+    + Headers
+
+            X-KBC-ManageApiToken: your_token
+
++ Response 200 (application/json)
+
+    ```js
+    [
+        {
+            "id": 123,
+            "name": "John Doe",
+            "email": "john@example.com"
+        },
+        {
+            "id": 456,
+            "name": "Jane Smith",
+            "email": "jane@example.com"
+        }
+    ]
+    ```
+
++ Response 400 (application/json)
+
+    ```js
+    {
+        "error": "Project is missing required feature flag \"branches-merge-requests\"."
+    }
+    ```
+
++ Response 403 (application/json)
+
+    ```js
+    {
+        "error": "Access denied."
+    }
+    ```
+
 ### Update project reviewers [PUT]
 
 Sets which project members can approve merge requests. Accepts a list of admin IDs with replace semantics — listed admins get the flag, others lose it. Empty array removes all reviewers.
