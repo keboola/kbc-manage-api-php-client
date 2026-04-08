@@ -52,6 +52,10 @@ services:
       - KBC_TEST_MAIN_SNOWFLAKE_BACKEND_WAREHOUSE
       - KBC_TEST_SNOWFLAKE_BACKEND_CLIENT_DB_PREFIX
 
+  # Alias for standalone repo workflow compatibility
+  release:
+    <<: *dev-config
+
   dev-xdebug:
     <<: *dev-config
     build:
