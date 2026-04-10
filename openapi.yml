@@ -3565,6 +3565,18 @@ paths:
                     type: string
               example:
                 error: Access denied.
+        '404':
+          description: Not Found
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Project not found.
       summary: List project reviewers
       operationId: List project reviewers
       description: >-
@@ -3614,7 +3626,19 @@ paths:
                   error:
                     type: string
               example:
-                error: Access denied.
+                error: Only organization admins can manage project reviewers.
+        '404':
+          description: Not Found
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+              example:
+                error: Project not found.
       summary: Update project reviewers
       operationId: Update project reviewers
       description: >-
@@ -7367,7 +7391,7 @@ paths:
                     external buckets are coming from one project, create a
                     project-based custom role in that project. If you know, that
                     your datasets to register will come from different projects,
-                    create orgazation based role.
+                    create organization based role.
               required:
                 - owner
                 - technicalOwner
@@ -8779,7 +8803,7 @@ components:
             If you know that datasets for registration as external buckets are
             coming from one project, create a project-based custom role in that
             project. If you know, that your datasets to register will come from
-            different projects, create orgazation based role.
+            different projects, create organization based role.
     BigQueryStorageBackendCreated:
       type: object
       required:
@@ -8840,7 +8864,7 @@ components:
             If you know that datasets for registration as external buckets are
             coming from one project, create a project-based custom role in that
             project. If you know, that your datasets to register will come from
-            different projects, create orgazation based role.
+            different projects, create organization based role.
     StorageBackendUpdate:
       type: object
       required:
