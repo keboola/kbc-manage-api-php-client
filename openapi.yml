@@ -1694,9 +1694,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -1706,9 +1703,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -1829,9 +1823,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -1841,9 +1832,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -2023,9 +2011,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -2035,9 +2020,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -2276,9 +2258,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -2288,9 +2267,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -2410,9 +2386,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -2422,9 +2395,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -2544,9 +2514,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -2556,9 +2523,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -2672,9 +2636,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -2684,9 +2645,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -2806,9 +2764,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -2818,9 +2773,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -4202,9 +4154,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -4214,9 +4163,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -6149,9 +6095,6 @@ paths:
                   kbc.writersCount:
                     name: kbc.writersCount
                     value: 0
-                  orchestrations.count:
-                    name: orchestrations.count
-                    value: 10
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
                     value: 50000000000
@@ -6161,9 +6104,6 @@ paths:
                 metrics:
                   kbc.adminsCount:
                     name: kbc.adminsCount
-                    value: 1
-                  orchestrations.count:
-                    name: orchestrations.count
                     value: 1
                   storage.dataSizeBytes:
                     name: storage.dataSizeBytes
@@ -8311,13 +8251,6 @@ components:
                   type: string
                 value:
                   type: number
-            orchestrations.count:
-              type: object
-              properties:
-                name:
-                  type: string
-                value:
-                  type: number
             storage.dataSizeBytes:
               type: object
               properties:
@@ -8336,13 +8269,6 @@ components:
           type: object
           properties:
             kbc.adminsCount:
-              type: object
-              properties:
-                name:
-                  type: string
-                value:
-                  type: number
-            orchestrations.count:
               type: object
               properties:
                 name:
