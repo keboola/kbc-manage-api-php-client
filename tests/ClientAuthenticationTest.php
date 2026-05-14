@@ -63,45 +63,51 @@ final class ClientAuthenticationTest extends TestCase
     {
         $tokenPath = tempnam(sys_get_temp_dir(), 'manage-api-jwt-');
         self::assertIsString($tokenPath);
-        file_put_contents($tokenPath, "first-jwt\n");
 
-        $container = [];
-        $history = Middleware::history($container);
-        $mockHandler = new MockHandler([
-            new Response(200, ['Content-Type' => 'application/json'], '{"ok":true}'),
-            new Response(200, ['Content-Type' => 'application/json'], '{"ok":true}'),
-        ]);
-        $client = new Client([
-            'url' => 'https://connection.example',
-            'kubernetesTokenPath' => $tokenPath,
-            'handler' => $mockHandler,
-            'middlewares' => [$history],
-        ]);
+        try {
+            file_put_contents($tokenPath, "first-jwt\n");
 
-        $client->verifyToken();
-        file_put_contents($tokenPath, "second-jwt\n");
-        $client->verifyToken();
+            $container = [];
+            $history = Middleware::history($container);
+            $mockHandler = new MockHandler([
+                new Response(200, ['Content-Type' => 'application/json'], '{"ok":true}'),
+                new Response(200, ['Content-Type' => 'application/json'], '{"ok":true}'),
+            ]);
+            $client = new Client([
+                'url' => 'https://connection.example',
+                'kubernetesTokenPath' => $tokenPath,
+                'handler' => $mockHandler,
+                'middlewares' => [$history],
+            ]);
 
-        unlink($tokenPath);
+            $client->verifyToken();
+            file_put_contents($tokenPath, "second-jwt\n");
+            $client->verifyToken();
 
-        self::assertSame('Bearer first-jwt', $container[0]['request']->getHeaderLine('X-Kubernetes-Authorization'));
-        self::assertSame('Bearer second-jwt', $container[1]['request']->getHeaderLine('X-Kubernetes-Authorization'));
+            self::assertSame('Bearer first-jwt', $container[0]['request']->getHeaderLine('X-Kubernetes-Authorization'));
+            self::assertSame('Bearer second-jwt', $container[1]['request']->getHeaderLine('X-Kubernetes-Authorization'));
+        } finally {
+            @unlink($tokenPath);
+        }
     }
 
     public function testUsesKubernetesAuthorizationHeaderFromExplicitFileStrategy(): void
     {
         $tokenPath = tempnam(sys_get_temp_dir(), 'manage-api-jwt-');
         self::assertIsString($tokenPath);
-        file_put_contents($tokenPath, 'jwt-token');
 
-        $requests = $this->captureRequests([
-            'authStrategy' => new KubernetesServiceAccountTokenAuthenticationStrategy($tokenPath),
-        ]);
+        try {
+            file_put_contents($tokenPath, 'jwt-token');
 
-        unlink($tokenPath);
+            $requests = $this->captureRequests([
+                'authStrategy' => new KubernetesServiceAccountTokenAuthenticationStrategy($tokenPath),
+            ]);
 
-        self::assertSame('', $requests[0]['request']->getHeaderLine('X-KBC-ManageApiToken'));
-        self::assertSame('Bearer jwt-token', $requests[0]['request']->getHeaderLine('X-Kubernetes-Authorization'));
+            self::assertSame('', $requests[0]['request']->getHeaderLine('X-KBC-ManageApiToken'));
+            self::assertSame('Bearer jwt-token', $requests[0]['request']->getHeaderLine('X-Kubernetes-Authorization'));
+        } finally {
+            @unlink($tokenPath);
+        }
     }
 
     public function testRejectsMissingAuthenticationConfiguration(): void
