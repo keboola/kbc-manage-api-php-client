@@ -69,7 +69,11 @@ class Client
         if (isset($config['handler'])) {
             $this->handler = $config['handler'];
         }
-        if (isset($config['middlewares']) && is_array($config['middlewares'])) {
+        if (isset($config['middlewares'])) {
+            if (!is_array($config['middlewares'])) {
+                throw new InvalidArgumentException('middlewares must be an array of callables');
+            }
+
             $middlewares = array_values($config['middlewares']);
             foreach ($middlewares as $middleware) {
                 if (!is_callable($middleware)) {
