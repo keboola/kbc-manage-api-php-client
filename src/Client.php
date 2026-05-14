@@ -1281,8 +1281,17 @@ class Client
      */
     private function request(string $method, string $url, array $options = []): mixed
     {
+        $callerHeaders = [];
+        if (isset($options['headers'])) {
+            if (!is_array($options['headers'])) {
+                throw new InvalidArgumentException('headers option must be an array');
+            }
+            $callerHeaders = $options['headers'];
+        }
+
         $requestOptions = array_merge($options, [
             'headers' => array_merge(
+                $callerHeaders,
                 $this->authenticationStrategy->getAuthenticationHeaders(),
                 [
                     'Accept-Encoding' => 'gzip',
