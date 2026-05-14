@@ -67,6 +67,9 @@ class Client
             $this->backoffMaxTries = (int) $config['backoffMaxTries'];
         }
         if (isset($config['handler'])) {
+            if (!is_callable($config['handler'])) {
+                throw new InvalidArgumentException('handler must be callable or null');
+            }
             $this->handler = $config['handler'];
         }
         if (isset($config['middlewares'])) {
