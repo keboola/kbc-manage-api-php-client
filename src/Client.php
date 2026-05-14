@@ -47,6 +47,8 @@ class Client
      *  - kubernetesTokenPath - path to projected Kubernetes service account JWT token
      *  - authStrategy - custom authentication strategy
      *  - backoffMaxTries - backoff maximum retries count
+     *  - handler - custom Guzzle handler (callable); useful for testing with MockHandler
+     *  - middlewares - list of additional Guzzle middlewares (list<callable>)
      *
      * @param array<string, mixed> $config
      */
