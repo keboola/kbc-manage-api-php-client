@@ -118,14 +118,23 @@ class Client
         }
 
         if (isset($config['jwtToken'])) {
-            return new StaticJwtAuthenticationStrategy((string) $config['jwtToken']);
+            if (!is_string($config['jwtToken'])) {
+                throw new InvalidArgumentException('jwtToken must be a string');
+            }
+            return new StaticJwtAuthenticationStrategy($config['jwtToken']);
         }
 
         if (isset($config['kubernetesTokenPath'])) {
-            return new KubernetesServiceAccountTokenAuthenticationStrategy((string) $config['kubernetesTokenPath']);
+            if (!is_string($config['kubernetesTokenPath'])) {
+                throw new InvalidArgumentException('kubernetesTokenPath must be a string');
+            }
+            return new KubernetesServiceAccountTokenAuthenticationStrategy($config['kubernetesTokenPath']);
         }
 
-        return new ManageApiTokenAuthenticationStrategy((string) $config['token']);
+        if (!is_string($config['token'])) {
+            throw new InvalidArgumentException('token must be a string');
+        }
+        return new ManageApiTokenAuthenticationStrategy($config['token']);
     }
 
     private function initClient(): void
