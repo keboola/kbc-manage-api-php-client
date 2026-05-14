@@ -4,10 +4,20 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApi\Auth;
 
+use InvalidArgumentException;
+
 final readonly class ManageApiTokenAuthenticationStrategy implements AuthenticationStrategyInterface
 {
-    public function __construct(private string $token)
+    private string $token;
+
+    public function __construct(string $token)
     {
+        $token = trim($token);
+        if ($token === '') {
+            throw new InvalidArgumentException('Manage API token must not be empty');
+        }
+
+        $this->token = $token;
     }
 
     /**
