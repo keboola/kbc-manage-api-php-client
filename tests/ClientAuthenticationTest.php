@@ -137,6 +137,14 @@ final class ClientAuthenticationTest extends TestCase
         new StaticJwtAuthenticationStrategy(' ');
     }
 
+    public function testRejectsEmptyManageApiToken(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Manage API token must not be empty');
+
+        new ManageApiTokenAuthenticationStrategy(' ');
+    }
+
     public function testRejectsEmptyKubernetesTokenFile(): void
     {
         $tokenPath = tempnam(sys_get_temp_dir(), 'manage-api-jwt-');
