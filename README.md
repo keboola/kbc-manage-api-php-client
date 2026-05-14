@@ -56,6 +56,39 @@ $client = new Client([
 $project = $client->getProject(234);
 ```
 
+### Authentication options
+
+The client supports exactly one authentication option per instance.
+
+Use the legacy Manage API token header:
+
+```php
+$client = new Client([
+    'token' => getenv('MY_MANAGE_TOKEN'),
+    'url' => 'https://connection.keboola.com',
+]);
+```
+
+Use a manually provided JWT for internal-service authentication:
+
+```php
+$client = new Client([
+    'jwtToken' => getenv('MY_INTERNAL_SERVICE_JWT'),
+    'url' => 'https://connection.keboola.com',
+]);
+```
+
+Use a projected Kubernetes ServiceAccount token mounted in a pod:
+
+```php
+$client = new Client([
+    'kubernetesTokenPath' => '/var/run/secrets/keboola/connection-token',
+    'url' => 'https://connection.keboola.com',
+]);
+```
+
+Both JWT variants send `X-Kubernetes-Authorization: Bearer <jwt>`. The Kubernetes token file is read for every request so kubelet token rotation is picked up without restarting the PHP process.
+
 ## Tests
 
 
