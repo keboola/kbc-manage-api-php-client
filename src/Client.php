@@ -10,6 +10,10 @@ use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use InvalidArgumentException;
+use Keboola\ManageApi\Auth\AuthenticationStrategyInterface;
+use Keboola\ManageApi\Auth\KubernetesServiceAccountTokenAuthenticationStrategy;
+use Keboola\ManageApi\Auth\ManageApiTokenAuthenticationStrategy;
+use Keboola\ManageApi\Auth\StaticJwtAuthenticationStrategy;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -17,11 +21,16 @@ class Client
 {
     private string $apiUrl;
 
-    private string $tokenString = '';
+    private AuthenticationStrategyInterface $authenticationStrategy;
 
     private int $backoffMaxTries = 10;
 
     private string $userAgent = 'Keboola Manage API PHP Client';
+
+    private mixed $handler = null;
+
+    /** @var list<callable> */
+    private array $middlewares = [];
 
     /**
      * @var GuzzleClient
@@ -34,16 +43,18 @@ class Client
      * Client configuration settings include the following options:
      *  - url - API URL
      *  - token - Keboola Manage api token
+     *  - jwtToken - static JWT token sent as X-Kubernetes-Authorization
+     *  - kubernetesTokenPath - path to projected Kubernetes service account JWT token
+     *  - authStrategy - custom authentication strategy
      *  - backoffMaxTries - backoff maximum retries count
+     *  - handler - custom Guzzle handler (callable); useful for testing with MockHandler
+     *  - middlewares - list of additional Guzzle middlewares (list<callable>)
      *
      * @param array<string, mixed> $config
      */
     public function __construct(array $config)
     {
-        if (!isset($config['token'])) {
-            throw new InvalidArgumentException('token must be set');
-        }
-        $this->tokenString = $config['token'];
+        $this->authenticationStrategy = $this->createAuthenticationStrategy($config);
 
         if (isset($config['userAgent'])) {
             $this->userAgent .= ' ' . $config['userAgent'];
@@ -57,16 +68,85 @@ class Client
         if (isset($config['backoffMaxTries'])) {
             $this->backoffMaxTries = (int) $config['backoffMaxTries'];
         }
+        if (isset($config['handler'])) {
+            if (!is_callable($config['handler'])) {
+                throw new InvalidArgumentException('handler must be callable or null');
+            }
+            $this->handler = $config['handler'];
+        }
+        if (isset($config['middlewares'])) {
+            if (!is_array($config['middlewares'])) {
+                throw new InvalidArgumentException('middlewares must be an array of callables');
+            }
+
+            $middlewares = array_values($config['middlewares']);
+            foreach ($middlewares as $middleware) {
+                if (!is_callable($middleware)) {
+                    throw new InvalidArgumentException('middlewares must contain only callables');
+                }
+            }
+
+            $this->middlewares = $middlewares;
+        }
         $this->initClient();
+    }
+
+    /**
+     * @param array<string, mixed> $config
+     */
+    private function createAuthenticationStrategy(array $config): AuthenticationStrategyInterface
+    {
+        $enabledOptions = array_filter([
+            'token' => array_key_exists('token', $config) && $config['token'] !== null,
+            'jwtToken' => array_key_exists('jwtToken', $config) && $config['jwtToken'] !== null,
+            'kubernetesTokenPath' => array_key_exists('kubernetesTokenPath', $config) && $config['kubernetesTokenPath'] !== null,
+            'authStrategy' => array_key_exists('authStrategy', $config) && $config['authStrategy'] !== null,
+        ]);
+
+        if (count($enabledOptions) !== 1) {
+            throw new InvalidArgumentException(
+                'Exactly one authentication option must be set: token, jwtToken, kubernetesTokenPath, or authStrategy',
+            );
+        }
+
+        if (isset($config['authStrategy'])) {
+            if (!$config['authStrategy'] instanceof AuthenticationStrategyInterface) {
+                throw new InvalidArgumentException('authStrategy must implement AuthenticationStrategyInterface');
+            }
+
+            return $config['authStrategy'];
+        }
+
+        if (isset($config['jwtToken'])) {
+            if (!is_string($config['jwtToken'])) {
+                throw new InvalidArgumentException('jwtToken must be a string');
+            }
+            return new StaticJwtAuthenticationStrategy($config['jwtToken']);
+        }
+
+        if (isset($config['kubernetesTokenPath'])) {
+            if (!is_string($config['kubernetesTokenPath'])) {
+                throw new InvalidArgumentException('kubernetesTokenPath must be a string');
+            }
+            return new KubernetesServiceAccountTokenAuthenticationStrategy($config['kubernetesTokenPath']);
+        }
+
+        if (!is_string($config['token'])) {
+            throw new InvalidArgumentException('token must be a string');
+        }
+        return new ManageApiTokenAuthenticationStrategy($config['token']);
     }
 
     private function initClient(): void
     {
-        $handlerStack = HandlerStack::create();
+        $handlerStack = HandlerStack::create($this->handler);
         $handlerStack->push(Middleware::retry(
             $this->createDefaultDecider($this->backoffMaxTries),
             $this->createExponentialDelay(),
         ));
+        foreach ($this->middlewares as $middleware) {
+            $handlerStack->push($middleware);
+        }
 
         $this->client = new GuzzleClient([
             'base_uri' => $this->apiUrl,
@@ -1215,12 +1295,23 @@ class Client
      */
     private function request(string $method, string $url, array $options = []): mixed
     {
+        $callerHeaders = [];
+        if (isset($options['headers'])) {
+            if (!is_array($options['headers'])) {
+                throw new InvalidArgumentException('headers option must be an array');
+            }
+            $callerHeaders = $options['headers'];
+        }
+
         $requestOptions = array_merge($options, [
-            'headers' => [
-                'X-KBC-ManageApiToken' => $this->tokenString,
-                'Accept-Encoding' => 'gzip',
-                'User-Agent' => $this->userAgent,
-            ],
+            'headers' => array_merge(
+                $callerHeaders,
+                $this->authenticationStrategy->getAuthenticationHeaders(),
+                [
+                    'Accept-Encoding' => 'gzip',
+                    'User-Agent' => $this->userAgent,
+                ],
+            ),
         ]);
 
         try {
