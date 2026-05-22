@@ -277,10 +277,12 @@ Symfony controllers in `connection/src/Controller/Manage/**` and request DTOs in
 (`apiary.apib`) is being kept as a reference until the OpenAPI definitions reach
 parity with it.
 
-To dump the current OpenAPI document (from the repository root):
+To dump the current OpenAPI document, run from the **monorepo repository root**
+(not from this package directory -- the script lives in the root `composer.json`
+and needs the root `docker-compose.yml`'s `cli` service):
 
 ```
-$ docker compose run --rm dev composer openapi:manage:dump
+$ docker compose run --rm cli composer openapi:manage:dump
 ```
 
 The output is written to `openapi/manage.json`.
