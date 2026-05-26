@@ -1138,7 +1138,16 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array{
+     *     name: string,
+     *     version: string,
+     *     basePath: string,
+     *     type: string,
+     *     scripts: list<string>,
+     *     styles: list<string>,
+     *     isCritical: bool,
+     *     commitSha: string|null
+     * }>
      */
     public function listUiApps(): array
     {
