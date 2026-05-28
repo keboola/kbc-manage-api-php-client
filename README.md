@@ -271,19 +271,21 @@ docker-compose run --rm dev composer tests-file-storage
 
 ## Build OpenAPI document
 
-Currently, we mainly document APIs in apiary.apib file. But we want to move to OpenAPI format. By calling following commands, the apiary.apib file will be translated to OpenAPI format and stored in file openapi.yml. Then you can commit it. We should put it in CI.
+The OpenAPI document for the Manage API is generated from PHP attributes (`#[OA\…]`) on
+Symfony controllers in `connection/src/Controller/Manage/**` and request DTOs in
+`connection/src/Manage/**/Request/*Request.php`. The Apiary blueprint
+(`apiary.apib`) is being kept as a reference until the OpenAPI definitions reach
+parity with it.
 
-You need to install `apib2swagger` [tool](https://github.com/kminami/apib2swagger) .
+To dump the current OpenAPI document, run from the **monorepo repository root**
+(not from this package directory -- the script lives in the root `composer.json`
+and needs the root `docker-compose.yml`'s `cli` service):
+
 ```
-$ npm install -g apib2swagger
+$ docker compose run --rm cli composer openapi:manage:dump
 ```
-Then run following commands 
-```
-$ cat apiary.apib | grep -v "X-KBC-ManageApiToken:" | apib2swagger -o openapi.yml -y --open-api-3 --info-title="Manage API"
-# or in docker
-$ docker-compose run --rm openapi 
-$ php AdjustOpenApi.php
-```
+
+The output is written to `openapi/manage.json`.
 
 ## License
 
