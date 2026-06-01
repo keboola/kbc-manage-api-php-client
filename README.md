@@ -2,7 +2,7 @@
 
 [![Build on master](https://github.com/keboola/kbc-manage-api-php-client/actions/workflows/master.yml/badge.svg?branch=master)](https://github.com/keboola/kbc-manage-api-php-client/actions/workflows/master.yml)
 
-Simple PHP wrapper library for [Keboola Management REST API](http://docs.keboolamanagementapi.apiary.io/#)
+Simple PHP wrapper library for Keboola Management REST API
 
 ## Installation
 
@@ -273,9 +273,7 @@ docker-compose run --rm dev composer tests-file-storage
 
 The OpenAPI document for the Manage API is generated from PHP attributes (`#[OA\…]`) on
 Symfony controllers in `connection/src/Controller/Manage/**` and request DTOs in
-`connection/src/Manage/**/Request/*Request.php`. The Apiary blueprint
-(`apiary.apib`) is being kept as a reference until the OpenAPI definitions reach
-parity with it.
+`connection/src/Manage/**/Request/*Request.php`.
 
 To dump the current OpenAPI document, run from the **monorepo repository root**
 (not from this package directory -- the script lives in the root `composer.json`
