@@ -2,7 +2,7 @@
 
 [![Build on master](https://github.com/keboola/kbc-manage-api-php-client/actions/workflows/master.yml/badge.svg?branch=master)](https://github.com/keboola/kbc-manage-api-php-client/actions/workflows/master.yml)
 
-Simple PHP wrapper library for Keboola Management REST API
+Simple PHP wrapper library for Keboola [Management REST API](https://api.keboola.com/?service=manage#auth)
 
 ## Installation
 
