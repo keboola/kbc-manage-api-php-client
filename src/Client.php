@@ -16,6 +16,7 @@ use Keboola\ManageApi\Auth\ManageApiTokenAuthenticationStrategy;
 use Keboola\ManageApi\Auth\StaticJwtAuthenticationStrategy;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use SensitiveParameter;
 
 class Client
 {
@@ -210,6 +211,37 @@ class Client
     public function createSessionToken(): array
     {
         return $this->apiPost('/manage/current-user/session-token');
+    }
+
+    /**
+     * Resolves a programmatic Connection bearer token (kbc_at_* / kbc_pat_*) into a legacy
+     * Storage token for the given project, via Connection's internal auth-bridge resolver.
+     *
+     * The calling service authenticates itself through this client's configured authentication
+     * strategy (Kubernetes service account JWT via `kubernetesTokenPath`/`jwtToken`, or a super
+     * Manage API token with the `internal:auth-bridge:resolve-storage-token` scope). The user's
+     * token to resolve is passed separately in the X-Subject-Token header.
+     *
+     * @param int $projectId Project whose Storage token should be resolved (must be > 0).
+     * @param string $subjectToken Bare programmatic token, without the "Bearer " scheme.
+     * @return array{
+     *     storageToken: string,
+     *     projectId: int,
+     *     tokenId: string,
+     *     userId: string,
+     *     expiresAt: string|null
+     * }
+     */
+    public function resolveStorageToken(int $projectId, #[SensitiveParameter] string $subjectToken): array
+    {
+        return $this->request('POST', '/manage/internal/auth-bridge/resolve-storage-token', [
+            'headers' => [
+                'X-Subject-Token' => 'Bearer ' . $subjectToken,
+            ],
+            'json' => [
+                'projectId' => $projectId,
+            ],
+        ]);
     }
 
     /**
