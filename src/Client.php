@@ -380,7 +380,7 @@ class Client
     }
 
     /**
-     * @param array<mixed> $metadata
+     * @param list<array{key: string, value: string}> $metadata
      * @return array<mixed>
      */
     public function setMaintainerMetadata(int $maintainerId, string $provider, array $metadata): array
@@ -816,7 +816,7 @@ class Client
     }
 
     /**
-     * @param array<mixed> $metadata
+     * @param list<array{key: string, value: string}> $metadata
      * @return array<mixed>
      */
     public function setProjectMetadata(int $projectId, string $provider, array $metadata): array
@@ -841,7 +841,7 @@ class Client
     }
 
     /**
-     * @param array<mixed> $metadata
+     * @param list<array{key: string, value: string}> $metadata
      * @return array<mixed>
      */
     public function setOrganizationMetadata(int $organizationId, string $provider, array $metadata): array
@@ -985,7 +985,7 @@ class Client
     }
 
     /**
-     * @param array<string, mixed> $metadata
+     * @param list<array{key: string, value: string}> $metadata
      * @return array<string, mixed>
      */
     public function setUserMetadata(int|string $emailOrId, string $provider, array $metadata): array
