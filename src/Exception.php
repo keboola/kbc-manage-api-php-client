@@ -10,7 +10,7 @@ class Exception extends GenericException
 {
     protected string $stringCode;
 
-    /** @var array<mixed> */
+    /** @var array<array-key, mixed> */
     protected array $contextParams;
 
     /**
@@ -42,7 +42,7 @@ class Exception extends GenericException
     }
 
     /**
-     * @return array<mixed>
+     * @return array<array-key, mixed>
      */
     public function getContextParams(): array
     {
@@ -50,7 +50,7 @@ class Exception extends GenericException
     }
 
     /**
-     * @param array<mixed> $contextParams
+     * @param array<array-key, mixed> $contextParams
      */
     public function setContextParams($contextParams): self
     {
