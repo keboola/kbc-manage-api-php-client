@@ -379,6 +379,10 @@ class Client
         return $this->apiGet($this->encode('/manage/maintainers/%s/organizations', $maintainerId));
     }
 
+    /**
+     * @param array<mixed> $metadata
+     * @return array<mixed>
+     */
     public function setMaintainerMetadata(int $maintainerId, string $provider, array $metadata): array
     {
         return $this->apiPost($this->encode('/manage/maintainers/%s/metadata', $maintainerId), [
@@ -387,6 +391,9 @@ class Client
         ]);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function listMaintainerMetadata(int $maintainerId): array
     {
         return $this->apiGet($this->encode('/manage/maintainers/%s/metadata', $maintainerId));
@@ -808,6 +815,10 @@ class Client
         $this->apiDelete($this->encode('/manage/projects/%s/limits/%s', $projectId, $limitName));
     }
 
+    /**
+     * @param array<mixed> $metadata
+     * @return array<mixed>
+     */
     public function setProjectMetadata(int $projectId, string $provider, array $metadata): array
     {
         return $this->apiPost($this->encode('/manage/projects/%s/metadata', $projectId), [
@@ -816,6 +827,9 @@ class Client
         ]);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function listProjectMetadata(int $projectId): array
     {
         return $this->apiGet($this->encode('/manage/projects/%s/metadata', $projectId));
@@ -826,6 +840,10 @@ class Client
         $this->apiDelete($this->encode('/manage/projects/%s/metadata/%s', $projectId, $metadataId));
     }
 
+    /**
+     * @param array<mixed> $metadata
+     * @return array<mixed>
+     */
     public function setOrganizationMetadata(int $organizationId, string $provider, array $metadata): array
     {
         return $this->apiPost($this->encode('/manage/organizations/%s/metadata', $organizationId), [
@@ -834,6 +852,9 @@ class Client
         ]);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function listOrganizationMetadata(int $organizationId): array
     {
         return $this->apiGet($this->encode('/manage/organizations/%s/metadata', $organizationId));
@@ -1147,6 +1168,9 @@ class Client
         return $this->apiGet('manage/storage-backend');
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getStorageBackend(int $id): array
     {
         return $this->apiGet(sprintf('manage/storage-backend/%s', $id));
@@ -1282,8 +1306,10 @@ class Client
 
     /**
      * Encode url parameters with `urlencode`. Use `printf` syntax for variables in url (%s, %d, ...).
+     *
+     * @param int|string ...$params
      */
-    private function encode(string $url, ...$params): string
+    private function encode(string $url, int|string ...$params): string
     {
         foreach ($params as &$param) {
             $param = rawurlencode((string) $param);

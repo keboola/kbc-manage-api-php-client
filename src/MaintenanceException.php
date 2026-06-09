@@ -9,7 +9,7 @@ class MaintenanceException extends ClientException
 
     private readonly int $retryAfter;
 
-    public function __construct($reason, $retryAfter, $params)
+    public function __construct(mixed $reason, mixed $retryAfter, mixed $params)
     {
         $this->retryAfter = (int) $retryAfter;
         parent::__construct($reason, 503, null, 'MAINTENANCE', $params);

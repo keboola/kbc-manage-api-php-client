@@ -8,9 +8,10 @@ use Exception as GenericException;
 
 class Exception extends GenericException
 {
-    protected $stringCode;
+    protected string $stringCode;
 
-    protected $contextParams;
+    /** @var array<mixed> */
+    protected array $contextParams;
 
     /**
      * Construct the exception
@@ -34,22 +35,22 @@ class Exception extends GenericException
         return $this->stringCode;
     }
 
-    /**
-     * @param $stringCode
-     */
-    public function setStringCode($stringCode): self
+    public function setStringCode(?string $stringCode): self
     {
         $this->stringCode = $stringCode ? (string) $stringCode : 'APPLICATION_ERROR';
         return $this;
     }
 
-    public function getContextParams()
+    /**
+     * @return array<mixed>
+     */
+    public function getContextParams(): array
     {
         return $this->contextParams;
     }
 
     /**
-     * @param array $contextParams
+     * @param array<mixed> $contextParams
      */
     public function setContextParams($contextParams): self
     {
