@@ -27,6 +27,11 @@ final class ResolveStorageTokenTest extends TestCase
                 'tokenId' => '456',
                 'userId' => '789',
                 'expiresAt' => '2026-01-01T00:00:00+00:00',
+                'tokenDetail' => [
+                    'id' => 456,
+                    'isMasterToken' => true,
+                    'owner' => ['id' => 123, 'name' => 'Test project'],
+                ],
             ])),
         ]);
 
@@ -45,6 +50,11 @@ final class ResolveStorageTokenTest extends TestCase
             'tokenId' => '456',
             'userId' => '789',
             'expiresAt' => '2026-01-01T00:00:00+00:00',
+            'tokenDetail' => [
+                'id' => 456,
+                'isMasterToken' => true,
+                'owner' => ['id' => 123, 'name' => 'Test project'],
+            ],
         ], $result);
 
         $request = $container[0]['request'];
@@ -70,6 +80,7 @@ final class ResolveStorageTokenTest extends TestCase
                 'tokenId' => '456',
                 'userId' => '789',
                 'expiresAt' => null,
+                'tokenDetail' => ['id' => 456],
             ])),
         ]);
 

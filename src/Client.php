@@ -229,8 +229,10 @@ class Client
      *     projectId: int,
      *     tokenId: string,
      *     userId: string,
-     *     expiresAt: string|null
-     * }
+     *     expiresAt: string|null,
+     *     tokenDetail: array<string, mixed>
+     * } `tokenDetail` carries the same payload as GET /v2/storage/tokens/verify,
+     *   so no follow-up verify call is needed.
      */
     public function resolveStorageToken(int $projectId, #[SensitiveParameter] string $subjectToken): array
     {
