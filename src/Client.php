@@ -767,6 +767,38 @@ class Client
     }
 
     /**
+     * Triggers an automatic pay-as-you-go top-up for the given project.
+     *
+     * Requires a super Manage API token holding the `payg:top-up:try` scope.
+     *
+     * @return array<array-key, mixed>
+     * @throws PayAsYouGoTopUpLockedException When a top-up for the project is already in progress
+     *     (HTTP 429, string code `topUp.alreadyInProgress`).
+     * @throws ClientException On any other Manage API error.
+     */
+    public function payAsYouGoTopUpTry(int $projectId): array
+    {
+        try {
+            return (array) $this->apiPost('/pay-as-you-go/top-up/try', [
+                'idProject' => $projectId,
+            ]);
+        } catch (ClientException $e) {
+            // The endpoint returns HTTP 429 + "topUp.alreadyInProgress" when a top-up for the project
+            // is already running; surface it as a dedicated, separately catchable exception.
+            if ($e->getCode() === 429 && $e->getStringCode() === 'topUp.alreadyInProgress') {
+                throw new PayAsYouGoTopUpLockedException(
+                    $e->getMessage(),
+                    $e->getCode(),
+                    $e,
+                    $e->getStringCode(),
+                    $e->getContextParams(),
+                );
+            }
+            throw $e;
+        }
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function assignProjectStorageBackend(int $projectId, ?int $backendId): array
