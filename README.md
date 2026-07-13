@@ -124,7 +124,8 @@ KBC_TEST_UNVERIFIED_ADMIN_TOKEN=token_of_unverified_admin_having_mfa_disabled # 
 
 # OPTIONAL - required only for running storage backend tests (StorageBackendTest), no password needed:
 # backend registration uses the cert endpoint (POST /manage/storage-backend/snowflake) and the server
-# generates the key pair itself
+# generates the key pair for the *registered backend* itself. The MAIN Snowflake user used for the
+# direct connection still needs its own key pair (KBC_TEST_MAIN_SNOWFLAKE_BACKEND_PRIVATE_KEY, see below).
 KBC_TEST_SNOWFLAKE_BACKEND_NAME=
 KBC_TEST_SNOWFLAKE_HOST=
 KBC_TEST_SNOWFLAKE_WAREHOUSE=
