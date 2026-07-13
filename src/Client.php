@@ -1153,16 +1153,6 @@ class Client
     }
 
     /**
-     * @deprecated Use createSnowflakeStorageBackend or createStorageBackendBigquery
-     * @param array<string, mixed> $options
-     * @return array<string, mixed>
-     */
-    public function createStorageBackend(array $options): array
-    {
-        return $this->apiPost('/manage/storage-backend', $options);
-    }
-
-    /**
      * @param array<string, mixed> $options
      * @return array<string, mixed>
      */
