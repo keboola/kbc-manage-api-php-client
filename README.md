@@ -122,15 +122,16 @@ KBC_TEST_ADMIN_WITH_MFA_EMAIL=email_of_another_admin_having_mfa_enabled # email 
 KBC_TEST_ADMIN_WITH_MFA_TOKEN=token_of_another_admin_having_mfa_enabled # is also a Personal Access Token of user **without** **superadmin** privileges , but for a different user than that which has `KBC_MANAGE_API_TOKEN` or `KBC_TEST_ADMIN_TOKEN`
 KBC_TEST_UNVERIFIED_ADMIN_TOKEN=token_of_unverified_admin_having_mfa_disabled # is a Personal Access Token of user with **isActivated=false** and **without** **superadmin** privileges, but for a different user than that which has `KBC_MANAGE_API_TOKEN`.
 
-# OPTIONAL - required only for running testCreateStorageBackend, you have to have new snowflake backend and fill credentials into following environment variables
+# OPTIONAL - required only for running storage backend tests (StorageBackendTest), no password needed:
+# backend registration uses the cert endpoint (POST /manage/storage-backend/snowflake) and the server
+# generates the key pair itself
 KBC_TEST_SNOWFLAKE_BACKEND_NAME=
-KBC_TEST_SNOWFLAKE_BACKEND_PASSWORD=
 KBC_TEST_SNOWFLAKE_HOST=
 KBC_TEST_SNOWFLAKE_WAREHOUSE=
 KBC_TEST_SNOWFLAKE_BACKEND_REGION=
 ```
 
-# OPTIONAL - required only for running StorageBackendTest::testCreateStorageBackendWithCert, you have to have new snowflake backend and fill credentials into following environment variables
+# OPTIONAL - required for running storage backend tests (StorageBackendTest), you have to have a snowflake account and fill credentials into following environment variables
 Prepare credentials for Snowflake access
 Create RSA key pair for Snowflake user, you can use the following command to generate it:
 
