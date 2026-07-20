@@ -1201,6 +1201,29 @@ class Client
     }
 
     /**
+     * @param array<string, mixed> $params
+     * @return array<string, mixed>
+     */
+    public function getStorageBackendProjects(int $id, array $params = []): array
+    {
+        $defaultParams = [
+            'limit' => 100,
+            'offset' => 0,
+        ];
+
+        $queryParams = array_merge($defaultParams, $params);
+        return $this->apiGet($this->encode('/manage/storage-backend/%s/projects?', $id) . http_build_query($queryParams));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getStorageBackendMaintainers(int $id): array
+    {
+        return $this->apiGet($this->encode('/manage/storage-backend/%s/maintainers', $id));
+    }
+
+    /**
      * @param array<string, mixed> $options
      * @return array<string, mixed>
      */
