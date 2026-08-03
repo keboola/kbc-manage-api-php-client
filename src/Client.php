@@ -1085,6 +1085,63 @@ class Client
     }
 
     /**
+     * @param array{q?: string, limit?: int, offset?: int} $params
+     * @return list<array<string, mixed>>
+     */
+    public function listUsers(array $params = []): array
+    {
+        $url = '/manage/users';
+        if ($params !== []) {
+            $url .= '?' . http_build_query($params);
+        }
+        return $this->apiGet($url);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function listUserOrganizations(int $userId): array
+    {
+        return $this->apiGet($this->encode('/manage/users/%s/organizations', $userId));
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function listUserProjects(int $userId): array
+    {
+        return $this->apiGet($this->encode('/manage/users/%s/projects', $userId));
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function listUserMaintainers(int $userId): array
+    {
+        return $this->apiGet($this->encode('/manage/users/%s/maintainers', $userId));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function grantUserSuperAdmin(int $userId): array
+    {
+        return $this->apiPost($this->encode('/manage/users/%s/super-admin', $userId));
+    }
+
+    /**
+     * DELETE .../super-admin returns the updated user, unlike most other
+     * DELETE endpoints — goes through request() directly since apiDelete()
+     * discards the response body.
+     *
+     * @return array<string, mixed>
+     */
+    public function removeUserSuperAdmin(int|string $emailOrId): array
+    {
+        return $this->request('DELETE', $this->encode('/manage/users/%s/super-admin', $emailOrId));
+    }
+
+    /**
      * @param array<string, mixed> $options
      * @return array<string, mixed>
      */
