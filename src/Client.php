@@ -1228,6 +1228,19 @@ class Client
     }
 
     /**
+     * Server-side (Path B) BigQuery backend creation: connection mints the first key on an
+     * already-provisioned master service account. The backend is created not-yet-active; call
+     * activateStorageBackend() afterwards to smoke-test and enable it.
+     *
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
+     */
+    public function createStorageBackendBigqueryServerSide(array $options): array
+    {
+        return $this->apiPost('/manage/storage-backend/bigquery/server-side', $options);
+    }
+
+    /**
      * @param array<string, mixed> $options
      * @return array<string, mixed>
      */
