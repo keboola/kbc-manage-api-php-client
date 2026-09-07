@@ -1228,7 +1228,7 @@ class Client
     }
 
     /**
-     * Server-side (Path B) BigQuery backend creation: connection mints the first key on an
+     * Server-side BigQuery backend creation: connection mints the first key on an
      * already-provisioned master service account. The backend is created not-yet-active; call
      * activateStorageBackend() afterwards to smoke-test and enable it.
      *
