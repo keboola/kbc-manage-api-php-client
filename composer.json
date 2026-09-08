@@ -13,6 +13,11 @@
             "Keboola\\ManageApi\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Keboola\\ManageApi\\Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "ci": []
     },
