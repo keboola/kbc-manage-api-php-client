@@ -88,6 +88,20 @@ $client = new Client([
 ```
 
 Both JWT variants send `X-Kubernetes-Authorization: Bearer <jwt>`. The Kubernetes token file is read for every request so kubelet token rotation is picked up without restarting the PHP process.
+A read that fails or returns an empty token (kubelet swaps the projected volume's `..data` symlink during rotation, which can leave PHP's realpath cache pointing at the removed directory) clears the stat cache and is retried with exponential backoff (6 reads, ~1.2 s in total by default). Both knobs are optional constructor arguments of `KubernetesServiceAccountTokenAuthenticationStrategy`:
+
+```php
+use Keboola\ManageApi\Auth\KubernetesServiceAccountTokenAuthenticationStrategy;
+
+$client = new Client([
+    'authStrategy' => new KubernetesServiceAccountTokenAuthenticationStrategy(
+        '/var/run/secrets/keboola/connection-token',
+        maxReadAttempts: 6,
+        retryBaseDelayMicroseconds: 40_000,
+    ),
+    'url' => 'https://connection.keboola.com',
+]);
+```
 
 ## Tests
 
