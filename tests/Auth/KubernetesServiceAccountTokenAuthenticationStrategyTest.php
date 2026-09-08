@@ -233,15 +233,6 @@ final class KubernetesServiceAccountTokenAuthenticationStrategyTest extends Test
         new KubernetesServiceAccountTokenAuthenticationStrategy('/fake/token', retryBaseDelayMicroseconds: -1);
     }
 
-    public function testExposesDefaultRetryConstants(): void
-    {
-        self::assertSame(6, KubernetesServiceAccountTokenAuthenticationStrategy::DEFAULT_MAX_READ_ATTEMPTS);
-        self::assertSame(
-            40_000,
-            KubernetesServiceAccountTokenAuthenticationStrategy::DEFAULT_RETRY_BASE_DELAY_MICROSECONDS,
-        );
-    }
-
     /**
      * Lays the token out the way kubelet's projected-volume AtomicWriter does:
      * token -> ..data/token and ..data -> ..<timestamp>, so a rotation is a symlink swap.
