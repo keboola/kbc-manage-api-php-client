@@ -22,7 +22,8 @@ final readonly class KubernetesServiceAccountTokenAuthenticationStrategy impleme
     private const MAX_RETRY_DELAY_MICROSECONDS = 1_000_000;
 
     /**
-     * @param int $maxReadAttempts Total reads (1 initial + N-1 retries) before giving up.
+     * @param int $maxReadAttempts Total attempts (1 initial + N-1 retries) before giving up;
+     *                             a failed read is re-read once within an attempt.
      * @param int $retryBaseDelayMicroseconds Base backoff, doubled each retry, capped at 1 s.
      */
     public function __construct(

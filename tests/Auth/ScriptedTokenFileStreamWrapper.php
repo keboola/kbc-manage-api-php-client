@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Keboola\ManageApi\Tests\Auth;
 
+use RuntimeException;
+
 // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps -- stream wrapper hooks are named by PHP
 
 /**
@@ -37,7 +39,9 @@ final class ScriptedTokenFileStreamWrapper
         self::$openOutcomes = $openOutcomes;
         self::$openCount = 0;
         self::$readable = $readable;
-        stream_wrapper_register(self::SCHEME, self::class);
+        if (!stream_wrapper_register(self::SCHEME, self::class)) {
+            throw new RuntimeException(sprintf('Failed to register the "%s" stream wrapper', self::SCHEME));
+        }
 
         return self::SCHEME . '://serviceaccount/token';
     }
