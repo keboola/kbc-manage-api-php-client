@@ -1328,6 +1328,28 @@ class Client
     }
 
     /**
+     * @return array{
+     *     id: int,
+     *     stringId: string,
+     *     name: string,
+     *     created: string,
+     *     versions: list<array{
+     *         id: int,
+     *         version: string,
+     *         created: string,
+     *         isActive: bool,
+     *         isCritical: bool,
+     *         buildUrl: string|null,
+     *         commitSha: string|null
+     *     }>
+     * }
+     */
+    public function getUiApp(string $id): array
+    {
+        return $this->apiGet($this->encode('manage/ui-apps/%s', $id));
+    }
+
+    /**
      * @param array<string, mixed> $options
      * @return array<string, mixed>
      */
