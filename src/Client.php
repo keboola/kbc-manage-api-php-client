@@ -1361,6 +1361,11 @@ class Client
         return $this->apiPost('manage/ui-apps', $options);
     }
 
+    public function renameUiApp(string $id, string $name): void
+    {
+        $this->apiPatch($this->encode('manage/ui-apps/%s', $id), ['name' => $name]);
+    }
+
     public function deleteUiApp(string $name): void
     {
         $this->apiDelete($this->encode('manage/ui-apps/%s', $name));
