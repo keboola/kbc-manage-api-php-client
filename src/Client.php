@@ -1327,6 +1327,20 @@ class Client
     }
 
     /**
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
+     */
+    public function createApplicationToken(array $options): array
+    {
+        return $this->apiPost('manage/application-tokens', $options);
+    }
+
+    public function deleteApplicationToken(int $id): void
+    {
+        $this->apiDelete($this->encode('manage/application-tokens/%s', (string) $id));
+    }
+
+    /**
      * @param bool $includeInactive Also return applications that have no active version.
      *                              Requires super-admin rights; the plain list is public.
      * @return list<array{
