@@ -1311,20 +1311,23 @@ class Client
     }
 
     /**
+     * @param bool $includeInactive Also return applications that have no active version.
+     *                              Requires super-admin rights; the plain list is public.
      * @return list<array{
+     *     stringId: string,
      *     name: string,
-     *     version: string,
-     *     basePath: string,
-     *     type: string,
+     *     version: string|null,
+     *     basePath: string|null,
+     *     type: string|null,
      *     scripts: list<string>,
      *     styles: list<string>,
      *     isCritical: bool,
      *     commitSha: string|null
      * }>
      */
-    public function listUiApps(): array
+    public function listUiApps(bool $includeInactive = false): array
     {
-        return $this->apiGet('manage/ui-apps');
+        return $this->apiGet($includeInactive ? 'manage/ui-apps?includeInactive=true' : 'manage/ui-apps');
     }
 
     /**
