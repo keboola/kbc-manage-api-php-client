@@ -1311,6 +1311,22 @@ class Client
     }
 
     /**
+     * @return list<array{
+     *     id: int,
+     *     description: string,
+     *     created: string,
+     *     lastUsed: string|null,
+     *     expires: string|null,
+     *     scopes: list<string>,
+     *     creator: array{id: int|null, name: string|null}
+     * }>
+     */
+    public function listApplicationTokens(): array
+    {
+        return $this->apiGet('manage/application-tokens');
+    }
+
+    /**
      * @param bool $includeInactive Also return applications that have no active version.
      *                              Requires super-admin rights; the plain list is public.
      * @return list<array{
