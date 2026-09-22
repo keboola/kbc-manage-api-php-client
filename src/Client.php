@@ -1653,4 +1653,9 @@ class Client
     {
         return $this->apiPost($this->encode('manage/file-storage-gcs/%s/default', $fileStorageId));
     }
+
+    public function deleteFileStorage(int $fileStorageId): void
+    {
+        $this->apiDelete($this->encode('/manage/file-storage/%s', $fileStorageId));
+    }
 }
