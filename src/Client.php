@@ -177,7 +177,7 @@ class Client
      * @return array{
      *     id: int,
      *     description: string,
-     *     created: string,
+     *     created: string|null,
      *     lastUsed: string|null,
      *     expires: string|null,
      *     isSessionToken: bool,
@@ -1314,7 +1314,7 @@ class Client
      * @return list<array{
      *     id: int,
      *     description: string,
-     *     created: string,
+     *     created: string|null,
      *     lastUsed: string|null,
      *     expires: string|null,
      *     scopes: list<string>,
