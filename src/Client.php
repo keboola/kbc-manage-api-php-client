@@ -1341,6 +1341,19 @@ class Client
     }
 
     /**
+     * The scopes this stack defines.
+     *
+     * - Not an enum the API enforces: a token may carry any string.
+     * - Meant for offering the known ones, so an unlisted scope is still accepted on create.
+     *
+     * @return list<string>
+     */
+    public function listApplicationTokenScopes(): array
+    {
+        return $this->apiGet('manage/application-tokens/scopes');
+    }
+
+    /**
      * @param bool $includeInactive Also return applications that have no active version.
      *                              Requires super-admin rights; the plain list is public.
      * @return list<array{
