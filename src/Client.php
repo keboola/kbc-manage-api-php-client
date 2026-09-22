@@ -1654,6 +1654,15 @@ class Client
         return $this->apiPost($this->encode('manage/file-storage-gcs/%s/default', $fileStorageId));
     }
 
+    /**
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
+     */
+    public function updateFileStorage(int $fileStorageId, array $options): array
+    {
+        return $this->apiPatch($this->encode('/manage/file-storage/%s', $fileStorageId), $options);
+    }
+
     public function deleteFileStorage(int $fileStorageId): void
     {
         $this->apiDelete($this->encode('/manage/file-storage/%s', $fileStorageId));
