@@ -1317,6 +1317,8 @@ class Client
      *     created: string|null,
      *     lastUsed: string|null,
      *     expires: string|null,
+     *     isDisabled: bool,
+     *     isExpired: bool,
      *     scopes: list<string>,
      *     creator: array{id: int|null, name: string|null}
      * }>
