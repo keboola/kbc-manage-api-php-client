@@ -1626,7 +1626,8 @@ class Client
      */
     public function createGcsFileStorage(array $options): array
     {
-        return $this->apiPost('/manage/file-storage-gcs/', $options);
+        // no trailing slash: Symfony redirects a slashed GET but answers a slashed POST with 404
+        return $this->apiPost('manage/file-storage-gcs', $options);
     }
 
     /**
