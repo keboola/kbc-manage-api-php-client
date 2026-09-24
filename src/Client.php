@@ -1228,6 +1228,18 @@ class Client
     }
 
     /**
+     * Register a DuckLake backend: a PostgreSQL catalog plus the object-storage bucket the
+     * sessions address. On a GCP stack this also mints the HMAC key the driver signs with.
+     *
+     * @param array<string, mixed> $options
+     * @return array<string, mixed>
+     */
+    public function createStorageBackendDuckLake(array $options): array
+    {
+        return $this->apiPost('/manage/storage-backend/ducklake', $options);
+    }
+
+    /**
      * Server-side BigQuery backend creation: connection mints the first key on an
      * already-provisioned master service account. The backend is created not-yet-active; call
      * activateStorageBackend() afterwards to smoke-test and enable it.
