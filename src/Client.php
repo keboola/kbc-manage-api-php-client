@@ -1667,4 +1667,12 @@ class Client
     {
         $this->apiDelete($this->encode('/manage/file-storage/%s', $fileStorageId));
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function reactivateWorkspace(int $workspaceId): array
+    {
+        return $this->apiPost($this->encode('/manage/workspaces/%s/reactivate', $workspaceId));
+    }
 }
