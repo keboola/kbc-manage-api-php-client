@@ -1675,4 +1675,16 @@ class Client
     {
         return $this->apiPost($this->encode('/manage/workspaces/%s/reactivate', $workspaceId));
     }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function listProjectRetentionWorkspaces(int $projectId, ?string $state = null): array
+    {
+        $url = $this->encode('/manage/projects/%s/workspaces', $projectId);
+        if ($state !== null) {
+            $url .= '?' . http_build_query(['state' => $state]);
+        }
+        return $this->apiGet($url);
+    }
 }
