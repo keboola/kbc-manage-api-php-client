@@ -614,8 +614,10 @@ class Client
     }
 
     /**
+     * Returns the page envelope `{items, total, limit, offset}`; a bool `overdue` is sent as `1`/`0`, which the API accepts.
+     *
      * @param array<string, mixed> $params
-     * @return array<string, mixed>
+     * @return array{items: list<array<string, mixed>>, total: int, limit: int, offset: int}
      */
     public function listDeletedProjects(array $params = []): array
     {
@@ -626,6 +628,14 @@ class Client
 
         $queryParams = array_merge($defaultParams, $params);
         return $this->apiGet('/manage/deleted-projects?' . http_build_query($queryParams));
+    }
+
+    /**
+     * @return array{deleted: int, purged: int, overdue: int}
+     */
+    public function getDeletedProjectsStats(): array
+    {
+        return $this->apiGet('/manage/deleted-projects/stats');
     }
 
     /**
