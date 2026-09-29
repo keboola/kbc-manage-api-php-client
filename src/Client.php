@@ -633,9 +633,7 @@ class Client
     }
 
     /**
-     * Returns the `{data: {deleted, purged, overdue}}` envelope as sent on the wire.
-     *
-     * @return array{data: array{deleted: int, purged: int, overdue: int}}
+     * @return array{deleted: int, purged: int, overdue: int}
      */
     public function getDeletedProjectsStats(): array
     {
