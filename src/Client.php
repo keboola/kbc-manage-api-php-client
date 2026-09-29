@@ -616,9 +616,10 @@ class Client
     /**
      * Returns the paginated collection `{data, meta: {total, limit, offset}, links: {self, first, prev, next, last}}` as sent on the wire.
      *
+     * - filters go in `$params['filter']`, e.g. `['status' => 'purged', 'organizationId' => 1]` (wire form `filter[status]`)
      * - pagination goes in `$params['page']` as `['offset' => int, 'limit' => int]` (wire form `page[offset]`, `page[limit]`);
      *   nothing is added, so the server defaults apply (offset 0, limit 20)
-     * - a bool `overdue` is sent as `1`/`0`, which the API accepts
+     * - a bool `filter.overdue` is sent as `1`/`0`, which the API accepts
      *
      * @param array<string, mixed> $params
      * @return array{
