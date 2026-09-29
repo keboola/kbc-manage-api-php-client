@@ -614,24 +614,28 @@ class Client
     }
 
     /**
-     * Returns the page envelope `{items, total, limit, offset}`; a bool `overdue` is sent as `1`/`0`, which the API accepts.
+     * Returns the paginated collection `{data, meta: {total, limit, offset}, links: {self, first, prev, next, last}}` as sent on the wire.
+     *
+     * - pagination goes in `$params['page']` as `['offset' => int, 'limit' => int]` (wire form `page[offset]`, `page[limit]`);
+     *   nothing is added, so the server defaults apply (offset 0, limit 20)
+     * - a bool `overdue` is sent as `1`/`0`, which the API accepts
      *
      * @param array<string, mixed> $params
-     * @return array{items: list<array<string, mixed>>, total: int, limit: int, offset: int}
+     * @return array{
+     *     data: list<array<string, mixed>>,
+     *     meta: array{total: int, limit: int, offset: int},
+     *     links: array{self: string, first: string, prev: string|null, next: string|null, last: string},
+     * }
      */
     public function listDeletedProjects(array $params = []): array
     {
-        $defaultParams = [
-            'limit' => 100,
-            'offset' => 0,
-        ];
-
-        $queryParams = array_merge($defaultParams, $params);
-        return $this->apiGet('/manage/deleted-projects?' . http_build_query($queryParams));
+        return $this->apiGet('/manage/deleted-projects?' . http_build_query($params));
     }
 
     /**
-     * @return array{deleted: int, purged: int, overdue: int}
+     * Returns the `{data: {deleted, purged, overdue}}` envelope as sent on the wire.
+     *
+     * @return array{data: array{deleted: int, purged: int, overdue: int}}
      */
     public function getDeletedProjectsStats(): array
     {
