@@ -1294,6 +1294,17 @@ class Client
     }
 
     /**
+     * @param array<string, mixed> $params format, roleProject, roleName, createTaxonomy, resourceScopes, probeTags
+     * @return array{format: string, content: string}
+     */
+    public function getStorageBackendPolicyTagEnablementGuide(int $id, array $params): array
+    {
+        return $this->apiGet(
+            $this->encode('/manage/storage-backend/%s/policy-tags/enablement-guide?', $id) . http_build_query($params),
+        );
+    }
+
+    /**
      * @param array<string, mixed> $options
      * @return array<string, mixed>
      */
