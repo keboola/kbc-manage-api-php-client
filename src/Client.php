@@ -614,18 +614,23 @@ class Client
     }
 
     /**
-     * Returns the paginated collection `{data, meta: {total, limit, offset}, links: {self, first, prev, next, last}}` as sent on the wire.
+     * Returns the cursor-paginated collection `{data, meta: {total, limit, cursor}, links: {self, first, next}}` as sent on the wire.
      *
      * - filters go in `$params['filter']`, e.g. `['status' => 'purged', 'organizationId' => 1]` (wire form `filter[status]`)
-     * - pagination goes in `$params['page']` as `['offset' => int, 'limit' => int]` (wire form `page[offset]`, `page[limit]`);
-     *   nothing is added, so the server defaults apply (offset 0, limit 20)
+     * - pagination goes in `$params['page']` as `['after' => string, 'limit' => int]` (wire form `page[after]`, `page[limit]`);
+     *   `after` is the cursor from `links.next` or built as `meta.cursor` describes; nothing is added, so the server
+     *   defaults apply (first page, limit 20)
      * - a bool `filter.overdue` is sent as `1`/`0`, which the API accepts
      *
      * @param array<string, mixed> $params
      * @return array{
      *     data: list<array<string, mixed>>,
-     *     meta: array{total: int, limit: int, offset: int},
-     *     links: array{self: string, first: string, prev: string|null, next: string|null, last: string},
+     *     meta: array{
+     *         total: int,
+     *         limit: int,
+     *         cursor: array{param: string, encoding: string, fields: list<array{name: string, type: string, nullable: bool}>, order: string},
+     *     },
+     *     links: array{self: string, first: string, next: string|null},
      * }
      */
     public function listDeletedProjects(array $params = []): array
