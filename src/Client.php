@@ -247,7 +247,7 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array<string, mixed>>
      */
     public function listMaintainers(): array
     {
@@ -286,7 +286,7 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array<string, mixed>>
      */
     public function listMaintainerMembers(int $maintainerId): array
     {
@@ -407,7 +407,7 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array<string, mixed>>
      */
     public function listOrganizations(): array
     {
@@ -415,7 +415,7 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array<string, mixed>>
      */
     public function listOrganizationProjects(int $organizationId): array
     {
@@ -672,7 +672,7 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array<string, mixed>>
      */
     public function listProjectInvitations(int $id): array
     {
@@ -680,7 +680,7 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array<string, mixed>>
      */
     public function listMyProjectInvitations(): array
     {
@@ -852,7 +852,7 @@ class Client
     }
 
     /**
-     * @param array<string, mixed> $limits
+     * @param list<array{name: string, value: mixed}> $limits
      * @return array<string, mixed>
      */
     public function setProjectLimits(int $projectId, array $limits): array
@@ -1460,7 +1460,7 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array<string, mixed>>
      */
     public function listMyProjectJoinRequests(): array
     {
@@ -1500,7 +1500,7 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array<string, mixed>>
      */
     public function listProjectJoinRequests(int $id): array
     {
