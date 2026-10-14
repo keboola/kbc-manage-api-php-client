@@ -664,7 +664,24 @@ class Client
     }
 
     /**
-     * @return array<string, mixed>
+     * @return list<array{
+     *     id: int,
+     *     name: string,
+     *     email: string,
+     *     mfaEnabled: bool,
+     *     features: list<string>,
+     *     canAccessLogs: bool,
+     *     isSuperAdmin: bool,
+     *     expires: ?string,
+     *     created: ?string,
+     *     reason: ?string,
+     *     role: string,
+     *     status: string,
+     *     invitor: ?array{id: int, name: string, email: string},
+     *     approver: ?array{id: int, name: string, email: string},
+     *     canApproveMergeRequests: bool,
+     *     isOrganizationMember: bool,
+     * }>
      */
     public function listProjectUsers(int $id): array
     {
