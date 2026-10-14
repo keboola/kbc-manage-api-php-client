@@ -1612,7 +1612,7 @@ class Client
             $body = $response instanceof ResponseInterface ? json_decode((string) $response->getBody(), true) : [];
 
             if ($response && $response->getStatusCode() === 503) {
-                throw new MaintenanceException($body['reason'] ?? 'Maintenance', $response && $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
+                throw new MaintenanceException($body['reason'] ?? 'Maintenance', $response->hasHeader('Retry-After') ? (string) $response->getHeader('Retry-After')[0] : null, $body);
             }
 
             throw new ClientException(

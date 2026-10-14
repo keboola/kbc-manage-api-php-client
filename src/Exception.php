@@ -26,7 +26,7 @@ class Exception extends GenericException
     {
         $this->setStringCode($stringCode);
         $this->setContextParams($params);
-        parent::__construct($message, (int) $code, $previous);
+        parent::__construct($message ?? '', (int) $code, $previous);
     }
 
 
