@@ -1716,6 +1716,40 @@ class Client
     }
 
     /**
+     * @param array<string, mixed> $params
+     * @return array{
+     *     data: list<array{id: int, name: string, isDeleted: bool}>,
+     *     meta: array{
+     *         total: int,
+     *         limit: int,
+     *         cursor: array{param: string, encoding: string, fields: list<array{name: string, type: string, nullable: bool}>, order: string},
+     *     },
+     *     links: array{self: string, first: string, next: string|null},
+     * }
+     */
+    public function listFileStorageProjects(int $fileStorageId, array $params = []): array
+    {
+        return $this->apiGet($this->encode('/manage/file-storage/%s/projects', $fileStorageId) . '?' . http_build_query($params));
+    }
+
+    /**
+     * @param array<string, mixed> $params
+     * @return array{
+     *     data: list<array{id: int, project: array{id: int, name: string, isDeleted: bool}, componentId: string|null, configurationId: string|null, created: string}>,
+     *     meta: array{
+     *         total: int,
+     *         limit: int,
+     *         cursor: array{param: string, encoding: string, fields: list<array{name: string, type: string, nullable: bool}>, order: string},
+     *     },
+     *     links: array{self: string, first: string, next: string|null},
+     * }
+     */
+    public function listFileStorageWorkspaces(int $fileStorageId, array $params = []): array
+    {
+        return $this->apiGet($this->encode('/manage/file-storage/%s/workspaces', $fileStorageId) . '?' . http_build_query($params));
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function reactivateWorkspace(int $workspaceId): array
