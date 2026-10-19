@@ -1329,7 +1329,7 @@ class Client
     }
 
     /**
-     * @param array<string, mixed> $params format, roleProject, roleName, createTaxonomy, resourceScopes, probeTags
+     * @param array<string, mixed> $params format, grantMode, roleProject, roleName, createTaxonomy, resourceScopes, probeTags
      * @return array{format: string, content: string}
      */
     public function getStorageBackendPolicyTagEnablementGuide(int $id, array $params): array
