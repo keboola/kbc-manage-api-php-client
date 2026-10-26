@@ -1751,4 +1751,16 @@ class Client
         }
         return $this->apiGet($url);
     }
+
+    /**
+     * @return array{tables: list<array<string, mixed>>, buckets: list<array<string, mixed>>}
+     */
+    public function listRestorableObjects(int $projectId, ?string $bucketId = null): array
+    {
+        $url = $this->encode('/manage/projects/%s/restorable-objects', $projectId);
+        if ($bucketId !== null) {
+            $url .= '?' . http_build_query(['bucketId' => $bucketId]);
+        }
+        return $this->apiGet($url);
+    }
 }
