@@ -639,6 +639,30 @@ class Client
     }
 
     /**
+     * Searches projects, organizations, maintainers and users; returns one cursor-paginated collection per type the
+     * caller may read, keyed by type (`project`, `organization`, `maintainer`, `user`).
+     *
+     * - `$params['q']` is the search term
+     * - `$params['filter']['types']` is a comma-separated subset of the types
+     * - `$params['page']` is `['after' => string, 'limit' => int]`; `after` needs exactly one type in the filter
+     *
+     * @param array<string, mixed> $params
+     * @return array<string, array{
+     *     data: list<array<string, mixed>>,
+     *     meta: array{
+     *         total: int,
+     *         limit: int,
+     *         cursor: array{param: string, encoding: string, fields: list<array{name: string, type: string, nullable: bool}>, order: string},
+     *     },
+     *     links: array{self: string, first: string, next: string|null},
+     * }>
+     */
+    public function search(array $params): array
+    {
+        return $this->apiGet('/manage/search?' . http_build_query($params));
+    }
+
+    /**
      * @return array{deleted: int, purged: int, overdue: int}
      */
     public function getDeletedProjectsStats(): array
@@ -1424,6 +1448,7 @@ class Client
      *     type: string|null,
      *     scripts: list<string>,
      *     styles: list<string>,
+     *     preloads: list<string>,
      *     isCritical: bool,
      *     commitSha: string|null
      * }>
