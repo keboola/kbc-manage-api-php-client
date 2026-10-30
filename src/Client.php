@@ -1412,6 +1412,7 @@ class Client
      *     type: string|null,
      *     scripts: list<string>,
      *     styles: list<string>,
+     *     preloads: list<string>,
      *     isCritical: bool,
      *     commitSha: string|null
      * }>
