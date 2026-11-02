@@ -1206,7 +1206,7 @@ class Client
      */
     public function createS3FileStorage(array $options): array
     {
-        return $this->apiPost('/manage/file-storage-s3/', $options);
+        return $this->apiPost('manage/file-storage-s3', $options);
     }
 
     /**
@@ -1240,7 +1240,7 @@ class Client
      */
     public function createAbsFileStorage(array $options): array
     {
-        return $this->apiPost('/manage/file-storage-abs/', $options);
+        return $this->apiPost('manage/file-storage-abs', $options);
     }
 
     /**
