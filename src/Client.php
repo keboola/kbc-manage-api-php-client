@@ -1788,4 +1788,24 @@ class Client
         }
         return $this->apiGet($url);
     }
+
+    /**
+     * Starts a restore of a table from Snowflake Time Travel and returns the storage job.
+     *
+     * @param array<string, mixed> $params source {bucketId, tableName, droppedOn?}, mode
+     *     (undrop|undropAs|pointInTime), targetName?, timestamp?, reason
+     * @return array<string, mixed>
+     */
+    public function createTableRestore(int $projectId, array $params): array
+    {
+        return $this->apiPost($this->encode('/manage/projects/%s/table-restores', $projectId), $params);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getTableRestore(int $projectId, int $jobId): array
+    {
+        return $this->apiGet($this->encode('/manage/projects/%s/table-restores/%s', $projectId, $jobId));
+    }
 }
