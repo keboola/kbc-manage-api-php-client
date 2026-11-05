@@ -1793,7 +1793,7 @@ class Client
      * Starts a restore of a table from Snowflake Time Travel and returns the storage job.
      *
      * @param array<string, mixed> $params source {bucketId, tableName, droppedOn?}, mode
-     *     (undrop|undropAs|pointInTime), targetName?, timestamp?, reason
+     *     (undrop|undropAs|pointInTime|replace|pointInTimeInPlace), targetName?, timestamp?, reason
      * @return array<string, mixed>
      */
     public function createTableRestore(int $projectId, array $params): array
