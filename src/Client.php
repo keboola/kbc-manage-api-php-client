@@ -968,15 +968,21 @@ class Client
         string $description,
         ?bool $canBeManageByAdmin = false,
         ?bool $canBeManagedViaAPI = true,
+        ?bool $canBeManagedByOrganizationAdmin = null,
     ): array {
-        return $this->apiPost('/manage/features', [
+        $data = [
             'name' => $name,
             'type' => $type,
             'title' => $title,
             'description' => $description,
             'canBeManageByAdmin' => $canBeManageByAdmin,
             'canBeManagedViaAPI' => $canBeManagedViaAPI,
-        ]);
+        ];
+        if ($canBeManagedByOrganizationAdmin !== null) {
+            $data['canBeManagedByOrganizationAdmin'] = $canBeManagedByOrganizationAdmin;
+        }
+
+        return $this->apiPost('/manage/features', $data);
     }
 
     /**
