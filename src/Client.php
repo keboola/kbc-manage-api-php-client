@@ -1808,4 +1808,23 @@ class Client
     {
         return $this->apiGet($this->encode('/manage/projects/%s/table-restores/%s', $projectId, $jobId));
     }
+
+    /**
+     * Starts a restore of a dropped bucket from Snowflake Time Travel and returns the storage job.
+     *
+     * @param array<string, mixed> $params bucketId, droppedOn, reason
+     * @return array<string, mixed>
+     */
+    public function createBucketRestore(int $projectId, array $params): array
+    {
+        return $this->apiPost($this->encode('/manage/projects/%s/bucket-restores', $projectId), $params);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getBucketRestore(int $projectId, int $jobId): array
+    {
+        return $this->apiGet($this->encode('/manage/projects/%s/bucket-restores/%s', $projectId, $jobId));
+    }
 }
