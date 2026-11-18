@@ -705,6 +705,7 @@ class Client
      *     approver: ?array{id: int, name: string, email: string},
      *     canApproveMergeRequests: bool,
      *     isOrganizationMember: bool,
+     *     customRoles?: list<array{id: string, name: string}>,
      * }>
      */
     public function listProjectUsers(int $id): array
@@ -959,7 +960,7 @@ class Client
     }
 
     /**
-     * @param array{name: string, description: string, scope: string, organizationId: int, projectId?: int, grants: array<string, mixed>} $params
+     * @param array<string, mixed> $params the role definition: name, description, scope, organizationId, optional projectId, grants
      * @return array<string, mixed>
      */
     public function createRole(array $params): array
@@ -968,7 +969,7 @@ class Client
     }
 
     /**
-     * @param array{organizationId: int, q?: string, limit?: int, offset?: int} $params
+     * @param array<string, mixed> $params organizationId, optional q, limit, offset
      * @return list<array<string, mixed>>
      */
     public function listRoles(array $params): array
@@ -985,7 +986,7 @@ class Client
     }
 
     /**
-     * @param array{version: int, grants?: array<string, mixed>, description?: string} $params
+     * @param array<string, mixed> $params the read version, optional grants and description
      * @return array<string, mixed>
      */
     public function updateRole(string $roleId, array $params): array
