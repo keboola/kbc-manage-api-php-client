@@ -1450,15 +1450,13 @@ class Client
      */
     public function listUiApps(bool $includeInactive = false, ?string $stack = null): array
     {
-        $query = array_filter(
-            [
-                'includeInactive' => $includeInactive ? 'true' : null,
-                'stack' => $stack,
-            ],
-            fn(?string $value) => $value !== null,
-        );
+        // http_build_query leaves the null values out.
+        $query = http_build_query([
+            'includeInactive' => $includeInactive ? 'true' : null,
+            'stack' => $stack,
+        ]);
 
-        return $this->apiGet($query === [] ? 'manage/ui-apps' : 'manage/ui-apps?' . http_build_query($query));
+        return $this->apiGet($query === '' ? 'manage/ui-apps' : 'manage/ui-apps?' . $query);
     }
 
     /**
