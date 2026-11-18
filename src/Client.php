@@ -705,6 +705,7 @@ class Client
      *     approver: ?array{id: int, name: string, email: string},
      *     canApproveMergeRequests: bool,
      *     isOrganizationMember: bool,
+     *     customRoles?: list<array{id: string, name: string}>,
      * }>
      */
     public function listProjectUsers(int $id): array
@@ -956,6 +957,79 @@ class Client
     public function deleteOrganizationMetadata(int $organizationId, int $metadataId): void
     {
         $this->apiDelete($this->encode('/manage/organizations/%s/metadata/%s', $organizationId, $metadataId));
+    }
+
+    /**
+     * @param array<string, mixed> $params the role definition: name, description, scope, organizationId, optional projectId, grants
+     * @return array<string, mixed>
+     */
+    public function createRole(array $params): array
+    {
+        return $this->apiPost('/manage/roles', $params);
+    }
+
+    /**
+     * @param array<string, mixed> $params organizationId, optional q, limit, offset
+     * @return list<array<string, mixed>>
+     */
+    public function listRoles(array $params): array
+    {
+        return $this->apiGet('/manage/roles?' . http_build_query($params));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getRole(string $roleId): array
+    {
+        return $this->apiGet($this->encode('/manage/roles/%s', $roleId));
+    }
+
+    /**
+     * @param array<string, mixed> $params the read version, optional grants and description
+     * @return array<string, mixed>
+     */
+    public function updateRole(string $roleId, array $params): array
+    {
+        return $this->apiPatch($this->encode('/manage/roles/%s', $roleId), $params);
+    }
+
+    public function deleteRole(string $roleId): void
+    {
+        $this->apiDelete($this->encode('/manage/roles/%s', $roleId));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function assignRole(string $roleId, int $adminId, int $projectId): array
+    {
+        return $this->apiPost($this->encode('/manage/roles/%s/assignments', $roleId), [
+            'adminId' => $adminId,
+            'projectId' => $projectId,
+        ]);
+    }
+
+    public function unassignRole(string $roleId, int $adminId, int $projectId): void
+    {
+        $this->apiDelete(
+            $this->encode('/manage/roles/%s/assignments/%s', $roleId, $adminId)
+            . '?' . http_build_query(['projectId' => $projectId]),
+        );
+    }
+
+    /**
+     * @param array{projectId?: int, limit?: int, offset?: int} $params
+     * @return list<array<string, mixed>>
+     */
+    public function listRoleAssignments(string $roleId, array $params = []): array
+    {
+        $url = $this->encode('/manage/roles/%s/assignments', $roleId);
+        if ($params !== []) {
+            $url .= '?' . http_build_query($params);
+        }
+
+        return $this->apiGet($url);
     }
 
     /**
