@@ -1444,12 +1444,59 @@ class Client
      *     styles: list<string>,
      *     preloads: list<string>,
      *     isCritical: bool,
-     *     commitSha: string|null
+     *     commitSha: string|null,
+     *     pinned?: bool
      * }>
      */
-    public function listUiApps(bool $includeInactive = false): array
+    public function listUiApps(bool $includeInactive = false, ?string $stack = null): array
     {
-        return $this->apiGet($includeInactive ? 'manage/ui-apps?includeInactive=true' : 'manage/ui-apps');
+        $query = array_filter(
+            [
+                'includeInactive' => $includeInactive ? 'true' : null,
+                'stack' => $stack,
+            ],
+            fn(?string $value) => $value !== null,
+        );
+
+        return $this->apiGet($query === [] ? 'manage/ui-apps' : 'manage/ui-apps?' . http_build_query($query));
+    }
+
+    /**
+     * @return list<array{
+     *     stack: string,
+     *     stringId: string,
+     *     type: 'pin'|'hold',
+     *     version: string|null,
+     *     reason: string,
+     *     createdBy: string,
+     *     created: string
+     * }>
+     */
+    public function listUiAppStackOverrides(): array
+    {
+        return $this->apiGet('manage/ui-apps/stack-overrides');
+    }
+
+    /**
+     * @param array{type: 'pin'|'hold', version?: string|null, reason: string} $override
+     * @return array{
+     *     stack: string,
+     *     stringId: string,
+     *     type: 'pin'|'hold',
+     *     version: string|null,
+     *     reason: string,
+     *     createdBy: string,
+     *     created: string
+     * }
+     */
+    public function setUiAppStackOverride(string $id, string $stack, array $override): array
+    {
+        return $this->apiPut($this->encode('manage/ui-apps/%s/stack-overrides/%s', $id, $stack), $override);
+    }
+
+    public function deleteUiAppStackOverride(string $id, string $stack): void
+    {
+        $this->apiDelete($this->encode('manage/ui-apps/%s/stack-overrides/%s', $id, $stack));
     }
 
     /**
