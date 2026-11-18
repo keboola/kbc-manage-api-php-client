@@ -959,6 +959,79 @@ class Client
     }
 
     /**
+     * @param array{name: string, description: string, scope: string, organizationId: int, projectId?: int, grants: array<string, mixed>} $params
+     * @return array<string, mixed>
+     */
+    public function createRole(array $params): array
+    {
+        return $this->apiPost('/manage/roles', $params);
+    }
+
+    /**
+     * @param array{organizationId: int, q?: string, limit?: int, offset?: int} $params
+     * @return list<array<string, mixed>>
+     */
+    public function listRoles(array $params): array
+    {
+        return $this->apiGet('/manage/roles?' . http_build_query($params));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getRole(string $roleId): array
+    {
+        return $this->apiGet($this->encode('/manage/roles/%s', $roleId));
+    }
+
+    /**
+     * @param array{version: int, grants?: array<string, mixed>, description?: string} $params
+     * @return array<string, mixed>
+     */
+    public function updateRole(string $roleId, array $params): array
+    {
+        return $this->apiPatch($this->encode('/manage/roles/%s', $roleId), $params);
+    }
+
+    public function deleteRole(string $roleId): void
+    {
+        $this->apiDelete($this->encode('/manage/roles/%s', $roleId));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function assignRole(string $roleId, int $adminId, int $projectId): array
+    {
+        return $this->apiPost($this->encode('/manage/roles/%s/assignments', $roleId), [
+            'adminId' => $adminId,
+            'projectId' => $projectId,
+        ]);
+    }
+
+    public function unassignRole(string $roleId, int $adminId, int $projectId): void
+    {
+        $this->apiDelete(
+            $this->encode('/manage/roles/%s/assignments/%s', $roleId, $adminId)
+            . '?' . http_build_query(['projectId' => $projectId]),
+        );
+    }
+
+    /**
+     * @param array{projectId?: int, limit?: int, offset?: int} $params
+     * @return list<array<string, mixed>>
+     */
+    public function listRoleAssignments(string $roleId, array $params = []): array
+    {
+        $url = $this->encode('/manage/roles/%s/assignments', $roleId);
+        if ($params !== []) {
+            $url .= '?' . http_build_query($params);
+        }
+
+        return $this->apiGet($url);
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function createFeature(
