@@ -1206,18 +1206,6 @@ class Client
         return $this->apiGet($this->encode('/manage/project-templates/%s/features', $templateStringId));
     }
 
-    public function addProjectTemplateFeature(string $templateStringId, string $featureName): void
-    {
-        $this->apiPost($this->encode('/manage/project-templates/%s/features', $templateStringId), [
-            'feature' => $featureName,
-        ]);
-    }
-
-    public function removeProjectTemplateFeature(string $templateStringId, string $featureName): void
-    {
-        $this->apiDelete($this->encode('/manage/project-templates/%s/features/%s', $templateStringId, $featureName));
-    }
-
     public function disableUserMFA(int|string $emailOrId): void
     {
         $this->apiDelete($this->encode('/manage/users/%s/mfa', $emailOrId));
